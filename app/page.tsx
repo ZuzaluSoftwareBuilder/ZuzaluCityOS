@@ -34,6 +34,7 @@ import {
   formatDateToMonth,
   groupEventsByMonth,
 } from '@/components/cards/EventCard';
+import SlotDates from '@/components/calendar/SlotDate';
 const queryClient = new QueryClient();
 
 const doclink = process.env.NEXT_LEARN_DOC_V2_URL || '';
@@ -209,6 +210,7 @@ const Home: React.FC = () => {
           },
         },
       );
+      console.log('response: ', response);
       if (response && response.data && 'eventIndex' in response.data) {
         const eventData: EventData = response.data as EventData;
         const fetchedEvents: Event[] = eventData.eventIndex.edges.map(
@@ -463,6 +465,16 @@ const Home: React.FC = () => {
                         <ZuCalendar
                           value={selectedDate}
                           onChange={(val) => setSelectedDate(val)}
+                          slots={{
+                            day: SlotDates
+                          }}
+                          slotProps = {{
+                            day: {
+                              highlightedDays: events.map((event) => {
+                                return new Date(event.startTime).getDate()
+                              })
+                            } as any
+                          }}
                         />
                       </Box>
                     </Box>
