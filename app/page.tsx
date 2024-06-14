@@ -164,8 +164,13 @@ const Home: React.FC = () => {
     }
   };
 
-  const getEventsByDate = async () => {
+  const getEventsByDate = async (dateVal?: string) => {
     try {
+
+      let date = selectedDate?.format('YYYY-MM-DDTHH:mm:ss[Z]');
+      if(dateVal) {
+        date = dateVal;
+      }
       const getEventsByDate_QUERY = `
         query ($input:EventFiltersInput!) {
         eventIndex(filters:$input, first: 20){
@@ -204,13 +209,12 @@ const Home: React.FC = () => {
           input: {
             where: {
               startTime: {
-                equalTo: selectedDate?.format('YYYY-MM-DDTHH:mm:ss[Z]'),
+                lessThanOrEqualTo: date,
               },
             },
           },
         },
       );
-      console.log('response: ', response);
       if (response && response.data && 'eventIndex' in response.data) {
         const eventData: EventData = response.data as EventData;
         const fetchedEvents: Event[] = eventData.eventIndex.edges.map(
@@ -224,6 +228,13 @@ const Home: React.FC = () => {
       console.error('Failed to fetch events:', error);
     }
   };
+
+  const handleMonthChange = (date: Dayjs) => {
+    console.log('date: ', date.endOf('month').toISOString());
+    const endDate = date.endOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]');
+    getEventsByDate(endDate);
+  };
+
   useEffect(() => {
     document.title = 'Zuzalu City';
     const fetchData = async () => {
@@ -465,6 +476,7 @@ const Home: React.FC = () => {
                         <ZuCalendar
                           value={selectedDate}
                           onChange={(val) => setSelectedDate(val)}
+                          onMonthChange={(val) => handleMonthChange(val)}
                           slots={{
                             day: SlotDates
                           }}
