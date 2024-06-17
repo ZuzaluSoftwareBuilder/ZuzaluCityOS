@@ -34,7 +34,6 @@ import {
   formatDateToMonth,
   groupEventsByMonth,
 } from '@/components/cards/EventCard';
-import SlotDates from '@/components/calendar/SlotDate';
 const queryClient = new QueryClient();
 
 const doclink = process.env.NEXT_LEARN_DOC_V2_URL || '';
@@ -96,6 +95,10 @@ const Home: React.FC = () => {
                 github
                 discord
                 ens
+                category
+                members{
+                  id
+                }
               }
             }
           }
@@ -164,12 +167,8 @@ const Home: React.FC = () => {
     }
   };
 
-  const getEventsByDate = async (dateVal?: string) => {
+  const getEventsByDate = async () => {
     try {
-      let date = selectedDate?.format('YYYY-MM-DDTHH:mm:ss[Z]');
-      if (dateVal) {
-        date = dateVal;
-      }
       const getEventsByDate_QUERY = `
         query ($input:EventFiltersInput!) {
         eventIndex(filters:$input, first: 20){
@@ -208,7 +207,7 @@ const Home: React.FC = () => {
           input: {
             where: {
               startTime: {
-                lessThanOrEqualTo: date,
+                equalTo: selectedDate?.format('YYYY-MM-DDTHH:mm:ss[Z]'),
               },
             },
           },
@@ -227,13 +226,6 @@ const Home: React.FC = () => {
       console.error('Failed to fetch events:', error);
     }
   };
-
-  const handleMonthChange = (date: Dayjs) => {
-    console.log('date: ', date.endOf('month').toISOString());
-    const endDate = date.endOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]');
-    getEventsByDate(endDate);
-  };
-
   useEffect(() => {
     document.title = 'Zuzalu City';
     const fetchData = async () => {
@@ -475,17 +467,6 @@ const Home: React.FC = () => {
                         <ZuCalendar
                           value={selectedDate}
                           onChange={(val) => setSelectedDate(val)}
-                          onMonthChange={(val) => handleMonthChange(val)}
-                          slots={{
-                            day: SlotDates,
-                          }}
-                          slotProps={{
-                            day: {
-                              highlightedDays: events.map((event) => {
-                                return new Date(event.startTime).getDate();
-                              }),
-                            } as any,
-                          }}
                         />
                       </Box>
                     </Box>
