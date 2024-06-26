@@ -97,7 +97,7 @@ const Home: React.FC = () => {
       <Navbar spaceName={event?.space?.name} />
       <Tabbar tabName={tabName} setTabName={setTabName} />
       <Stack direction="row" justifyContent="center">
-        <Box width={isMobile ? '90%' : '60%'} marginTop={3}>
+        <Box width={isMobile ? '90%' : '60%'} py={'30px'}>
           {renderPage()}
         </Box>
       </Stack>

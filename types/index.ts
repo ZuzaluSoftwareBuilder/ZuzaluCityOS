@@ -127,9 +127,14 @@ export interface SessionData {
   };
 }
 
-export interface Venue {
-  id: string;
-  title: string;
+export interface VenueDTO {
+  id: number;
+  name: string;
+  tags: string;
+  eventid: string;
+  avatar: string;
+  bookings: string;
+  created_at: string;
 }
 
 export type Profile = {

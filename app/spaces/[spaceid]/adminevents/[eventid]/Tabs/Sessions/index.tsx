@@ -98,9 +98,10 @@ const Sessions = () => {
 
   const getSessions = async () => {
     try {
-      const response: any = await composeClient.executeQuery(`
-        query MyQuery {
-          sessionIndex(first: 20) {
+
+      const query = `
+        query MyQuery ($filter: SessionFiltersInput) {
+          sessionIndex(first: 20, filters: $filter) {
             edges {
               node {
                 id
@@ -124,7 +125,9 @@ const Sessions = () => {
             }
           }
         }
-      `);
+      `;
+
+      const response: any = await composeClient.executeQuery(query, {})
       console.log(response);
       if ('sessionIndex' in response.data) {
         const sessionData: SessionData = response.data as SessionData;
@@ -1292,10 +1295,9 @@ const Sessions = () => {
   };
 
   return (
-    <Stack direction={'column'} spacing={6} paddingBottom={5}>
-      <SessionHeader onToggle={toggleDrawer} />
+    <Stack direction={'column'} >
+      <SessionHeader onToggle={toggleDrawer} sessionAmount={sessions.length} />
       <SessionList sessions={sessions} />
-      <SessionAdd />
       <SwipeableDrawer
         hideBackdrop={true}
         sx={{

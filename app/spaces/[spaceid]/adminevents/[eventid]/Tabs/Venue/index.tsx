@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import {
   Stack,
@@ -33,6 +33,7 @@ import { ZuButton, ZuInput } from '@/components/core';
 import { TimeRange } from './components';
 import { supabase } from '@/utils/supabase/client';
 import { VENUE_TAGS } from '@/constant';
+import { VenueDTO } from '@/types';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
@@ -56,6 +57,8 @@ const Venue: React.FC = () => {
     bottom: false,
     right: false,
   });
+
+  const [venues, setVenues] = useState<VenueDTO[]>([])
 
   const toggleDrawer = (anchor: Anchor, open: boolean) => {
     setState({ ...state, [anchor]: open });
@@ -635,10 +638,28 @@ const Venue: React.FC = () => {
     );
   };
 
+  const getVenues = async () => {
+    try {
+      const result = await supabase.from('venue').select();
+      if(result.error) {
+        console.log('ERROR: SUPABASE: GET VENUES: ', result.error);
+        return ;
+      }
+      setVenues(result.data)
+    } catch (err) {
+      console.log('ERROR: SUPABASE: GET VENUES: ', err)
+    }
+
+  }
+
+  useEffect(() => {
+    getVenues();
+  }, [])
+
   return (
     <Stack spacing="30px">
-      <VenueHeader onToggle={toggleDrawer} />
-      <VenueList venues={MOCK_DATA.venues} onToggle={toggleDrawer} />
+      <VenueHeader onToggle={toggleDrawer} spaceAmount={venues.length} />
+      <VenueList venues={venues} onToggle={toggleDrawer} />
       <SwipeableDrawer
         hideBackdrop={true}
         sx={{
