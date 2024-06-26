@@ -236,7 +236,6 @@ const Home: React.FC = () => {
           const fetchedEvents: Event[] = eventData.eventIndex.edges.map(
             (edge) => edge.node,
           );
-          console.log('fetchEvents: ', fetchedEvents)
           setEvents(fetchedEvents);
         } else {
           console.error('Invalid data structure:', response.data);
@@ -309,7 +308,6 @@ const Home: React.FC = () => {
   }
 
   const handleMonthChange = (date: Dayjs) => {
-    console.log('date: ', date.endOf('month').toISOString());
     setDateForCalendar(date);
   };
 
@@ -559,7 +557,6 @@ const Home: React.FC = () => {
                         <ZuCalendar
                           value={selectedDate}
                           onChange={(val) => {
-                            console.log('val: ', val);
                             setSelectedDate(val)
                           }}
                           slots={{

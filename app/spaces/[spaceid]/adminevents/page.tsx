@@ -237,7 +237,6 @@ const Home = () => {
     const [tracks, setTracks] = useState<string[]>([]);
 
     const profileId = profile?.id || '';
-    console.log('profileId: ', profileId)
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = event.target;

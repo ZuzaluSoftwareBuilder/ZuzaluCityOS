@@ -58,7 +58,6 @@ const Home: React.FC = () => {
 
     try {
       const result: any = await composeClient.executeQuery(query, variable);
-      console.log(result);
       if (result.data) {
         if (result.data.node) {
           setEvent(result.data.node);
