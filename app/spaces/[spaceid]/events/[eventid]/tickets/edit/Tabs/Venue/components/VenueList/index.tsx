@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Stack, Typography } from '@mui/material';
 import ZuButton from 'components/core/Button';
 import { PlusIcon, PlusCircleIcon } from 'components/icons';
-import { Venue } from '@/types';
+import { VenueDTO } from '@/types';
 import VenueCard from './VenueCard';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
 interface VenueListProps {
-  venues?: Venue[];
+  venues?: VenueDTO[];
   onToggle: (anchor: Anchor, open: boolean) => void;
 }
 
@@ -42,7 +42,7 @@ const VenueList: React.FC<VenueListProps> = ({ venues, onToggle }) => {
       )}
       <Stack paddingY="20px" spacing="10px">
         {venues?.map((venue, index) => (
-          <VenueCard key={`VenueCard-${index}`} title={venue.title} />
+          <VenueCard key={`VenueCard-${index}`} {...venue} />
         ))}
       </Stack>
     </Stack>
