@@ -1986,7 +1986,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                                 .format('dddd · DD MMM YYYY')}
                             </Typography>
                             <ZuButton
-                              sx={{ height: '24px' }}
+                              sx={{ height: '20px' }}
                               onClick={handleDownload(
                                 dayjs(date, 'MMMM D, YYYY')
                                   .tz(eventData?.timezone, true)
