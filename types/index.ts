@@ -1,3 +1,4 @@
+import { SwipeableDrawerProps } from '@mui/material';
 import { CSSProperties, Dispatch, SetStateAction } from 'react';
 import { ITimezoneOption } from 'react-timezone-select';
 
@@ -185,6 +186,7 @@ export type SessionSupabaseData = {
   speakers?: string;
   creatorDID: string;
   uuid: string;
+  liveStreamLink?: string;
 };
 export interface SessionEdge {
   node: Session;
@@ -320,7 +322,29 @@ export type AvailableType = {
   error?: string;
 };
 
+export interface FilterSessionsPopComponentProps extends SwipeableDrawerProps {
+  isRSVPFiltered: boolean;
+  handleRSVPSwitchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  isManagedFiltered: boolean;
+  handleManagedSwitchChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => void;
+  location: string;
+  track: string;
+  handleClear: () => void;
+  setSelectedLocations: Dispatch<SetStateAction<string[]>>;
+  selectedLocations: string[];
+  setSelectedTracks: Dispatch<SetStateAction<string[]>>;
+  selectedTracks: string[];
+}
+
 export interface TimezoneSelectorProps {
   sx: CSSProperties;
   setSelectedTimezone: Dispatch<SetStateAction<ITimezoneOption>>;
+}
+
+export interface FilmOptionType {
+  value: string;
+  label: string;
+  isAdd?: boolean;
 }

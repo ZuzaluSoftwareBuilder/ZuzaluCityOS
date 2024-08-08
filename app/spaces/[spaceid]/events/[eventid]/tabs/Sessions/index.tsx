@@ -1719,6 +1719,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                   users={people}
                   onChange={handleOrganizerChange}
                   initialUsers={[profile as Profile]}
+                  fixedUsers={[profile as Profile]}
                   removedInitialUsers={hiddenOrganizer}
                 />
               </Stack>
@@ -1906,28 +1907,6 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                   paddingX="10px"
                   direction="row"
                 >
-                  <Stack
-                    direction="row"
-                    spacing="10px"
-                    padding="14px"
-                    sx={{ cursor: 'pointer' }}
-                    alignItems="center"
-                  >
-                    <QueueListIcon size={5} />
-                    <ZuButton
-                      onClick={() => {
-                        setSelectedDate(null);
-                      }}
-                      variant="text"
-                      sx={{
-                        textTransform: 'none',
-                        padding: 0,
-                        minWidth: 'auto',
-                      }}
-                    >
-                      <Typography variant="bodyS">Full Schedule</Typography>
-                    </ZuButton>
-                  </Stack>
                   <Stack
                     direction="row"
                     spacing="10px"
