@@ -226,7 +226,7 @@ const OverviewInvite = ({ event }: PropTypes) => {
         title="Updating"
         message="Please wait while the data is being updated..."
       />
-      <Box padding="20px" borderRadius="10px" bgcolor="#262626">
+      {/*<Box padding="20px" borderRadius="10px" bgcolor="#262626">
         <Typography variant="subtitleMB">Add Track (Temp Solution)</Typography>
         <Stack
           padding="20px"
@@ -247,7 +247,7 @@ const OverviewInvite = ({ event }: PropTypes) => {
           </Stack>
           <Stack spacing="10px">{eventData?.tracks}</Stack>
         </Stack>
-      </Box>
+      </Box>*/}
       <Typography variant="subtitleMB">Invite Event Admins</Typography>
       <Stack
         padding="20px"

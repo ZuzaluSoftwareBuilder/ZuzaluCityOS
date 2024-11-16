@@ -34,24 +34,9 @@ export async function POST(req: Request) {
             id
             admins {
               id
-              zucityProfile {
-                username
-              }
-            }
-            members {
-              id
-              zucityProfile {
-                username
-              }
-            }
-            author {
-              id
             }
             superAdmin {
               id
-            }
-            zupassHash {
-             hash
             }
             tracks
             timezone
@@ -103,14 +88,13 @@ export async function POST(req: Request) {
         id: eventId,
         content: {
           tracks: updatedTracks,
-          timezone: 'Asia/Tbilisi',
         },
       },
     };
     updateResult = await composeClient.executeQuery(query, variables);
     return NextResponse.json(
       {
-        message: 'Successfully added into member list',
+        message: 'Successfully added tracks',
       },
       { status: 200 },
     );

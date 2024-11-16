@@ -12,8 +12,13 @@ import {
   generateAuthSig,
   LitAbility,
   LitAccessControlConditionResource,
+  LitPKPResource,
+  LitActionResource,
 } from '@lit-protocol/auth-helpers';
+import { createSiweMessageWithRecaps } from '@lit-protocol/auth-helpers';
 import * as ethers from 'ethers';
+import { addLitUser } from '@/services/lit/addUser';
+
 interface LitContextType {
   client: LitNodeClient | null;
   isConnected: boolean;
@@ -29,6 +34,7 @@ interface LitContextType {
     dataToEncryptHash: string,
     accessControlConditions: any,
     client: LitNodeClient,
+    ethersWallet: any,
   ) => Promise<string>;
   getSessionSigs: (
     accessControlConditions: any,
@@ -58,17 +64,30 @@ export const LitProvider: React.FC<{ children: React.ReactNode }> = ({
       const isDev = process.env.NEXT_PUBLIC_ENV === 'dev';
       if (!isConnected) {
         const litNodeClient = new LitNodeClient({
-          litNetwork: isDev ? LitNetwork.DatilDev : LitNetwork.Datil,
-          debug: true,
+          litNetwork: isDev ? LitNetwork.DatilTest : LitNetwork.Datil,
+          debug: false,
         });
         await litNodeClient.connect();
+
+        if (window.ethereum) {
+          const accounts = await window.ethereum.request({
+            method: 'eth_accounts',
+          });
+          if (accounts[0]) {
+            const response = await addLitUser([accounts[0]]);
+            if (response.status === 200) {
+              console.log('User added to Lit');
+            } else {
+              console.error('Error adding user to Lit');
+            }
+          }
+        }
+
         setIsConnected(true);
         setClient(litNodeClient);
         return litNodeClient;
-      } else {
-        console.log('already connected', { client: !!client, isConnected });
-        return false;
       }
+      return false;
     } catch (error) {
       console.error('Lit error while connecting:', error);
       return false;
@@ -84,8 +103,16 @@ export const LitProvider: React.FC<{ children: React.ReactNode }> = ({
 
     return await client.getSessionSigs({
       chain: 'ethereum',
-      expiration: new Date(Date.now() + 1000 * 60 * 60).toISOString(),
+      expiration: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
       resourceAbilityRequests: [
+        {
+          resource: new LitPKPResource('*'),
+          ability: LitAbility.PKPSigning,
+        },
+        {
+          resource: new LitActionResource('*'),
+          ability: LitAbility.LitActionExecution,
+        },
         {
           resource: new LitAccessControlConditionResource(
             await LitAccessControlConditionResource.generateResourceString(
@@ -101,13 +128,23 @@ export const LitProvider: React.FC<{ children: React.ReactNode }> = ({
         expiration,
         resourceAbilityRequests,
       }) => {
-        const toSign = await createSiweMessage({
-          uri,
+        if (!uri || !expiration || !resourceAbilityRequests || !ethersWallet) {
+          throw new Error('Missing required parameters for SIWE message');
+        }
+
+        const address = await ethersWallet.getAddress();
+
+        const toSign = await createSiweMessageWithRecaps({
+          domain: 'localhost',
+          uri: uri,
           expiration,
           resources: resourceAbilityRequests,
-          walletAddress: ethersWallet.address,
+          walletAddress: address,
           nonce: await client.getLatestBlockhash(),
           litNodeClient: client,
+          statement: 'Sign in with Ethereum to use Lit Protocol',
+          version: '1',
+          chainId: 1,
         });
 
         return await generateAuthSig({
@@ -148,19 +185,65 @@ export const LitProvider: React.FC<{ children: React.ReactNode }> = ({
     dataToEncryptHash: string,
     accessControlConditions: any,
     client: LitNodeClient,
+    ethersWallet: any,
   ): Promise<string> => {
     if (!client) throw new Error('not connected to Lit');
 
-    const authSig = await checkAndSignAuthMessage({
+    const sessionSigs = await client.getSessionSigs({
       chain: 'ethereum',
-      nonce: await client.getLatestBlockhash(),
+      expiration: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
+      resourceAbilityRequests: [
+        {
+          resource: new LitPKPResource('*'),
+          ability: LitAbility.PKPSigning,
+        },
+        {
+          resource: new LitActionResource('*'),
+          ability: LitAbility.LitActionExecution,
+        },
+        {
+          resource: new LitAccessControlConditionResource(
+            await LitAccessControlConditionResource.generateResourceString(
+              accessControlConditions,
+              dataToEncryptHash,
+            ),
+          ),
+          ability: LitAbility.AccessControlConditionDecryption,
+        },
+      ],
+      authNeededCallback: async ({
+        uri,
+        expiration,
+        resourceAbilityRequests,
+      }) => {
+        if (!uri || !expiration || !resourceAbilityRequests || !ethersWallet) {
+          throw new Error('Missing required parameters for SIWE message');
+        }
+
+        const address = await ethersWallet.getAddress();
+
+        const toSign = await createSiweMessageWithRecaps({
+          uri: uri,
+          expiration,
+          resources: resourceAbilityRequests,
+          walletAddress: address,
+          nonce: await client.getLatestBlockhash(),
+          litNodeClient: client,
+        });
+
+        return await generateAuthSig({
+          signer: ethersWallet,
+          toSign,
+        });
+      },
     });
+
     const decryptedString = await decryptToString(
       {
         accessControlConditions,
         ciphertext,
         dataToEncryptHash,
-        authSig,
+        sessionSigs,
         chain: 'ethereum',
       },
       client,
