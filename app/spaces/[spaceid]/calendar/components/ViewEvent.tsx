@@ -92,7 +92,6 @@ export default function ViewEvent({
 
   const dateContent = useMemo(() => {
     const { start_date, end_date, timezone } = event;
-    console.log(start_date);
     const start = dayjs(start_date).tz(timezone);
     const end = dayjs(end_date).tz(timezone);
     if (start.isSame(end, 'day')) {
@@ -390,13 +389,15 @@ export default function ViewEvent({
               By:
             </Typography>
             <Stack direction="row" gap="5px" alignItems="center">
-              <Image
-                src={creator.avatar}
-                alt={creator.username}
-                width={20}
-                height={20}
-                style={{ borderRadius: '50%' }}
-              />
+              {creator.avatar && (
+                <Image
+                  src={creator.avatar}
+                  alt={creator.username}
+                  width={20}
+                  height={20}
+                  style={{ borderRadius: '50%' }}
+                />
+              )}
               <Typography fontSize={14} fontWeight={600} lineHeight={1.6}>
                 {creator.username}
               </Typography>

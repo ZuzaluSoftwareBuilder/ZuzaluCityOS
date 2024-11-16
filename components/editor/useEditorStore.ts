@@ -2,10 +2,31 @@ import { OutputBlockData, OutputData } from '@editorjs/editorjs';
 import { useRef, useState } from 'react';
 import { once } from 'lodash';
 
+const escapeHtml = (text: string) => {
+  return text
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/(?<=&lt;[^&]*?)"/g, '\\"')
+    .replace(/\\"/g, '"');
+};
+
 export const decodeOutputData = (value: string | OutputData): OutputData => {
   if (typeof value !== 'string') return value;
   try {
-    return JSON.parse(value.replaceAll('\\"', '"')) as OutputData;
+    const data = JSON.parse(escapeHtml(value)) as OutputData;
+    if (data?.blocks) {
+      data.blocks = data.blocks.map((block) => {
+        if (block.data?.text) {
+          block.data.text = block.data.text
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/\\"/g, '"');
+        }
+        return block;
+      });
+    }
+
+    return data;
   } catch (e) {
     console.error('Failed to parse output data', e);
     return { time: 0, blocks: [] };

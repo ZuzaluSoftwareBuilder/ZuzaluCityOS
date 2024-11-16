@@ -67,7 +67,7 @@ const Calendar = () => {
     return null;
   }, [spaceData]);
 
-  const canAccessCalendar = isAdmin || isMember;
+  const canAccessCalendar = true;
 
   const { data: eventsData, refetch: refetchEvents } = useQuery({
     queryKey: ['calendar', spaceId, ceramic?.did?.parent.toString()],
@@ -176,7 +176,6 @@ const Calendar = () => {
 
   const handleEventClick = useCallback(
     (data: any) => {
-      console.log(data.event.start, '1312312312');
       const eventId = data.event.id.toString().split('_')[0];
       eventsData?.forEach((event: any) => {
         if (event.id === Number(eventId)) {
@@ -371,7 +370,7 @@ const Calendar = () => {
         spaceId={params.spaceid.toString()}
         avatar={spaceData?.avatar}
         banner={spaceData?.banner}
-        isAdmin={true}
+        isAdmin={isAdmin}
       />
       <Stack width="100%" position="relative">
         {content}
