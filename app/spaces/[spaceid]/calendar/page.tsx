@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { CalendarConfig, CalEvent, Space } from '@/types';
@@ -26,6 +26,7 @@ dayjs.extend(timezone);
 
 const Calendar = () => {
   const params = useParams();
+  const router = useRouter();
   const { ceramic, composeClient } = useCeramicContext();
   const spaceId = params.spaceid.toString();
 
@@ -35,6 +36,8 @@ const Calendar = () => {
   const [isMember, setIsMember] = useState(false);
   const [currentCategory, setCurrentCategory] = useState('All');
   const [currentEvent, setCurrentEvent] = useState<any>(null);
+
+  const searchParams = useSearchParams();
 
   const {
     data: spaceData,
@@ -164,11 +167,14 @@ const Calendar = () => {
     if (type.includes('edit')) {
       setType('view');
     } else {
-      setType('');
-      setCurrentEvent(null);
-      toggleDrawer();
+      router.push(`/spaces/${spaceId}/calendar`);
+      setTimeout(() => {
+        setType('');
+        setCurrentEvent(null);
+        toggleDrawer();
+      });
     }
-  }, [toggleDrawer, type]);
+  }, [toggleDrawer, type, spaceId, router]);
 
   const handleCategory = useCallback((category: string) => {
     setCurrentCategory(category);
@@ -181,6 +187,7 @@ const Calendar = () => {
         if (event.id === Number(eventId)) {
           toggleDrawer();
           setType('view');
+          router.push(`/spaces/${spaceId}/calendar?id=${event.id}`);
           setCurrentEvent({
             ...event,
             start_date: dayjs(data.event.start),
@@ -189,7 +196,7 @@ const Calendar = () => {
         }
       });
     },
-    [eventsData, toggleDrawer],
+    [eventsData, router, spaceId, toggleDrawer],
   );
 
   const content = useMemo(() => {
@@ -362,6 +369,35 @@ const Calendar = () => {
       });
     }
   }, [currentEvent, eventsData]);
+
+  useEffect(() => {
+    const eventId = searchParams.get('id');
+
+    if (eventId && eventsData && !currentEvent && !open) {
+      const event = eventsData.find(
+        (event: any) => event.id === Number(eventId),
+      );
+      if (event) {
+        setCurrentEvent({
+          ...event,
+          start_date: dayjs(event.start_date),
+          end_date: dayjs(event.end_date),
+        });
+        setType('view');
+        toggleDrawer();
+      } else {
+        router.push(`/spaces/${spaceId}/calendar`);
+      }
+    }
+  }, [
+    searchParams,
+    eventsData,
+    currentEvent,
+    spaceId,
+    router,
+    toggleDrawer,
+    open,
+  ]);
 
   return (
     <Stack direction="row" width={'100%'}>
