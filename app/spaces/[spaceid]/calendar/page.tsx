@@ -167,12 +167,12 @@ const Calendar = () => {
     if (type.includes('edit')) {
       setType('view');
     } else {
-      router.push(`/spaces/${spaceId}/calendar`);
+      router.replace(`/spaces/${spaceId}/calendar`);
       setTimeout(() => {
         setType('');
         setCurrentEvent(null);
         toggleDrawer();
-      });
+      }, 100);
     }
   }, [toggleDrawer, type, spaceId, router]);
 
@@ -187,7 +187,7 @@ const Calendar = () => {
         if (event.id === Number(eventId)) {
           toggleDrawer();
           setType('view');
-          router.push(`/spaces/${spaceId}/calendar?id=${event.id}`);
+          router.replace(`/spaces/${spaceId}/calendar?id=${data.event.id}`);
           setCurrentEvent({
             ...event,
             start_date: dayjs(data.event.start),
@@ -373,20 +373,38 @@ const Calendar = () => {
   useEffect(() => {
     const eventId = searchParams.get('id');
 
-    if (eventId && eventsData && !currentEvent && !open) {
-      const event = eventsData.find(
-        (event: any) => event.id === Number(eventId),
+    if (eventId && eventsData && filteredEventsData && !currentEvent && !open) {
+      const originalEventId = eventId.toString().split('_')[0];
+      const originalEvent = eventsData.find(
+        (event: any) => event.id === Number(originalEventId),
       );
-      if (event) {
-        setCurrentEvent({
-          ...event,
-          start_date: dayjs(event.start_date),
-          end_date: dayjs(event.end_date),
-        });
-        setType('view');
-        toggleDrawer();
+      const event = filteredEventsData.find(
+        (event: any) => event.id === eventId,
+      );
+      if (eventId.includes('_')) {
+        if (event && originalEvent) {
+          setCurrentEvent({
+            ...originalEvent,
+            start_date: dayjs(event.start),
+            end_date: dayjs(event.end),
+          });
+          setType('view');
+          toggleDrawer();
+        } else {
+          router.replace(`/spaces/${spaceId}/calendar`);
+        }
       } else {
-        router.push(`/spaces/${spaceId}/calendar`);
+        if (originalEvent) {
+          setCurrentEvent({
+            ...originalEvent,
+            start_date: dayjs(originalEvent.start),
+            end_date: dayjs(originalEvent.end),
+          });
+          setType('view');
+          toggleDrawer();
+        } else {
+          router.replace(`/spaces/${spaceId}/calendar`);
+        }
       }
     }
   }, [
@@ -397,6 +415,7 @@ const Calendar = () => {
     router,
     toggleDrawer,
     open,
+    filteredEventsData,
   ]);
 
   return (
