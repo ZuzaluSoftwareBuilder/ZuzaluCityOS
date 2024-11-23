@@ -3,7 +3,7 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { CalendarConfig, CalEvent, Space } from '@/types';
+import { CalendarConfig, Space } from '@/types';
 import SubSidebar from 'components/layout/Sidebar/SubSidebar';
 import Drawer from '@/components/drawer';
 import { getSpaceEventsQuery } from '@/services/space';
@@ -19,7 +19,7 @@ import CalendarConfigForm from './components/CalendarConfigForm';
 import { supabase } from '@/utils/supabase/client';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import { RRule, rrulestr } from 'rrule';
+import { rrulestr } from 'rrule';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -373,7 +373,7 @@ const Calendar = () => {
   useEffect(() => {
     const eventId = searchParams.get('id');
 
-    if (eventId && eventsData && filteredEventsData && !currentEvent && !open) {
+    if (eventId && eventsData && filteredEventsData && !open && type === '') {
       const originalEventId = eventId.toString().split('_')[0];
       const originalEvent = eventsData.find(
         (event: any) => event.id === Number(originalEventId),
@@ -410,12 +410,12 @@ const Calendar = () => {
   }, [
     searchParams,
     eventsData,
-    currentEvent,
     spaceId,
     router,
     toggleDrawer,
     open,
     filteredEventsData,
+    type,
   ]);
 
   return (
