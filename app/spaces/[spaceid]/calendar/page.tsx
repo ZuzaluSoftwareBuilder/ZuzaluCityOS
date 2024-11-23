@@ -1,5 +1,11 @@
 'use client';
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+  useRef,
+} from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 import { useCeramicContext } from '@/context/CeramicContext';
@@ -370,10 +376,19 @@ const Calendar = () => {
     }
   }, [currentEvent, eventsData]);
 
+  const eventIdProcessed = useRef(false);
+
   useEffect(() => {
     const eventId = searchParams.get('id');
 
-    if (eventId && eventsData && filteredEventsData && !open && type === '') {
+    if (
+      eventId &&
+      eventsData &&
+      filteredEventsData &&
+      !open &&
+      type === '' &&
+      !eventIdProcessed.current
+    ) {
       const originalEventId = eventId.toString().split('_')[0];
       const originalEvent = eventsData.find(
         (event: any) => event.id === Number(originalEventId),
@@ -388,6 +403,7 @@ const Calendar = () => {
             start_date: dayjs(event.start),
             end_date: dayjs(event.end),
           });
+          eventIdProcessed.current = true;
           setType('view');
           toggleDrawer();
         } else {
@@ -400,6 +416,7 @@ const Calendar = () => {
             start_date: dayjs(originalEvent.start),
             end_date: dayjs(originalEvent.end),
           });
+          eventIdProcessed.current = true;
           setType('view');
           toggleDrawer();
         } else {
