@@ -12,6 +12,7 @@ const escapeHtml = (text: string) => {
 
 export const decodeOutputData = (value: string | OutputData): OutputData => {
   if (typeof value !== 'string') return value;
+  if (!value) return { time: 0, blocks: [] };
   try {
     const data = JSON.parse(escapeHtml(value)) as OutputData;
     if (data?.blocks) {
