@@ -91,7 +91,7 @@ const getSpaceByID = async (spaceId: string) => {
   const GET_SPACE_QUERY = `
       query GetSpace($id: ID!) {
         node(id: $id) {
-          ...on Space {
+          ...on ZucitySpace {
             avatar
             name
           }
