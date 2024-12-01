@@ -2657,13 +2657,16 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                       height: '300px',
                       padding: '0 10px',
                       '& .MuiPickersCalendarHeader-root': {
-                        margin: '0 0 10px',
+                        margin: '0',
                         padding: '0',
                       },
                       '& .MuiDayCalendar-weekContainer, & .MuiDayCalendar-header':
                         {
                           justifyContent: 'space-between',
                         },
+                      '& .MuiDayCalendar-weekDayLabel': {
+                        fontSize: '15px',
+                      },
                     }}
                   />
                 </Stack>
@@ -2675,8 +2678,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                     onClick={handleClickExportAllSessions}
                     sx={{
                       cursor:
-                        sessionsByDate && Object.keys(sessionsByDate).length >
-                        0
+                        sessionsByDate && Object.keys(sessionsByDate).length > 0
                           ? 'pointer'
                           : 'not-allowed',
                       opacity:
