@@ -12,6 +12,8 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   EditIcon,
+  ExportIcon,
+  FunnelIcon,
   LeftArrowIcon,
   MapIcon,
   MicrophoneIcon,
@@ -82,6 +84,7 @@ import dynamic from 'next/dynamic';
 import { formatUserName } from '@/utils/format';
 import { StreamID } from '@ceramicnetwork/streamid';
 import { useLitContext } from '@/context/LitContext';
+import TabSelector from './components/TabSelector';
 
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,
@@ -299,7 +302,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
   };
 
   const handleClickExportAllSessions = () => {
-    if (!sessionsByDate) return;
+    if (!sessionsByDate || Object.keys(sessionsByDate).length === 0) return;
     let csv = '';
     const sessions: Session[] = [];
     Object.keys(sessionsByDate).forEach((key) =>
@@ -2510,20 +2513,14 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                   value={searchQuery}
                   onChange={handleSearchChange}
                   placeholder="Search Sessions"
-                  // onKeyDown={(event) => {
-                  //   if (event.keyCode === 13) {
-                  //     onSearch();
-                  //   }
-                  // }}
                   sx={{
-                    backgroundColor: '#313131',
-                    paddingX: '15px',
-                    paddingY: '13px',
+                    backgroundColor: 'transparent',
+                    padding: '12px 14px',
                     borderRadius: '10px',
-                    height: '35px',
+                    height: '40px',
                     border:
                       '1px solid var(--Hover-White, rgba(255, 255, 255, 0.10))',
-                    fontFamily: 'Inter',
+                    fontSize: '16px',
                     opacity: 0.7,
                     color: 'white',
                     '& .MuiOutlinedInput-notchedOutline': {
@@ -2531,8 +2528,8 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                     },
                   }}
                   startAdornment={
-                    <InputAdornment position="start" sx={{ opacity: 0.6 }}>
-                      <SearchIcon />
+                    <InputAdornment position="start">
+                      <SearchIcon size={5} style={{ opacity: 0.7 }} />
                     </InputAdornment>
                   }
                 />
@@ -2550,84 +2547,68 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                 >
                   <ZuButton
                     startIcon={<PlusCircleIcon />}
-                    sx={{ width: '100%' }}
+                    sx={{
+                      width: '100%',
+                      fontSize: '16px',
+                      fontWeight: 600,
+                      padding: '10px 14px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      border: 'solid 1px rgba(255, 255, 255, 0.10)',
+                      height: '40px',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      },
+                    }}
                     onClick={() => toggleDrawer('right', true)}
                   >
                     Add a Session
                   </ZuButton>
-                  <Stack gap={'5px'}>
-                    <Stack
-                      padding="10px"
-                      direction="row"
-                      alignItems="center"
-                      spacing="10px"
-                    >
-                      <UserPlusIcon />
-                      <Typography variant="bodyM" sx={{ opacity: 0.6 }}>
-                        My RSVPs
+                  <Divider />
+                  <Stack
+                    p="10px"
+                    borderRadius="10px"
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      },
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Stack direction="row" alignItems="center" spacing="10px">
+                      <FunnelIcon />
+                      <Typography
+                        fontSize={13}
+                        fontWeight={700}
+                        lineHeight={1.2}
+                        sx={{ opacity: 0.8 }}
+                      >
+                        Filter / Sort Schedule
                       </Typography>
-                      <Stack flex={1} direction="row" justifyContent="end">
-                        <ZuSwitch
-                          checked={isRSVPFiltered}
-                          onChange={handleRSVPSwitchChange}
-                        />
-                      </Stack>
                     </Stack>
-                    <Stack
-                      padding="10px"
-                      direction="row"
-                      alignItems="center"
-                      spacing="10px"
+                    <Typography
+                      fontSize={13}
+                      fontWeight={700}
+                      lineHeight={1.2}
+                      color="#7DFFD1"
+                      sx={{ opacity: 0.8 }}
                     >
-                      <EditIcon />
-                      <Typography variant="bodyM" sx={{ opacity: 0.6 }}>
-                        Managed by me
-                      </Typography>
-                      <Stack flex={1} direction="row" justifyContent="end">
-                        <ZuSwitch
-                          checked={isManagedFiltered}
-                          onChange={handleManagedSwitchChange}
-                        />
-                      </Stack>
-                    </Stack>
+                      0
+                    </Typography>
                   </Stack>
                 </Stack>
                 <Stack
+                  p="10px"
                   sx={{
-                    borderRadius: '14px',
+                    borderRadius: '10px',
                     border: 'solid 1px rgba(255, 255, 255, 0.10)',
                   }}
-                  alignItems={'flex-start'}
+                  gap="10px"
                 >
-                  <Stack padding={'14px'} width={'100%'} paddingBottom={'0px'}>
-                    <Stack
-                      direction="row"
-                      spacing="10px"
-                      padding="8px 10px"
-                      sx={{ cursor: 'pointer' }}
-                      alignItems="center"
-                      bgcolor={'rgba(255, 255, 255, 0.05)'}
-                      width="100%"
-                      borderRadius={'10px'}
-                      onClick={() => {
-                        resetDateFilter();
-                        setSelectDateRange([dayjs().tz(eventData?.timezone)]);
-                      }}
-                    >
-                      <ChevronDoubleRightIcon size={5} />
-                      <ZuButton
-                        variant="text"
-                        sx={{
-                          textTransform: 'none',
-                          padding: 0,
-                          minWidth: 'auto',
-                          backgroundColor: 'transparent',
-                        }}
-                      >
-                        <Typography variant="bodyS">Show From Today</Typography>
-                      </ZuButton>
-                    </Stack>
-                  </Stack>
+                  <TabSelector />
+                  <Divider />
                   <ZuCalendar
                     value={selectedDate}
                     onChange={(val) => {
@@ -2669,13 +2650,20 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                       resetDateFilter();
                       setDateForCalendar(val);
                     }}
-                    onYearChange={(val) => {
-                      resetDateFilter();
-                      setDateForCalendar(val);
-                    }}
+                    views={['day']}
+                    dayOfWeekFormatter={(day) => day.format('dd')}
                     sx={{
                       border: 'none',
                       height: '300px',
+                      padding: '0 10px',
+                      '& .MuiPickersCalendarHeader-root': {
+                        margin: '0 0 10px',
+                        padding: '0',
+                      },
+                      '& .MuiDayCalendar-weekContainer, & .MuiDayCalendar-header':
+                        {
+                          justifyContent: 'space-between',
+                        },
                     }}
                   />
                 </Stack>
@@ -2683,226 +2671,26 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                   <Stack
                     direction={'row'}
                     alignItems={'center'}
-                    justifyContent={'space-between'}
-                    padding={'10px'}
-                    borderRadius={'10px'}
-                    border={'solid 1px rgba(255, 255, 255, 0.10)'}
-                    aria-describedby={trackAnchorId}
-                    onClick={handleTrackFilterClick}
-                    sx={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.02)',
-                      cursor: 'pointer',
-                    }}
-                    spacing={'10px'}
-                  >
-                    <Stack direction={'row'} alignItems={'center'} gap={'10px'}>
-                      <MapOutlinedIcon />
-                      <Typography
-                        fontSize={'14px'}
-                        lineHeight={'160%'}
-                        sx={{
-                          opacity: '0.6',
-                        }}
-                      >
-                        Track
-                      </Typography>
-                    </Stack>
-                    <Stack direction={'row'} alignItems={'center'}>
-                      <Typography
-                        fontSize={'14px'}
-                        fontWeight={'600'}
-                        lineHeight={'160%'}
-                        sx={{
-                          opacity: '0.6',
-                        }}
-                      >
-                        {selectedTracks.length
-                          ? selectedTracks.join(', ')
-                          : 'All'}
-                      </Typography>
-                      <ChevronRightIcon />
-                    </Stack>
-                  </Stack>
-
-                  <Popover
-                    id={trackAnchorId}
-                    open={trackAnchorOpen}
-                    anchorEl={trackAnchor}
-                    onClose={handleTrackFilterClose}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    }}
-                    slotProps={{
-                      paper: {
-                        sx: {
-                          maxHeight: '200px',
-                          backgroundColor: 'rgba(34, 34, 34, 0.8)',
-                          backdropFilter: 'blur(20px)',
-                          width: '344px',
-                        },
-                      },
-                    }}
-                  >
-                    {eventData &&
-                      [...new Set(eventData.tracks?.split(','))].map(
-                        (item: string, index) => {
-                          return (
-                            <MenuItem
-                              key={index}
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                              }}
-                              onClick={() => {
-                                if (selectedTracks.includes(item)) {
-                                  const temp = selectedTracks.filter(
-                                    (track) => track !== item,
-                                  );
-                                  setSelectedTracks(temp);
-                                } else {
-                                  const temp = [...selectedTracks, item];
-                                  const uniqueArray = [...new Set(temp)];
-                                  setSelectedTracks(uniqueArray);
-                                }
-                              }}
-                            >
-                              {item}
-                              {selectedTracks.includes(item) && (
-                                <HighlightOffIcon />
-                              )}
-                            </MenuItem>
-                          );
-                        },
-                      )}
-                  </Popover>
-                  <Stack
-                    direction={'row'}
-                    alignItems={'center'}
-                    justifyContent={'space-between'}
-                    padding={'10px'}
-                    borderRadius={'10px'}
-                    border={'solid 1px rgba(255, 255, 255, 0.10)'}
-                    aria-describedby={locationAnchorId}
-                    onClick={handleLocationFilterClick}
-                    sx={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.02)',
-                      cursor: 'pointer',
-                    }}
-                    spacing={'10px'}
-                  >
-                    <Stack direction={'row'} alignItems={'center'} gap={'10px'}>
-                      <MapIcon />
-                      <Typography
-                        fontSize={'14px'}
-                        lineHeight={'160%'}
-                        sx={{
-                          opacity: '0.6',
-                        }}
-                      >
-                        Location
-                      </Typography>
-                    </Stack>
-                    <Stack direction={'row'} alignItems={'center'}>
-                      <Typography
-                        fontSize={'14px'}
-                        fontWeight={'600'}
-                        lineHeight={'160%'}
-                        sx={{
-                          opacity: '0.6',
-                        }}
-                      >
-                        {selectedLocations.length
-                          ? selectedLocations.join(', ')
-                          : 'All'}
-                      </Typography>
-                      <ChevronRightIcon />
-                    </Stack>
-                  </Stack>
-                  <Stack
-                    direction={'row'}
-                    alignItems={'center'}
                     justifyContent="center"
-                    padding={'10px'}
-                    borderRadius={'10px'}
-                    border={'solid 1px rgba(255, 255, 255, 0.10)'}
                     onClick={handleClickExportAllSessions}
                     sx={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.02)',
-                      cursor: 'pointer',
+                      cursor:
+                        sessionsByDate && Object.keys(sessionsByDate).length >
+                        0
+                          ? 'pointer'
+                          : 'not-allowed',
+                      opacity:
+                        sessionsByDate && Object.keys(sessionsByDate).length > 0
+                          ? 0.7
+                          : 0.3,
                     }}
                     spacing={'10px'}
                   >
-                    <Typography
-                      fontSize={'14px'}
-                      lineHeight={'160%'}
-                      sx={{
-                        opacity: '0.6',
-                      }}
-                    >
-                      Export all Sessions
+                    <ExportIcon />
+                    <Typography fontSize={'14px'} lineHeight={'160%'}>
+                      Export All Sessions
                     </Typography>
-                    <ArrowDownIcon size={4} />
                   </Stack>
-                  <Popover
-                    id={locationAnchorId}
-                    open={locationAnchorOpen}
-                    anchorEl={locationAnchor}
-                    onClose={handleLocationFilterClose}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    }}
-                    slotProps={{
-                      paper: {
-                        sx: {
-                          maxHeight: '200px',
-                          backgroundColor: 'rgba(34, 34, 34, 0.8)',
-                          backdropFilter: 'blur(20px)',
-                          width: '344px',
-                        },
-                      },
-                    }}
-                  >
-                    {venues &&
-                      venues
-                        .filter((v) => v.name)
-                        .map((item, index) => {
-                          return (
-                            <MenuItem
-                              key={index}
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                              }}
-                              onClick={() => {
-                                if (selectedLocations.includes(item.name)) {
-                                  const temp = selectedLocations.filter(
-                                    (location) => location !== item.name,
-                                  );
-                                  setSelectedLocations(temp);
-                                } else {
-                                  const temp = [
-                                    ...selectedLocations,
-                                    item.name,
-                                  ];
-                                  const uniqueArray = [...new Set(temp)];
-                                  setSelectedLocations(uniqueArray);
-                                }
-                              }}
-                            >
-                              {item.name}
-                              {selectedLocations.includes(item.name) && (
-                                <HighlightOffIcon />
-                              )}
-                            </MenuItem>
-                          );
-                        })}
-                  </Popover>
                 </Stack>
               </Stack>
             )}

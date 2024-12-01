@@ -91,6 +91,8 @@ import { WalletIcon } from './Wallet';
 import { LinkIcon } from './Link';
 import { TrashIcon } from './Trash';
 import { ArrowFatLeftIcon } from './ArrowFatLeft';
+import { FunnelIcon } from './Funnel';
+import { ExportIcon } from './Export';
 export {
   HomeIcon,
   SearchIcon,
@@ -185,4 +187,6 @@ export {
   LinkIcon,
   TrashIcon,
   ArrowFatLeftIcon,
+  FunnelIcon,
+  ExportIcon,
 };
