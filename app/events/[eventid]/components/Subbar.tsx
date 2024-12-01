@@ -124,6 +124,12 @@ const Subbar: React.FC<SubbarProps> = ({
                 opacity: tabName === item.name ? 1 : 0,
                 transition: 'opacity 0.2s ease',
               },
+              '&:hover': {
+                '& > div': {
+                  opacity:
+                    item.requiresPermission && !canViewSessions ? 0.6 : 1,
+                },
+              },
             }}
             onClick={(e) => handleTabClick(item.name, e)}
           >
