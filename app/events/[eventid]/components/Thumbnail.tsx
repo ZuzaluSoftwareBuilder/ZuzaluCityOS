@@ -42,16 +42,16 @@ const Thumbnail: React.FC<IThumbnail> = ({ name, imageUrl, backFun }) => {
         {imageUrl ? (
           <Image
             src={imageUrl}
-            width={24}
-            height={24}
-            style={{ borderRadius: '8px', width: '24px', height: '24px' }}
+            width={30}
+            height={30}
+            style={{ borderRadius: '8px', width: '30px', height: '30px' }}
             alt="event_image"
           />
         ) : (
           <Skeleton
             variant="rectangular"
-            width={24}
-            height={24}
+            width={30}
+            height={30}
             sx={{
               borderRadius: '8px',
               bgcolor: 'rgba(255, 255, 255, 0.1)',
