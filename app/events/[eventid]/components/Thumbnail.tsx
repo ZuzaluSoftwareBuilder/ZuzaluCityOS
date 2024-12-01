@@ -1,12 +1,11 @@
 'use client';
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Stack, Typography, useTheme } from '@mui/material';
+import { Stack, Typography, useTheme, Skeleton } from '@mui/material';
 import { ZuButton } from 'components/core';
-import { ShareIcon, HomeIcon } from 'components/icons';
-import { MoreIcon } from '@/components/icons/More';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Image from 'next/image';
+import { ArrowFatLeftIcon } from '@/components/icons';
 
 interface IThumbnail {
   name?: string;
@@ -22,33 +21,25 @@ const Thumbnail: React.FC<IThumbnail> = ({ name, imageUrl, backFun }) => {
     <Stack
       direction="row"
       justifyContent="space-between"
-      padding="5px 14px"
+      padding="6px 20px"
       borderBottom="1px solid #383838"
       bgcolor="rgba(43, 43, 43, 0.8)"
       sx={{
         backdropFilter: 'blur(20px)',
       }}
     >
-      <Stack direction="row" spacing={2} alignItems="center">
+      <Stack direction="row" spacing="10px" alignItems="center">
         <ZuButton
           sx={{
             backgroundColor: '#333333',
             minWidth: 'unset',
+            padding: '6px 10px',
           }}
           onClick={() => (backFun ? backFun() : router.back())}
         >
-          <ArrowBackIcon />
-          <Typography
-            sx={{
-              [breakpoints.down('md')]: {
-                display: 'none',
-              },
-            }}
-          >
-            Back
-          </Typography>
+          <ArrowFatLeftIcon />
         </ZuButton>
-        {imageUrl && (
+        {imageUrl ? (
           <Image
             src={imageUrl}
             width={24}
@@ -56,37 +47,34 @@ const Thumbnail: React.FC<IThumbnail> = ({ name, imageUrl, backFun }) => {
             style={{ borderRadius: '8px', width: '24px', height: '24px' }}
             alt="event_image"
           />
+        ) : (
+          <Skeleton
+            variant="rectangular"
+            width={24}
+            height={24}
+            sx={{
+              borderRadius: '8px',
+              bgcolor: 'rgba(255, 255, 255, 0.1)',
+            }}
+          />
         )}
 
-        <Typography variant="h6" color="white" lineHeight="40px">
-          {name}
-        </Typography>
+        {name ? (
+          <Typography variant="h6" color="white">
+            {name}
+          </Typography>
+        ) : (
+          <Skeleton
+            variant="text"
+            width={100}
+            height={32}
+            sx={{
+              bgcolor: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: 1,
+            }}
+          />
+        )}
       </Stack>
-      {/* <Stack direction="row" gap={1}>
-        <Stack
-          direction="row"
-          padding={1}
-          alignItems="center"
-          bgcolor="#333333"
-          borderRadius={2}
-          sx={{
-            [breakpoints.down('md')]: {
-              display: 'none',
-            },
-          }}
-        >
-          <ShareIcon />
-        </Stack>
-        <Stack
-          direction="row"
-          padding={1}
-          alignItems="center"
-          bgcolor="#333333"
-          borderRadius={2}
-        >
-          <MoreIcon />
-        </Stack>
-      </Stack> */}
     </Stack>
   );
 };

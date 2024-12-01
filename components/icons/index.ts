@@ -90,6 +90,7 @@ import { ArrowUpTrayIcon } from './ArrowUpTray';
 import { WalletIcon } from './Wallet';
 import { LinkIcon } from './Link';
 import { TrashIcon } from './Trash';
+import { ArrowFatLeftIcon } from './ArrowFatLeft';
 export {
   HomeIcon,
   SearchIcon,
@@ -183,4 +184,5 @@ export {
   WalletIcon,
   LinkIcon,
   TrashIcon,
+  ArrowFatLeftIcon,
 };

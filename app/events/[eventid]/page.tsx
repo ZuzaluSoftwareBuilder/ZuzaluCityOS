@@ -171,7 +171,7 @@ const Home = () => {
 
   return (
     <Stack color="white">
-      <Thumbnail name={eventData?.title} />
+      <Thumbnail name={eventData?.title} imageUrl={eventData?.imageUrl} />
       <Subbar
         tabName={tabName}
         setTabName={setTabName}
