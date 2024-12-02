@@ -1269,7 +1269,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
               borderRadius="10px"
             >
               <Typography variant="subtitleMB">Session Details</Typography>
-              <Stack direction={'row'} spacing="10px">
+              {/*<Stack direction={'row'} spacing="10px">
                 <ZuSwitch
                   checked={ceramicSession}
                   onChange={() => setCeramicSession((v) => !v)}
@@ -1279,7 +1279,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                     Beta: Encrypt your session on Ceramic
                   </Typography>
                 </Stack>
-              </Stack>
+              </Stack>*/}
               <Stack spacing="10px">
                 <Typography variant="bodyBB">Session Name*</Typography>
                 <ZuInput
