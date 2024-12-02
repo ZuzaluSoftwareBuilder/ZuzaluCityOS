@@ -56,11 +56,18 @@ const EventName = ({
         <Stack width={'100%'} alignItems={'center'} justifyContent={'center'}>
           <Box
             component="img"
-            width={'500px'}
-            height={'500px'}
+            width={'450px'}
+            height={'450px'}
             src={imageUrl}
             borderRadius="10px"
             border="1px solid rgba(255, 255, 255, 0.2)"
+            sx={{
+              [theme.breakpoints.down('sm')]: {
+                width: '100%',
+                height: 'auto',
+                aspectRatio: '1/1'
+              }
+            }}
           />
         </Stack>
       </Stack>

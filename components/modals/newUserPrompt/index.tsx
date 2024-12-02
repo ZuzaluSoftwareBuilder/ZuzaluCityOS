@@ -15,7 +15,8 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
-import { useDisconnect } from 'wagmi';
+import { useDisconnect, useWalletClient } from 'wagmi';
+import { ethers } from 'ethers';
 
 interface NewUserPromptModalProps {
   showModal: boolean;
@@ -23,6 +24,7 @@ interface NewUserPromptModalProps {
   setVerify: React.Dispatch<React.SetStateAction<boolean>> | any;
   eventId: string;
   ticketType: string;
+  setStep: React.Dispatch<React.SetStateAction<number>> | any;
 }
 
 export default function NewUserPromptModal({
@@ -31,6 +33,7 @@ export default function NewUserPromptModal({
   setVerify,
   eventId,
   ticketType,
+  setStep,
 }: NewUserPromptModalProps) {
   const [stage, setStage] = useState('Initial');
   const [nickname, setNickName] = useState<string>('');
@@ -63,6 +66,7 @@ export default function NewUserPromptModal({
   const hasProcessedNullifier = useRef(false);
   const { disconnect } = useDisconnect();
   const { litConnect, litEncryptString, litDecryptString } = useLitContext();
+  const { data: walletClient } = useWalletClient();
   const handleConinue = async () => {
     await createProfile(nickname);
     setStage('Final');
@@ -109,6 +113,7 @@ export default function NewUserPromptModal({
                   hasProcessedNullifier.current = true;
                   if (result.status === 200) {
                     setVerify(true);
+                    setStep(3);
                     if (username) {
                       setStage('Final');
                     } else {
@@ -125,6 +130,7 @@ export default function NewUserPromptModal({
                         : 'An unknown error occurred';
                   if (errorMessage === 'You are already whitelisted') {
                     setVerify(true);
+                    setStep(3);
                     if (username) {
                       setStage('Final');
                     } else {
@@ -166,14 +172,23 @@ export default function NewUserPromptModal({
                 accessControlConditions,
                 litClient,
               );
-
-              /*const decryptedString = await litDecryptString(
-                encryptedMemberScrollpass.ciphertext,
-                encryptedMemberScrollpass.dataToEncryptHash,
-                accessControlConditions,
-                litClient,
+              console.log(
+                'encryptedMemberScrollpass',
+                encryptedMemberScrollpass,
               );
-              console.log('decryptedString', decryptedString);*/
+              /*if (walletClient) {
+                const provider = new ethers.BrowserProvider(window.ethereum);
+                const ethersWallet = await provider.getSigner();
+                console.log('ethersWallet', ethersWallet);
+                const decryptedString = await litDecryptString(
+                  encryptedMemberScrollpass.ciphertext,
+                  encryptedMemberScrollpass.dataToEncryptHash,
+                  accessControlConditions,
+                  litClient,
+                  ethersWallet,
+                );
+                console.log('decryptedString', decryptedString);
+              }*/
               if (
                 encryptString &&
                 encryptedMemberScrollpass &&
@@ -192,9 +207,9 @@ export default function NewUserPromptModal({
                   addScrollpassMemberInput,
                 );
                 hasProcessedNullifier.current = true;
-
                 if (result.status === 200) {
                   setVerify(true);
+                  setStep(3);
                   if (username) {
                     setStage('Final');
                   } else {
@@ -208,6 +223,7 @@ export default function NewUserPromptModal({
                 error instanceof Error ? error.message : 'unknown error';
               if (errorMessage === 'You are already whitelisted') {
                 setVerify(true);
+                setStep(3);
                 if (username) {
                   setStage('Final');
                 } else {

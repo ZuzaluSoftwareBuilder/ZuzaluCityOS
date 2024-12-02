@@ -154,6 +154,10 @@ export const SOCIAL_TYPES: {
     key: 'nostr',
     value: 'Nostr',
   },
+  {
+    key: 'other',
+    value: 'Other',
+  },
 ];
 
 export const STARTING_STATUS: {

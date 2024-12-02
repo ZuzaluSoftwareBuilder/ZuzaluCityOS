@@ -137,17 +137,37 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
 
   const footerItems = [
     {
-      content: 'Blog',
-      url: 'https://zuzalu.craft.me/ZuBuilderBlog',
+      content: 'Docs',
+      url: 'https://bit.ly/ZuSoftware-doc',
     },
-    // {
-    //   content: 'Privacy',
-    //   url: 'https://blog.zuzalu.city',
-    // },
-    // {
-    //   content: 'Terms',
-    //   url: 'https://blog.zuzalu.city',
-    // },
+    {
+      content: 'About',
+      url: 'https://zuzalu.gitbook.io/zuzalu-beta-docs/welcome/zuzalu.city-vision-and-mission',
+    },
+    {
+      content: 'X/Twitter',
+      url: 'https://x.com/Zuzalu_city',
+    },
+    {
+      content: 'Farcaster',
+      url: 'https://warpcast.com/zuzalucity',
+    },
+    {
+      content: 'Builder Chat',
+      url: 'https://matrix.to/#/#zuzalusoftware:matrix.org',
+    },
+    {
+      content: 'Medium',
+      url: 'https://medium.com/@Zuzalu_city',
+    },
+    {
+      content: 'Paragraph',
+      url: 'https://paragraph.xyz/@zuzalu.city',
+    },
+    {
+      content: 'Podcast',
+      url: 'https://youtube.com/@ZuzaluCity',
+    },
   ];
 
   return (
@@ -311,10 +331,10 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
         }}
       >
         <Box
-          gap="10px"
           sx={{
             display: 'flex',
             flexDirection: 'column',
+            gap: '10px',
             paddingLeft: '10px',
           }}
         >
@@ -322,6 +342,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
             sx={{
               display: 'flex',
               flexDirection: 'row',
+              flexWrap: 'wrap',
               gap: '10px',
             }}
           >
@@ -349,7 +370,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
               );
             })}
           </Box>
-          <Typography
+          {/*<Typography
             color="rgba(225, 225, 225, 0.7)"
             variant="body2"
             component="a"
@@ -384,7 +405,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
             }}
           >
             About Zuzalu.city
-          </Typography>
+          </Typography>*/}
         </Box>
         <ZuButton
           variant="outlined"

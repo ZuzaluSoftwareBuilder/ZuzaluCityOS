@@ -1,17 +1,17 @@
 import {
-  ArrowUpLeftIcon,
   Cog6Icon,
   LinkIcon,
   MapIcon,
   PencilIcon,
+  ShareIcon,
   TicketIcon,
   TrashIcon,
-  XMarkIcon,
 } from '@/components/icons';
 import {
   Box,
   CircularProgress,
   Divider,
+  IconButton,
   Link,
   Menu,
   Stack,
@@ -32,7 +32,8 @@ import { useDialog } from '@/components/dialog/DialogContext';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { supabase } from '@/utils/supabase/client';
 import { useCeramicContext } from '@/context/CeramicContext';
-import FormFooter from '@/components/form/FormFooter';
+import CopyToClipboard from 'react-copy-to-clipboard';
+import { useToast } from '@/components/toast/ToastContext';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -61,6 +62,7 @@ export default function ViewEvent({
 }: ViewEventProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
+  const { showToast } = useToast();
   const { ceramic } = useCeramicContext();
   const userDID = ceramic.did?.parent.toString().toLowerCase() || '';
 
@@ -348,9 +350,25 @@ export default function ViewEvent({
             />
           )}
           {dateContent}
-          <Typography fontSize={20} fontWeight={700} lineHeight={1.2}>
-            {event.name}
-          </Typography>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Typography fontSize={20} fontWeight={700} lineHeight={1.2}>
+              {event.name}
+            </Typography>
+            <CopyToClipboard
+              text={window.location.href}
+              onCopy={() => {
+                showToast({ message: 'Copy share link to clipboard!' });
+              }}
+            >
+              <IconButton>
+                <ShareIcon />
+              </IconButton>
+            </CopyToClipboard>
+          </Stack>
           <Stack
             p="10px"
             bgcolor="rgba(255, 255, 255, 0.05)"
