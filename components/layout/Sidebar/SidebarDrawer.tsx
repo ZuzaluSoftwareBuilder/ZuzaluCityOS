@@ -322,7 +322,7 @@ export default function SidebarDrawer({ open, onClose, selected }: PropTypes) {
             sx={{ cursor: 'pointer' }}
             onClick={() =>
               window.open(
-                'https://github.com/EthereumCommunityFund/Zuzalu-City',
+                'https://github.com/ZuzaluSoftwareBuilder/ZuzaluCityOS',
                 '_blank',
               )
             }
