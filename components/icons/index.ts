@@ -90,6 +90,19 @@ import { ArrowUpTrayIcon } from './ArrowUpTray';
 import { WalletIcon } from './Wallet';
 import { LinkIcon } from './Link';
 import { TrashIcon } from './Trash';
+import { FlagIcon } from './Flag';
+import ClockIcon from './Clock';
+import { ArrowUpOnSquareIcon } from './ArrowUpOnSquare';
+import { ChatBubbleIcon } from './ChatBubble';
+import DiscordIcon from './Discord';
+import FarcasterIcon from './Farcaster';
+import { FireIcon } from './Fire';
+import { SparklesIcon } from './Sparkles';
+import TelegramIcon from './Telegram';
+import { TrashcanIcon } from './Trashcan';
+import TwitterIcon from './Twitter';
+import WhatsappIcon from './Whatsapp';
+import ChainIcon from './Chain';
 export {
   HomeIcon,
   SearchIcon,
@@ -183,4 +196,17 @@ export {
   WalletIcon,
   LinkIcon,
   TrashIcon,
+  ArrowUpOnSquareIcon,
+  ClockIcon,
+  ChainIcon,
+  ChatBubbleIcon,
+  DiscordIcon,
+  FarcasterIcon,
+  FireIcon,
+  FlagIcon,
+  SparklesIcon,
+  TelegramIcon,
+  TrashcanIcon,
+  TwitterIcon,
+  WhatsappIcon,
 };

@@ -6,41 +6,48 @@ import {
   SessionIcon,
   LockIcon,
   AnnouncementsIcon,
+  ChatBubbleIcon,
 } from 'components/icons';
 
 interface SubbarProps {
   tabName: string;
   setTabName: (value: string | ((prevVar: string) => string)) => void;
   canViewSessions: boolean;
+  canViewDiscussions: boolean;
 }
 
 const Subbar: React.FC<SubbarProps> = ({
   tabName,
   setTabName,
   canViewSessions,
+  canViewDiscussions,
 }) => {
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
-  const handleTabClick = (newTabName: string, event: React.MouseEvent<HTMLDivElement>) => {
+  const handleTabClick = (
+    newTabName: string,
+    event: React.MouseEvent<HTMLDivElement>,
+  ) => {
     if (newTabName === 'Sessions' && !canViewSessions) {
       return;
     }
 
     setTabName(newTabName);
-    
+
     const clickedElement = event.currentTarget;
     const container = scrollContainerRef.current;
-    
+
     if (container) {
       const containerWidth = container.offsetWidth;
       const elementOffset = clickedElement.offsetLeft;
       const elementWidth = clickedElement.offsetWidth;
-      
-      const scrollPosition = elementOffset - (containerWidth / 2) + (elementWidth / 2);
-      
+
+      const scrollPosition =
+        elementOffset - containerWidth / 2 + elementWidth / 2;
+
       container.scrollTo({
         left: scrollPosition,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   };
@@ -72,10 +79,7 @@ const Subbar: React.FC<SubbarProps> = ({
           onClick={(e) => handleTabClick('About', e)}
         >
           <CalendarIcon />
-          <Typography
-            color="white"
-            variant="bodyMB"
-          >
+          <Typography color="white" variant="bodyMB">
             About
           </Typography>
         </Stack>
@@ -84,7 +88,10 @@ const Subbar: React.FC<SubbarProps> = ({
           spacing={1}
           alignItems="center"
           borderBottom={tabName === 'Sessions' ? '1px solid white' : 'none'}
-          sx={{ cursor: canViewSessions ? 'pointer' : 'not-allowed', padding: '0 14px' }}
+          sx={{
+            cursor: canViewSessions ? 'pointer' : 'not-allowed',
+            padding: '0 14px',
+          }}
           onClick={(e) => handleTabClick('Sessions', e)}
         >
           {canViewSessions ? <SessionIcon /> : <LockIcon />}
@@ -100,7 +107,9 @@ const Subbar: React.FC<SubbarProps> = ({
           direction="row"
           spacing={1}
           alignItems="center"
-          borderBottom={tabName === 'Public Sessions' ? '1px solid white' : 'none'}
+          borderBottom={
+            tabName === 'Public Sessions' ? '1px solid white' : 'none'
+          }
           sx={{ cursor: 'pointer', padding: '0 14px' }}
           onClick={(e) => handleTabClick('Public Sessions', e)}
         >
@@ -117,16 +126,32 @@ const Subbar: React.FC<SubbarProps> = ({
           direction="row"
           spacing={1}
           alignItems="center"
-          borderBottom={tabName === 'Announcements' ? '1px solid white' : 'none'}
+          borderBottom={
+            tabName === 'Announcements' ? '1px solid white' : 'none'
+          }
           sx={{ cursor: 'pointer', padding: '0 14px' }}
           onClick={(e) => handleTabClick('Announcements', e)}
         >
           <AnnouncementsIcon />
+          <Typography color="white" variant="bodyMB">
+            Announcements
+          </Typography>
+        </Stack>
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          borderBottom={tabName === 'discussions' ? '1px solid white' : 'none'}
+          sx={{ cursor: 'pointer' }}
+        >
+          {canViewDiscussions ? <ChatBubbleIcon /> : <LockIcon />}
           <Typography
+            onClick={() => canViewDiscussions && setTabName('discussions')}
             color="white"
             variant="bodyMB"
+            sx={{ cursor: canViewDiscussions ? 'pointer' : 'not-allowed' }}
           >
-            Announcements
+            Discussions
           </Typography>
         </Stack>
       </Stack>

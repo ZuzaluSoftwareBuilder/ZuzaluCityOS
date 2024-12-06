@@ -13,6 +13,11 @@ const BUTTON_GROUP = [
     description: 'Scan atendee tickets',
     icon: <PlusCircleIcon />,
   },
+  {
+    name: 'Create Discussions',
+    description: 'Create a social forum for this event',
+    icon: <PlusCircleIcon />,
+  },
 ];
 
 type OverviewButtonProps = {
