@@ -41,6 +41,7 @@ import {
   Session,
   SessionSupabaseData,
   Venue,
+  ZucityCeramicSession,
 } from '@/types';
 import dayjs, { Dayjs } from '@/utils/dayjs';
 import formatDateAgo from '@/utils/formatDateAgo';
@@ -79,6 +80,8 @@ import { download } from 'utils/download';
 import { decodeOutputData } from '@/components/editor/useEditorStore';
 import dynamic from 'next/dynamic';
 import { formatUserName } from '@/utils/format';
+import { StreamID } from '@ceramicnetwork/streamid';
+import { useLitContext } from '@/context/LitContext';
 
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,
@@ -176,7 +179,10 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
   const [blockClickModal, setBlockClickModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [hiddenOrganizer, setHiddenOrganizer] = useState(false);
+  const [ceramicSession, setCeramicSession] = useState<boolean>(false);
   const [refreshFlag, setRefreshFlag] = useState(0);
+  const { litConnect, litEncryptString, litDecryptString, client } =
+    useLitContext();
   const toggleDrawer = (anchor: Anchor, open: boolean) => {
     setState({ ...state, [anchor]: open });
   };
@@ -576,7 +582,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
 
   const handleDateChange = async (date: Dayjs) => {
     if (date && person && sessionLocation !== 'Custom') {
-      const dayName = date.format('dddd'); // Get the day name (e.g., 'Monday')
+      const dayName = date.format('dddd');
       const selectedDay = date.format('YYYY-MM-DD');
       if (sessionLocation == '') {
         return;
@@ -827,7 +833,26 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
     }
     return false;
   };
-
+  const resetForm = () => {
+    setSessionName('');
+    setSessionTrack('');
+    setSessionTags([]);
+    setSessionType('');
+    setSessionExperienceLevel('');
+    setSessionVideoURL('');
+    setSessionDate(null);
+    setSessionStartTime(
+      dayjs().tz(eventData?.timezone).set('hour', 0).set('minute', 0),
+    );
+    setSessionEndTime(
+      dayjs().tz(eventData?.timezone).set('hour', 0).set('minute', 0),
+    );
+    setSessionOrganizers([profile]);
+    setSessionSpeakers([]);
+    setSessionLocation('');
+    setCustomLocation('');
+    setDirections('');
+  };
   const createSession = async () => {
     if (!isAuthenticated) {
       return;
@@ -886,77 +911,224 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
         return;
       }
     }
-    const formattedData: SessionSupabaseData = {
-      title: sessionName,
-      description,
-      experience_level: sessionExperienceLevel,
-      createdAt: dayjs().format('YYYY-MM-DDTHH:mm:ss[Z]').toString(),
-      startTime: sessionStartTime
-        ? dayjs(sessionStartTime)
-            .utc()
-            .format('YYYY-MM-DDTHH:mm:ss[Z]')
-            .toString()
-        : null,
-      endTime: sessionEndTime
-        ? dayjs(sessionEndTime)
-            .utc()
-            .format('YYYY-MM-DDTHH:mm:ss[Z]')
-            .toString()
-        : null,
-      profileId,
-      eventId,
-      tags: sessionTags.join(','),
-      type: sessionType,
-      format,
-      track: sessionTrack,
-      timezone: timezone,
-      video_url: sessionVideoURL,
-      location:
-        sessionLocation === 'Custom'
-          ? `Custom Location: ${customLocation} ${directions}`
-          : sessionLocation,
-      organizers: JSON.stringify(sessionOrganizers),
-      speakers: JSON.stringify(sessionSpeakers),
-      creatorDID: adminId,
-      uuid: uuidv4(),
-      liveStreamLink: sessionLiveStreamLink,
-      recording_link: sessionRecordingLink,
-    };
+
     try {
       setBlockClickModal(true);
-      const response = await supaCreateSession(formattedData);
-      if (response.status === 200) {
-        await fetchAndFilterSessions();
-        setShowModal(true);
-        resetForm();
+
+      if (ceramic?.did && ceramicSession) {
+        try {
+          let litClient;
+          if (client) {
+            litClient = client;
+          } else {
+            litClient = await litConnect();
+          }
+          if (!litClient) {
+            throw new Error('Failed to connect to Lit Network');
+          }
+
+          if (
+            !sessionName ||
+            !description ||
+            !sessionTrack ||
+            !format ||
+            !sessionTags
+          ) {
+            throw new Error('Missing required fields');
+          }
+
+          const isDev = process.env.NEXT_PUBLIC_ENV === 'dev';
+          const accessControlConditions = [
+            {
+              contractAddress:
+                'ipfs://bafkreifybxvbqbpgpvfwuqrvs4hxusskraih7kkquy4xtkynsl4u2q76iu',
+              standardContractType: 'LitAction',
+              chain: 'ethereum',
+              method: 'verifyUser',
+              parameters: [
+                eventId,
+                '0x2CE2D27fa4DaA7Eb559A74C3980dCAcA793871a7',
+                'dev',
+              ],
+              returnValueTest: {
+                comparator: '=',
+                value: 'true',
+              },
+            },
+          ];
+          console.log(accessControlConditions, 'accessControlConditions');
+          const encryptPromises = {
+            title: litEncryptString(
+              sessionName,
+              accessControlConditions,
+              litClient,
+            ),
+            description: litEncryptString(
+              description,
+              accessControlConditions,
+              litClient,
+            ),
+            track: litEncryptString(
+              sessionTrack,
+              accessControlConditions,
+              litClient,
+            ),
+            format: litEncryptString(
+              format,
+              accessControlConditions,
+              litClient,
+            ),
+            ...(sessionType && {
+              type: litEncryptString(
+                sessionType,
+                accessControlConditions,
+                litClient,
+              ),
+            }),
+            ...(sessionTags.length > 0 && {
+              tags: litEncryptString(
+                sessionTags.join(','),
+                accessControlConditions,
+                litClient,
+              ),
+            }),
+            ...(sessionLocation && {
+              location: litEncryptString(
+                sessionLocation === 'Custom'
+                  ? `Custom Location: ${customLocation} ${directions}`
+                  : sessionLocation,
+                accessControlConditions,
+                litClient,
+              ),
+            }),
+          };
+
+          const encryptedFields = await Promise.all(
+            Object.entries(encryptPromises).map(async ([key, promise]) => {
+              console.log(key, promise, 'key, promise');
+              const result = await promise;
+              return [key, result];
+            }),
+          );
+          console.log(encryptedFields, 'encryptedFields');
+          const encryptedData = Object.fromEntries(encryptedFields);
+          /* const sessionData = {
+            title: sessionName,
+            description,
+            status: 'upcoming',
+            videoUrl: sessionVideoURL || '',
+            createdAt: dayjs().utc().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+            startTime: dayjs(sessionStartTime)
+              .utc()
+              .format('YYYY-MM-DDTHH:mm:ss[Z]'),
+            endTime: dayjs(sessionEndTime)
+              .utc()
+              .format('YYYY-MM-DDTHH:mm:ss[Z]'),
+            track: sessionTrack,
+            format,
+            type: sessionType || '',
+            tags: sessionTags.join(','),
+            rsvpNb: 0,
+          };
+          console.log(sessionData);
+          const encryptedTBD = await litEncryptString(
+            JSON.stringify(sessionData),
+            accessControlConditions,
+            litClient,
+          );
+          console.log(encryptedTBD);*/
+          const result = await composeClient.executeQuery(
+            `mutation createZucitySessionMutation($input: CreateZucitySessionInput!) {
+              createZucitySession(input: $input) {
+                document {
+                  id
+                  title
+                  description
+                  status
+                  createdAt
+                  startTime
+                  endTime
+                  eventId
+                  profileId
+                  track
+                  format
+                  type
+                  tags
+                  rsvpNb
+                }
+              }
+            }`,
+            {
+              input: {
+                content: {
+                  title: 'Test', // String!
+                  description: JSON.stringify({
+                    ciphertext: encryptedData.description.ciphertext,
+                    dataToEncryptHash:
+                      encryptedData.description.dataToEncryptHash,
+                  }), // String!
+                  status: 'upcoming',
+                  createdAt: dayjs().utc().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+                  startTime: dayjs(sessionStartTime)
+                    .utc()
+                    .format('YYYY-MM-DDTHH:mm:ss[Z]'), // DateTime!
+                  endTime: dayjs(sessionEndTime)
+                    .utc()
+                    .format('YYYY-MM-DDTHH:mm:ss[Z]'), // DateTime!
+                  eventId, // StreamID!
+                  profileId, // StreamID!
+                  track: JSON.stringify({
+                    ciphertext: encryptedData.track.ciphertext,
+                    dataToEncryptHash: encryptedData.track.dataToEncryptHash,
+                  }), // String!
+                  format: JSON.stringify({
+                    ciphertext: encryptedData.format.ciphertext,
+                    dataToEncryptHash: encryptedData.format.dataToEncryptHash,
+                  }), // String!
+                  tags: JSON.stringify({
+                    ciphertext: encryptedData.tags.ciphertext,
+                    dataToEncryptHash: encryptedData.tags.dataToEncryptHash,
+                  }),
+                  type: sessionType
+                    ? JSON.stringify({
+                        ciphertext: encryptedData.type.ciphertext,
+                        dataToEncryptHash: encryptedData.type.dataToEncryptHash,
+                      })
+                    : undefined,
+                  rsvpNb: 0,
+                  speakers: [
+                    'did:pkh:eip155:534351:0xa90381616eebc94d89b11afde57b869705626968',
+                  ],
+                  organizers: [
+                    'did:pkh:eip155:534351:0xa90381616eebc94d89b11afde57b869705626968',
+                  ],
+                },
+              },
+            },
+          );
+          console.log(result);
+          if (result.errors?.length) {
+            console.error('Detailed error info:', result.errors);
+            throw new Error(
+              `Error creating session: ${JSON.stringify(result.errors)}`,
+            );
+          }
+
+          await fetchAndFilterSessions();
+          setShowModal(true);
+          resetForm();
+        } catch (err) {
+          console.error('Error creating session on Ceramic:', err);
+          throw err;
+        }
       }
     } catch (err) {
-      console.log(err);
+      console.error('Error creating session:', err);
     } finally {
       setBlockClickModal(false);
     }
   };
 
-  const resetForm = () => {
-    setSessionName('');
-    setSessionTrack('');
-    setSessionTags([]);
-    setSessionType('');
-    setSessionExperienceLevel('');
-    setSessionVideoURL('');
-    setSessionDate(null);
-    setSessionStartTime(
-      dayjs().tz(eventData?.timezone).set('hour', 0).set('minute', 0),
-    );
-    setSessionEndTime(
-      dayjs().tz(eventData?.timezone).set('hour', 0).set('minute', 0),
-    );
-    setSessionOrganizers([profile]);
-    setSessionSpeakers([]);
-    setSessionLocation('');
-    setCustomLocation('');
-    setDirections('');
-  };
   useEffect(() => {
     const fetchData = async () => {
       let timezone = eventData?.timezone;
@@ -1097,6 +1269,17 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
               borderRadius="10px"
             >
               <Typography variant="subtitleMB">Session Details</Typography>
+              {/*<Stack direction={'row'} spacing="10px">
+                <ZuSwitch
+                  checked={ceramicSession}
+                  onChange={() => setCeramicSession((v) => !v)}
+                />
+                <Stack spacing="10px">
+                  <Typography variant="bodyBB">
+                    Beta: Encrypt your session on Ceramic
+                  </Typography>
+                </Stack>
+              </Stack>*/}
               <Stack spacing="10px">
                 <Typography variant="bodyBB">Session Name*</Typography>
                 <ZuInput
@@ -1149,6 +1332,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                   Write an introduction for this session
                 </Typography>
                 <SuperEditor
+                  value={sessionDescriptionEditorStore.value}
                   onChange={(val) => {
                     sessionDescriptionEditorStore.setValue(val);
                   }}

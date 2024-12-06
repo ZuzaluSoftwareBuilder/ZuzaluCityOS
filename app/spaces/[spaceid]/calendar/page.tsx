@@ -1,9 +1,15 @@
 'use client';
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import React, {
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+  useRef,
+} from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { CalendarConfig, CalEvent, Space } from '@/types';
+import { CalendarConfig, Space } from '@/types';
 import SubSidebar from 'components/layout/Sidebar/SubSidebar';
 import Drawer from '@/components/drawer';
 import { getSpaceEventsQuery } from '@/services/space';
@@ -19,13 +25,14 @@ import CalendarConfigForm from './components/CalendarConfigForm';
 import { supabase } from '@/utils/supabase/client';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import { RRule, rrulestr } from 'rrule';
+import { rrulestr } from 'rrule';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const Calendar = () => {
   const params = useParams();
+  const router = useRouter();
   const { ceramic, composeClient } = useCeramicContext();
   const spaceId = params.spaceid.toString();
 
@@ -35,6 +42,8 @@ const Calendar = () => {
   const [isMember, setIsMember] = useState(false);
   const [currentCategory, setCurrentCategory] = useState('All');
   const [currentEvent, setCurrentEvent] = useState<any>(null);
+
+  const searchParams = useSearchParams();
 
   const {
     data: spaceData,
@@ -164,11 +173,14 @@ const Calendar = () => {
     if (type.includes('edit')) {
       setType('view');
     } else {
-      setType('');
-      setCurrentEvent(null);
-      toggleDrawer();
+      router.replace(`/spaces/${spaceId}/calendar`);
+      setTimeout(() => {
+        setType('');
+        setCurrentEvent(null);
+        toggleDrawer();
+      }, 100);
     }
-  }, [toggleDrawer, type]);
+  }, [toggleDrawer, type, spaceId, router]);
 
   const handleCategory = useCallback((category: string) => {
     setCurrentCategory(category);
@@ -181,6 +193,7 @@ const Calendar = () => {
         if (event.id === Number(eventId)) {
           toggleDrawer();
           setType('view');
+          router.replace(`/spaces/${spaceId}/calendar?id=${data.event.id}`);
           setCurrentEvent({
             ...event,
             start_date: dayjs(data.event.start),
@@ -189,7 +202,7 @@ const Calendar = () => {
         }
       });
     },
-    [eventsData, toggleDrawer],
+    [eventsData, router, spaceId, toggleDrawer],
   );
 
   const content = useMemo(() => {
@@ -362,6 +375,65 @@ const Calendar = () => {
       });
     }
   }, [currentEvent, eventsData]);
+
+  const eventIdProcessed = useRef(false);
+
+  useEffect(() => {
+    const eventId = searchParams.get('id');
+
+    if (
+      eventId &&
+      eventsData &&
+      filteredEventsData &&
+      !open &&
+      type === '' &&
+      !eventIdProcessed.current
+    ) {
+      const originalEventId = eventId.toString().split('_')[0];
+      const originalEvent = eventsData.find(
+        (event: any) => event.id === Number(originalEventId),
+      );
+      const event = filteredEventsData.find(
+        (event: any) => event.id === eventId,
+      );
+      if (eventId.includes('_')) {
+        if (event && originalEvent) {
+          setCurrentEvent({
+            ...originalEvent,
+            start_date: dayjs(event.start),
+            end_date: dayjs(event.end),
+          });
+          eventIdProcessed.current = true;
+          setType('view');
+          toggleDrawer();
+        } else {
+          router.replace(`/spaces/${spaceId}/calendar`);
+        }
+      } else {
+        if (originalEvent) {
+          setCurrentEvent({
+            ...originalEvent,
+            start_date: dayjs(originalEvent.start),
+            end_date: dayjs(originalEvent.end),
+          });
+          eventIdProcessed.current = true;
+          setType('view');
+          toggleDrawer();
+        } else {
+          router.replace(`/spaces/${spaceId}/calendar`);
+        }
+      }
+    }
+  }, [
+    searchParams,
+    eventsData,
+    spaceId,
+    router,
+    toggleDrawer,
+    open,
+    filteredEventsData,
+    type,
+  ]);
 
   return (
     <Stack direction="row" width={'100%'}>

@@ -145,16 +145,21 @@ const EventContent: React.FC = () => {
       if (result.data) {
         if (result.data.node) {
           setEvent(result.data.node);
-          const regAndAccess = result.data.node.regAndAccess.edges[0].node;
-          setStatus({
-            checkinOpen: regAndAccess?.checkinOpen === '1',
-            registrationOpen: regAndAccess?.registrationOpen === '1',
-          });
+          const edges = result.data.node.regAndAccess.edges;
+          if (edges.length > 0) {
+            const regAndAccess = edges[0].node;
+            setStatus({
+              checkinOpen: regAndAccess?.checkinOpen === '1',
+              registrationOpen: regAndAccess?.registrationOpen === '1',
+            });
+          }
         }
       }
     } catch (err) {
       console.log('ERROR: FETCH EVENT: ', err);
     }
+
+    return {};
   };
 
   const isMobile = useMediaQuery('(max-width:768px)');

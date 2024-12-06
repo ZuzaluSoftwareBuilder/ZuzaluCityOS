@@ -373,6 +373,7 @@ const EventRegister: React.FC<EventRegisterProps> = ({
           setVerify={setVerify}
           eventId={eventId}
           ticketType={ticketType}
+          setStep={setCurrentStep}
         />
       ) : null}
       <Stack

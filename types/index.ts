@@ -283,6 +283,34 @@ export interface Session {
   uuid: string;
   isPublic?: boolean;
 }
+export type ZucityCeramicSession = {
+  title: string;
+  description: string;
+  timezone?: string;
+  meetingUrl?: string;
+  status: string;
+  videoUrl?: string;
+  createdAt: string;
+  startTime: string;
+  endTime: string;
+  eventId: string;
+  profileId: string;
+  track: string;
+  speakers: string[];
+  organizers?: string[];
+  format: string;
+  type?: string;
+  experienceLevel?: string;
+  tags: string;
+  gated?: string;
+  rsvpNb?: number;
+  liveStreamLink?: string;
+  recordingLink?: string;
+  location?: string;
+  customAttributes?: Array<{
+    tbd?: string;
+  }>;
+};
 export type SessionSupabaseData = {
   title: string;
   description?: string;
