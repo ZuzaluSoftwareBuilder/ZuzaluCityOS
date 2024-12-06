@@ -16,7 +16,7 @@ export class ZulandLit {
     this.chain = chain ?? 'sepolia';
     this.litNodeClient = new LitJsSdk.LitNodeClient({
       litNetwork: 'datil-dev',
-      debug: process.env.NODE_ENV !== 'production',
+      debug: process.env.NEXT_PUBLIC_ENV !== 'production',
     });
   }
 
