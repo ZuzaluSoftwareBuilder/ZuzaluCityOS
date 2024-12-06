@@ -1,3 +1,4 @@
+import { AdminIcon } from './AdminIcon';
 import { HomeIcon } from './Home';
 import { SearchIcon } from './Search';
 import { StreamIcon } from './Stream';
@@ -86,11 +87,26 @@ import { BuildStoreFrontIcon } from './BuildStoreFront';
 import { LottoPGFIcon } from './LottoPGF';
 import { WrenchIcon } from './Wrench';
 import { KeyIcon } from './Key';
+import { ArrowIcon } from './ArrowIcon';
+import { ArrowIconVariant } from './ArrowIcon';
+import { CommentIcon } from './CommentIcon';
+import { HandHeartIcon } from './HandHeartIcon';
+import { UserIcon } from './UserIcon';
+import { TrustfulIcon } from './TrustfulIcon';
+import { LoginIcon } from './LoginIcon';
+import { BadgeIcon } from './BadgeIcon';
+import { LogoutIcon } from './LogoutIcon';
+import { ThankYouIcon } from './ThankYouIcon';
+import { QrCodeIcon } from './QrCodeIcon';
+import { HeartLoveIcon } from './HeartLoveIcon';
+import { CalendarTimeIcon } from './CalendarTimeIcon';
+import { BlockfulLogo } from './BlockfulLogo';
 import { ArrowUpTrayIcon } from './ArrowUpTray';
 import { WalletIcon } from './Wallet';
 import { LinkIcon } from './Link';
 import { TrashIcon } from './Trash';
 export {
+  AdminIcon,
   HomeIcon,
   SearchIcon,
   StreamIcon,
@@ -179,6 +195,20 @@ export {
   LottoPGFIcon,
   WrenchIcon,
   KeyIcon,
+  ArrowIcon,
+  ArrowIconVariant,
+  CommentIcon,
+  HandHeartIcon,
+  UserIcon,
+  TrustfulIcon,
+  LoginIcon,
+  BadgeIcon,
+  LogoutIcon,
+  ThankYouIcon,
+  QrCodeIcon,
+  HeartLoveIcon,
+  CalendarTimeIcon,
+  BlockfulLogo,
   ArrowUpTrayIcon,
   WalletIcon,
   LinkIcon,

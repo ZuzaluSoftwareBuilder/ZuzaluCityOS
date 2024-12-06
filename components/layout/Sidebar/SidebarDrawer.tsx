@@ -20,6 +20,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { EventData, Event } from '@/types';
 import { useEffect, useState } from 'react';
+import { TrustfulIcon } from '@/components/icons/TrustfulIcon';
 
 interface PropTypes {
   open: boolean;
@@ -124,6 +125,18 @@ export default function SidebarDrawer({ open, onClose, selected }: PropTypes) {
         onClose();
       },
     },
+    // {
+    //   {spaceId ==
+    //     'kjzl6kcym7w8y7drgmopt1aufcut7p9cbwyoaa0ht9vl8sgs5q39blhgsbeyb83' && (
+    //       content: 'Reputation Badge',
+    //       icon: <TrustfulIcon />,
+    //       function: () => {
+    //         router.push(`/spaces/${spaceId}/trustful`);
+    //         onClose();
+    //       }
+
+    //   )},
+    // }
     // {
     //     content: 'Zapps',
     //     icon: <BoltIcon />,

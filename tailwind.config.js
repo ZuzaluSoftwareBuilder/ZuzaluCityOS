@@ -19,6 +19,13 @@ export default {
           'linear-gradient(90deg, rgba(125, 255, 209, 0.16) 0%, rgba(125, 255, 209, 0.00) 100%)',
       }),
     },
+    screens: {
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'lg-c': '1200px',
+      'xl': '1280px',
+    }
   },
   plugins: [],
 };
