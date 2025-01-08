@@ -198,6 +198,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
   );
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
+  const [isAllSessions, setIsAllSessions] = useState<boolean>(false);
 
   const handleCalendarClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -270,17 +271,6 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
         .tz(eventData?.timezone, true)
         .format('MMMM-D-YYYY');
     };
-    const nearToday = getDay();
-    if (sessionsByDate && nearToday) {
-      const dom = document.getElementById(nearToday);
-
-      if (dom) {
-        window.scrollTo({
-          behavior: 'instant',
-          top: dom.offsetTop + 120,
-        });
-      }
-    }
   }, [sessionsByDate]);
 
   const handleDownload = (date: string) => () => {
@@ -476,8 +466,15 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
         .select('*')
         .eq('eventId', eventId);
       if (data) {
-        setSessions(data);
-        return data as Session[];
+        const filteredData = !isAllSessions
+          ? data
+          : data.filter((session) =>
+              dayjs(session.startTime)
+                .tz(session.timezone)
+                .isSameOrAfter(dayjs(), 'day'),
+            );
+        setSessions(filteredData);
+        return filteredData as Session[];
       }
     } catch (err) {
       console.log(err);
@@ -489,9 +486,9 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
     try {
       let filteredSessions = await getSession();
       if (filteredSessions) {
-        if (dateForCalendar && sessionsByDate) {
-          filteredSessions = await getSessionsByMonth(dateForCalendar);
-        }
+        // if (dateForCalendar && sessionsByDate) {
+        //   filteredSessions = await getSessionsByMonth(dateForCalendar);
+        // }
         if (selectedDate) {
           filteredSessions = await getSessionsByDate(
             dayjs(selectedDate).tz(eventData?.timezone).format('MMMM D, YYYY'),
@@ -563,6 +560,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
       refreshFlag,
       selectedTracks,
       selectedLocations,
+      isAllSessions,
     ],
     queryFn: async () => {
       fetchAndFilterSessions().catch((error) => {
@@ -917,7 +915,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
 
     try {
       setBlockClickModal(true);
-
+      console.log('ceramic?.did', ceramic?.did, ceramicSession);
       if (ceramic?.did && ceramicSession) {
         try {
           let litClient;
@@ -2388,37 +2386,35 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                         .format('MMMM-D-YYYY')}
                     >
                       <Typography
-                        borderTop="1px solid var(--Hover-White, rgba(255, 255, 255, 0.10))"
-                        padding="8px 10px"
+                        padding="5px 10px"
                         variant="bodySB"
-                        bgcolor="rgba(255, 255, 255, 0.05)"
+                        bgcolor="rgba(49, 49, 49, 0.80)"
                         borderRadius="10px"
                         sx={{ backdropFilter: 'blur(10px)' }}
                         position={'sticky'}
                         top={'100px'}
                         zIndex={2}
                         display={'flex'}
+                        fontWeight={600}
                       >
                         <Typography component={'span'} flex={1}>
                           {dayjs(date, 'MMMM D, YYYY')
                             .tz(eventData?.timezone, true)
-                            .format('dddd · DD MMM YYYY')}
+                            .format('dddd · DD MMM YYYY')}{' '}
+                          {dayjs(date).isSame(dayjs(), 'day') && '(Today)'}
                         </Typography>
-                        <ZuButton
-                          sx={{ height: '20px' }}
+                        <Image
+                          src="/session/download.png?v=1"
+                          alt="download"
+                          width={38}
+                          height={26}
                           onClick={handleDownload(
                             dayjs(date, 'MMMM D, YYYY')
                               .tz(eventData?.timezone, true)
                               .format('MMMM D, YYYY'),
                           )}
-                        >
-                          <Image
-                            src="/session/download.png"
-                            alt="download"
-                            width={16}
-                            height={16}
-                          />
-                        </ZuButton>
+                          style={{ cursor: 'pointer' }}
+                        />
                       </Typography>
                       {dateSessions && dateSessions.length > 0 ? (
                         dateSessions.map((session, index) => (
@@ -2457,7 +2453,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                           >
                             <PlusCircleIcon color="#6c6c6c" size={15} />
                             <Typography variant="subtitle2">
-                              No Sessions
+                              No {isAllSessions ? '' : 'Upcoming'} Sessions
                             </Typography>
                             <ZuButton>
                               <Typography variant="subtitle2">
@@ -2481,7 +2477,9 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                     onClick={() => toggleDrawer('right', true)}
                   >
                     <PlusCircleIcon color="#6c6c6c" size={15} />
-                    <Typography variant="subtitle2">No Sessions</Typography>
+                    <Typography variant="subtitle2">
+                      No {isAllSessions ? '' : 'Upcoming'} Sessions
+                    </Typography>
                     <ZuButton>
                       <Typography variant="subtitle2">
                         Create a Session
@@ -2607,7 +2605,9 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                   }}
                   gap="10px"
                 >
-                  <TabSelector />
+                  <TabSelector
+                    onChange={(tab) => setIsAllSessions(tab === 'all')}
+                  />
                   <Divider />
                   <ZuCalendar
                     value={selectedDate}
