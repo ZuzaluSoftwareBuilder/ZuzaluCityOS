@@ -177,6 +177,8 @@ const Home = () => {
     fetchData();
   }, [ceramic?.did?.parent, verify]);
 
+  console.log('tabName', tabName);
+
   return (
     <Stack color="white">
       <Thumbnail name={eventData?.title} imageUrl={eventData?.imageUrl} />
@@ -186,27 +188,27 @@ const Home = () => {
         canViewSessions={sessionView}
         canViewDiscussions={discussionsView}
       />
-      {tabName === 'about' && (
+      {tabName === 'About' && (
         <About
           eventData={eventData}
           setVerify={setVerify}
           canEdit={announcementsEdit}
         />
       )}
-      {tabName === 'sessions' && (
+      {tabName === 'Sessions' && (
         <Sessions eventData={eventData} option={urlOption} />
       )}
-      {tabName === 'public-sessions' && (
+      {tabName === 'Public Sessions' && (
         <PublicSessions eventData={eventData} option={urlOption} />
       )}
-      {tabName === 'announcements' && (
+      {tabName === 'Announcements' && (
         <Announcements
           eventData={eventData}
           setVerify={setVerify}
           canEdit={announcementsEdit}
         />
       )}
-      {tabName === 'discussions' && <Discussions eventId={eventId} />}
+      {tabName === 'Discussions' && <Discussions eventId={eventId} />}
     </Stack>
   );
 };
