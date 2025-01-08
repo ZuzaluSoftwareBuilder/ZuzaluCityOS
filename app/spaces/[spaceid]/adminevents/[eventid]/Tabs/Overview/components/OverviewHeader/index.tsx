@@ -8,6 +8,7 @@ import { useParams } from 'next/navigation';
 import dayjs, { Dayjs } from 'dayjs';
 import { QRReader } from '@/components/modals/QRScanModal/QRReader';
 import { supabase } from '@/utils/supabase/client';
+import CreateDiscussionModal from '@/components/modals/Zuland/CreateDiscussionModal';
 
 interface PropTypes {
   event?: Event;
@@ -31,6 +32,7 @@ const OverviewHeader = ({ event, setTabName }: PropTypes) => {
     right: false,
   });
   const [showQRScanner, setShowQRScanner] = React.useState(false);
+  const [showDiscussion, setShowDiscussion] = React.useState(false);
   const [people, setPeople] = React.useState<Profile[]>([]);
   const [locations, setLocations] = React.useState<string[]>([]);
   const [person, setPerson] = React.useState(true);
@@ -59,6 +61,11 @@ const OverviewHeader = ({ event, setTabName }: PropTypes) => {
     [],
   );
   const [sessionLocation, setSessionLocation] = React.useState<string>();
+  const [toast, setToast] = React.useState({
+    open: false,
+    message: '',
+    severity: 'success' as 'success' | 'error' | 'info' | 'warning',
+  });
 
   const toggleDrawer = (anchor: Anchor, open: boolean) => {
     setState({ ...state, [anchor]: open });
@@ -244,6 +251,13 @@ const OverviewHeader = ({ event, setTabName }: PropTypes) => {
     getPeople();
   }, []);
 
+  const showToast = (
+    message: string,
+    severity: 'success' | 'error' | 'info' | 'warning' = 'success',
+  ) => {
+    setToast({ open: true, message, severity });
+  };
+
   return event ? (
     <Stack direction="column" spacing={3} marginBottom={3}>
       <Stack
@@ -324,6 +338,12 @@ const OverviewHeader = ({ event, setTabName }: PropTypes) => {
             setShowQRScanner(!showQRScanner);
           }}
         />
+        <OverviewButton
+          type={2}
+          onClick={() => {
+            setShowDiscussion((prev) => !prev);
+          }}
+        />
       </Stack>
       {/* <SwipeableDrawer
         hideBackdrop={true}
@@ -382,6 +402,18 @@ const OverviewHeader = ({ event, setTabName }: PropTypes) => {
         }
       </SwipeableDrawer> */}
       {showQRScanner && <QRReader />}
+      {showDiscussion && (
+        <CreateDiscussionModal
+          eventId={eventId}
+          showModal={showDiscussion}
+          setShowModal={setShowDiscussion}
+          showToast={showToast}
+          eventName={event.title}
+          eventDescription={
+            event.tagline || `Brief description of ${event.title}`
+          }
+        />
+      )}
     </Stack>
   ) : (
     <></>

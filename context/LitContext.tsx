@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import {
   LitNodeClient,
   encryptString,
@@ -6,7 +6,7 @@ import {
   disconnectWeb3,
   checkAndSignAuthMessage,
 } from '@lit-protocol/lit-node-client';
-import { LitNetwork, LIT_RPC } from '@lit-protocol/constants';
+import { LitNetwork } from '@lit-protocol/constants';
 import {
   createSiweMessage,
   generateAuthSig,

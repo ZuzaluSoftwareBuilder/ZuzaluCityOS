@@ -6,12 +6,14 @@ import {
   LockIcon,
   AnnouncementsIcon,
   InformationIcon,
+  ChatBubbleIcon,
 } from 'components/icons';
 
 interface SubbarProps {
   tabName: string;
   setTabName: (value: string | ((prevVar: string) => string)) => void;
   canViewSessions: boolean;
+  canViewDiscussions: boolean;
 }
 
 interface TabItem {
@@ -19,7 +21,6 @@ interface TabItem {
   icon: React.ElementType;
   label: string;
   requiresPermission?: boolean;
-  noWrap?: boolean;
 }
 
 const tabItems: TabItem[] = [
@@ -38,12 +39,17 @@ const tabItems: TabItem[] = [
     name: 'Public Sessions',
     icon: SessionIcon,
     label: 'Public Sessions',
-    noWrap: true,
   },
   {
     name: 'Announcements',
     icon: AnnouncementsIcon,
     label: 'Announcements',
+  },
+  {
+    name: 'Discussions',
+    icon: ChatBubbleIcon,
+    label: 'Discussions',
+    requiresPermission: true,
   },
 ];
 
@@ -51,6 +57,7 @@ const Subbar: React.FC<SubbarProps> = ({
   tabName,
   setTabName,
   canViewSessions,
+  canViewDiscussions,
 }) => {
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
@@ -155,7 +162,7 @@ const Subbar: React.FC<SubbarProps> = ({
                     item.requiresPermission && !canViewSessions
                       ? 'not-allowed'
                       : 'pointer',
-                  whiteSpace: item.noWrap ? 'nowrap' : 'normal',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {item.label}

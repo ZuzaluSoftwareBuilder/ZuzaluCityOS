@@ -93,6 +93,19 @@ import { TrashIcon } from './Trash';
 import { ArrowFatLeftIcon } from './ArrowFatLeft';
 import { FunnelIcon } from './Funnel';
 import { ExportIcon } from './Export';
+import { FlagIcon } from './Flag';
+import ClockIcon from './Clock';
+import { ArrowUpOnSquareIcon } from './ArrowUpOnSquare';
+import { ChatBubbleIcon } from './ChatBubble';
+import DiscordIcon from './Discord';
+import FarcasterIcon from './Farcaster';
+import { FireIcon } from './Fire';
+import { SparklesIcon } from './Sparkles';
+import TelegramIcon from './Telegram';
+import { TrashcanIcon } from './Trashcan';
+import TwitterIcon from './Twitter';
+import WhatsappIcon from './Whatsapp';
+import ChainIcon from './Chain';
 export {
   HomeIcon,
   SearchIcon,
@@ -189,4 +202,17 @@ export {
   ArrowFatLeftIcon,
   FunnelIcon,
   ExportIcon,
+  ArrowUpOnSquareIcon,
+  ClockIcon,
+  ChainIcon,
+  ChatBubbleIcon,
+  DiscordIcon,
+  FarcasterIcon,
+  FireIcon,
+  FlagIcon,
+  SparklesIcon,
+  TelegramIcon,
+  TrashcanIcon,
+  TwitterIcon,
+  WhatsappIcon,
 };
