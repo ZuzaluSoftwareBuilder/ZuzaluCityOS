@@ -228,7 +228,7 @@ const SessionCard: React.FC<SessionCardProps> = ({
       >
         <Stack flex={1} minWidth={0}>
           <Stack direction="row" spacing="8px" alignItems="center">
-            {!isLive && (
+            {isLive && (
               <Typography
                 bgcolor="rgba(125, 255, 209, 0.10)"
                 padding="4px 8px"
@@ -241,12 +241,18 @@ const SessionCard: React.FC<SessionCardProps> = ({
                 alignItems="center"
                 gap="4px"
               >
-                <div
-                  style={{
-                    width: '4px',
-                    height: '4px',
-                    backgroundColor: '#7DFFD1',
-                    borderRadius: '50%',
+                <Stack
+                  width="4px"
+                  height="4px"
+                  bgcolor="#7DFFD1"
+                  borderRadius="50%"
+                  sx={{
+                    animation: 'blink 1.5s infinite',
+                    '@keyframes blink': {
+                      '0%': { opacity: 1 },
+                      '50%': { opacity: 0.4 },
+                      '100%': { opacity: 1 },
+                    },
                   }}
                 />
                 LIVE
