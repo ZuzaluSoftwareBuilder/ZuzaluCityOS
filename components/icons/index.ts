@@ -106,6 +106,10 @@ import { TrashcanIcon } from './Trashcan';
 import TwitterIcon from './Twitter';
 import WhatsappIcon from './Whatsapp';
 import ChainIcon from './Chain';
+import { AcademicCapIcon } from './AcademicCap';
+import { CubeIcon } from './Cube';
+import { HeroMapIcon } from './HeroMap';
+import { SpeakWaveIcon } from './SpeakWave';
 export {
   HomeIcon,
   SearchIcon,
@@ -215,4 +219,8 @@ export {
   TrashcanIcon,
   TwitterIcon,
   WhatsappIcon,
+  AcademicCapIcon,
+  CubeIcon,
+  HeroMapIcon,
+  SpeakWaveIcon,
 };

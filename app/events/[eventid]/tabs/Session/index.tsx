@@ -2342,6 +2342,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
               bgcolor="#262626"
               flex={8}
               position={'relative'}
+              pb="10px"
               sx={{
                 width: '700px',
                 maxWidth: '700px',
@@ -2378,7 +2379,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                   .map(([date, dateSessions]) => (
                     <Stack
                       spacing="10px"
-                      padding="10px"
+                      padding="10px 10px 0"
                       key={`Session-GroupByDate-${date}`}
                       position={'relative'}
                       id={dayjs(date, 'MMMM D, YYYY')
@@ -2438,6 +2439,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                                   .tz(eventData?.timezone)
                                   .format('dddd, MMMM D')
                             }
+                            isLast={index === dateSessions.length - 1}
                           />
                         ))
                       ) : (

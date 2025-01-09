@@ -6,11 +6,17 @@ import {
   Box,
   Tooltip,
   CircularProgress,
+  Divider,
 } from '@mui/material';
 import {
+  AcademicCapIcon,
+  CubeIcon,
   EditIcon,
+  HeroMapIcon,
   MapIcon,
   SessionIcon,
+  SpeakWaveIcon,
+  TicketIcon,
   UserCircleIcon,
 } from 'components/icons';
 import { Profile, Session } from '@/types';
@@ -26,6 +32,7 @@ interface SessionCardProps {
   isLive?: boolean;
   isPublic?: boolean;
   people: Profile[];
+  isLast?: boolean;
 }
 
 const SessionCard: React.FC<SessionCardProps> = ({
@@ -36,6 +43,7 @@ const SessionCard: React.FC<SessionCardProps> = ({
   isLive,
   isPublic,
   people,
+  isLast,
 }) => {
   const [hover, setHover] = useState<boolean>(false);
   const [isRSVP, setIsRSVP] = useState<boolean>(false);
@@ -203,198 +211,253 @@ const SessionCard: React.FC<SessionCardProps> = ({
   }, [session, userDID]);
 
   return (
-    <Stack
-      onClick={() => handleClick()}
-      direction="row"
-      padding="10px 10px 20px 10px"
-      borderRadius={'10px'}
-      width="100%"
-      overflow="hidden"
-      sx={{
-        ':hover': {
-          backgroundColor: '#383838',
-        },
-        cursor: 'pointer',
-      }}
-    >
-      <Stack spacing="10px" flex={1} minWidth={0}>
-        <Stack direction="row" spacing="10px" alignItems="center">
-          {isLive && (
+    <>
+      <Stack
+        onClick={() => handleClick()}
+        direction="row"
+        padding="10px"
+        borderRadius={'10px'}
+        width="100%"
+        overflow="hidden"
+        sx={{
+          ':hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          },
+          cursor: 'pointer',
+        }}
+      >
+        <Stack flex={1} minWidth={0}>
+          <Stack direction="row" spacing="8px" alignItems="center">
+            {!isLive && (
+              <Typography
+                bgcolor="rgba(125, 255, 209, 0.10)"
+                padding="4px 8px"
+                color="#7DFFD1"
+                borderRadius="2px"
+                fontSize={10}
+                fontWeight={700}
+                lineHeight={1.2}
+                display="flex"
+                alignItems="center"
+                gap="4px"
+              >
+                <div
+                  style={{
+                    width: '4px',
+                    height: '4px',
+                    backgroundColor: '#7DFFD1',
+                    borderRadius: '50%',
+                  }}
+                />
+                LIVE
+              </Typography>
+            )}
+            <Stack direction="row" spacing="4px" alignItems="center">
+              <Typography
+                fontSize={16}
+                fontWeight={600}
+                sx={{ opacity: '0.8' }}
+              >
+                {dayjs(session.startTime).tz(session.timezone).format('h:mm A')}
+              </Typography>
+              <Typography fontSize={13} sx={{ opacity: '0.5' }}>
+                - {dayjs(session.endTime).tz(session.timezone).format('h:mm A')}
+              </Typography>
+            </Stack>
             <Typography
-              bgcolor="#7DFFD11A"
+              bgcolor="rgba(255, 255, 255, 0.1)"
               padding="2px 4px"
-              color="#7DFFD1"
-              variant="bodyX"
+              color="#fff"
+              fontSize={10}
+              fontWeight={700}
+              lineHeight={1.2}
               borderRadius="2px"
             >
-              · LIVE
+              {session.format === 'person' ? 'IRL' : 'ONLINE'}
             </Typography>
+          </Stack>
+          <Typography fontSize={18} fontWeight={700} lineHeight={1.4} mt="10px">
+            {session.title}
+          </Typography>
+          <Stack direction={'row'} spacing={1} alignItems="center" mt="14px">
+            {session.track && (
+              <Stack
+                direction={'row'}
+                alignItems={'center'}
+                spacing="5px"
+                p="4px 8px"
+                borderRadius="20px"
+                bgcolor="rgba(255, 255, 255, 0.1)"
+              >
+                <HeroMapIcon />
+                <Typography fontSize={10} lineHeight={1.2} color="#fff">
+                  {session.track}
+                </Typography>
+              </Stack>
+            )}
+            {session.type && (
+              <Stack direction={'row'} alignItems={'center'} spacing="5px">
+                <CubeIcon />
+                <Typography fontSize={10} lineHeight={1.2} color="#67DBFF">
+                  {session.type}
+                </Typography>
+              </Stack>
+            )}
+            {session.experience_level && (
+              <Stack direction={'row'} alignItems={'center'} spacing="5px">
+                <AcademicCapIcon />
+                <Typography fontSize={10} lineHeight={1.2} color="#FFB070">
+                  {session.experience_level}
+                </Typography>
+              </Stack>
+            )}
+          </Stack>
+          {session.speakers.length > 2 && (
+            <Stack direction={'row'} spacing={1} alignItems="center" mt="14px">
+              <SpeakWaveIcon />
+              {session.speakers
+                ? JSON.parse(session.speakers).map(
+                    (speaker: any, index: number) => (
+                      <Stack
+                        key={`Speaker-${index}`}
+                        direction={'row'}
+                        spacing="4px"
+                        alignItems={'center'}
+                      >
+                        <Box
+                          component={'img'}
+                          height={20}
+                          width={20}
+                          borderRadius={10}
+                          src={
+                            people.find(
+                              (item: any) =>
+                                item.author?.id === speaker.author.id,
+                            )?.avatar || '/user/avatar_p.png'
+                          }
+                        />
+                        <Typography
+                          fontSize={13}
+                          lineHeight={1.4}
+                          sx={{ opacity: 0.56 }}
+                        >
+                          {formatUserName(speaker.username)}
+                        </Typography>
+                      </Stack>
+                    ),
+                  )
+                : null}
+            </Stack>
           )}
-          <Typography
-            bgcolor="rgba(255, 255, 255, 0.05)"
-            padding="2px 4px"
-            color="#fff"
-            variant="bodyX"
-            borderRadius="2px"
-          >
-            {session.format === 'person' ? 'IRL' : 'ONLINE'}
-          </Typography>
-          <Typography variant="caption" textTransform="uppercase">
-            {session.track}
-          </Typography>
-        </Stack>
-        <Typography variant="bodyB" sx={{ opacity: '0.6' }}>
-          {dayjs(session.startTime).tz(session.timezone).format('h:mm A')} -{' '}
-          {dayjs(session.endTime).tz(session.timezone).format('h:mm A')}
-        </Typography>
-        <Typography variant="subtitleSB">{session.title}</Typography>
-        <Stack direction={'row'} spacing={1} alignItems="center">
-          {session.speakers.length > 2 ? (
-            <Typography variant="bodyS" sx={{ opacity: 0.7 }}>
-              Speakers:
-            </Typography>
-          ) : null}
-          {session.speakers
-            ? JSON.parse(session.speakers).map(
-                (speaker: any, index: number) => (
-                  <Stack
-                    key={`Speaker-${index}`}
-                    direction={'row'}
-                    spacing={0.5}
-                    alignItems={'center'}
-                  >
-                    <Box
-                      component={'img'}
-                      height={20}
-                      width={20}
-                      borderRadius={10}
-                      src={
-                        people.find(
-                          (item: any) => item.author?.id === speaker.author.id,
-                        )?.avatar || '/user/avatar_p.png'
-                      }
-                    />
-                    <Typography variant="bodyS">
-                      {formatUserName(speaker.username)}
-                    </Typography>
-                  </Stack>
-                ),
-              )
-            : null}
-        </Stack>
-        <Stack
-          direction={'row'}
-          alignItems={'center'}
-          spacing={1}
-          sx={{ opacity: '0.5' }}
-        >
-          <MapIcon size={4} />
-          <Typography
-            variant="caption"
-            sx={{
-              opacity: 0.5,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              wordBreak: 'break-word',
-              maxWidth: '90%',
-            }}
-            textTransform={session.format !== 'online' ? 'uppercase' : 'none'}
-          >
-            {session.format === 'online' ? session.video_url : session.location}
-          </Typography>
-        </Stack>
-      </Stack>
-      <Stack
-        gap={'10px'}
-        alignItems={'flex-end'}
-        minWidth={'fit-content'}
-        ml={1}
-      >
-        {userDID && session.creatorDID === userDID && (
           <Stack
             direction={'row'}
-            gap={'4px'}
-            padding={'2px 5px'}
-            bgcolor={'rgba(255, 199, 125, 0.10)'}
-            borderRadius={'2px'}
             alignItems={'center'}
+            spacing="5px"
+            sx={{ opacity: '0.56' }}
+            mt="10px"
           >
-            <UserCircleIcon color={'#FFCC66'} size={4} />
+            <MapIcon size={4} />
             <Typography
-              textTransform={'uppercase'}
-              fontWeight={700}
-              fontSize={'10px'}
-              color={'#FFC77D'}
+              fontSize={13}
+              lineHeight={1.4}
+              textTransform={session.format !== 'online' ? 'uppercase' : 'none'}
             >
-              My Session
+              {session.format === 'online'
+                ? session.video_url
+                : session.location}
             </Typography>
           </Stack>
-        )}
-        <Tooltip
-          title={
-            !isRSVP ? (
-              <Typography
-                sx={{ cursor: 'pointer' }}
-                fontSize={'14px'}
-                onClick={handleRSVPTicketTooltip}
-              >
-                RSVP
-              </Typography>
-            ) : (
-              <Typography
-                sx={{ cursor: 'pointer' }}
-                fontSize={'14px'}
-                onClick={handleCancelTicketTooltip}
-              >
-                Cancel
-              </Typography>
-            )
-          }
-          sx={{ cursor: 'pointer', borderRadius: '8px' }}
+        </Stack>
+        <Stack
+          gap={'10px'}
+          alignItems={'flex-end'}
+          minWidth={'fit-content'}
+          ml={1}
         >
-          <Stack
-            padding="4px"
-            spacing="4px"
-            direction="row"
-            alignItems="center"
-            borderRadius="8px"
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-            sx={{
-              opacity: 0.7,
-              color: isRSVP ? '#7DFFD1' : 'white',
-              backgroundColor: isRSVP
-                ? 'rgba(125, 255, 209, 0.10)'
-                : 'rgba(255, 255, 255, 0.05)',
-              width: 'fit-content',
-            }}
-            height="fit-content"
-            onClick={handleTicketClick}
-          >
-            {isLoading ? (
-              <CircularProgress
-                size={'24px'}
-                sx={{ color: '#7DFFD1' }}
-              ></CircularProgress>
-            ) : isRSVP ? (
-              hover ? (
-                <CancelIcon />
+          {userDID && session.creatorDID === userDID && (
+            <Stack
+              direction={'row'}
+              gap={'4px'}
+              padding={'2px 4px'}
+              bgcolor={'rgba(255, 209, 135, 0.10)'}
+              borderRadius={'2px'}
+              alignItems={'center'}
+            >
+              <UserCircleIcon color={'#FFCC66'} size={4} />
+              <Typography
+                textTransform={'uppercase'}
+                fontWeight={700}
+                fontSize={'10px'}
+                color={'#FFC77D'}
+              >
+                My Session
+              </Typography>
+            </Stack>
+          )}
+          <Tooltip
+            title={
+              !isRSVP ? (
+                <Typography
+                  sx={{ cursor: 'pointer' }}
+                  fontSize={'14px'}
+                  onClick={handleRSVPTicketTooltip}
+                >
+                  RSVP
+                </Typography>
               ) : (
-                <SessionIcon fill={'#7DFFD1'} />
+                <Typography
+                  sx={{ cursor: 'pointer' }}
+                  fontSize={'14px'}
+                  onClick={handleCancelTicketTooltip}
+                >
+                  Cancel
+                </Typography>
               )
-            ) : (
-              <SessionIcon fill={'white'} />
-            )}
-            <Typography variant="bodyS">
-              {rsvpNb !== undefined ? rsvpNb : 0}
-            </Typography>
-          </Stack>
-        </Tooltip>
+            }
+            sx={{ cursor: 'pointer', borderRadius: '8px' }}
+          >
+            <Stack
+              padding="4px"
+              spacing="4px"
+              direction="row"
+              alignItems="center"
+              borderRadius="8px"
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+              sx={{
+                opacity: 0.7,
+                color: isRSVP ? '#7DFFD1' : 'white',
+                backgroundColor: isRSVP
+                  ? 'rgba(125, 255, 209, 0.10)'
+                  : 'rgba(255, 255, 255, 0.05)',
+                width: 'fit-content',
+              }}
+              height="fit-content"
+              onClick={handleTicketClick}
+            >
+              {isLoading ? (
+                <CircularProgress
+                  size={'24px'}
+                  sx={{ color: '#7DFFD1' }}
+                ></CircularProgress>
+              ) : isRSVP ? (
+                hover ? (
+                  <CancelIcon />
+                ) : (
+                  <TicketIcon color={'#7DFFD1'} />
+                )
+              ) : (
+                <TicketIcon color={'white'} />
+              )}
+              <Typography variant="bodyS">
+                {rsvpNb !== undefined ? rsvpNb : 0}
+              </Typography>
+            </Stack>
+          </Tooltip>
+        </Stack>
       </Stack>
-    </Stack>
+      {!isLast && <Divider />}
+    </>
   );
 };
 
