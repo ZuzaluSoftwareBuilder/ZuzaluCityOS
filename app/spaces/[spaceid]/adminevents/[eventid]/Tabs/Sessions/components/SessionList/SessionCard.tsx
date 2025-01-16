@@ -365,7 +365,6 @@ const SessionCard: React.FC<SessionCardProps> = ({
             <MapIcon size={4} />
             <Typography
               fontSize={13}
-              lineHeight={1.4}
               textTransform={session.format !== 'online' ? 'uppercase' : 'none'}
             >
               {session.format === 'online'
