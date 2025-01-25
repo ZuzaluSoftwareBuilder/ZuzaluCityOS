@@ -7,6 +7,7 @@ import {
   SpaceIcon,
   HomeIcon,
   ArrowUpRightIcon,
+  ShapeIcon,
 } from 'components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { ZuButton } from '@/components/core';
@@ -128,6 +129,13 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
       function: () => router.push('/events'),
       url: '/events',
     },
+    {
+      content: 'dApps',
+      icon: <ShapeIcon />,
+      function: () => router.push('/dapps'),
+      url: '/dapps',
+      isNew: true,
+    },
     // {
     //   content: 'Zapps',
     //   icon: <BoltIcon />,
@@ -186,20 +194,18 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
       }}
       borderRight="1px solid #383838"
     >
-      <Box
-        display="flex"
-        flexDirection="column"
-        paddingX="10px"
-        paddingY="20px"
-        gap="15px"
-      >
+      <Box display="flex" flexDirection="column" padding="10px" gap="10px">
         {naviButtons.map((item, index) => {
           return (
             <Box
               display="flex"
-              padding="10px"
+              padding="8px 10px"
               alignItems="center"
-              sx={{ cursor: 'pointer', '&:hover': { bgcolor: '#383838' } }}
+              sx={{
+                cursor: 'pointer',
+                '&:hover': { bgcolor: '#383838' },
+                opacity: pathname === item.url ? 1 : 0.7,
+              }}
               bgcolor={pathname === item.url ? '#383838' : 'transparent'}
               gap="10px"
               borderRadius="10px"
@@ -210,6 +216,21 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
               {selected !== 'Space Details' && (
                 <Typography color="white" variant="bodyMB">
                   {item.content}
+                </Typography>
+              )}
+              {item.isNew && (
+                <Typography
+                  sx={{
+                    borderRadius: '4px',
+                    backgroundColor: 'rgba(125, 255, 209, 0.10)',
+                    padding: '2px 4px',
+                    fontSize: '12px',
+                    color: '#7dffd1',
+                    fontWeight: 600,
+                    lineHeight: 1.4,
+                  }}
+                >
+                  New!
                 </Typography>
               )}
             </Box>
@@ -327,7 +348,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
         flexDirection="column"
         sx={{
           marginX: '10px',
-          padding: '20px 0',
+          padding: '10px 0',
         }}
       >
         <Box
@@ -414,10 +435,11 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
             width: '100%',
             height: '32px',
             border: '1px solid rgba(255, 255, 255, 0.1)',
-            fontSize: '14px',
+            fontSize: '13px !important',
             color: '#fff',
-            fontWeight: 700,
-            marginTop: '30px',
+            marginTop: '10px',
+            fontWeight: 400,
+            backgroundColor: 'transparent',
           }}
           onClick={() =>
             window.open(

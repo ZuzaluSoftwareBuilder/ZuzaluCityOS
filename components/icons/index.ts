@@ -103,6 +103,7 @@ import { TrashcanIcon } from './Trashcan';
 import TwitterIcon from './Twitter';
 import WhatsappIcon from './Whatsapp';
 import ChainIcon from './Chain';
+import { ShapeIcon } from './Shape';
 export {
   HomeIcon,
   SearchIcon,
@@ -209,4 +210,5 @@ export {
   TrashcanIcon,
   TwitterIcon,
   WhatsappIcon,
+  ShapeIcon,
 };
