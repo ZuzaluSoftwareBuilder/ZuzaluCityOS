@@ -80,7 +80,7 @@ export default function List() {
               width: '16px',
               height: '16px',
               opacity: filter.includes('Dapps') ? 1 : 0,
-              transition: 'all 0.3s linear',
+              transition: 'all 0.1s linear',
               left: '8px',
             }}
           >
