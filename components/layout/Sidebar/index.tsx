@@ -248,11 +248,12 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
           padding: '20px 0 10px',
           flex: 1,
           flexDirection: isAuthenticated ? 'column' : 'column-reverse',
+          justifyContent: 'space-between',
         }}
       >
         {isAuthenticated ? (
           <>
-            <Typography fontSize={10} color="rgba(255, 255, 255, 0.7)">
+            <Typography fontSize={10} color="rgba(255, 255, 255, 0.7)" pl="6px">
               YOUR RSVP&apos;D EVENTS
             </Typography>
             <Box
@@ -307,7 +308,12 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
                           alt={event.title}
                           width={20}
                           height={20}
-                          style={{ objectFit: 'cover', borderRadius: '2px' }}
+                          style={{
+                            objectFit: 'cover',
+                            borderRadius: '2px',
+                            height: '20px',
+                            width: '20px',
+                          }}
                         />
                         <Typography color="white" variant="bodyM" noWrap>
                           {event.title}
@@ -331,7 +337,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
             )
           }
         >
-          <Typography fontSize={10} color="rgba(255, 255, 255, 0.7)">
+          <Typography fontSize={12} color="rgba(255, 255, 255, 0.7)">
             Zuzalu.city is open source
           </Typography>
           <Image
