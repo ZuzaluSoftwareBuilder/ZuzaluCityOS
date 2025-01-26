@@ -1,8 +1,15 @@
 import { CloseIcon, SearchIcon } from '@/components/icons';
-import { Box, InputAdornment, OutlinedInput, Typography } from '@mui/material';
+import {
+  Box,
+  InputAdornment,
+  OutlinedInput,
+  Typography,
+  Grid,
+} from '@mui/material';
 
 import { Stack } from '@mui/material';
 import { useState } from 'react';
+import { Item } from '.';
 
 // 在组件顶部添加类型定义
 type FilterType = 'Dapps' | 'NFTs' | 'DeFi'; // 示例过滤器类型，可根据实际需求扩展
@@ -98,7 +105,23 @@ export default function List() {
           </Typography>
         </Box>
       </Stack>
-      <Stack direction="column" flex={1}></Stack>
+      <Grid
+        container
+        spacing="20px"
+        flex={1}
+        sx={{
+          '& .MuiGrid-item': {
+            width: '100%',
+            maxWidth: '100%',
+          },
+        }}
+      >
+        {Array.from({ length: 10 }).map((_, index) => (
+          <Grid item xl={3} lg={4} md={6} sm={12} xs={24} key={index}>
+            <Item />
+          </Grid>
+        ))}
+      </Grid>
     </Stack>
   );
 }
