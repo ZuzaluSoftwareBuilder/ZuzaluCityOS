@@ -33,7 +33,7 @@ function RootLayout({
   children: React.ReactNode;
 }>) {
   const [isClient, setIsClient] = useState(false);
-  // const [show, setShow] = useState(true);
+  const [show, setShow] = useState(true);
 
   useEffect(() => {
     setIsClient(true);
@@ -63,15 +63,15 @@ function RootLayout({
                             <Header />
                             {isClient && <AuthPrompt />}
                             <GlobalDialog />
-                            {/* {isClient && (
-                        <Dialog
-                          title="Upgrading Ceramic Node"
-                          message="We are currently upgrading our Ceramic node. Some data may be temporarily unavailable or inconsistent. We apologize for any inconvenience."
-                          showModal={show}
-                          onClose={() => setShow(false)}
-                          onConfirm={() => setShow(false)}
-                        />
-                      )} */}
+                            {isClient && (
+                              <Dialog
+                                title="Upgrading Ceramic Node"
+                                message="We are currently upgrading our Ceramic node. Some data may be temporarily unavailable or inconsistent. We apologize for any inconvenience."
+                                showModal={show}
+                                onClose={() => setShow(false)}
+                                onConfirm={() => setShow(false)}
+                              />
+                            )}
                             <div style={{ minHeight: `calc(100vh - 50px)` }}>
                               {children}
                             </div>
