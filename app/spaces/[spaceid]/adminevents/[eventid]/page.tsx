@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Box, Stack, useMediaQuery } from '@mui/material';
 
-import { Ticket, Overview, Venue, Announcements } from './Tabs';
+import { Ticket, Overview, Venue, Announcements, Apps } from './Tabs';
 import { Tabbar, Navbar } from 'components/layout';
 import { useParams, useRouter } from 'next/navigation';
 import { useCeramicContext } from '@/context/CeramicContext';
@@ -192,6 +192,8 @@ const EventContent: React.FC = () => {
         return <Sessions />;*/
       case 'Venue':
         return <Venue event={event} />;
+      case 'Apps':
+        return <Apps event={event} />;
       default:
         return <Overview setTabName={setTabName} />;
     }

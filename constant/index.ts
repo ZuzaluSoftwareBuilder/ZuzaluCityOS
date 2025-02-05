@@ -222,3 +222,83 @@ export const prodShowSpaceId = [
   'kjzl6kcym7w8y8uao2darzcxz2fxxvpsni6eezxjaz5f7trqxktfjln9pnbqeen',
   'kjzl6kcym7w8yahrne2e6t8drh7g6vvplzbd6gv6yfe8hb2mz4790lgmgx12mbw',
 ];
+export const apps = [
+  {
+    name: 'Zuland',
+    image: '/zuland-logo.svg',
+    description:
+      "A private, token-gated, decentralized social network built by AKASHA core and Builders' Garden where only users with specific credentials can read and write content, enhances Zuzalu.city with a social feed function. It focuses on a commenting system and feed that can be integrated into other projects using Ceramic's ComposeDB and Web3 storage.",
+  },
+  {
+    name: 'ECF Pensieve',
+    image: '/ecf-pensieve-logo.jpg',
+    description:
+      'A cutting-edge mechanism designed for community intelligence and coordination. By redefining how communities connect, this tool enables decentralized social consensus and builds a collaborative knowledge base, paving the way for stronger, more cohesive decentralized ecosystems.',
+  },
+  {
+    name: 'Scrollpass',
+    image: '/scroll-logo.png',
+    description:
+      'A decentralized and private event ticketing solution, involving storing NFT tickets on the Scroll blockchain and using zk-proofing for anonymous ticket ownership verification.',
+  },
+  {
+    name: 'LottoPGF',
+    image: '/lottopgf-logo.png',
+    description:
+      'A protocol designed to launch permissionless lotteries to fund public goods. The protocol aims to address issues of manipulation, inefficiency, and lack of transparency in traditional lotteries by using verifiable randomness secured by Ethereum.',
+  },
+  {
+    name: 'Trustful',
+    image: '/trustful-logo.svg',
+    description:
+      "Trustful by Blockful is a cross-community reputation aggregator based on the concepts of Valocracy and Trust Networks. It's an open-source software that enables users to import reputation badges from other systems or create new ones.",
+  },
+  {
+    name: 'Zu.Coffee',
+    image: '/zucoffee-logo.svg',
+    description:
+      'A Web3 e-commerce platform enables decentralized shopping experiences and quick integration capabilities for community marketplaces.',
+  },
+  {
+    name: 'Community Graphs',
+    image: '/community-graphs-logo.svg',
+    description:
+      'A social media OS, built by maitri.network enhancing social graphs and providing an interoperability layer for apps to share network effects while competing uniquely.',
+  },
+  {
+    name: 'Lemonade',
+    image: '/lemonade-logo.jpg',
+    description:
+      'Lemonade is a community-owned platform designed for on-chain human coordination, focusing on events, real estate management for co-working and co-living, and rewards and data ownership.',
+  },
+  {
+    name: 'Social Layer',
+    image: '/sociallayer-logo.webp',
+    description:
+      'A turnkey framework and infrastructure for the design, scale and sustainability of Pop-up communities and cities.',
+  },
+  {
+    name: 'Ceramic',
+    image: '/ceramic.png',
+    description:
+      'Ceramic is a database management system designed to synchronize data across multiple nodes in a peer-to-peer manner. This system allows nodes to only synchronize the data they care about.',
+  },
+  {
+    name: 'Status.im',
+    image: '/status-logo.webp',
+    description:
+      'A comprehensive tool combining a secure crypto wallet, messaging, and community features, all designed with privacy at its core. It ensures strong privacy through end-to-end encryption (E2EE) for both direct messages and group chats.',
+  },
+  {
+    name: 'CarbonVote',
+    image: '/carbonvote-logo.webp',
+    description:
+      'A decentralized governance tool designed to empower communities by enabling transparent, trustless decision-making processes. It focuses on leveraging token-based voting mechanisms.',
+  },
+  {
+    name: 'ZuPass',
+    image: '/zupass-logo.svg',
+    description:
+      'Zupass is a webapp delivering digital identity and community management through zero-knowledge proofs, aiming to revolutionize data privacy and user control in decentralized networks.',
+  },
+];

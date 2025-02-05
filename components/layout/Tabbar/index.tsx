@@ -29,6 +29,7 @@ const Tabbar: React.FC<TabbarProps> = ({ tabName, setTabName, event }) => {
       { name: 'Announcements', label: 'Announcements' },
       { name: 'Venue', label: 'Venue' },
       { name: 'Attendees', label: 'Attendees' },
+      { name: 'Apps', label: 'Apps' },
     ],
     [event?.regAndAccess?.edges?.length],
   );
