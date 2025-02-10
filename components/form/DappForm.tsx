@@ -4,10 +4,9 @@ import {
   MenuItem,
   Select,
   Stack,
-  Switch,
   Typography,
 } from '@mui/material';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback } from 'react';
 import FormHeader from './FormHeader';
 import {
   FormLabel,
@@ -44,16 +43,18 @@ const schema = Yup.object().shape({
   appName: Yup.string().required('App name is required'),
   developerName: Yup.string().required('Developer name is required'),
   description: Yup.string(),
-  bannerUrl: Yup.string(),
+  bannerUrl: Yup.string().required('Banner URL is required'),
   categories: Yup.array(Yup.string().required('Category is required')).min(
     1,
     'At least one category is required',
   ),
   developmentStatus: Yup.string().required('Development status is required'),
   openSource: Yup.boolean(),
-  repositoryUrl: Yup.string().when('openSource', (openSource, schema) =>
-    openSource ? schema.url().required('Repository URL is required') : schema,
-  ),
+  repositoryUrl: Yup.string().when('openSource', (v, schema) => {
+    const openSource = v?.[0];
+    if (!openSource) return schema;
+    return schema.url().required('Repository URL is required');
+  }),
   appUrl: Yup.string().url(),
   websiteUrl: Yup.string().url(),
   docsUrl: Yup.string().url(),
@@ -79,15 +80,14 @@ const DappForm: React.FC<DappFormProps> = ({
     watch,
   } = useForm<FormData>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      categories: [],
+    },
   });
 
-  const openSource = watch('openSource');
+  console.log(errors);
 
-  useEffect(() => {
-    if (initialData?.description) {
-      descriptionEditorStore.setValue(initialData.description);
-    }
-  }, [initialData]);
+  const openSource = watch('openSource');
 
   const resetForm = useCallback(() => {
     reset();
@@ -128,11 +128,6 @@ const DappForm: React.FC<DappFormProps> = ({
   const onFormError = useCallback(() => {
     window.alert('Please input all necessary fields.');
   }, []);
-
-  const initialTags = useMemo(() => {
-    if (!initialData) return [];
-    return POST_TAGS.filter((item) => initialData?.tags.includes(item.value));
-  }, [initialData]);
 
   return (
     <Box>
@@ -202,7 +197,7 @@ const DappForm: React.FC<DappFormProps> = ({
             )}
           </Stack>
           <Stack spacing="10px">
-            <FormLabel>App Banner Image</FormLabel>
+            <FormLabel>App Banner Image*</FormLabel>
             <FormLabelDesc>
               Recommend 620 x 220. Upload PNG, GIF or JPEG
             </FormLabelDesc>
@@ -220,6 +215,9 @@ const DappForm: React.FC<DappFormProps> = ({
                 />
               )}
             />
+            {errors?.bannerUrl && (
+              <FormHelperText error>{errors?.bannerUrl.message}</FormHelperText>
+            )}
           </Stack>
           <Stack spacing="10px">
             <Stack spacing="10px">
@@ -234,10 +232,10 @@ const DappForm: React.FC<DappFormProps> = ({
                 name="categories"
                 render={({ field }) => (
                   <SelectCategories
+                    {...field}
                     onChange={(value) => {
                       setValue('categories', value);
                     }}
-                    initialValues={initialTags}
                     options={POST_TAGS}
                   />
                 )}
