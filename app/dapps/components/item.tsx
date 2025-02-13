@@ -4,7 +4,6 @@ export default function Item() {
   return (
     <Stack
       p="10px"
-      height="100%"
       borderRadius="10px"
       boxSizing="border-box"
       border="1px solid transparent"
@@ -15,7 +14,7 @@ export default function Item() {
           bgcolor: 'rgba(255, 255, 255, 0.05)',
         },
       }}
-      gap="8px"
+      gap="10px"
       justifyContent="space-between"
     >
       <Stack direction="column" gap="10px">
@@ -26,40 +25,43 @@ export default function Item() {
           style={{
             border: '1px solid rgba(255, 255, 255, 0.10)',
             borderRadius: '10px',
+            aspectRatio: '620/280',
           }}
         />
-        <Typography
-          sx={{
-            color: '#fff',
-            fontSize: '16px',
-            fontWeight: 700,
-            lineHeight: 1.2,
-          }}
-        >
-          Trustful Reputation
-        </Typography>
-        <Typography
-          sx={{
-            color: '#fff',
-            fontSize: '13px',
-            lineHeight: 1.4,
-            opacity: 0.8,
-          }}
-        >
-          A private, token-gated, decentralized social network built by AKASHA
-          core
-        </Typography>
+        <Stack direction="column" gap="5px">
+          <Typography
+            sx={{
+              color: '#fff',
+              fontSize: '18px',
+              fontWeight: 700,
+              lineHeight: 1.4,
+            }}
+          >
+            Trustful Reputation
+          </Typography>
+          <Typography
+            sx={{
+              color: '#fff',
+              fontSize: '13px',
+              lineHeight: 1.4,
+              opacity: 0.8,
+            }}
+          >
+            A private, token-gated, decentralized social network built by AKASHA
+            core
+          </Typography>
+        </Stack>
       </Stack>
       <Stack direction="column" gap="10px">
         <Stack direction="row">
           <Typography
-            p="2px 4px"
+            p="3px 6px"
             borderRadius="4px"
-            bgcolor="rgba(255, 255, 255, 0.05)"
+            bgcolor="rgba(255, 255, 255, 0.1)"
             fontSize={10}
             lineHeight={1.2}
             color="#fff"
-            sx={{ opacity: 0.8 }}
+            borderRight="4px"
           >
             Developer:
           </Typography>

@@ -199,7 +199,7 @@ const DappForm: React.FC<DappFormProps> = ({
           <Stack spacing="10px">
             <FormLabel>App Banner Image*</FormLabel>
             <FormLabelDesc>
-              Recommend 620 x 220. Upload PNG, GIF or JPEG
+              Recommend 620 x 280. Upload PNG, GIF or JPEG
             </FormLabelDesc>
             <Controller
               name="bannerUrl"
@@ -207,7 +207,7 @@ const DappForm: React.FC<DappFormProps> = ({
               render={({ field }) => (
                 <FormUploader
                   previewStyle={{
-                    aspectRatio: '620/220',
+                    aspectRatio: '620/280',
                     width: '100%',
                     height: 'auto',
                   }}

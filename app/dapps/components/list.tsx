@@ -55,7 +55,7 @@ export default function List() {
         }}
       >
         {Array.from({ length: 10 }).map((_, index) => (
-          <Grid item xl={3} lg={4} md={6} sm={12} xs={24} key={index}>
+          <Grid item xl={3} lg={4} md={6} sm={12} xs={24} gap={20} key={index}>
             <Item />
           </Grid>
         ))}
