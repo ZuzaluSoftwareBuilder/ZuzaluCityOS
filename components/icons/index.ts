@@ -107,7 +107,7 @@ import { ShapeIcon } from './Shape';
 import { DIcon } from './D';
 import { GlobalIcon } from './Global';
 import { CubeIcon } from './Cube';
-
+import { BroadcastIcon } from './Broadcast';
 export {
   HomeIcon,
   SearchIcon,
@@ -218,4 +218,5 @@ export {
   DIcon,
   GlobalIcon,
   CubeIcon,
+  BroadcastIcon,
 };
