@@ -1,5 +1,11 @@
 import { BroadcastIcon, SearchIcon } from '@/components/icons';
-import { InputAdornment, OutlinedInput, Grid } from '@mui/material';
+import {
+  InputAdornment,
+  OutlinedInput,
+  Grid,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
 
 import { Stack } from '@mui/material';
 import { useState, useCallback } from 'react';
@@ -7,6 +13,9 @@ import { Item } from '.';
 import Filter from './filter';
 
 export default function List() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const [filterData, setFilterData] = useState<string[]>([
     'Dapps',
     'NFTs',
@@ -15,9 +24,14 @@ export default function List() {
   const [filter, setFilter] = useState<string[]>([]);
 
   return (
-    <Stack direction="column" flex={1} p="20px" gap="20px">
+    <Stack
+      direction="column"
+      flex={1}
+      p={isMobile ? '20px 10px' : '20px'}
+      gap="20px"
+    >
       <Stack direction="row" gap="8px" alignItems="center">
-        <BroadcastIcon />
+        {!isMobile && <BroadcastIcon />}
         <OutlinedInput
           placeholder="Search dApps"
           sx={{

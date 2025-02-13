@@ -7,18 +7,21 @@ interface FilterProps {
   onFilterChange: (filter: string[]) => void;
 }
 
-export default function Filter({
-  filterData,
-  onFilterChange,
-}: FilterProps) {
+export default function Filter({ filterData, onFilterChange }: FilterProps) {
   const [filter, setFilter] = useState<string[]>([]);
 
-  const toggleFilter = useCallback((type: string) => {
-    setFilter((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
-    );
-    onFilterChange(filter);
-  }, [filter, onFilterChange]);
+  const toggleFilter = useCallback(
+    (type: string) => {
+      setFilter((prev) => {
+        const newFilter = prev.includes(type)
+          ? prev.filter((t) => t !== type)
+          : [...prev, type];
+        onFilterChange(newFilter);
+        return newFilter;
+      });
+    },
+    [onFilterChange],
+  );
 
   const resetFilter = useCallback(() => {
     setFilter([]);
@@ -26,7 +29,7 @@ export default function Filter({
   }, [onFilterChange]);
 
   return (
-    <Stack direction="row" gap="10px">
+    <Stack direction={{ xs: 'row' }} gap="10px" flexWrap="wrap">
       <Box
         display="flex"
         alignItems="center"
@@ -37,6 +40,9 @@ export default function Filter({
           borderRadius: '6px',
           border: '1px solid #fff',
           cursor: 'pointer',
+          '&:hover': {
+            opacity: 1,
+          },
         }}
         onClick={resetFilter}
       >
