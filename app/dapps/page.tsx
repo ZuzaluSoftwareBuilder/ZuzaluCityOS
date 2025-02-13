@@ -22,7 +22,7 @@ export default function DappsPage() {
     <Stack direction="row" sx={{ backgroundColor: '#222222' }}>
       {!isTablet && <Sidebar selected="dapps" />}
       <Stack direction="column" flex={1} width="100%">
-        <Header />
+        <Header onAdd={toggleDrawer} />
         <Nav />
         <List />
         <Drawer open={open} onClose={toggleDrawer} onOpen={toggleDrawer}>

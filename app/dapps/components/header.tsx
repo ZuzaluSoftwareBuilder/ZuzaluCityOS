@@ -2,8 +2,6 @@ import { Stack, Typography, useTheme, useMediaQuery } from '@mui/material';
 import { PlusCircleIcon, DIcon } from '@/components/icons';
 import { ZuButton } from '@/components/core';
 import Image from 'next/image';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useQuery } from '@tanstack/react-query';
 
 const AddButton = ({
   isMobile,
@@ -19,7 +17,7 @@ const AddButton = ({
         backgroundColor: '#222',
         p: '8px 14px',
         fontSize: '16px',
-        width: isMobile ? '100%' : 'auto',
+        width: isMobile ? '100%' : 'fit-content',
         margin: isMobile ? '10px 0 0' : 0,
         zIndex: 2,
       }}
@@ -31,37 +29,9 @@ const AddButton = ({
   );
 };
 
-export default function Header() {
-  const { isAuthenticated, composeClient } = useCeramicContext();
+export default function Header({ onAdd }: { onAdd: () => void }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const { data, isLoading } = useQuery({
-    queryKey: ['zucitySpaceIndex', isAuthenticated],
-    enabled: isAuthenticated,
-    queryFn: async () => {
-      try {
-        const response: any = await composeClient.executeQuery(`
-      query {
-        zucitySpaceIndex(first: 100) {
-          edges {
-            node {
-              id
-            }
-          }
-        } 
-      }
-    `);
-        if (response && response.data && 'zucitySpaceIndex' in response.data) {
-          return response.data.zucitySpaceIndex.edges.length > 0;
-        } else {
-          console.error('Invalid data structure:', response.data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch events:', error);
-      }
-    },
-  });
 
   return (
     <Stack
@@ -151,10 +121,10 @@ export default function Header() {
           >
             Zuzalu tools for Communities, Events & More
           </Typography>
-          {!isMobile && <AddButton isMobile={isMobile} onClick={() => {}} />}
+          {!isMobile && <AddButton isMobile={isMobile} onClick={onAdd} />}
         </Stack>
       </Stack>
-      {isMobile && <AddButton isMobile={isMobile} onClick={() => {}} />}
+      {isMobile && <AddButton isMobile={isMobile} onClick={onAdd} />}
     </Stack>
   );
 }
