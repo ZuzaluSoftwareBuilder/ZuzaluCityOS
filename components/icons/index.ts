@@ -108,6 +108,7 @@ import { DIcon } from './D';
 import { GlobalIcon } from './Global';
 import { CubeIcon } from './Cube';
 import { BroadcastIcon } from './Broadcast';
+import { ArrowsCounterClockwiseIcon } from './ArrowsCounterClockwise';
 export {
   HomeIcon,
   SearchIcon,
@@ -219,4 +220,5 @@ export {
   GlobalIcon,
   CubeIcon,
   BroadcastIcon,
+  ArrowsCounterClockwiseIcon,
 };

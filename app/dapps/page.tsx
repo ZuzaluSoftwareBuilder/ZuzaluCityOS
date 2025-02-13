@@ -12,7 +12,7 @@ import Nav from './components/nav';
 export default function DappsPage() {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const toggleDrawer = useCallback(() => {
     setOpen((v) => !v);

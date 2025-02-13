@@ -1,26 +1,18 @@
-import { BroadcastIcon, CloseIcon, SearchIcon } from '@/components/icons';
-import {
-  Box,
-  InputAdornment,
-  OutlinedInput,
-  Typography,
-  Grid,
-} from '@mui/material';
+import { BroadcastIcon, SearchIcon } from '@/components/icons';
+import { InputAdornment, OutlinedInput, Grid } from '@mui/material';
 
 import { Stack } from '@mui/material';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Item } from '.';
-
-type FilterType = 'Dapps' | 'NFTs' | 'DeFi';
+import Filter from './filter';
 
 export default function List() {
-  const [filter, setFilter] = useState<FilterType[]>([]);
-
-  const toggleFilter = (type: FilterType) => {
-    setFilter((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
-    );
-  };
+  const [filterData, setFilterData] = useState<string[]>([
+    'Dapps',
+    'NFTs',
+    'DeFi',
+  ]);
+  const [filter, setFilter] = useState<string[]>([]);
 
   return (
     <Stack direction="column" flex={1} p="20px" gap="20px">
@@ -50,61 +42,7 @@ export default function List() {
           }
         />
       </Stack>
-      <Stack direction="row" gap="10px">
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          onClick={() => toggleFilter('Dapps')}
-          sx={{
-            p: '4px 8px',
-            borderRadius: '6px',
-            border: '1px solid',
-            backgroundColor: filter.includes('Dapps')
-              ? 'rgba(255, 255, 255, 0.20)'
-              : 'rgba(255, 255, 255, 0.05)',
-            borderColor: filter.includes('Dapps')
-              ? 'rgba(255, 255, 255, 0.40)'
-              : 'rgba(255, 255, 255, 0.10)',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            position: 'relative',
-            '&:hover': {
-              backgroundColor: 'rgba(255, 255, 255, 0.08)',
-            },
-            '& svg': {
-              opacity: 0.5,
-            },
-            '&:hover svg': {
-              opacity: 1,
-            },
-            pl: filter.includes('Dapps') ? '29px' : '8px',
-          }}
-        >
-          <Box
-            sx={{
-              position: 'absolute',
-              width: '16px',
-              height: '16px',
-              opacity: filter.includes('Dapps') ? 1 : 0,
-              transition: 'all 0.1s linear',
-              left: '8px',
-            }}
-          >
-            <CloseIcon size={4} />
-          </Box>
-          <Typography
-            fontSize={14}
-            lineHeight={1.6}
-            color="white"
-            sx={{
-              opacity: 0.8,
-            }}
-          >
-            Dapps
-          </Typography>
-        </Box>
-      </Stack>
+      <Filter filterData={filterData} onFilterChange={setFilter} />
       <Grid
         container
         spacing="20px"
