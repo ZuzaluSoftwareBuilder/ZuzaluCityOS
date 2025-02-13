@@ -11,6 +11,7 @@ const NavButton = styled(Button)(
     fontWeight: 600,
     lineHeight: 1.4,
     opacity: 0.34,
+    whiteSpace: 'nowrap',
     ...(isDisabled && {
       cursor: 'not-allowed',
     }),
@@ -84,32 +85,52 @@ export default function Nav() {
   return (
     <Stack
       direction="row"
-      spacing={2}
       position="relative"
       sx={{
         borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
         p: '0 10px',
         bgcolor: 'rgba(34, 34, 34, 0.80)',
+        width: '100%',
+        maxWidth: '100%',
       }}
     >
-      {navItems.map((item) => (
-        <NavButton
-          key={item.label}
-          className={activeTab === item.label ? 'active' : ''}
-          startIcon={item.icon}
-          onClick={(e) => handleTabClick(e, item)}
-          disableRipple
-          isDisabled={!!item.isComingSoon}
-        >
-          {item.label}
-          {item.isComingSoon && (
-            <Typography fontSize={13} fontWeight={400} ml="10px">
-              (Coming Soon)
-            </Typography>
-          )}
-        </NavButton>
-      ))}
-      <Indicator sx={indicatorStyle} />
+      <Stack
+        direction="row"
+        position="relative"
+        sx={{
+          width: '100%',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+          msOverflowStyle: 'none',
+        }}
+      >
+        {navItems.map((item) => (
+          <NavButton
+            key={item.label}
+            className={activeTab === item.label ? 'active' : ''}
+            startIcon={item.icon}
+            onClick={(e) => handleTabClick(e, item)}
+            disableRipple
+            isDisabled={!!item.isComingSoon}
+          >
+            {item.label}
+            {item.isComingSoon && (
+              <Typography
+                fontSize={13}
+                fontWeight={400}
+                ml="10px"
+                sx={{ whiteSpace: 'nowrap' }}
+              >
+                (Coming Soon)
+              </Typography>
+            )}
+          </NavButton>
+        ))}
+        <Indicator sx={indicatorStyle} />
+      </Stack>
     </Stack>
   );
 }

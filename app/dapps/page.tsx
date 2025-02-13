@@ -21,7 +21,7 @@ export default function DappsPage() {
   return (
     <Stack direction="row" sx={{ backgroundColor: '#222222' }}>
       {!isTablet && <Sidebar selected="dapps" />}
-      <Stack direction="column" flex={1}>
+      <Stack direction="column" flex={1} width="100%">
         <Header />
         <Nav />
         <List />
