@@ -7,6 +7,7 @@ import { Header, List } from './components';
 import { useCallback, useState } from 'react';
 import Drawer from '@/components/drawer';
 import DappForm from '@/components/form/DappForm';
+import Nav from './components/nav';
 
 export default function DappsPage() {
   const theme = useTheme();
@@ -22,6 +23,7 @@ export default function DappsPage() {
       {!isTablet && <Sidebar selected="dapps" />}
       <Stack direction="column" flex={1}>
         <Header />
+        <Nav />
         <List />
         <Drawer open={open} onClose={toggleDrawer} onOpen={toggleDrawer}>
           <DappForm handleClose={toggleDrawer} refetch={() => toggleDrawer()} />

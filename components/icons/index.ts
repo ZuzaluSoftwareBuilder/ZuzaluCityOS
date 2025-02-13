@@ -104,6 +104,10 @@ import TwitterIcon from './Twitter';
 import WhatsappIcon from './Whatsapp';
 import ChainIcon from './Chain';
 import { ShapeIcon } from './Shape';
+import { DIcon } from './D';
+import { GlobalIcon } from './Global';
+import { CubeIcon } from './Cube';
+
 export {
   HomeIcon,
   SearchIcon,
@@ -211,4 +215,7 @@ export {
   TwitterIcon,
   WhatsappIcon,
   ShapeIcon,
+  DIcon,
+  GlobalIcon,
+  CubeIcon,
 };

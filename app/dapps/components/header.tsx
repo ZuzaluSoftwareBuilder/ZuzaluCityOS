@@ -1,19 +1,34 @@
 import { Stack, Typography } from '@mui/material';
-import { PlusCircleIcon } from '@/components/icons';
+import { PlusCircleIcon, DIcon } from '@/components/icons';
 import { ZuButton } from '@/components/core';
 import Image from 'next/image';
+
 export default function Header() {
   return (
     <Stack
       sx={{
-        background: 'url(/dapps/dappsHeader.png) no-repeat center center',
-        backgroundSize: 'cover',
         width: '100%',
         height: '222px',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.10)',
+        position: 'relative',
+        pt: '20px',
+        background: 'linear-gradient(272deg, #222 2.52%, #2C2C2C 107.14%)',
       }}
     >
-      <Stack direction="row" p="45px 0 0 25px" gap="20px">
+      <Image
+        src="/dapps/header.png"
+        alt="header"
+        width={220}
+        height={200}
+        style={{
+          width: '220px',
+          height: '200px',
+          position: 'absolute',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+        }}
+      />
+      <Stack direction="row" p="25px 0 0 25px" gap="20px">
         <Image
           src="/dapps/shapes.png"
           alt="shapes"
@@ -22,16 +37,19 @@ export default function Header() {
           style={{ width: '80px', height: '80px' }}
         />
         <Stack direction="column" gap="10px">
-          <Typography
-            sx={{
-              color: '#fff',
-              fontSize: '40px',
-              fontWeight: 800,
-              lineHeight: 1.2,
-            }}
-          >
-            dApps
-          </Typography>
+          <Stack direction="row" alignItems="center">
+            <DIcon />
+            <Typography
+              sx={{
+                color: '#fff',
+                fontSize: '40px',
+                fontWeight: 800,
+                lineHeight: 1.2,
+              }}
+            >
+              Apps
+            </Typography>
+          </Stack>
           <Typography
             sx={{
               color: '#fff',
