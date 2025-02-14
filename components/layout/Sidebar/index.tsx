@@ -1,7 +1,7 @@
 'use client';
 import * as React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Box, Skeleton, Typography } from '@mui/material';
+import { Box, Skeleton, Stack, Typography } from '@mui/material';
 import {
   EventIcon,
   SpaceIcon,
@@ -122,12 +122,14 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
       icon: <SpaceIcon />,
       function: () => router.push('/spaces'),
       url: '/spaces',
+      version: 'V0.5',
     },
     {
       content: 'Events',
       icon: <EventIcon />,
       function: () => router.push('/events'),
       url: '/events',
+      version: 'V0.5',
     },
     {
       content: 'dApps',
@@ -135,6 +137,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
       function: () => router.push('/dapps'),
       url: '/dapps',
       isNew: true,
+      version: 'V0.1',
     },
     // {
     //   content: 'Zapps',
@@ -209,28 +212,41 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
               bgcolor={pathname === item.url ? '#383838' : 'transparent'}
               gap="10px"
               borderRadius="10px"
+              justifyContent="space-between"
               onClick={item.function}
               key={index}
             >
-              {item.icon}
-              {selected !== 'Space Details' && (
-                <Typography color="white" variant="bodyMB">
-                  {item.content}
-                </Typography>
-              )}
-              {item.isNew && (
+              <Stack direction="row" alignItems="center" gap="10px">
+                {item.icon}
+                {selected !== 'Space Details' && (
+                  <Typography color="white" variant="bodyMB">
+                    {item.content}
+                  </Typography>
+                )}
+                {item.isNew && (
+                  <Typography
+                    sx={{
+                      borderRadius: '4px',
+                      backgroundColor: 'rgba(125, 255, 209, 0.10)',
+                      padding: '2px 4px',
+                      fontSize: '12px',
+                      color: '#7dffd1',
+                      fontWeight: 600,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    New!
+                  </Typography>
+                )}
+              </Stack>
+              {item.version && (
                 <Typography
-                  sx={{
-                    borderRadius: '4px',
-                    backgroundColor: 'rgba(125, 255, 209, 0.10)',
-                    padding: '2px 4px',
-                    fontSize: '12px',
-                    color: '#7dffd1',
-                    fontWeight: 600,
-                    lineHeight: 1.4,
-                  }}
+                  fontSize={10}
+                  lineHeight={1.2}
+                  sx={{ opacity: 0.5 }}
+                  color="#fff"
                 >
-                  New!
+                  {item.version}
                 </Typography>
               )}
             </Box>
