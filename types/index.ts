@@ -586,3 +586,17 @@ export const SOCIAL_TYPES = [
   { key: 'discord', value: 'Discord' },
   { key: 'ens', value: 'ENS' },
 ];
+
+export interface Dapp {
+  appName: string;
+  developerName: string;
+  description: string;
+  bannerUrl: string;
+  categories: string;
+  developmentStatus: string;
+  openSource: boolean;
+  repositoryUrl: string;
+  appUrl: string;
+  websiteUrl: string;
+  docsUrl: string;
+}

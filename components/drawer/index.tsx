@@ -32,7 +32,7 @@ const EventDrawer: React.FC<EventDrawerProps> = ({
       <Box
         sx={{
           width: '700px',
-          [breakpoints.down('sm')]: {
+          [breakpoints.down(700)]: {
             width: '100vw',
             borderLeft: 'none',
           },

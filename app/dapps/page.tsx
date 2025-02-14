@@ -11,7 +11,7 @@ import DappForm from '@/components/form/DappForm';
 const mockData = {
   appName: 'Mock Dapp',
   developerName: 'Mock Developer',
-  description: {
+  description: JSON.stringify({
     time: Date.now(),
     blocks: [
       {
@@ -23,9 +23,11 @@ const mockData = {
       },
     ],
     version: '2.27.2',
-  },
-  bannerUrl: 'https://example.com/mock-banner.jpg',
-  categories: ['DeFi', 'Gaming'],
+  }),
+  bannerUrl:
+    'https://images.wsj.net/im-43460061?width=608&height=405&pixel_ratio=2',
+  categories:
+    'Defi,Gaming,Defi,Gaming,Defi,Gaming,Defi,Gaming,Defi,Gaming,Defi,GamingDefi,Gaming,Defi,Gaming,Defi,Gaming',
   developmentStatus: '1',
   openSource: true,
   repositoryUrl: 'https://github.com/mock/repository',
@@ -61,7 +63,7 @@ export default function DappsPage() {
           <DappForm handleClose={toggleForm} refetch={() => toggleForm()} />
         </Drawer>
         <Drawer open={openDetail} onClose={toggleDetail} onOpen={toggleDetail}>
-          <DappDetail handleClose={toggleDetail} />
+          <DappDetail handleClose={toggleDetail} data={mockData} />
         </Drawer>
       </Stack>
     </Stack>

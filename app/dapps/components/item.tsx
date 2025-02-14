@@ -58,7 +58,7 @@ export default function Item({ onClick }: ItemProps) {
         </Stack>
       </Stack>
       <Stack direction="column" gap="10px">
-        <Stack direction="row">
+        <Stack direction="row" gap="5px">
           <Typography
             p="3px 6px"
             borderRadius="4px"
@@ -66,9 +66,8 @@ export default function Item({ onClick }: ItemProps) {
             fontSize={10}
             lineHeight={1.2}
             color="#fff"
-            borderRight="4px"
           >
-            Developer:
+            Developer
           </Typography>
         </Stack>
         <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.10)' }} />
