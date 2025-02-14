@@ -12,7 +12,11 @@ import { useState, useCallback } from 'react';
 import { Item } from '.';
 import Filter from './filter';
 
-export default function List() {
+interface ListProps {
+  onDetailClick: () => void;
+}
+
+export default function List({ onDetailClick }: ListProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -70,7 +74,7 @@ export default function List() {
       >
         {Array.from({ length: 10 }).map((_, index) => (
           <Grid item xl={3} lg={4} md={6} sm={12} xs={24} gap={20} key={index}>
-            <Item />
+            <Item onClick={onDetailClick} />
           </Grid>
         ))}
       </Grid>

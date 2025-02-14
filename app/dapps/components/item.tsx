@@ -1,6 +1,10 @@
 import { Divider, Stack, Typography } from '@mui/material';
 
-export default function Item() {
+interface ItemProps {
+  onClick: () => void;
+}
+
+export default function Item({ onClick }: ItemProps) {
   return (
     <Stack
       p="10px"
@@ -16,6 +20,7 @@ export default function Item() {
       }}
       gap="10px"
       justifyContent="space-between"
+      onClick={onClick}
     >
       <Stack direction="column" gap="10px">
         <img

@@ -109,6 +109,8 @@ import { GlobalIcon } from './Global';
 import { CubeIcon } from './Cube';
 import { BroadcastIcon } from './Broadcast';
 import { ArrowsCounterClockwiseIcon } from './ArrowsCounterClockwise';
+import { GlobeAltIcon } from './GlobeAlt';
+import { WindowIcon } from './Window';
 export {
   HomeIcon,
   SearchIcon,
@@ -221,4 +223,6 @@ export {
   CubeIcon,
   BroadcastIcon,
   ArrowsCounterClockwiseIcon,
+  GlobeAltIcon,
+  WindowIcon,
 };
