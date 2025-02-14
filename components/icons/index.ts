@@ -111,6 +111,7 @@ import { BroadcastIcon } from './Broadcast';
 import { ArrowsCounterClockwiseIcon } from './ArrowsCounterClockwise';
 import { GlobeAltIcon } from './GlobeAlt';
 import { WindowIcon } from './Window';
+import { HourglassHighIcon } from './HourglassHigh';
 export {
   HomeIcon,
   SearchIcon,
@@ -225,4 +226,5 @@ export {
   ArrowsCounterClockwiseIcon,
   GlobeAltIcon,
   WindowIcon,
+  HourglassHighIcon,
 };

@@ -44,10 +44,9 @@ const schema = Yup.object().shape({
   developerName: Yup.string().required('Developer name is required'),
   description: Yup.string(),
   bannerUrl: Yup.string().required('Banner URL is required'),
-  categories: Yup.array(Yup.string().required('Category is required')).min(
-    1,
-    'At least one category is required',
-  ),
+  categories: Yup.array(Yup.string().required('Category is required'))
+    .min(1, 'At least one category is required')
+    .max(5, 'Maximum 5 categories are allowed'),
   developmentStatus: Yup.string().required('Development status is required'),
   openSource: Yup.boolean(),
   repositoryUrl: Yup.string().when('openSource', (v, schema) => {
@@ -84,8 +83,6 @@ const DappForm: React.FC<DappFormProps> = ({
       categories: [],
     },
   });
-
-  console.log(errors);
 
   const openSource = watch('openSource');
 

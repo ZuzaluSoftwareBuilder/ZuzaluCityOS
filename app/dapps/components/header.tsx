@@ -1,13 +1,17 @@
 import { Stack, Typography, useTheme, useMediaQuery } from '@mui/material';
-import { PlusCircleIcon, DIcon } from '@/components/icons';
+import { PlusCircleIcon, DIcon, HourglassHighIcon } from '@/components/icons';
 import { ZuButton } from '@/components/core';
 import Image from 'next/image';
+import { useQuery } from '@tanstack/react-query';
+import { useCeramicContext } from '@/context/CeramicContext';
 
 const AddButton = ({
   isMobile,
+  isDisabled,
   onClick,
 }: {
   isMobile: boolean;
+  isDisabled: boolean;
   onClick: () => void;
 }) => {
   return (
@@ -20,11 +24,12 @@ const AddButton = ({
         width: isMobile ? '100%' : 'fit-content',
         margin: isMobile ? '10px 0 0' : 0,
         zIndex: 2,
+        cursor: isDisabled ? 'not-allowed' : 'pointer',
       }}
-      startIcon={<PlusCircleIcon size={5} />}
+      startIcon={isDisabled ? <HourglassHighIcon /> : <PlusCircleIcon />}
       onClick={onClick}
     >
-      Add Your App
+      {isDisabled ? 'Listing Coming Soon' : 'Add Your App'}
     </ZuButton>
   );
 };
@@ -32,6 +37,32 @@ const AddButton = ({
 export default function Header({ onAdd }: { onAdd: () => void }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { isAuthenticated, composeClient, ceramic } = useCeramicContext();
+
+  const { data: hasSpace, isLoading } = useQuery({
+    queryKey: ['getSpace'],
+    enabled: isAuthenticated,
+    queryFn: async () => {
+      const response: any = await composeClient.executeQuery(`
+      query {
+        zucitySpaceIndex(first: 100) {
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    `);
+
+      if (response && response.data && 'zucitySpaceIndex' in response.data) {
+        return response.data.zucitySpaceIndex.edges.length > 0;
+      }
+      return false;
+    },
+  });
+
+  console.log(hasSpace);
 
   return (
     <Stack
@@ -121,10 +152,22 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
           >
             Zuzalu tools for Communities, Events & More
           </Typography>
-          {!isMobile && <AddButton isMobile={isMobile} onClick={onAdd} />}
+          {!isMobile && (
+            <AddButton
+              isMobile={isMobile}
+              isDisabled={!hasSpace}
+              onClick={() => hasSpace && onAdd()}
+            />
+          )}
         </Stack>
       </Stack>
-      {isMobile && <AddButton isMobile={isMobile} onClick={onAdd} />}
+      {isMobile && (
+        <AddButton
+          isMobile={isMobile}
+          isDisabled={!hasSpace}
+          onClick={() => hasSpace && onAdd()}
+        />
+      )}
     </Stack>
   );
 }

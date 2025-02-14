@@ -35,7 +35,7 @@ export default function List({ onDetailClick }: ListProps) {
       gap="20px"
     >
       <Stack direction="row" gap="8px" alignItems="center">
-        {!isMobile && <BroadcastIcon />}
+        {/* {!isMobile && <BroadcastIcon />} */}
         <OutlinedInput
           placeholder="Search dApps"
           sx={{

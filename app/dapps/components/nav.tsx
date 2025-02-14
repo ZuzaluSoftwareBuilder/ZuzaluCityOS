@@ -85,11 +85,13 @@ export default function Nav() {
   return (
     <Stack
       direction="row"
-      position="relative"
+      position="sticky"
+      top="50px"
+      zIndex="1000"
       sx={{
         borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
         p: '0 10px',
-        bgcolor: 'rgba(34, 34, 34, 0.80)',
+        bgcolor: 'rgba(34, 34, 34)',
         width: '100%',
         maxWidth: '100%',
       }}

@@ -1,6 +1,7 @@
 import { ArrowsCounterClockwiseIcon, CloseIcon } from '@/components/icons';
 import { Typography, Box, Stack } from '@mui/material';
 import { useCallback, useState } from 'react';
+import { positions } from 'slate';
 
 interface FilterProps {
   filterData: string[];
