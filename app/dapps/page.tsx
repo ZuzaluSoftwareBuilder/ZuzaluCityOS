@@ -8,6 +8,32 @@ import { useCallback, useState } from 'react';
 import Drawer from '@/components/drawer';
 import DappForm from '@/components/form/DappForm';
 
+const mockData = {
+  appName: 'Mock Dapp',
+  developerName: 'Mock Developer',
+  description: {
+    time: Date.now(),
+    blocks: [
+      {
+        id: 'mockBlock1',
+        type: 'paragraph',
+        data: {
+          text: 'This is a mock description for the dapp.',
+        },
+      },
+    ],
+    version: '2.27.2',
+  },
+  bannerUrl: 'https://example.com/mock-banner.jpg',
+  categories: ['DeFi', 'Gaming'],
+  developmentStatus: '1',
+  openSource: true,
+  repositoryUrl: 'https://github.com/mock/repository',
+  appUrl: 'https://mockapp.com',
+  websiteUrl: 'https://mockwebsite.com',
+  docsUrl: 'https://docs.mockapp.com',
+};
+
 export default function DappsPage() {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));

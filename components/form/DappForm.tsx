@@ -19,7 +19,7 @@ import { useEditorStore } from '../editor/useEditorStore';
 import Yup from '@/utils/yupExtensions';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
-import { POST_TAGS } from '@/constant';
+import { DAPP_TAGS, POST_TAGS } from '@/constant';
 import { createPost, updatePost } from '@/services/announcements';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useMutation } from '@tanstack/react-query';
@@ -220,7 +220,7 @@ const DappForm: React.FC<DappFormProps> = ({
             <Stack spacing="10px">
               <FormLabel>Select App Categories *</FormLabel>
               <FormLabelDesc>
-                Search or create categories related to your app
+                Select up to 5 category labels that are relevant to your app
               </FormLabelDesc>
             </Stack>
             <Box>
@@ -233,7 +233,7 @@ const DappForm: React.FC<DappFormProps> = ({
                     onChange={(value) => {
                       setValue('categories', value);
                     }}
-                    options={POST_TAGS}
+                    options={DAPP_TAGS}
                   />
                 )}
               />

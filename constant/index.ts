@@ -126,6 +126,80 @@ export const POST_TAGS: {
   },
 ];
 
+export const DAPP_TAGS: {
+  value: string;
+  label: string;
+}[] = [
+  {
+    value: 'social',
+    label: 'Social',
+  },
+  {
+    value: 'forum',
+    label: 'Forum',
+  },
+  {
+    value: 'polls',
+    label: 'Polls',
+  },
+  {
+    value: 'messaging',
+    label: 'Messaging',
+  },
+  {
+    value: 'tools',
+    label: 'Tools',
+  },
+  {
+    value: 'wallet',
+    label: 'Wallet',
+  },
+  {
+    value: 'oracles',
+    label: 'Oracles',
+  },
+  {
+    value: 'finance',
+    label: 'Finance',
+  },
+  {
+    value: 'funding',
+    label: 'Funding',
+  },
+  {
+    value: 'creative',
+    label: 'Creative',
+  },
+  {
+    value: 'education',
+    label: 'Education',
+  },
+  {
+    value: 'marketplace',
+    label: 'Marketplace',
+  },
+  {
+    value: 'privacy',
+    label: 'Privacy',
+  },
+  {
+    value: 'identity',
+    label: 'Identity',
+  },
+  {
+    value: 'reputation',
+    label: 'Reputation',
+  },
+  {
+    value: 'governance',
+    label: 'Governance',
+  },
+  {
+    value: 'gaming',
+    label: 'Gaming',
+  },
+];
+
 export const SOCIAL_TYPES: {
   key: string;
   value: string;

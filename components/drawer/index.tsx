@@ -17,7 +17,7 @@ const EventDrawer: React.FC<EventDrawerProps> = ({
   const breakpoints = useTheme().breakpoints;
   return (
     <SwipeableDrawer
-      hideBackdrop={true}
+      hideBackdrop={false}
       anchor="right"
       open={open}
       onClose={onClose}
