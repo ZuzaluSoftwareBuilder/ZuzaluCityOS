@@ -207,7 +207,7 @@ export default function List({ onDetailClick }: ListProps) {
                 gap={20}
                 key={index}
               >
-                <Item data={dapp} onClick={onDetailClick} />
+                <Item data={data} onClick={onDetailClick} />
               </Grid>
             ))}
       </Grid>
