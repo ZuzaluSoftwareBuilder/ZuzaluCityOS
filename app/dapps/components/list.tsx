@@ -1,4 +1,4 @@
-import { BroadcastIcon, SearchIcon } from '@/components/icons';
+import { SearchIcon } from '@/components/icons';
 import {
   InputAdornment,
   OutlinedInput,
@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 
 import { Stack } from '@mui/material';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Item } from '.';
 import Filter from './filter';
 import { useQuery } from '@tanstack/react-query';
@@ -53,6 +53,7 @@ export default function List({ onDetailClick }: ListProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [filter, setFilter] = useState<string[]>([]);
+  const [searchVal, setSearchVal] = useState<string>('');
 
   const { data, isLoading } = useQuery({
     queryKey: ['getDapps'],
@@ -72,14 +73,34 @@ export default function List({ onDetailClick }: ListProps) {
   }, [data]);
 
   const currentData = useMemo(() => {
-    if (filter.length === 0) {
+    if (filter.length === 0 && searchVal === '') {
       return data;
     }
-    return data?.filter((dapp) => {
-      const tags = dapp.categories.split(',');
-      return filter.some((tag) => tags.includes(tag));
-    });
-  }, [data, filter]);
+    const filteredData: Dapp[] = [];
+    if (searchVal !== '') {
+      console.log(
+        data?.filter((dapp) => {
+          console.log(dapp.appName.toLowerCase());
+          return dapp.appName.toLowerCase().includes(searchVal.toLowerCase());
+        }),
+        searchVal,
+      );
+      filteredData.concat(
+        data?.filter((dapp) => {
+          return dapp.appName.toLowerCase().includes(searchVal.toLowerCase());
+        }) || [],
+      );
+    }
+    if (filter.length > 0) {
+      filteredData.push(
+        ...(data?.filter((dapp) => {
+          const tags = dapp.categories.split(',');
+          return filter.some((tag) => tags.includes(tag));
+        }) || []),
+      );
+    }
+    return filteredData;
+  }, [data, filter, searchVal]);
 
   return (
     <Stack
@@ -106,7 +127,7 @@ export default function List({ onDetailClick }: ListProps) {
               border: 'none',
             },
           }}
-          // onChange={(e) => setSearchVal(e.target.value)}
+          onChange={(e) => setSearchVal(e.target.value)}
           startAdornment={
             <InputAdornment position="start" sx={{ opacity: 0.6 }}>
               <SearchIcon />
@@ -175,7 +196,7 @@ export default function List({ onDetailClick }: ListProps) {
                 </Stack>
               </Grid>
             ))
-          : currentData?.map((_, index) => (
+          : currentData?.map((data, index) => (
               <Grid
                 item
                 xl={3}
@@ -186,7 +207,7 @@ export default function List({ onDetailClick }: ListProps) {
                 gap={20}
                 key={index}
               >
-                <Item onClick={onDetailClick} />
+                <Item data={dapp} onClick={onDetailClick} />
               </Grid>
             ))}
       </Grid>

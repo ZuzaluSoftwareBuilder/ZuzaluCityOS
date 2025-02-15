@@ -1,10 +1,21 @@
+import { Dapp } from '@/types';
 import { Divider, Stack, Typography } from '@mui/material';
+import dynamic from 'next/dynamic';
 
+const EditorPreview = dynamic(
+  () => import('@/components/editor/EditorPreview'),
+  {
+    ssr: false,
+  },
+);
 interface ItemProps {
+  data: Dapp;
   onClick: () => void;
 }
 
-export default function Item({ onClick }: ItemProps) {
+export default function Item({ data, onClick }: ItemProps) {
+  const { appName, developerName, description, bannerUrl, categories } = data;
+  const tags = categories.split(',');
   return (
     <Stack
       p="10px"
@@ -24,7 +35,7 @@ export default function Item({ onClick }: ItemProps) {
     >
       <Stack direction="column" gap="10px">
         <img
-          src="/dapps/dappsHeader.png"
+          src={bannerUrl}
           alt="dappsItem"
           width="100%"
           style={{
@@ -42,33 +53,38 @@ export default function Item({ onClick }: ItemProps) {
               lineHeight: 1.4,
             }}
           >
-            Trustful Reputation
+            {appName}
           </Typography>
-          <Typography
-            sx={{
-              color: '#fff',
+          <EditorPreview
+            value={description}
+            collapsable={false}
+            style={{
               fontSize: '13px',
               lineHeight: 1.4,
               opacity: 0.8,
             }}
-          >
-            A private, token-gated, decentralized social network built by AKASHA
-            core
-          </Typography>
+          />
         </Stack>
       </Stack>
       <Stack direction="column" gap="10px">
-        <Stack direction="row" gap="5px">
-          <Typography
-            p="3px 6px"
-            borderRadius="4px"
-            bgcolor="rgba(255, 255, 255, 0.1)"
-            fontSize={10}
-            lineHeight={1.2}
-            color="#fff"
-          >
-            Developer
-          </Typography>
+        <Stack direction="row" gap="5px" alignItems="center">
+          {tags.slice(0, 3).map((tag) => (
+            <Typography
+              p="3px 6px"
+              borderRadius="4px"
+              bgcolor="rgba(255, 255, 255, 0.1)"
+              fontSize={10}
+              lineHeight={1.2}
+              color="#fff"
+            >
+              {tag}
+            </Typography>
+          ))}
+          {tags.length > 3 && (
+            <Typography fontSize={10} lineHeight={1.2} color="#fff">
+              +{tags.length - 3}
+            </Typography>
+          )}
         </Stack>
         <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.10)' }} />
         <Stack direction="row" gap="5px" alignItems="center" color="#fff">
@@ -76,7 +92,7 @@ export default function Item({ onClick }: ItemProps) {
             Developer:
           </Typography>
           <Typography fontSize={10} lineHeight={1.2}>
-            Blockful.io
+            {developerName}
           </Typography>
         </Stack>
       </Stack>
