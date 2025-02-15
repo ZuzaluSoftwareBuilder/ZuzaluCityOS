@@ -24,6 +24,7 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
     appUrl,
     websiteUrl,
     docsUrl,
+    tagline,
   } = data;
 
   const categoriesArray = categories.split(',');
@@ -117,9 +118,14 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
             </Stack>
           </Stack>
         </Stack>
-        <Typography fontSize={18} fontWeight={800} lineHeight={1.4}>
-          {appName}
-        </Typography>
+        <Stack gap="10px">
+          <Typography fontSize={18} fontWeight={800} lineHeight={1.4}>
+            {appName}
+          </Typography>
+          <Typography fontSize={13} lineHeight={1.4} sx={{ opacity: 0.8 }}>
+            {tagline}
+          </Typography>
+        </Stack>
         <Stack direction="column" gap="10px">
           <Stack direction="row" alignItems="center" gap="10px" flexWrap="wrap">
             <Typography fontSize={13} lineHeight={1.4} sx={{ opacity: 0.5 }}>

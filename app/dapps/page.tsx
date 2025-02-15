@@ -11,6 +11,8 @@ import DappForm from '@/components/form/DappForm';
 const mockData = {
   appName: 'Mock Dapp',
   developerName: 'Mock Developer',
+  tagline:
+    'A private, token-gated, decentralized social network built by AKASHA coreA private, token-gated, decentralized social network built by AKASHA coreA private, token-gated, decentralized social network built by AKASHA core',
   description: JSON.stringify({
     time: Date.now(),
     blocks: [

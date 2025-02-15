@@ -599,4 +599,5 @@ export interface Dapp {
   appUrl: string;
   websiteUrl: string;
   docsUrl: string;
+  tagline: string;
 }

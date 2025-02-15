@@ -46,6 +46,8 @@ const mockData = {
   appUrl: 'https://mockapp.com',
   websiteUrl: 'https://mockwebsite.com',
   docsUrl: 'https://docs.mockapp.com',
+  tagline:
+    'A private, token-gated, decentralized social network built by AKASHA coreA private, token-gated, decentralized social network built by AKASHA coreA private, token-gated, decentralized social network built by AKASHA core',
 };
 
 export default function List({ onDetailClick }: ListProps) {

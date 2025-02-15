@@ -1,24 +1,18 @@
 import { Dapp } from '@/types';
 import { Divider, Stack, Typography } from '@mui/material';
-import dynamic from 'next/dynamic';
 
-const EditorPreview = dynamic(
-  () => import('@/components/editor/EditorPreview'),
-  {
-    ssr: false,
-  },
-);
 interface ItemProps {
   data: Dapp;
   onClick: () => void;
 }
 
 export default function Item({ data, onClick }: ItemProps) {
-  const { appName, developerName, description, bannerUrl, categories } = data;
+  const { appName, developerName, tagline, bannerUrl, categories } = data;
   const tags = categories.split(',');
   return (
     <Stack
       p="10px"
+      height="100%"
       borderRadius="10px"
       boxSizing="border-box"
       border="1px solid transparent"
@@ -55,15 +49,21 @@ export default function Item({ data, onClick }: ItemProps) {
           >
             {appName}
           </Typography>
-          <EditorPreview
-            value={description}
-            collapsable={false}
-            style={{
-              fontSize: '13px',
-              lineHeight: 1.4,
+          <Typography
+            fontSize={13}
+            lineHeight={1.4}
+            color="#fff"
+            sx={{
               opacity: 0.8,
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
-          />
+          >
+            {tagline}
+          </Typography>
         </Stack>
       </Stack>
       <Stack direction="column" gap="10px">
@@ -76,6 +76,7 @@ export default function Item({ data, onClick }: ItemProps) {
               fontSize={10}
               lineHeight={1.2}
               color="#fff"
+              key={tag}
             >
               {tag}
             </Typography>
