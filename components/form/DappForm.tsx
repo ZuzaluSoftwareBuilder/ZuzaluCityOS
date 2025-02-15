@@ -44,6 +44,9 @@ const schema = Yup.object().shape({
   appName: Yup.string().required('App name is required'),
   developerName: Yup.string().required('Developer name is required'),
   description: Yup.string(),
+  tagline: Yup.string()
+    .required('Tagline is required')
+    .max(70, 'Maximum 70 characters are allowed'),
   bannerUrl: Yup.string().required('Banner URL is required'),
   categories: Yup.array(Yup.string().required('Category is required'))
     .min(1, 'At least one category is required')
@@ -86,6 +89,7 @@ const DappForm: React.FC<DappFormProps> = ({
   });
 
   const openSource = watch('openSource');
+  const tagline = watch('tagline');
 
   const resetForm = useCallback(() => {
     reset();
@@ -174,6 +178,26 @@ const DappForm: React.FC<DappFormProps> = ({
               <FormHelperText error>
                 {errors?.developerName.message}
               </FormHelperText>
+            )}
+          </Stack>
+          <Stack spacing="10px">
+            <FormLabel>App Tagline*</FormLabel>
+            <Controller
+              control={control}
+              name="tagline"
+              render={({ field }) => (
+                <ZuInput {...field} placeholder="Type a tagline" />
+              )}
+            />
+            <Typography
+              fontSize={10}
+              lineHeight={1.2}
+              sx={{ opacity: 0.7, textAlign: 'right' }}
+            >
+              {Math.max(0, 70 - (tagline?.length || 0))} Characters Left
+            </Typography>
+            {errors?.tagline && (
+              <FormHelperText error>{errors?.tagline.message}</FormHelperText>
             )}
           </Stack>
           <Stack spacing="10px">

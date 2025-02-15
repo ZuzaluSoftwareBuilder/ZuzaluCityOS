@@ -8,6 +8,7 @@ import {
   HomeIcon,
   ArrowUpRightIcon,
   ShapeIcon,
+  DIcon,
 } from 'components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { ZuButton } from '@/components/core';

@@ -39,8 +39,8 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { isAuthenticated, composeClient, ceramic } = useCeramicContext();
 
-  const { data: hasSpace, isLoading } = useQuery({
-    queryKey: ['getSpace'],
+  const { data: hasSpace } = useQuery({
+    queryKey: ['getSpace', ceramic.did?.parent],
     enabled: isAuthenticated,
     queryFn: async () => {
       const response: any = await composeClient.executeQuery(`
@@ -61,8 +61,6 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
       return false;
     },
   });
-
-  console.log(hasSpace);
 
   return (
     <Stack
