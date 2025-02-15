@@ -2,6 +2,7 @@ import {
   Box,
   FormHelperText,
   MenuItem,
+  OutlinedInput,
   Select,
   Stack,
   Typography,
@@ -270,7 +271,12 @@ const DappForm: React.FC<DappFormProps> = ({
               control={control}
               name="developmentStatus"
               render={({ field }) => (
-                <Select {...field} size="small" placeholder="https://">
+                <Select
+                  {...field}
+                  size="small"
+                  renderValue={(selected) => selected}
+                  input={<OutlinedInput label="Name" />}
+                >
                   <MenuItem value="1">
                     <SelectCheckItem label="1" isChecked />
                   </MenuItem>

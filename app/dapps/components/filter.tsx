@@ -92,9 +92,12 @@ export default function Filter({ filterData, onFilterChange }: FilterProps) {
               '&:hover p': {
                 opacity: 1,
               },
-              pl: isActive ? '29px' : '8px',
+              pr: isActive ? '29px' : '8px',
             }}
           >
+            <Typography fontSize={14} lineHeight={1.6} color="white">
+              {item}
+            </Typography>
             <Box
               sx={{
                 position: 'absolute',
@@ -102,14 +105,11 @@ export default function Filter({ filterData, onFilterChange }: FilterProps) {
                 height: '16px',
                 opacity: isActive ? 1 : 0,
                 transition: 'all 0.1s linear',
-                left: '8px',
+                right: '8px',
               }}
             >
               <CloseIcon size={4} />
             </Box>
-            <Typography fontSize={14} lineHeight={1.6} color="white">
-              {item}
-            </Typography>
           </Box>
         );
       })}
