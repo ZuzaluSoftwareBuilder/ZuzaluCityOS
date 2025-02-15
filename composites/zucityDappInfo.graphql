@@ -1,0 +1,45 @@
+type ZucityDappInfo
+  @createModel(
+    accountRelation: LIST
+    description: "Dapp infos for Zuzalu.city beta version"
+  )
+  @createIndex(fields: [{ path: "appName" }])
+  @createIndex(fields: [{ path: "openSource" }])
+  @createIndex(fields: [{ path: "developerName" }])
+  @createIndex(fields: [{ path: "createdAtTime" }])
+  @createIndex(fields: [{ path: "devStatus" }])
+  @createIndex(fields: [{ path: "audited" }])
+  @createIndex(fields: [{ path: "installEnv" }])
+  @createIndex(fields: [{ path: "appType" }]) {
+  author: DID! @documentAccount
+  appName: String! @string(minLength: 1, maxLength: 10000)
+  developerName: String! @string(minLength: 1, maxLength: 10000)
+  description: String! @string(minLength: 1, maxLength: 50000)
+  bannerUrl: String! @string(minLength: 1, maxLength: 10000)
+  categories: String! @string(minLength: 1, maxLength: 10000)
+  devStatus: String! @string(minLength: 1, maxLength: 10000)
+  openSource: String! @string(minLength: 1, maxLength: 10000)
+  repositoryUrl: String @string(minLength: 1, maxLength: 10000)
+  appUrl: String @string(minLength: 1, maxLength: 10000)
+  websiteUrl: String @string(minLength: 1, maxLength: 10000)
+  docsUrl: String @string(minLength: 1, maxLength: 10000)   
+  createdAtTime: DateTime!
+  profileId: StreamID! @documentReference(model: "ZucityProfile")
+  profile: ZucityProfile! @relationDocument(property: "profileId")
+  tagline: String! @string(minLength: 1, maxLength: 10000)
+  installedSpaces: [StreamID] @list(maxLength: 10000)
+  installedEvents: [StreamID] @list(maxLength: 10000)
+  installEnv: String @string(minLength: 1, maxLength: 10000)
+  appType: String! @string(minLength: 1, maxLength: 10000)
+  audited: String @string(minLength: 1, maxLength: 10000)
+  customAttributes: [TBD] @list(maxLength: 10000)
+}
+
+type ZucityProfile @loadModel(id: "$Profile_ID") {
+  id: ID!
+}
+
+
+type TBD {
+  tbd: String @string(minLength: 1, maxLength: 10000)
+}
