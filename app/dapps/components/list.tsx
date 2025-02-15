@@ -76,29 +76,22 @@ export default function List({ onDetailClick }: ListProps) {
     if (filter.length === 0 && searchVal === '') {
       return data;
     }
-    const filteredData: Dapp[] = [];
+
+    let filteredData = data || [];
+
     if (searchVal !== '') {
-      console.log(
-        data?.filter((dapp) => {
-          console.log(dapp.appName.toLowerCase());
-          return dapp.appName.toLowerCase().includes(searchVal.toLowerCase());
-        }),
-        searchVal,
-      );
-      filteredData.concat(
-        data?.filter((dapp) => {
-          return dapp.appName.toLowerCase().includes(searchVal.toLowerCase());
-        }) || [],
+      filteredData = filteredData.filter((dapp) =>
+        dapp.appName.toLowerCase().includes(searchVal.toLowerCase()),
       );
     }
+
     if (filter.length > 0) {
-      filteredData.push(
-        ...(data?.filter((dapp) => {
-          const tags = dapp.categories.split(',');
-          return filter.some((tag) => tags.includes(tag));
-        }) || []),
-      );
+      filteredData = filteredData.filter((dapp) => {
+        const tags = dapp.categories.split(',');
+        return filter.some((tag) => tags.includes(tag));
+      });
     }
+
     return filteredData;
   }, [data, filter, searchVal]);
 
