@@ -4,45 +4,17 @@ import { Sidebar } from 'components/layout';
 import { useTheme } from '@mui/material/styles';
 import { Stack, useMediaQuery } from '@mui/material';
 import { Header, List, Nav, DappDetail } from './components';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Drawer from '@/components/drawer';
 import DappForm from '@/components/form/DappForm';
-
-const mockData = {
-  appName: 'Mock Dapp',
-  developerName: 'Mock Developer',
-  tagline:
-    'A private, token-gated, decentralized social network built by AKASHA coreA private, token-gated, decentralized social network built by AKASHA coreA private, token-gated, decentralized social network built by AKASHA core',
-  description: JSON.stringify({
-    time: Date.now(),
-    blocks: [
-      {
-        id: 'mockBlock1',
-        type: 'paragraph',
-        data: {
-          text: 'This is a mock description for the dapp.',
-        },
-      },
-    ],
-    version: '2.27.2',
-  }),
-  bannerUrl:
-    'https://images.wsj.net/im-43460061?width=608&height=405&pixel_ratio=2',
-  categories:
-    'Defi,Gaming,Defi,Gaming,Defi,Gaming,Defi,Gaming,Defi,Gaming,Defi,GamingDefi,Gaming,Defi,Gaming,Defi,Gaming',
-  developmentStatus: '1',
-  openSource: true,
-  repositoryUrl: 'https://github.com/mock/repository',
-  appUrl: 'https://mockapp.com',
-  websiteUrl: 'https://mockwebsite.com',
-  docsUrl: 'https://docs.mockapp.com',
-};
+import { Dapp } from '@/types';
 
 export default function DappsPage() {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
   const [openForm, setOpenForm] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
+  const [detailData, setDetailData] = useState<Dapp | undefined>(undefined);
 
   const toggleForm = useCallback(() => {
     setOpenForm((v) => !v);
@@ -50,9 +22,17 @@ export default function DappsPage() {
   const toggleDetail = useCallback(() => {
     setOpenDetail((v) => !v);
   }, []);
-  const handleDetailClick = useCallback(() => {
-    toggleDetail();
-  }, [toggleDetail]);
+
+  const handleDetailClick = useCallback((data: Dapp) => {
+    setOpenDetail(true);
+    setDetailData(data);
+  }, []);
+
+  useEffect(() => {
+    if (!openDetail) {
+      setDetailData(undefined);
+    }
+  }, [openDetail]);
 
   return (
     <Stack direction="row" sx={{ backgroundColor: '#222222' }}>
@@ -65,7 +45,7 @@ export default function DappsPage() {
           <DappForm handleClose={toggleForm} refetch={() => toggleForm()} />
         </Drawer>
         <Drawer open={openDetail} onClose={toggleDetail} onOpen={toggleDetail}>
-          <DappDetail handleClose={toggleDetail} data={mockData} />
+          <DappDetail handleClose={toggleDetail} data={detailData} />
         </Drawer>
       </Stack>
     </Stack>

@@ -75,13 +75,15 @@ export async function POST(req: Request) {
             devStatus: developmentStatus,
             categories: categories.join(','),
             openSource: openSource ? '1' : '0',
-            websiteUrl,
-            repositoryUrl,
-            docsUrl,
+            websiteUrl: websiteUrl || null,
+            repositoryUrl: repositoryUrl || null,
+            docsUrl: docsUrl || null,
           },
         },
       },
     );
+
+    console.log(update);
 
     const dappId = update.data.createZucityDappInfo.document.id;
 

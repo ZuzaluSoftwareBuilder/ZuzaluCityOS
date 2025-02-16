@@ -23,7 +23,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { DAPP_TAGS, POST_TAGS } from '@/constant';
 import { createPost, updatePost } from '@/services/announcements';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Post } from '@/types';
 import SelectCategories from '../select/selectCategories';
 
@@ -79,6 +79,7 @@ const DappForm: React.FC<DappFormProps> = ({
 }) => {
   const descriptionEditorStore = useEditorStore();
   const { profile } = useCeramicContext();
+  const queryClient = useQueryClient();
   const profileId = profile?.id || '';
 
   const {
@@ -112,6 +113,7 @@ const DappForm: React.FC<DappFormProps> = ({
     onSuccess: () => {
       resetForm();
       refetch();
+      queryClient.invalidateQueries({ queryKey: ['getDappInfoList'] });
     },
   });
 
@@ -256,7 +258,7 @@ const DappForm: React.FC<DappFormProps> = ({
           </Stack>
           <Stack spacing="10px">
             <Stack spacing="10px">
-              <FormLabel>Select App Categories *</FormLabel>
+              <FormLabel>Select App Categories*</FormLabel>
               <FormLabelDesc>
                 Select up to 5 category labels that are relevant to your app
               </FormLabelDesc>
@@ -303,7 +305,7 @@ const DappForm: React.FC<DappFormProps> = ({
           borderRadius="10px"
         >
           <Stack spacing="10px">
-            <FormLabel>Development Status</FormLabel>
+            <FormLabel>Development Status*</FormLabel>
             <Controller
               control={control}
               name="developmentStatus"

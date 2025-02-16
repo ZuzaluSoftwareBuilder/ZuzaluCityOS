@@ -7,18 +7,19 @@ import ShowMoreEdit from '@/components/editor/ShowMoreEdit';
 import { Dapp } from '@/types';
 import theme from '@/theme/theme';
 interface DappDetailProps {
-  data: Dapp;
+  data?: Dapp;
   handleClose: () => void;
 }
 
 export default function DappDetail({ handleClose, data }: DappDetailProps) {
+  if (!data) return null;
   const {
     appName,
     developerName,
     description,
     bannerUrl,
     categories,
-    developmentStatus,
+    devStatus,
     openSource,
     repositoryUrl,
     appUrl,
@@ -164,10 +165,10 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
               Status:
             </Typography>
             <Typography fontSize={13} lineHeight={1.4} sx={{ opacity: 0.8 }}>
-              {developmentStatus}
+              {devStatus}
             </Typography>
           </Stack>
-          {openSource && (
+          {Number(openSource) === 1 && (
             <>
               <Stack direction="row" alignItems="center" gap="10px">
                 <Typography
@@ -178,7 +179,7 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
                   Repository Link:
                 </Typography>
                 <Link
-                  href={repositoryUrl}
+                  href={repositoryUrl || ''}
                   target="_blank"
                   style={{
                     fontSize: 13,

@@ -593,7 +593,7 @@ export interface Dapp {
   description: string;
   bannerUrl: string;
   categories: string;
-  developmentStatus: string;
+  devStatus: string;
   openSource: boolean;
   repositoryUrl: string;
   appUrl: string;

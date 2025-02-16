@@ -17,7 +17,7 @@ import { Dapp } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
 
 interface ListProps {
-  onDetailClick: () => void;
+  onDetailClick: (data: Dapp) => void;
 }
 
 export default function List({ onDetailClick }: ListProps) {
@@ -197,7 +197,7 @@ export default function List({ onDetailClick }: ListProps) {
                 gap={20}
                 key={index}
               >
-                <Item data={data} onClick={onDetailClick} />
+                <Item data={data} onClick={() => onDetailClick(data)} />
               </Grid>
             ))}
       </Grid>
