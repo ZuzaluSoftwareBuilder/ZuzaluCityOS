@@ -95,6 +95,7 @@ export default function OwnedDappList({
                   bgcolor: 'rgba(255, 255, 255, 0.05)',
                   color: 'rgba(255, 255, 255, 0.6)',
                   height: '30px',
+                  textTransform: 'none',
                 }}
               >
                 View
@@ -110,6 +111,7 @@ export default function OwnedDappList({
                   bgcolor: 'rgba(255, 255, 255, 0.05)',
                   color: 'rgba(255, 255, 255, 0.6)',
                   height: '30px',
+                  textTransform: 'none',
                 }}
               >
                 Edit

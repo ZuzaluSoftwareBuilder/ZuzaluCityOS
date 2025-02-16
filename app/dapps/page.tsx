@@ -17,6 +17,7 @@ export default function DappsPage() {
   const [openDetail, setOpenDetail] = useState(false);
   const [openOwnedDapps, setOpenOwnedDapps] = useState(false);
   const [showOwnedDapps, setShowOwnedDapps] = useState(false);
+  const [showEditDapp, setShowEditDapp] = useState(false);
   const [detailData, setDetailData] = useState<Dapp | undefined>(undefined);
 
   const toggleForm = useCallback(() => {
@@ -38,6 +39,11 @@ export default function DappsPage() {
     },
     [],
   );
+
+  const handleEditDapp = useCallback((data: Dapp) => {
+    setShowEditDapp(true);
+    setDetailData(data);
+  }, []);
 
   useEffect(() => {
     if (!openDetail) {
@@ -75,10 +81,19 @@ export default function DappsPage() {
                 }}
                 data={detailData}
               />
+            ) : showEditDapp ? (
+              <DappForm
+                handleClose={() => {
+                  setShowEditDapp(false);
+                  setDetailData(undefined);
+                }}
+                initialData={detailData}
+                refetch={() => toggleForm()}
+              />
             ) : (
               <OwnedDappList
                 onViewDapp={(dapp) => handleDetailClick(dapp, true)}
-                onEditDapp={handleDetailClick}
+                onEditDapp={handleEditDapp}
                 handleClose={toggleOwnedDapps}
               />
             ))}

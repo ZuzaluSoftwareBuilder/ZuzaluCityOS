@@ -7,7 +7,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import FormHeader from './FormHeader';
 import {
   FormLabel,
@@ -20,11 +20,10 @@ import { useEditorStore } from '../editor/useEditorStore';
 import Yup from '@/utils/yupExtensions';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
-import { DAPP_TAGS, POST_TAGS } from '@/constant';
-import { createPost, updatePost } from '@/services/announcements';
+import { DAPP_TAGS } from '@/constant';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Post } from '@/types';
+import { Dapp } from '@/types';
 import SelectCategories from '../select/selectCategories';
 
 import dynamic from 'next/dynamic';
@@ -37,7 +36,7 @@ const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
 
 interface DappFormProps {
   handleClose: () => void;
-  initialData?: Post;
+  initialData?: Dapp;
   refetch: () => void;
 }
 
@@ -92,8 +91,19 @@ const DappForm: React.FC<DappFormProps> = ({
     watch,
   } = useForm<FormData>({
     resolver: yupResolver(schema),
-    defaultValues: {
-      categories: [],
+    values: {
+      appName: initialData?.appName || '',
+      developerName: initialData?.developerName || '',
+      description: initialData?.description || '',
+      bannerUrl: initialData?.bannerUrl || '',
+      categories: initialData?.categories?.split(',') || [],
+      developmentStatus: initialData?.devStatus || '',
+      tagline: initialData?.tagline || '',
+      openSource: Number(initialData?.openSource) === 1 || false,
+      repositoryUrl: initialData?.repositoryUrl || '',
+      appUrl: initialData?.appUrl || '',
+      websiteUrl: initialData?.websiteUrl || '',
+      docsUrl: initialData?.docsUrl || '',
     },
   });
 
@@ -146,9 +156,25 @@ const DappForm: React.FC<DappFormProps> = ({
     window.alert('Please input all necessary fields.');
   }, []);
 
+  const initialTags = useMemo(() => {
+    if (!initialData) return [];
+    return DAPP_TAGS.filter((item) =>
+      initialData?.categories?.includes(item.value),
+    );
+  }, [initialData]);
+
+  useEffect(() => {
+    if (initialData?.description) {
+      descriptionEditorStore.setValue(initialData.description);
+    }
+  }, [initialData]);
+
   return (
     <Box>
-      <FormHeader title="Submit Your App" handleClose={handleClose} />
+      <FormHeader
+        title={initialData ? 'Edit Your App' : 'Submit Your App'}
+        handleClose={handleClose}
+      />
       <Box
         display="flex"
         flexDirection="column"
@@ -270,6 +296,7 @@ const DappForm: React.FC<DappFormProps> = ({
                 render={({ field }) => (
                   <SelectCategories
                     {...field}
+                    initialValues={initialTags}
                     onChange={(value) => {
                       setValue('categories', value);
                     }}
@@ -367,7 +394,9 @@ const DappForm: React.FC<DappFormProps> = ({
               <Controller
                 control={control}
                 name="openSource"
-                render={({ field }) => <ZuSwitch {...field} />}
+                render={({ field }) => (
+                  <ZuSwitch checked={field.value} {...field} />
+                )}
               />
             </Stack>
             {openSource && (
