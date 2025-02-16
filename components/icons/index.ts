@@ -113,6 +113,7 @@ import { GlobeAltIcon } from './GlobeAlt';
 import { WindowIcon } from './Window';
 import { HourglassHighIcon } from './HourglassHigh';
 import { GearSixIcon } from './GearSix';
+import { NotePencilIcon } from './NotePencil';
 export {
   HomeIcon,
   SearchIcon,
@@ -229,4 +230,5 @@ export {
   WindowIcon,
   HourglassHighIcon,
   GearSixIcon,
+  NotePencilIcon,
 };

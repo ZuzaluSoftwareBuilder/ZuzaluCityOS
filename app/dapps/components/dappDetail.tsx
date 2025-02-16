@@ -189,7 +189,7 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
                     textDecorationStyle: 'solid',
                   }}
                 >
-                  {repositoryUrl}
+                  View Repository
                 </Link>
               </Stack>
               <Typography

@@ -29,7 +29,7 @@ import SelectCategories from '../select/selectCategories';
 import dynamic from 'next/dynamic';
 import FormUploader from './FormUploader';
 import SelectCheckItem from '../select/selectCheckItem';
-import { createDapp } from '@/services/dapp.ts';
+import { createDapp, updateDapp } from '@/services/dapp.ts';
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,
 });
@@ -37,7 +37,7 @@ const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
 interface DappFormProps {
   handleClose: () => void;
   initialData?: Dapp;
-  refetch: () => void;
+  refetch?: () => void;
 }
 
 const schema = Yup.object().shape({
@@ -77,7 +77,7 @@ const DappForm: React.FC<DappFormProps> = ({
   refetch,
 }) => {
   const descriptionEditorStore = useEditorStore();
-  const { profile } = useCeramicContext();
+  const { profile, composeClient } = useCeramicContext();
   const queryClient = useQueryClient();
   const profileId = profile?.id || '';
 
@@ -118,11 +118,16 @@ const DappForm: React.FC<DappFormProps> = ({
 
   const submitMutation = useMutation({
     mutationFn: ({ type, data }: { type: 'create' | 'edit'; data: any }) => {
-      return createDapp({ ...data, profileId });
+      if (type === 'create') {
+        return createDapp(composeClient, { ...data, profileId });
+      } else {
+        return updateDapp(composeClient, { ...data, id: initialData?.id });
+      }
     },
     onSuccess: () => {
       resetForm();
-      refetch();
+      refetch?.();
+      handleClose();
       queryClient.invalidateQueries({ queryKey: ['getDappInfoList'] });
     },
   });
@@ -141,15 +146,22 @@ const DappForm: React.FC<DappFormProps> = ({
         return;
       }
       const description = descriptionEditorStore.getValueString();
-      await submitMutation.mutateAsync({
-        type: 'create',
-        data: {
-          ...data,
-          description,
-        },
-      });
+      if (!initialData) {
+        await submitMutation.mutateAsync({
+          type: 'create',
+          data: {
+            ...data,
+            description,
+          },
+        });
+      } else {
+        await submitMutation.mutateAsync({
+          type: 'edit',
+          data: { ...data, description, id: initialData.id },
+        });
+      }
     },
-    [descriptionEditorStore, setError, submitMutation],
+    [descriptionEditorStore, setError, submitMutation, initialData],
   );
 
   const onFormError = useCallback(() => {
@@ -489,7 +501,7 @@ const DappForm: React.FC<DappFormProps> = ({
       </Box>
       <Box padding={3}>
         <FormFooter
-          confirmText="Confirm App"
+          confirmText={initialData ? 'Update App' : 'Confirm App'}
           isLoading={submitMutation.isPending}
           disabled={false}
           handleClose={handleClose}

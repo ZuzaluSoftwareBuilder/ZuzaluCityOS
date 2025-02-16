@@ -104,16 +104,18 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
     return data?.filter((dapp) => dapp.profile.author.id === userDID) || [];
   }, [data, userDID]);
 
-  console.log(ownedDapps);
-
   return (
     <Stack
       direction="column"
       flex={1}
       p={isMobile ? '20px 10px' : '20px'}
-      gap="20px"
+      gap={isMobile ? '10px' : '20px'}
     >
-      <Stack direction="row" gap="10px" alignItems="center">
+      <Stack
+        direction={isMobile ? 'column' : 'row'}
+        gap="10px"
+        alignItems="center"
+      >
         {/* {!isMobile && <BroadcastIcon />} */}
         <OutlinedInput
           placeholder="Search dApps"
@@ -142,7 +144,10 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
           direction="row"
           justifyContent="space-between"
           alignItems="center"
-          width="260px"
+          width={isMobile ? '100%' : '210px'}
+          flexShrink={0}
+          p="8px 14px"
+          boxSizing="content-box"
           sx={{ cursor: ownedDapps?.length > 0 ? 'pointer' : 'not-allowed' }}
           onClick={() => {
             if (ownedDapps?.length > 0) {
@@ -200,8 +205,26 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
                 lg={4}
                 md={6}
                 sm={12}
-                xs={24}
+                xs={12}
                 gap={20}
+                sx={{
+                  '@media (max-width: 809px)': {
+                    maxWidth: '100% !important',
+                    flexBasis: '100% !important',
+                  },
+                  '@media (min-width: 810px) and (max-width: 1199px)': {
+                    maxWidth: '50% !important',
+                    flexBasis: '50% !important',
+                  },
+                  '@media (min-width: 1200px) and (max-width: 1399px)': {
+                    maxWidth: '33.333% !important',
+                    flexBasis: '33.333% !important',
+                  },
+                  '@media (min-width: 1400px)': {
+                    maxWidth: '25% !important',
+                    flexBasis: '25% !important',
+                  },
+                }}
                 key={index}
               >
                 <Stack p="10px">
@@ -244,8 +267,26 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
                 lg={4}
                 md={6}
                 sm={12}
-                xs={24}
+                xs={12}
                 gap={20}
+                sx={{
+                  '@media (max-width: 809px)': {
+                    maxWidth: '100% !important',
+                    flexBasis: '100% !important',
+                  },
+                  '@media (min-width: 810px) and (max-width: 1199px)': {
+                    maxWidth: '50% !important',
+                    flexBasis: '50% !important',
+                  },
+                  '@media (min-width: 1200px) and (max-width: 1399px)': {
+                    maxWidth: '33.333% !important',
+                    flexBasis: '33.333% !important',
+                  },
+                  '@media (min-width: 1400px)': {
+                    maxWidth: '25% !important',
+                    flexBasis: '25% !important',
+                  },
+                }}
                 key={index}
               >
                 <Item data={data} onClick={() => onDetailClick(data)} />

@@ -1,9 +1,18 @@
 import FormHeader from '@/components/form/FormHeader';
-import { Box, Typography, Stack, Button } from '@mui/material';
-import Link from 'next/link';
+import {
+  Box,
+  Typography,
+  Stack,
+  Button,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
 
 import { Dapp } from '@/types';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { EyeIcon } from '@/components/icons/Eye';
+import { PencilIcon } from '@/components/icons/Pencil';
+import { NotePencilIcon } from '@/components/icons/NotePencil';
 
 interface OwnedDappListProps {
   onViewDapp: (dapp: Dapp) => void;
@@ -16,8 +25,11 @@ export default function OwnedDappList({
   onEditDapp,
   handleClose,
 }: OwnedDappListProps) {
-  const queryClient = useQueryClient();
-  const dapps = queryClient.getQueryData<Dapp[]>(['getDappInfoList']) || [];
+  const { data: dapps = [] } = useQuery<Dapp[]>({
+    queryKey: ['getDappInfoList'],
+  });
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <Box>
@@ -39,7 +51,7 @@ export default function OwnedDappList({
         {dapps.map((dapp) => (
           <Stack
             key={dapp.id}
-            direction="row"
+            direction={isMobile ? 'column' : 'row'}
             justifyContent="space-between"
             sx={{
               p: '10px',
@@ -47,12 +59,12 @@ export default function OwnedDappList({
               borderRadius: '10px',
             }}
           >
-            <Stack direction="row" gap="10px">
+            <Stack direction={isMobile ? 'column' : 'row'} gap="10px">
               <img
                 src={dapp.bannerUrl || ''}
                 alt={dapp.appName}
                 style={{
-                  width: '200px',
+                  width: isMobile ? '100%' : '200px',
                   height: 'auto',
                   aspectRatio: '620/280',
                   borderRadius: '10px',
@@ -83,9 +95,15 @@ export default function OwnedDappList({
                 </Typography>
               </Stack>
             </Stack>
-            <Stack direction="column" justifyContent="center" gap="10px">
+            <Stack
+              direction={isMobile ? 'row' : 'column'}
+              justifyContent="center"
+              gap="10px"
+              mt={isMobile ? '20px' : '0'}
+            >
               <Button
                 onClick={() => onViewDapp(dapp)}
+                startIcon={<EyeIcon color="#fff" size={4.5} />}
                 sx={{
                   p: '4px 10px',
                   fontSize: '14px',
@@ -96,12 +114,14 @@ export default function OwnedDappList({
                   color: 'rgba(255, 255, 255, 0.6)',
                   height: '30px',
                   textTransform: 'none',
+                  flex: isMobile ? 1 : 'unset',
                 }}
               >
                 View
               </Button>
               <Button
                 onClick={() => onEditDapp(dapp)}
+                startIcon={<NotePencilIcon />}
                 sx={{
                   p: '4px 10px',
                   fontSize: '14px',
@@ -112,6 +132,7 @@ export default function OwnedDappList({
                   color: 'rgba(255, 255, 255, 0.6)',
                   height: '30px',
                   textTransform: 'none',
+                  flex: isMobile ? 1 : 'unset',
                 }}
               >
                 Edit

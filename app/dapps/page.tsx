@@ -62,7 +62,7 @@ export default function DappsPage() {
           onOwnedDappsClick={toggleOwnedDapps}
         />
         <Drawer open={openForm} onClose={toggleForm} onOpen={toggleForm}>
-          <DappForm handleClose={toggleForm} refetch={() => toggleForm()} />
+          <DappForm handleClose={toggleForm} />
         </Drawer>
         <Drawer open={openDetail} onClose={toggleDetail} onOpen={toggleDetail}>
           <DappDetail handleClose={toggleDetail} data={detailData} />
@@ -88,7 +88,6 @@ export default function DappsPage() {
                   setDetailData(undefined);
                 }}
                 initialData={detailData}
-                refetch={() => toggleForm()}
               />
             ) : (
               <OwnedDappList
