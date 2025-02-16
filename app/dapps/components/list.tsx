@@ -1,4 +1,4 @@
-import { SearchIcon } from '@/components/icons';
+import { GearSixIcon, SearchIcon } from '@/components/icons';
 import {
   InputAdornment,
   OutlinedInput,
@@ -6,6 +6,7 @@ import {
   useTheme,
   useMediaQuery,
   Skeleton,
+  Typography,
 } from '@mui/material';
 
 import { Stack } from '@mui/material';
@@ -18,12 +19,14 @@ import { useCeramicContext } from '@/context/CeramicContext';
 
 interface ListProps {
   onDetailClick: (data: Dapp) => void;
+  onOwnedDappsClick: () => void;
 }
 
-export default function List({ onDetailClick }: ListProps) {
+export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { composeClient } = useCeramicContext();
+  const { composeClient, ceramic } = useCeramicContext();
+  const userDID = ceramic.did?.parent;
 
   const [filter, setFilter] = useState<string[]>([]);
   const [searchVal, setSearchVal] = useState<string>('');
@@ -49,6 +52,11 @@ export default function List({ onDetailClick }: ListProps) {
               appUrl
               websiteUrl
               docsUrl
+              profile {
+                author {
+                  id
+                }
+              }
             }
           }
         }
@@ -92,6 +100,12 @@ export default function List({ onDetailClick }: ListProps) {
     return filteredData;
   }, [data, filter, searchVal]);
 
+  const ownedDapps = useMemo(() => {
+    return data?.filter((dapp) => dapp.profile.author.id === userDID) || [];
+  }, [data, userDID]);
+
+  console.log(ownedDapps);
+
   return (
     <Stack
       direction="column"
@@ -99,7 +113,7 @@ export default function List({ onDetailClick }: ListProps) {
       p={isMobile ? '20px 10px' : '20px'}
       gap="20px"
     >
-      <Stack direction="row" gap="8px" alignItems="center">
+      <Stack direction="row" gap="10px" alignItems="center">
         {/* {!isMobile && <BroadcastIcon />} */}
         <OutlinedInput
           placeholder="Search dApps"
@@ -124,6 +138,43 @@ export default function List({ onDetailClick }: ListProps) {
             </InputAdornment>
           }
         />
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          width="260px"
+          sx={{ cursor: ownedDapps?.length > 0 ? 'pointer' : 'not-allowed' }}
+          onClick={() => {
+            if (ownedDapps?.length > 0) {
+              onOwnedDappsClick();
+            }
+          }}
+        >
+          <Stack
+            direction="row"
+            gap="10px"
+            alignItems="center"
+            sx={{ opacity: 0.7 }}
+          >
+            <GearSixIcon />
+            <Typography
+              fontSize={16}
+              lineHeight={1.6}
+              color="white"
+              sx={{ whiteSpace: 'nowrap' }}
+            >
+              Manage My dApps
+            </Typography>
+          </Stack>
+          <Typography
+            fontSize={13}
+            lineHeight={1.4}
+            color="white"
+            sx={{ opacity: 0.4 }}
+          >
+            {ownedDapps?.length || 0}
+          </Typography>
+        </Stack>
       </Stack>
       {isLoading ? (
         <Skeleton variant="rounded" height="30px" width="100%" />

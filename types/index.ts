@@ -588,6 +588,7 @@ export const SOCIAL_TYPES = [
 ];
 
 export interface Dapp {
+  id: string;
   appName: string;
   developerName: string;
   description: string;
@@ -600,4 +601,9 @@ export interface Dapp {
   websiteUrl: string;
   docsUrl: string;
   tagline: string;
+  profile: {
+    author: {
+      id: string;
+    };
+  };
 }

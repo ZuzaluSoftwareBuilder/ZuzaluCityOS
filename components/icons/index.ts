@@ -112,6 +112,7 @@ import { ArrowsCounterClockwiseIcon } from './ArrowsCounterClockwise';
 import { GlobeAltIcon } from './GlobeAlt';
 import { WindowIcon } from './Window';
 import { HourglassHighIcon } from './HourglassHigh';
+import { GearSixIcon } from './GearSix';
 export {
   HomeIcon,
   SearchIcon,
@@ -227,4 +228,5 @@ export {
   GlobeAltIcon,
   WindowIcon,
   HourglassHighIcon,
+  GearSixIcon,
 };

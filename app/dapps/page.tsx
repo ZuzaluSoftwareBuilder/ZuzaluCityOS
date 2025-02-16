@@ -8,12 +8,15 @@ import { useCallback, useEffect, useState } from 'react';
 import Drawer from '@/components/drawer';
 import DappForm from '@/components/form/DappForm';
 import { Dapp } from '@/types';
+import OwnedDappList from './components/ownedDappList';
 
 export default function DappsPage() {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
   const [openForm, setOpenForm] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
+  const [openOwnedDapps, setOpenOwnedDapps] = useState(false);
+  const [showOwnedDapps, setShowOwnedDapps] = useState(false);
   const [detailData, setDetailData] = useState<Dapp | undefined>(undefined);
 
   const toggleForm = useCallback(() => {
@@ -23,10 +26,18 @@ export default function DappsPage() {
     setOpenDetail((v) => !v);
   }, []);
 
-  const handleDetailClick = useCallback((data: Dapp) => {
-    setOpenDetail(true);
-    setDetailData(data);
+  const toggleOwnedDapps = useCallback(() => {
+    setOpenOwnedDapps((v) => !v);
   }, []);
+
+  const handleDetailClick = useCallback(
+    (data: Dapp, isOwned: boolean = false) => {
+      !isOwned && setOpenDetail(true);
+      setDetailData(data);
+      isOwned && setShowOwnedDapps(true);
+    },
+    [],
+  );
 
   useEffect(() => {
     if (!openDetail) {
@@ -40,12 +51,37 @@ export default function DappsPage() {
       <Stack direction="column" flex={1} width="100%">
         <Header onAdd={toggleForm} />
         <Nav />
-        <List onDetailClick={handleDetailClick} />
+        <List
+          onDetailClick={handleDetailClick}
+          onOwnedDappsClick={toggleOwnedDapps}
+        />
         <Drawer open={openForm} onClose={toggleForm} onOpen={toggleForm}>
           <DappForm handleClose={toggleForm} refetch={() => toggleForm()} />
         </Drawer>
         <Drawer open={openDetail} onClose={toggleDetail} onOpen={toggleDetail}>
           <DappDetail handleClose={toggleDetail} data={detailData} />
+        </Drawer>
+        <Drawer
+          open={openOwnedDapps}
+          onClose={toggleOwnedDapps}
+          onOpen={toggleOwnedDapps}
+        >
+          {openOwnedDapps &&
+            (showOwnedDapps ? (
+              <DappDetail
+                handleClose={() => {
+                  setShowOwnedDapps(false);
+                  setDetailData(undefined);
+                }}
+                data={detailData}
+              />
+            ) : (
+              <OwnedDappList
+                onViewDapp={(dapp) => handleDetailClick(dapp, true)}
+                onEditDapp={handleDetailClick}
+                handleClose={toggleOwnedDapps}
+              />
+            ))}
         </Drawer>
       </Stack>
     </Stack>

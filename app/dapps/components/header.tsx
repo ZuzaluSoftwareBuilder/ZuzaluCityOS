@@ -44,21 +44,14 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
     enabled: isAuthenticated,
     queryFn: async () => {
       const response: any = await composeClient.executeQuery(`
-      query {
-        zucitySpaceIndex(first: 100) {
-          edges {
-            node {
-              id
-            }
-          }
+      query MyQuery {
+        viewer {
+          zucitySpaceListCount
         }
       }
     `);
 
-      if (response && response.data && 'zucitySpaceIndex' in response.data) {
-        return response.data.zucitySpaceIndex.edges.length > 0;
-      }
-      return false;
+      return response?.data?.viewer?.zucitySpaceListCount > 0;
     },
   });
 
