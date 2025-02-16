@@ -30,6 +30,7 @@ import SelectCategories from '../select/selectCategories';
 import dynamic from 'next/dynamic';
 import FormUploader from './FormUploader';
 import SelectCheckItem from '../select/selectCheckItem';
+import { createDapp } from '@/services/dapp.ts';
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,
 });
@@ -65,6 +66,12 @@ const schema = Yup.object().shape({
 
 type FormData = Yup.InferType<typeof schema>;
 
+const developmentStatusOptions = [
+  { label: 'Live', value: 'Live' },
+  { label: 'In Development', value: 'In Development' },
+  { label: 'Discontinued', value: 'Discontinued' },
+];
+
 const DappForm: React.FC<DappFormProps> = ({
   handleClose,
   initialData,
@@ -72,6 +79,7 @@ const DappForm: React.FC<DappFormProps> = ({
 }) => {
   const descriptionEditorStore = useEditorStore();
   const { profile } = useCeramicContext();
+  const profileId = profile?.id || '';
 
   const {
     control,
@@ -89,6 +97,7 @@ const DappForm: React.FC<DappFormProps> = ({
   });
 
   const openSource = watch('openSource');
+  const developmentStatus = watch('developmentStatus');
   const tagline = watch('tagline');
 
   const resetForm = useCallback(() => {
@@ -98,11 +107,7 @@ const DappForm: React.FC<DappFormProps> = ({
 
   const submitMutation = useMutation({
     mutationFn: ({ type, data }: { type: 'create' | 'edit'; data: any }) => {
-      if (type === 'create') {
-        return createPost(data);
-      } else {
-        return updatePost(data.id, data);
-      }
+      return createDapp({ ...data, profileId });
     },
     onSuccess: () => {
       resetForm();
@@ -123,8 +128,16 @@ const DappForm: React.FC<DappFormProps> = ({
         window.alert('Description is required');
         return;
       }
+      const description = descriptionEditorStore.getValueString();
+      await submitMutation.mutateAsync({
+        type: 'create',
+        data: {
+          ...data,
+          description,
+        },
+      });
     },
-    [descriptionEditorStore, initialData, setError, submitMutation, profile],
+    [descriptionEditorStore, setError, submitMutation],
   );
 
   const onFormError = useCallback(() => {
@@ -301,9 +314,14 @@ const DappForm: React.FC<DappFormProps> = ({
                   renderValue={(selected) => selected}
                   input={<OutlinedInput label="Name" />}
                 >
-                  <MenuItem value="1">
-                    <SelectCheckItem label="1" isChecked />
-                  </MenuItem>
+                  {developmentStatusOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      <SelectCheckItem
+                        label={option.label}
+                        isChecked={developmentStatus === option.value}
+                      />
+                    </MenuItem>
+                  ))}
                 </Select>
               )}
             />
@@ -441,6 +459,7 @@ const DappForm: React.FC<DappFormProps> = ({
       <Box padding={3}>
         <FormFooter
           confirmText="Confirm App"
+          isLoading={submitMutation.isPending}
           disabled={false}
           handleClose={handleClose}
           handleConfirm={handleSubmit(handlePost, onFormError)}

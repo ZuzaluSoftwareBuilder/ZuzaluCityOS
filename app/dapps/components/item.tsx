@@ -12,7 +12,6 @@ export default function Item({ data, onClick }: ItemProps) {
   return (
     <Stack
       p="10px"
-      height="100%"
       borderRadius="10px"
       boxSizing="border-box"
       border="1px solid transparent"
@@ -60,6 +59,7 @@ export default function Item({ data, onClick }: ItemProps) {
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
+              height: '36px',
             }}
           >
             {tagline}

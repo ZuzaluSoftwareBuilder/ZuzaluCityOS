@@ -14,64 +14,59 @@ import { Item } from '.';
 import Filter from './filter';
 import { useQuery } from '@tanstack/react-query';
 import { Dapp } from '@/types';
-import { DAPP_TAGS } from '@/constant';
+import { useCeramicContext } from '@/context/CeramicContext';
 
 interface ListProps {
   onDetailClick: () => void;
 }
 
-const mockData = {
-  appName: 'Mock Dapp',
-  developerName: 'Mock Developer',
-  description: JSON.stringify({
-    time: Date.now(),
-    blocks: [
-      {
-        id: 'mockBlock1',
-        type: 'paragraph',
-        data: {
-          text: 'This is a mock description for the dapp.',
-        },
-      },
-    ],
-    version: '2.27.2',
-  }),
-  bannerUrl:
-    'https://images.wsj.net/im-43460061?width=608&height=405&pixel_ratio=2',
-  categories:
-    'Defi,Gaming,Defi,Gaming,Defi,Gaming,Defi,Gaming,Defi,Gaming,Defi,GamingDefi,Gaming,Defi,Gaming,Defi,Gaming',
-  developmentStatus: '1',
-  openSource: true,
-  repositoryUrl: 'https://github.com/mock/repository',
-  appUrl: 'https://mockapp.com',
-  websiteUrl: 'https://mockwebsite.com',
-  docsUrl: 'https://docs.mockapp.com',
-  tagline:
-    'A private, token-gated, decentralized social network built by AKASHA coreA private, token-gated, decentralized social network built by AKASHA coreA private, token-gated, decentralized social network built by AKASHA core',
-};
-
 export default function List({ onDetailClick }: ListProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { composeClient } = useCeramicContext();
 
   const [filter, setFilter] = useState<string[]>([]);
   const [searchVal, setSearchVal] = useState<string>('');
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['getDapps'],
+  const { data, isLoading } = useQuery<Dapp[]>({
+    queryKey: ['getDappInfoList'],
     queryFn: async () => {
-      const res = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(Array.from({ length: 10 }, () => mockData));
-        }, 2000);
-      });
-      return res as Dapp[];
+      const response: any = await composeClient.executeQuery(`
+      query {
+        zucityDappInfoIndex(first: 100) {
+          edges {
+            node {
+              id
+              appName
+              tagline
+              developerName
+              description
+              bannerUrl
+              categories
+              devStatus
+              openSource
+              repositoryUrl
+              appUrl
+              websiteUrl
+              docsUrl
+            }
+          }
+        }
+      }
+    `);
+
+      if (response && response.data && 'zucityDappInfoIndex' in response.data) {
+        return response.data.zucityDappInfoIndex.edges.map(
+          (edge: any) => edge.node,
+        );
+      }
+      return [];
     },
   });
 
   const filterData = useMemo(() => {
-    // const tags = data?.map((dapp) => dapp.categories.split(','));
-    return DAPP_TAGS.map((tag) => tag.label);
+    const tags = data?.map((dapp) => dapp.categories.split(','));
+    return [...new Set(tags?.flat())];
   }, [data]);
 
   const currentData = useMemo(() => {

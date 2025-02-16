@@ -131,71 +131,71 @@ export const DAPP_TAGS: {
   label: string;
 }[] = [
   {
-    value: 'social',
+    value: 'Social',
     label: 'Social',
   },
   {
-    value: 'forum',
+    value: 'Forum',
     label: 'Forum',
   },
   {
-    value: 'polls',
+    value: 'Polls',
     label: 'Polls',
   },
   {
-    value: 'messaging',
+    value: 'Messaging',
     label: 'Messaging',
   },
   {
-    value: 'tools',
+    value: 'Tools',
     label: 'Tools',
   },
   {
-    value: 'wallet',
+    value: 'Wallet',
     label: 'Wallet',
   },
   {
-    value: 'oracles',
+    value: 'Oracles',
     label: 'Oracles',
   },
   {
-    value: 'finance',
+    value: 'Finance',
     label: 'Finance',
   },
   {
-    value: 'funding',
+    value: 'Funding',
     label: 'Funding',
   },
   {
-    value: 'creative',
+    value: 'Creative',
     label: 'Creative',
   },
   {
-    value: 'education',
+    value: 'Education',
     label: 'Education',
   },
   {
-    value: 'marketplace',
+    value: 'Marketplace',
     label: 'Marketplace',
   },
   {
-    value: 'privacy',
+    value: 'Privacy',
     label: 'Privacy',
   },
   {
-    value: 'identity',
+    value: 'Identity',
     label: 'Identity',
   },
   {
-    value: 'reputation',
+    value: 'Reputation',
     label: 'Reputation',
   },
   {
-    value: 'governance',
+    value: 'Governance',
     label: 'Governance',
   },
   {
-    value: 'gaming',
+    value: 'Gaming',
     label: 'Gaming',
   },
 ];
