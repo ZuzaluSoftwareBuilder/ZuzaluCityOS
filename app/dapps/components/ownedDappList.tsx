@@ -13,6 +13,8 @@ import { useQuery } from '@tanstack/react-query';
 import { EyeIcon } from '@/components/icons/Eye';
 import { PencilIcon } from '@/components/icons/Pencil';
 import { NotePencilIcon } from '@/components/icons/NotePencil';
+import { useMemo } from 'react';
+import { useCeramicContext } from '@/context/CeramicContext';
 
 interface OwnedDappListProps {
   onViewDapp: (dapp: Dapp) => void;
@@ -30,6 +32,12 @@ export default function OwnedDappList({
   });
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { ceramic } = useCeramicContext();
+  const userDID = ceramic.did?.parent;
+
+  const ownedDapps = useMemo(() => {
+    return dapps?.filter((dapp) => dapp.profile.author.id === userDID) || [];
+  }, [dapps, userDID]);
 
   return (
     <Box>
@@ -48,7 +56,7 @@ export default function OwnedDappList({
             View and edit your app listings
           </Typography>
         </Stack>
-        {dapps.map((dapp) => (
+        {ownedDapps.map((dapp) => (
           <Stack
             key={dapp.id}
             direction={isMobile ? 'column' : 'row'}
