@@ -7,7 +7,6 @@ interface ZuSwitchProps extends SwitchProps {
 
 const ZuSwitch = styled((props: ZuSwitchProps) => {
   const { ...otherProps } = props;
-  console.log(otherProps);
   return (
     <Switch
       focusVisibleClassName=".Mui-focusVisible"
