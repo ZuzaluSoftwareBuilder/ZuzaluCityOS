@@ -170,12 +170,7 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
               Manage My dApps
             </Typography>
           </Stack>
-          <Typography
-            fontSize={13}
-            lineHeight={1.4}
-            color="white"
-            sx={{ opacity: 0.4 }}
-          >
+          <Typography fontSize={13} color="white" sx={{ opacity: 0.4 }}>
             {ownedDapps?.length || 0}
           </Typography>
         </Stack>
