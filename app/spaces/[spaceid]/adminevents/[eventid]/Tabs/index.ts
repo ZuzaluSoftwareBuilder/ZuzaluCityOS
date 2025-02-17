@@ -3,5 +3,5 @@ import Ticket from './Ticket';
 import Sessions from './Sessions';
 import Venue from './Venue';
 import Announcements from './Announcements';
-
-export { Overview, Ticket, Sessions, Venue, Announcements };
+import Apps from './Apps';
+export { Overview, Ticket, Sessions, Venue, Announcements, Apps };

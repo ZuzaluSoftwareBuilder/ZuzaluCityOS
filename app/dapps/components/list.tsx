@@ -27,7 +27,6 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { composeClient, ceramic } = useCeramicContext();
   const userDID = ceramic.did?.parent;
-
   const [filter, setFilter] = useState<string[]>([]);
   const [searchVal, setSearchVal] = useState<string>('');
 
