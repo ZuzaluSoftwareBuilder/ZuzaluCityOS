@@ -17,7 +17,7 @@ const EventDrawer: React.FC<EventDrawerProps> = ({
   const breakpoints = useTheme().breakpoints;
   return (
     <SwipeableDrawer
-      hideBackdrop={true}
+      hideBackdrop={false}
       anchor="right"
       open={open}
       onClose={onClose}
@@ -32,7 +32,7 @@ const EventDrawer: React.FC<EventDrawerProps> = ({
       <Box
         sx={{
           width: '700px',
-          [breakpoints.down('sm')]: {
+          [breakpoints.down(700)]: {
             width: '100vw',
             borderLeft: 'none',
           },

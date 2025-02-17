@@ -10,7 +10,7 @@ const escapeHtml = (text: string) => {
     .replace(/\\"/g, '"');
 };
 
-export const decodeOutputData = (value: string | OutputData): OutputData => {
+export const decodeOutputData = (value: any): OutputData => {
   if (typeof value !== 'string') return value;
   if (!value) return { time: 0, blocks: [] };
   try {
@@ -34,7 +34,7 @@ export const decodeOutputData = (value: string | OutputData): OutputData => {
   }
 };
 
-export const encodeOutputData = (data: OutputData) => {
+export const encodeOutputData = (data: any) => {
   if (!data) return JSON.stringify({});
   return JSON.stringify(data);
 };

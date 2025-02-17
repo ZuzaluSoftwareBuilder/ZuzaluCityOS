@@ -1,0 +1,8 @@
+type ZucityDappInfo @loadModel(id: "$DappInfo_ID") {
+  id: ID!
+}
+
+type ZucityProfile @loadModel(id: "$Profile_ID") {
+  dappInfos: [ZucityDappInfo]
+    @relationFrom(model: "ZucityDappInfo", property: "profileId")
+}
