@@ -4,14 +4,17 @@ import { ZuButton } from '@/components/core';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { useCallback } from 'react';
 
 const AddButton = ({
   isMobile,
   isDisabled,
+  isAuthenticated,
   onClick,
 }: {
   isMobile: boolean;
   isDisabled: boolean;
+  isAuthenticated: boolean;
   onClick: () => void;
 }) => {
   return (
@@ -24,12 +27,30 @@ const AddButton = ({
         width: isMobile ? '100%' : 'fit-content',
         margin: isMobile ? '10px 0 0' : 0,
         zIndex: 2,
-        cursor: isDisabled ? 'not-allowed' : 'pointer',
+        cursor: isAuthenticated
+          ? isDisabled
+            ? 'not-allowed'
+            : 'pointer'
+          : 'pointer',
       }}
-      startIcon={isDisabled ? <HourglassHighIcon /> : <PlusCircleIcon />}
+      startIcon={
+        isAuthenticated ? (
+          isDisabled ? (
+            <HourglassHighIcon />
+          ) : (
+            <PlusCircleIcon />
+          )
+        ) : (
+          <Image src="/user/wallet.png" alt="wallet" height={24} width={24} />
+        )
+      }
       onClick={onClick}
     >
-      {isDisabled ? 'Listing Coming Soon' : 'Add Your App'}
+      {isAuthenticated
+        ? isDisabled
+          ? 'Listing Coming Soon'
+          : 'Add Your App'
+        : 'Connect'}
     </ZuButton>
   );
 };
@@ -37,7 +58,8 @@ const AddButton = ({
 export default function Header({ onAdd }: { onAdd: () => void }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { isAuthenticated, composeClient, ceramic } = useCeramicContext();
+  const { isAuthenticated, composeClient, ceramic, showAuthPrompt } =
+    useCeramicContext();
 
   const { data: hasSpace } = useQuery({
     queryKey: ['getSpace', ceramic.did?.parent],
@@ -54,6 +76,14 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
       return response?.data?.viewer?.zucitySpaceListCount > 0;
     },
   });
+
+  const handleClick = useCallback(() => {
+    if (!isAuthenticated) {
+      showAuthPrompt();
+    } else {
+      hasSpace && onAdd();
+    }
+  }, [isAuthenticated, hasSpace, onAdd, showAuthPrompt]);
 
   return (
     <Stack
@@ -147,7 +177,8 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
             <AddButton
               isMobile={isMobile}
               isDisabled={!hasSpace}
-              onClick={() => hasSpace && onAdd()}
+              isAuthenticated={isAuthenticated}
+              onClick={handleClick}
             />
           )}
         </Stack>
@@ -156,7 +187,8 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
         <AddButton
           isMobile={isMobile}
           isDisabled={!hasSpace}
-          onClick={() => hasSpace && onAdd()}
+          isAuthenticated={isAuthenticated}
+          onClick={handleClick}
         />
       )}
     </Stack>
