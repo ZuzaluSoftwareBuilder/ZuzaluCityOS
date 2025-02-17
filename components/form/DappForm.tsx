@@ -23,7 +23,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { DAPP_TAGS } from '@/constant';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Dapp } from '@/types';
+import { Dapp, FilmOptionType } from '@/types';
 import SelectCategories from '../select/selectCategories';
 
 import dynamic from 'next/dynamic';
@@ -170,9 +170,26 @@ const DappForm: React.FC<DappFormProps> = ({
 
   const initialTags = useMemo(() => {
     if (!initialData) return [];
-    return DAPP_TAGS.filter((item) =>
-      initialData?.categories?.includes(item.value),
-    );
+    const selectedCategories = initialData?.categories?.split(',') || [];
+    return selectedCategories.map((item) => ({
+      label: item,
+      value: item,
+    }));
+  }, [initialData]);
+
+  const categoriesOptions = useMemo(() => {
+    if (!initialData) return DAPP_TAGS;
+    const selectedCategories = initialData?.categories?.split(',') || [];
+    const tags: FilmOptionType[] = [];
+    selectedCategories.forEach((item) => {
+      if (!DAPP_TAGS.find((tag) => tag.value === item)) {
+        tags.push({
+          label: item,
+          value: item,
+        });
+      }
+    });
+    return [...DAPP_TAGS, ...tags];
   }, [initialData]);
 
   useEffect(() => {
@@ -312,7 +329,7 @@ const DappForm: React.FC<DappFormProps> = ({
                     onChange={(value) => {
                       setValue('categories', value);
                     }}
-                    options={DAPP_TAGS}
+                    options={categoriesOptions}
                   />
                 )}
               />

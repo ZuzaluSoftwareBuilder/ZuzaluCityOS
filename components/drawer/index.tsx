@@ -22,6 +22,9 @@ const EventDrawer: React.FC<EventDrawerProps> = ({
       open={open}
       onClose={onClose}
       onOpen={onOpen}
+      ModalProps={{
+        keepMounted: false,
+      }}
       sx={{
         '& .MuiDrawer-paper': {
           background: '#222',
