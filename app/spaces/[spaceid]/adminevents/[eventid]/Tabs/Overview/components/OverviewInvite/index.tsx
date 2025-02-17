@@ -90,7 +90,7 @@ const OverviewInvite = ({ event }: PropTypes) => {
   };
 
   const isValidEVMAddress = (address: string): boolean => {
-    return /^0x[a-fA-F0-9]{40}$/.test(address);
+    return /^0x[a-fA-F0-9]{40}$/.test(address.trim());
   };
 
   const updateEventAdmin = async () => {

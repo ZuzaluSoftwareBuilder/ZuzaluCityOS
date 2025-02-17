@@ -132,9 +132,8 @@ export default function EventList({
           )
             return null;
           return (
-            <>
+            <div key={item.key}>
               <Box
-                key={item.key}
                 sx={{
                   backgroundColor: 'rgba(34, 34, 34, 0.9)',
                   backdropFilter: 'blur(10px)',
@@ -202,7 +201,7 @@ export default function EventList({
                   </Fragment>
                 );
               })}
-            </>
+            </div>
           );
         })
       )}

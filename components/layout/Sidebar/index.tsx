@@ -1,12 +1,14 @@
 'use client';
 import * as React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Box, Skeleton, Typography } from '@mui/material';
+import { Box, Skeleton, Stack, Typography } from '@mui/material';
 import {
   EventIcon,
   SpaceIcon,
   HomeIcon,
   ArrowUpRightIcon,
+  ShapeIcon,
+  DIcon,
 } from 'components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { ZuButton } from '@/components/core';
@@ -121,12 +123,22 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
       icon: <SpaceIcon />,
       function: () => router.push('/spaces'),
       url: '/spaces',
+      version: 'V0.5',
     },
     {
       content: 'Events',
       icon: <EventIcon />,
       function: () => router.push('/events'),
       url: '/events',
+      version: 'V0.5',
+    },
+    {
+      content: 'dApps',
+      icon: <ShapeIcon />,
+      function: () => router.push('/dapps'),
+      url: '/dapps',
+      isNew: true,
+      version: 'V0.1',
     },
     // {
     //   content: 'Zapps',
@@ -186,30 +198,56 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
       }}
       borderRight="1px solid #383838"
     >
-      <Box
-        display="flex"
-        flexDirection="column"
-        paddingX="10px"
-        paddingY="20px"
-        gap="15px"
-      >
+      <Box display="flex" flexDirection="column" padding="10px" gap="10px">
         {naviButtons.map((item, index) => {
           return (
             <Box
               display="flex"
-              padding="10px"
+              padding="8px 10px"
               alignItems="center"
-              sx={{ cursor: 'pointer', '&:hover': { bgcolor: '#383838' } }}
+              sx={{
+                cursor: 'pointer',
+                '&:hover': { bgcolor: '#383838' },
+                opacity: pathname === item.url ? 1 : 0.7,
+              }}
               bgcolor={pathname === item.url ? '#383838' : 'transparent'}
               gap="10px"
               borderRadius="10px"
+              justifyContent="space-between"
               onClick={item.function}
               key={index}
             >
-              {item.icon}
-              {selected !== 'Space Details' && (
-                <Typography color="white" variant="bodyMB">
-                  {item.content}
+              <Stack direction="row" alignItems="center" gap="10px">
+                {item.icon}
+                {selected !== 'Space Details' && (
+                  <Typography color="white" variant="bodyMB">
+                    {item.content}
+                  </Typography>
+                )}
+                {item.isNew && (
+                  <Typography
+                    sx={{
+                      borderRadius: '4px',
+                      backgroundColor: 'rgba(125, 255, 209, 0.10)',
+                      padding: '2px 4px',
+                      fontSize: '12px',
+                      color: '#7dffd1',
+                      fontWeight: 600,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    New!
+                  </Typography>
+                )}
+              </Stack>
+              {item.version && (
+                <Typography
+                  fontSize={10}
+                  lineHeight={1.2}
+                  sx={{ opacity: 0.5 }}
+                  color="#fff"
+                >
+                  {item.version}
                 </Typography>
               )}
             </Box>
@@ -227,11 +265,12 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
           padding: '20px 0 10px',
           flex: 1,
           flexDirection: isAuthenticated ? 'column' : 'column-reverse',
+          justifyContent: 'space-between',
         }}
       >
         {isAuthenticated ? (
           <>
-            <Typography fontSize={10} color="rgba(255, 255, 255, 0.7)">
+            <Typography fontSize={10} color="rgba(255, 255, 255, 0.7)" pl="6px">
               YOUR RSVP&apos;D EVENTS
             </Typography>
             <Box
@@ -286,7 +325,12 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
                           alt={event.title}
                           width={20}
                           height={20}
-                          style={{ objectFit: 'cover', borderRadius: '2px' }}
+                          style={{
+                            objectFit: 'cover',
+                            borderRadius: '2px',
+                            height: '20px',
+                            width: '20px',
+                          }}
                         />
                         <Typography color="white" variant="bodyM" noWrap>
                           {event.title}
@@ -310,7 +354,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
             )
           }
         >
-          <Typography fontSize={10} color="rgba(255, 255, 255, 0.7)">
+          <Typography fontSize={12} color="rgba(255, 255, 255, 0.7)">
             Zuzalu.city is open source
           </Typography>
           <Image
@@ -327,7 +371,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
         flexDirection="column"
         sx={{
           marginX: '10px',
-          padding: '20px 0',
+          padding: '10px 0',
         }}
       >
         <Box
@@ -414,10 +458,11 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
             width: '100%',
             height: '32px',
             border: '1px solid rgba(255, 255, 255, 0.1)',
-            fontSize: '14px',
+            fontSize: '13px !important',
             color: '#fff',
-            fontWeight: 700,
-            marginTop: '30px',
+            marginTop: '10px',
+            fontWeight: 400,
+            backgroundColor: 'transparent',
           }}
           onClick={() =>
             window.open(

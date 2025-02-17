@@ -404,9 +404,9 @@ const PublicSessions: React.FC<ISessions> = ({ eventData, option }) => {
     try {
       let filteredSessions = await getSession();
       if (filteredSessions) {
-        if (dateForCalendar && sessionsByDate) {
-          filteredSessions = await getSessionsByMonth(dateForCalendar);
-        }
+        // if (dateForCalendar && sessionsByDate) {
+        //   filteredSessions = await getSessionsByMonth(dateForCalendar);
+        // }
         if (selectedDate) {
           filteredSessions = await getSessionsByDate(
             dayjs(selectedDate).tz(eventData?.timezone).format('MMMM D, YYYY'),

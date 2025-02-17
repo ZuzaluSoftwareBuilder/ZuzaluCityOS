@@ -38,7 +38,7 @@ const SuperEditor: React.FC<{
         holder: container,
         placeholder,
         tools,
-        data: editorValue,
+        data: value || editorValue,
         minHeight: minHeight - (24 + 38),
         onChange: async (api, event: BlockMutationEvent) => {
           if (event.type !== 'block-changed') {
@@ -82,17 +82,7 @@ const SuperEditor: React.FC<{
 
       editor.isReady.then(() => {
         container.classList.add('editor-ready');
-        if (shallowDiff(editorValue, value)) {
-          if (typeof value === 'undefined') {
-            editor.clear();
-            setEditorValue(value);
-          } else if (value) {
-            editor.render(value).catch((err) => {
-              console.error(err);
-            });
-            setEditorValue(value);
-          }
-        }
+        setEditorValue(value);
 
         // observer .codex-editor__redactor height change
         const editorEl = container.querySelector<HTMLDivElement>(
@@ -122,13 +112,9 @@ const SuperEditor: React.FC<{
 
   useEffect(() => {
     if (wrapperRef.current && !editorRef.current) {
-      loadEditor(wrapperRef.current)
-        .then(() => {
-          // console.log('editor loaded');
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+      loadEditor(wrapperRef.current).catch((err) => {
+        console.error(err);
+      });
     }
     return () => {
       editorRef.current?.destroy?.();
@@ -136,23 +122,19 @@ const SuperEditor: React.FC<{
   }, []);
 
   useEffect(() => {
-    if (editorRef.current?.isReady && shallowDiff(editorValue, value)) {
+    const editor = editorRef.current;
+    if (!editor?.isReady) return;
+
+    if (shallowDiff(editorValue, value)) {
       if (typeof value === 'undefined') {
-        editorRef.current.clear();
+        editor.clear();
         setEditorValue(value);
-      } else if (value && editorRef.current.render) {
-        editorRef.current.render(value).catch((err) => {
-          console.error(err);
-        });
+      } else if (value) {
+        editor.render?.(value).catch(console.error);
         setEditorValue(value);
       }
     }
-  }, [
-    value,
-    editorValue,
-    editorRef.current?.isReady,
-    editorRef.current?.render,
-  ]);
+  }, [value, editorValue]);
 
   return (
     <Wrapper ref={wrapperRef} minHeight={minHeight}>

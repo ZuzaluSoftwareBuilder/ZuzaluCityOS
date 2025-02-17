@@ -19,6 +19,7 @@ import { LitProvider } from '@/context/LitContext';
 import { DialogProvider } from '@/components/dialog/DialogContext';
 import { GlobalDialog } from '@/components/dialog/GlobalDialog';
 import { ToastProvider } from '@/components/toast/ToastContext';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 const queryClient = new QueryClient();
 
@@ -26,14 +27,14 @@ const queryClient = new QueryClient();
 //   title: 'Zuzalu City',
 //   description: 'Zuzalu City Powered By Ethereum Community Fund',
 // };
-
+const ceramicDown = process.env.NEXT_PUBLIC_CERAMIC_DOWN === 'true';
 function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const [isClient, setIsClient] = useState(false);
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(ceramicDown);
 
   useEffect(() => {
     setIsClient(true);
@@ -54,32 +55,34 @@ function RootLayout({
             <ToastProvider>
               <ThemeProvider theme={theme}>
                 <QueryClientProvider client={queryClient}>
-                  <LitProvider>
-                    <CeramicProvider>
-                      <WalletProvider>
-                        <ZupassProvider>
-                          <AppContextProvider>
-                            <ReactQueryDevtools initialIsOpen={false} />
-                            <Header />
-                            {isClient && <AuthPrompt />}
-                            <GlobalDialog />
-                            {isClient && (
-                              <Dialog
-                                title="Upgrading Ceramic Node"
-                                message="We are currently upgrading our Ceramic node. Some data may be temporarily unavailable or inconsistent. We apologize for any inconvenience."
-                                showModal={show}
-                                onClose={() => setShow(false)}
-                                onConfirm={() => setShow(false)}
-                              />
-                            )}
-                            <div style={{ minHeight: `calc(100vh - 50px)` }}>
-                              {children}
-                            </div>
-                          </AppContextProvider>
-                        </ZupassProvider>
-                      </WalletProvider>
-                    </CeramicProvider>
-                  </LitProvider>
+                  <NuqsAdapter>
+                    <LitProvider>
+                      <CeramicProvider>
+                        <WalletProvider>
+                          <ZupassProvider>
+                            <AppContextProvider>
+                              <ReactQueryDevtools initialIsOpen={false} />
+                              <Header />
+                              {isClient && <AuthPrompt />}
+                              <GlobalDialog />
+                              {isClient && ceramicDown && (
+                                <Dialog
+                                  title="Upgrading Ceramic Node"
+                                  message="We are currently upgrading our Ceramic node. Some data may be temporarily unavailable or inconsistent. We apologize for any inconvenience."
+                                  showModal={show}
+                                  onClose={() => setShow(false)}
+                                  onConfirm={() => setShow(false)}
+                                />
+                              )}
+                              <div style={{ minHeight: `calc(100vh - 50px)` }}>
+                                {children}
+                              </div>
+                            </AppContextProvider>
+                          </ZupassProvider>
+                        </WalletProvider>
+                      </CeramicProvider>
+                    </LitProvider>
+                  </NuqsAdapter>
                 </QueryClientProvider>
               </ThemeProvider>
             </ToastProvider>

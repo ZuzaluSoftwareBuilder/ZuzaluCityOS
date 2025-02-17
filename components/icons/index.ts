@@ -90,6 +90,30 @@ import { ArrowUpTrayIcon } from './ArrowUpTray';
 import { WalletIcon } from './Wallet';
 import { LinkIcon } from './Link';
 import { TrashIcon } from './Trash';
+import { FlagIcon } from './Flag';
+import ClockIcon from './Clock';
+import { ArrowUpOnSquareIcon } from './ArrowUpOnSquare';
+import { ChatBubbleIcon } from './ChatBubble';
+import DiscordIcon from './Discord';
+import FarcasterIcon from './Farcaster';
+import { FireIcon } from './Fire';
+import { SparklesIcon } from './Sparkles';
+import TelegramIcon from './Telegram';
+import { TrashcanIcon } from './Trashcan';
+import TwitterIcon from './Twitter';
+import WhatsappIcon from './Whatsapp';
+import ChainIcon from './Chain';
+import { ShapeIcon } from './Shape';
+import { DIcon } from './D';
+import { GlobalIcon } from './Global';
+import { CubeIcon } from './Cube';
+import { BroadcastIcon } from './Broadcast';
+import { ArrowsCounterClockwiseIcon } from './ArrowsCounterClockwise';
+import { GlobeAltIcon } from './GlobeAlt';
+import { WindowIcon } from './Window';
+import { HourglassHighIcon } from './HourglassHigh';
+import { GearSixIcon } from './GearSix';
+import { NotePencilIcon } from './NotePencil';
 export {
   HomeIcon,
   SearchIcon,
@@ -183,4 +207,28 @@ export {
   WalletIcon,
   LinkIcon,
   TrashIcon,
+  ArrowUpOnSquareIcon,
+  ClockIcon,
+  ChainIcon,
+  ChatBubbleIcon,
+  DiscordIcon,
+  FarcasterIcon,
+  FireIcon,
+  FlagIcon,
+  SparklesIcon,
+  TelegramIcon,
+  TrashcanIcon,
+  TwitterIcon,
+  WhatsappIcon,
+  ShapeIcon,
+  DIcon,
+  GlobalIcon,
+  CubeIcon,
+  BroadcastIcon,
+  ArrowsCounterClockwiseIcon,
+  GlobeAltIcon,
+  WindowIcon,
+  HourglassHighIcon,
+  GearSixIcon,
+  NotePencilIcon,
 };
