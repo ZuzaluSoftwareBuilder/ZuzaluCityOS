@@ -23,7 +23,10 @@ export default function FormHeader({
       borderBottom="1px solid #383838"
       paddingX={3}
       gap={2}
-      bgcolor="rgba(34, 34, 34, 0.8)"
+      bgcolor="rgba(34, 34, 34)"
+      position="sticky"
+      top="0"
+      zIndex="1000"
     >
       <ZuButton
         startIcon={isBack ? <ArrowLeftIcon /> : <XMarkIcon />}

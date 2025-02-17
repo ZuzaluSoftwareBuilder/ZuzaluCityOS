@@ -7,7 +7,7 @@ export const FormTitle = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <Typography variant="subtitleMB" color="text.secondary">
+    <Typography variant="subtitleMB" color="white">
       {children}
     </Typography>
   );

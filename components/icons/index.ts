@@ -103,6 +103,17 @@ import { TrashcanIcon } from './Trashcan';
 import TwitterIcon from './Twitter';
 import WhatsappIcon from './Whatsapp';
 import ChainIcon from './Chain';
+import { ShapeIcon } from './Shape';
+import { DIcon } from './D';
+import { GlobalIcon } from './Global';
+import { CubeIcon } from './Cube';
+import { BroadcastIcon } from './Broadcast';
+import { ArrowsCounterClockwiseIcon } from './ArrowsCounterClockwise';
+import { GlobeAltIcon } from './GlobeAlt';
+import { WindowIcon } from './Window';
+import { HourglassHighIcon } from './HourglassHigh';
+import { GearSixIcon } from './GearSix';
+import { NotePencilIcon } from './NotePencil';
 export {
   HomeIcon,
   SearchIcon,
@@ -209,4 +220,15 @@ export {
   TrashcanIcon,
   TwitterIcon,
   WhatsappIcon,
+  ShapeIcon,
+  DIcon,
+  GlobalIcon,
+  CubeIcon,
+  BroadcastIcon,
+  ArrowsCounterClockwiseIcon,
+  GlobeAltIcon,
+  WindowIcon,
+  HourglassHighIcon,
+  GearSixIcon,
+  NotePencilIcon,
 };
