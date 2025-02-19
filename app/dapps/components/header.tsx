@@ -176,7 +176,7 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
           {!isMobile && (
             <AddButton
               isMobile={isMobile}
-              isDisabled={!hasSpace}
+              isDisabled={false}
               isAuthenticated={isAuthenticated}
               onClick={handleClick}
             />
@@ -186,7 +186,7 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
       {isMobile && (
         <AddButton
           isMobile={isMobile}
-          isDisabled={!hasSpace}
+          isDisabled={false}
           isAuthenticated={isAuthenticated}
           onClick={handleClick}
         />
