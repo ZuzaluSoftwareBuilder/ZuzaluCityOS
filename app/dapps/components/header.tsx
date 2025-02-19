@@ -81,9 +81,9 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
     if (!isAuthenticated) {
       showAuthPrompt();
     } else {
-      hasSpace && onAdd();
+      onAdd();
     }
-  }, [isAuthenticated, hasSpace, onAdd, showAuthPrompt]);
+  }, [isAuthenticated, onAdd, showAuthPrompt]);
 
   return (
     <Stack
