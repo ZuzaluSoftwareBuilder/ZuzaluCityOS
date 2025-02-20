@@ -29,8 +29,7 @@ export const decodeOutputData = (value: any): OutputData => {
 
     return data;
   } catch (e) {
-    console.error('Failed to parse output data', e);
-    return { time: 0, blocks: [] };
+    return JSON.parse(value);
   }
 };
 
