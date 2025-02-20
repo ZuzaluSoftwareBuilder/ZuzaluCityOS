@@ -145,6 +145,7 @@ const AuthPrompt: React.FC<{}> = () => {
         await authenticate();
       } catch (error) {
         console.error('Authentication failed:', error);
+        disconnect();
         needSetState && setAuthState('CONNECT_WALLET');
       }
     };

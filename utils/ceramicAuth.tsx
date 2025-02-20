@@ -6,7 +6,7 @@ import { DID } from 'dids';
 import { DIDSession } from 'did-session';
 import { EthereumWebAuth, getAccountId } from '@didtools/pkh-ethereum';
 import { CeramicClient } from '@ceramicnetwork/http-client';
-import { getAccount } from '@wagmi/core';
+import { getAccount, getConnectors } from '@wagmi/core';
 import { config } from '@/context/WalletContext';
 
 const DID_SEED_KEY = 'ceramic:did_seed';
@@ -70,42 +70,45 @@ const authenticateEthPKH = async (
   ceramic: CeramicClient,
   compose: ComposeClient,
 ) => {
-  const sessionStr = localStorage.getItem('ceramic:eth_did');
-  let session;
-  if (sessionStr) {
-    session = await DIDSession.fromSession(sessionStr);
-  }
+  return new Promise((resolve, reject) => {
+    setTimeout(async () => {
+      const sessionStr = localStorage.getItem('ceramic:eth_did');
+      let session;
+      if (sessionStr) {
+        session = await DIDSession.fromSession(sessionStr);
+      }
+      if (!session || (session.hasSession && session.isExpired)) {
+        const account = getAccount(config);
+        // const ethereum =
+        //   typeof window === 'undefined' ? undefined : window.ethereum;
 
-  if (!session || (session.hasSession && session.isExpired)) {
-    const account = getAccount(config);
-    // const ethereum =
-    //   typeof window === 'undefined' ? undefined : window.ethereum;
+        // We enable the ethereum provider to get the user's addresses.
+        const ethProvider = await account.connector?.getProvider();
+        if (!ethProvider) {
+          throw new Error('No injected Ethereum provider found.');
+        }
+        const accountId = await getAccountId(ethProvider, account.address!);
+        const authMethod = await EthereumWebAuth.getAuthMethod(
+          ethProvider,
+          accountId,
+        );
+        /**
+         * Create DIDSession & provide capabilities for resources that we want to access.
+         * @NOTE: The specific resources (ComposeDB data models) are provided through
+         * "compose.resources" below.
+         */
+        session = await DIDSession.authorize(authMethod, {
+          resources: compose.resources,
+        });
+        // Set the session in localStorage.
+        localStorage.setItem('ceramic:eth_did', session.serialize());
+      }
 
-    // We enable the ethereum provider to get the user's addresses.
-    const ethProvider = await account.connector?.getProvider();
-    if (!ethProvider) {
-      throw new Error('No injected Ethereum provider found.');
-    }
-    const accountId = await getAccountId(ethProvider, account.address!);
-    const authMethod = await EthereumWebAuth.getAuthMethod(
-      ethProvider,
-      accountId,
-    );
-    /**
-     * Create DIDSession & provide capabilities for resources that we want to access.
-     * @NOTE: The specific resources (ComposeDB data models) are provided through
-     * "compose.resources" below.
-     */
-    session = await DIDSession.authorize(authMethod, {
-      resources: compose.resources,
-    });
-    // Set the session in localStorage.
-    localStorage.setItem('ceramic:eth_did', session.serialize());
-  }
-
-  // Set our Ceramic DID to be our session DID.
-  compose.setDID(session.did);
-  ceramic.did = session.did;
-  localStorage.setItem('display did', session.did.toString());
-  return;
+      // Set our Ceramic DID to be our session DID.
+      compose.setDID(session.did);
+      ceramic.did = session.did;
+      localStorage.setItem('display did', session.did.toString());
+      resolve(true);
+    }, 2000);
+  });
 };
