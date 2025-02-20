@@ -77,7 +77,7 @@ const authenticateEthPKH = async (
       if (sessionStr) {
         session = await DIDSession.fromSession(sessionStr);
       }
-      if (!session || (session.hasSession && !session.isExpired)) {
+      if (!session || (session.hasSession && session.isExpired)) {
         const account = getAccount(config);
         // const ethereum =
         //   typeof window === 'undefined' ? undefined : window.ethereum;
