@@ -139,41 +139,43 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
             </InputAdornment>
           }
         />
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          width={isMobile ? '100%' : '210px'}
-          flexShrink={0}
-          p="8px 14px"
-          boxSizing="content-box"
-          sx={{ cursor: ownedDapps?.length > 0 ? 'pointer' : 'not-allowed' }}
-          onClick={() => {
-            if (ownedDapps?.length > 0) {
-              onOwnedDappsClick();
-            }
-          }}
-        >
+        {ownedDapps?.length > 0 && (
           <Stack
             direction="row"
-            gap="10px"
+            justifyContent="space-between"
             alignItems="center"
-            sx={{ opacity: 0.7 }}
+            width={isMobile ? '100%' : '210px'}
+            flexShrink={0}
+            p="8px 14px"
+            boxSizing="content-box"
+            sx={{ cursor: ownedDapps?.length > 0 ? 'pointer' : 'not-allowed' }}
+            onClick={() => {
+              if (ownedDapps?.length > 0) {
+                onOwnedDappsClick();
+              }
+            }}
           >
-            <GearSixIcon />
-            <Typography
-              fontSize={16}
-              lineHeight={1.6}
-              color="white"
-              sx={{ whiteSpace: 'nowrap' }}
+            <Stack
+              direction="row"
+              gap="10px"
+              alignItems="center"
+              sx={{ opacity: 0.7 }}
             >
-              Manage My dApps
+              <GearSixIcon />
+              <Typography
+                fontSize={16}
+                lineHeight={1.6}
+                color="white"
+                sx={{ whiteSpace: 'nowrap' }}
+              >
+                Manage My dApps
+              </Typography>
+            </Stack>
+            <Typography fontSize={13} color="white" sx={{ opacity: 0.4 }}>
+              {ownedDapps?.length || 0}
             </Typography>
           </Stack>
-          <Typography fontSize={13} color="white" sx={{ opacity: 0.4 }}>
-            {ownedDapps?.length || 0}
-          </Typography>
-        </Stack>
+        )}
       </Stack>
       {isLoading ? (
         <Skeleton variant="rounded" height="30px" width="100%" />
