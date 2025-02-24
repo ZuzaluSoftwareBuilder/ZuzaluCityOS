@@ -141,12 +141,12 @@ const Subbar: React.FC<SubbarProps> = ({
           direction="row"
           spacing={1}
           alignItems="center"
-          borderBottom={tabName === 'discussions' ? '1px solid white' : 'none'}
+          borderBottom={tabName === 'Discussions' ? '1px solid white' : 'none'}
           sx={{ cursor: 'pointer' }}
         >
           {canViewDiscussions ? <ChatBubbleIcon /> : <LockIcon />}
           <Typography
-            onClick={() => canViewDiscussions && setTabName('discussions')}
+            onClick={() => canViewDiscussions && setTabName('Discussions')}
             color="white"
             variant="bodyMB"
             sx={{ cursor: canViewDiscussions ? 'pointer' : 'not-allowed' }}
