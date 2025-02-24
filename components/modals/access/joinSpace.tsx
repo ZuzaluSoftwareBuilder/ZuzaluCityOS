@@ -1,4 +1,8 @@
-import { ArrowSquareRightIcon, XCricleIcon } from '@/components/icons';
+import {
+  ArrowSquareRightIcon,
+  CheckCircleIcon,
+  XCricleIcon,
+} from '@/components/icons';
 import {
   Modal,
   ModalContent,
@@ -6,6 +10,8 @@ import {
   useDisclosure,
   Divider,
   Avatar,
+  Accordion,
+  AccordionItem,
 } from '@heroui/react';
 
 const MODAL_BASE_CLASSES = {
@@ -83,8 +89,119 @@ const JoinSpaceNoGate = () => {
   );
 };
 
+const defaultContent =
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
+
 const JoinSpaceWithGate = () => {
-  return <div>JoinSpace</div>;
+  const { isOpen, onOpen, onOpenChange } = useDisclosure({
+    isOpen: true,
+  });
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      classNames={MODAL_BASE_CLASSES}
+      hideCloseButton
+      onOpenChange={onOpenChange}
+    >
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <div className="flex flex-row justify-between p-[20px] h-[62px] w-full items-center">
+              <p className={COMMON_TEXT.title}>Verify to Join</p>
+              <Button
+                isIconOnly
+                variant="flat"
+                className={BUTTON_STYLES.transparent}
+                onPress={onClose}
+              >
+                <XCricleIcon size={5} />
+              </Button>
+            </div>
+            <Divider />
+            <div className="flex flex-col p-[20px] gap-[20px]">
+              <div className="flex items-center gap-[10px] rounded-[10px] border border-b-w-10 p-[8px]">
+                <Avatar
+                  name="Junior"
+                  classNames={{
+                    base: 'min-w-[60px] h-[60px] flex-0',
+                  }}
+                />
+                <div className="flex flex-col gap-[6px]">
+                  <span className={COMMON_TEXT.title}>Community Name</span>
+                  <span className={COMMON_TEXT.description}>
+                    Community tagline. Kept short, another line for good
+                    measure.
+                  </span>
+                </div>
+              </div>
+              <p className="text-[14px] font-semibold leading-[1.2] text-center opacity-80">
+                Following credentials are required to join:
+              </p>
+              <Accordion
+                variant="splitted"
+                className="p-0 gap-[10px]"
+                itemClasses={{
+                  base: 'bg-transparent rounded-[10px] border border-white/10 bg-white/5 px-[8px]',
+                  title: 'text-[14px] font-semibold leading-[1.2] opacity-80',
+                  trigger: 'py-[8px] gap-[10px]',
+                  content: 'pb-[10px] pt-[2px]',
+                }}
+              >
+                <AccordionItem
+                  key="1"
+                  aria-label="Accordion 1"
+                  title="CredentialType"
+                  startContent={
+                    <Avatar
+                      name="Junior"
+                      classNames={{
+                        base: 'w-[30px] h-[30px] flex-0',
+                      }}
+                    />
+                  }
+                >
+                  <Divider className="mb-[10px]" />
+                  <span className="px-[10px] py-[5px] text-[13px] leading-[1.4] rounded-[60px] bg-b-w-10 text-white">
+                    DevCon3
+                  </span>
+                </AccordionItem>
+                <AccordionItem
+                  key="2"
+                  aria-label="Accordion 2"
+                  title="CredentialType"
+                  startContent={
+                    <Avatar
+                      name="Junior"
+                      classNames={{
+                        base: 'w-[30px] h-[30px] flex-0',
+                      }}
+                    />
+                  }
+                  indicator={<CheckCircleIcon color="#7DFFD1" />}
+                  disableIndicatorAnimation
+                  className="border border-[rgba(125,255,209,0.4)] bg-[rgba(125,255,209,0.05)]"
+                >
+                  <Divider className="mb-[10px]" />
+                  <span className="px-[10px] py-[5px] text-[13px] leading-[1.4] rounded-[60px] bg-b-w-10 text-white">
+                    DevCon3
+                  </span>
+                </AccordionItem>
+              </Accordion>
+              <Button
+                variant="bordered"
+                className={BUTTON_STYLES.primary}
+                startContent={<ArrowSquareRightIcon />}
+                isDisabled
+              >
+                Confirm & Join
+              </Button>
+            </div>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
+  );
 };
 
 export { JoinSpaceNoGate, JoinSpaceWithGate };
