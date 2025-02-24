@@ -20,6 +20,7 @@ import { DialogProvider } from '@/components/dialog/DialogContext';
 import { GlobalDialog } from '@/components/dialog/GlobalDialog';
 import { ToastProvider } from '@/components/toast/ToastContext';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { HeroUIProvider } from '@heroui/react';
 
 const queryClient = new QueryClient();
 
@@ -51,42 +52,46 @@ function RootLayout({
       />
       <body>
         <AppRouterCacheProvider>
-          <DialogProvider>
-            <ToastProvider>
-              <ThemeProvider theme={theme}>
-                <QueryClientProvider client={queryClient}>
-                  <NuqsAdapter>
-                    <LitProvider>
-                      <CeramicProvider>
-                        <WalletProvider>
-                          <ZupassProvider>
-                            <AppContextProvider>
-                              <ReactQueryDevtools initialIsOpen={false} />
-                              <Header />
-                              {isClient && <AuthPrompt />}
-                              <GlobalDialog />
-                              {isClient && ceramicDown && (
-                                <Dialog
-                                  title="Upgrading Ceramic Node"
-                                  message="We are currently upgrading our Ceramic node. Some data may be temporarily unavailable or inconsistent. We apologize for any inconvenience."
-                                  showModal={show}
-                                  onClose={() => setShow(false)}
-                                  onConfirm={() => setShow(false)}
-                                />
-                              )}
-                              <div style={{ minHeight: `calc(100vh - 50px)` }}>
-                                {children}
-                              </div>
-                            </AppContextProvider>
-                          </ZupassProvider>
-                        </WalletProvider>
-                      </CeramicProvider>
-                    </LitProvider>
-                  </NuqsAdapter>
-                </QueryClientProvider>
-              </ThemeProvider>
-            </ToastProvider>
-          </DialogProvider>
+          <HeroUIProvider>
+            <DialogProvider>
+              <ToastProvider>
+                <ThemeProvider theme={theme}>
+                  <QueryClientProvider client={queryClient}>
+                    <NuqsAdapter>
+                      <LitProvider>
+                        <CeramicProvider>
+                          <WalletProvider>
+                            <ZupassProvider>
+                              <AppContextProvider>
+                                <ReactQueryDevtools initialIsOpen={false} />
+                                <Header />
+                                {isClient && <AuthPrompt />}
+                                <GlobalDialog />
+                                {isClient && ceramicDown && (
+                                  <Dialog
+                                    title="Upgrading Ceramic Node"
+                                    message="We are currently upgrading our Ceramic node. Some data may be temporarily unavailable or inconsistent. We apologize for any inconvenience."
+                                    showModal={show}
+                                    onClose={() => setShow(false)}
+                                    onConfirm={() => setShow(false)}
+                                  />
+                                )}
+                                <div
+                                  style={{ minHeight: `calc(100vh - 50px)` }}
+                                >
+                                  {children}
+                                </div>
+                              </AppContextProvider>
+                            </ZupassProvider>
+                          </WalletProvider>
+                        </CeramicProvider>
+                      </LitProvider>
+                    </NuqsAdapter>
+                  </QueryClientProvider>
+                </ThemeProvider>
+              </ToastProvider>
+            </DialogProvider>
+          </HeroUIProvider>
         </AppRouterCacheProvider>
       </body>
     </html>
