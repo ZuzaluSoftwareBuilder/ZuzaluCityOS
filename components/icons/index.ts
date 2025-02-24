@@ -114,6 +114,7 @@ import { WindowIcon } from './Window';
 import { HourglassHighIcon } from './HourglassHigh';
 import { GearSixIcon } from './GearSix';
 import { NotePencilIcon } from './NotePencil';
+import { ArrowSquareRightIcon } from './ArrowSquareRight';
 export {
   HomeIcon,
   SearchIcon,
@@ -231,4 +232,5 @@ export {
   HourglassHighIcon,
   GearSixIcon,
   NotePencilIcon,
+  ArrowSquareRightIcon,
 };
