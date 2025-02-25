@@ -81,9 +81,9 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
     if (!isAuthenticated) {
       showAuthPrompt();
     } else {
-      // onAdd();
+      onAdd();
     }
-  }, [isAuthenticated, showAuthPrompt]);
+  }, [isAuthenticated, onAdd, showAuthPrompt]);
 
   return (
     <Stack
@@ -176,7 +176,7 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
           {!isMobile && (
             <AddButton
               isMobile={isMobile}
-              isDisabled
+              isDisabled={false}
               isAuthenticated={isAuthenticated}
               onClick={handleClick}
             />
@@ -186,7 +186,7 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
       {isMobile && (
         <AddButton
           isMobile={isMobile}
-          isDisabled
+          isDisabled={false}
           isAuthenticated={isAuthenticated}
           onClick={handleClick}
         />
