@@ -468,6 +468,39 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
   };
   const getSession = async () => {
     try {
+      //   const ceramicResponse: any = await composeClient.executeQuery(`
+      //   query {
+      //     zucitySessionIndex(first: 20, sorting: { createdAt: DESC }) {
+      //       edges {
+      //         node {
+      //           id
+      //           title
+      //           description
+      //           status
+      //           createdAt
+      //           startTime
+      //           endTime
+      //           eventId
+      //           profileId
+      //           track
+      //           format
+      //           type
+      //           tags
+      //           rsvpNb
+      //         }
+      //       }
+      //     }
+      //   }
+      // `);
+      //   if ('zucitySessionIndex' in ceramicResponse.data) {
+      //     const sessionData: any = ceramicResponse.data;
+      //     const fetchedSessions: Session[] =
+      //       sessionData.zucitySessionIndex.edges.map((edge: any) => edge.node);
+      //     console.log(fetchedSessions);
+      //   } else {
+      //     // console.error('Invalid data structure:', response.data);
+      //   }
+
       const { data } = await supabase
         .from('sessions')
         .select('*')
@@ -1269,7 +1302,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
               borderRadius="10px"
             >
               <Typography variant="subtitleMB">Session Details</Typography>
-              {/*<Stack direction={'row'} spacing="10px">
+              <Stack direction={'row'} spacing="10px" alignItems="center">
                 <ZuSwitch
                   checked={ceramicSession}
                   onChange={() => setCeramicSession((v) => !v)}
@@ -1279,7 +1312,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
                     Beta: Encrypt your session on Ceramic
                   </Typography>
                 </Stack>
-              </Stack>*/}
+              </Stack>
               <Stack spacing="10px">
                 <Typography variant="bodyBB">Session Name*</Typography>
                 <ZuInput

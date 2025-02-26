@@ -177,6 +177,34 @@ const Home = () => {
     fetchData();
   }, [ceramic?.did?.parent, verify]);
 
+  const tabContent = () => {
+    if (tabName === 'Sessions') {
+      return <Sessions eventData={eventData} option={urlOption} />;
+    }
+    if (tabName === 'Public Sessions') {
+      return <PublicSessions eventData={eventData} option={urlOption} />;
+    }
+    if (tabName === 'Announcements') {
+      return (
+        <Announcements
+          eventData={eventData}
+          setVerify={setVerify}
+          canEdit={announcementsEdit}
+        />
+      );
+    }
+    if (tabName === 'Discussions') {
+      return <Discussions eventId={eventId} />;
+    }
+    return (
+      <About
+        eventData={eventData}
+        setVerify={setVerify}
+        canEdit={announcementsEdit}
+      />
+    );
+  };
+
   return (
     <Stack color="white">
       <Thumbnail name={eventData?.title} />
@@ -186,27 +214,7 @@ const Home = () => {
         canViewSessions={sessionView}
         canViewDiscussions={discussionsView}
       />
-      {tabName === 'about' && (
-        <About
-          eventData={eventData}
-          setVerify={setVerify}
-          canEdit={announcementsEdit}
-        />
-      )}
-      {tabName === 'sessions' && (
-        <Sessions eventData={eventData} option={urlOption} />
-      )}
-      {tabName === 'public-sessions' && (
-        <PublicSessions eventData={eventData} option={urlOption} />
-      )}
-      {tabName === 'announcements' && (
-        <Announcements
-          eventData={eventData}
-          setVerify={setVerify}
-          canEdit={announcementsEdit}
-        />
-      )}
-      {tabName === 'discussions' && <Discussions eventId={eventId} />}
+      {tabContent()}
     </Stack>
   );
 };

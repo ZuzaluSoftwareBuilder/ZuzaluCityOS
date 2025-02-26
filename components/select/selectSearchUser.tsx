@@ -178,7 +178,7 @@ export default function SelectSearchUser({
               const isInitialUser =
                 !removedInitialUsers &&
                 fixedUsers.length > 0 &&
-                fixedUsers.some((user) => user && user.id === i.id);
+                fixedUsers.some((user) => user && user.id === i?.id);
               return (
                 i && (
                   <Chip
