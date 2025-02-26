@@ -10,7 +10,11 @@ import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import Carousel from 'components/Carousel';
-import { RightArrowCircleIcon, SpaceIcon } from 'components/icons';
+import {
+  RightArrowCircleIcon,
+  RightArrowIcon,
+  SpaceIcon,
+} from 'components/icons';
 import { Sidebar } from 'components/layout';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -18,6 +22,9 @@ import { getSpacesQuery } from '@/services/space';
 import Banner from './components/Banner';
 import { supabase } from '@/utils/supabase/client';
 import EventList from '@/components/event/EventList';
+import COMMON_STYLES from 'style/common';
+import { cn } from '@heroui/react';
+import { Button } from 'components/base';
 
 const Home: React.FC = () => {
   const theme = useTheme();
@@ -354,7 +361,23 @@ const Home: React.FC = () => {
           height={'calc(100vh - 50px)'}
         >
           {!isTablet && <Sidebar selected="Home" />}
-          <Box
+          <div className="flex-1 w-full lg:w-[calc(100vw-260px)] h-full overflow-y-auto overflow-x-hidden text-white">
+            <div className="h-[50px] p-[10px] border-b-w-10 border-b-1">1</div>
+            <div className="px-[42px] py-[32px] bg-[url('/banner/banner_bg.png')] bg-lightgray bg-center bg-cover bg-no-repeat">
+              <p className="text-[49px] font-[900] leading-[1.2] mb-[10px]">
+                Zuzalu City
+              </p>
+              <p className="text-[16px] font-[500] leading-[1.2] opacity-80 mb-[20px]">
+                Welcome to the new Zuzalu City! Stay up to date below.
+              </p>
+              <div className="flex items-center gap-[10px]">
+                <Button border startContent={<RightArrowIcon />}>
+                  Join the Discussion
+                </Button>
+              </div>
+            </div>
+          </div>
+          {/* <Box
             flex={1}
             padding={isMobile ? '10px' : '30px'}
             width={isTablet ? '100vw' : 'calc(100vw - 260px)'}
@@ -509,7 +532,7 @@ const Home: React.FC = () => {
                 )}
               </Box>
             </Box>
-          </Box>
+          </Box> */}
         </Box>
       </Box>
     </LocalizationProvider>
