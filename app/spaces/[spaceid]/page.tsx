@@ -29,6 +29,10 @@ import { ChevronUpIcon } from '@/components/icons/ChevronUp';
 import dynamic from 'next/dynamic';
 import { getSpaceEventsQuery } from '@/services/space';
 import useGetShareLink from '@/hooks/useGetShareLink';
+import {
+  JoinSpaceNoGate,
+  JoinSpaceWithGate,
+} from '@/components/modals/access/joinSpace';
 
 const EditorPreview = dynamic(
   () => import('@/components/editor/EditorPreview'),
@@ -107,6 +111,8 @@ export default function SpaceDetailPage() {
         overflowY: 'auto',
       }}
     >
+      {/* <JoinSpaceNoGate /> */}
+      <JoinSpaceWithGate />
       <SubSidebar
         title={space?.name}
         spaceId={params.spaceid.toString()}
