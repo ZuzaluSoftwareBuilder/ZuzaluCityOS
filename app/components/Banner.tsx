@@ -1,163 +1,27 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import useEmblaCarousel from 'embla-carousel-react';
-import Autoplay from 'embla-carousel-autoplay';
-import {
-  Button,
-  Link,
-  Stack,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
+import React from 'react';
+
 import { RightArrowIcon } from '@/components/icons';
+import { Button } from '@/components/base';
 
-const doclink = process.env.NEXT_PUBLIC_LEARN_DOC_V2_URL || '';
-
-const EmblaVerticalCarousel = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [emblaRef, emblaApi] = useEmblaCarousel({ axis: 'y', loop: true }, [
-    Autoplay({ stopOnInteraction: true }),
-  ]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  const scrollTo = useCallback(
-    (index: number) => {
-      emblaApi && emblaApi.scrollTo(index);
-    },
-    [emblaApi],
-  );
-
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    onSelect();
-    emblaApi.on('select', onSelect);
-    emblaApi.on('reInit', onSelect);
-  }, [emblaApi, onSelect]);
-
-  const slides = useMemo(() => {
-    const data = [
-      {
-        image: '/banner/banner_1.png',
-        text: (
-          <Stack
-            ml="40px"
-            mt="30px"
-            sx={{
-              [theme.breakpoints.down('sm')]: {
-                p: '40px 25px',
-                m: 0,
-              },
-            }}
-          >
-            <Typography
-              fontSize="49px"
-              fontWeight={700}
-              lineHeight={1.2}
-              color="#222222"
-            >
-              Zuzalu City
-            </Typography>
-            <Typography
-              mt="10px"
-              fontSize="16px"
-              fontWeight={600}
-              lineHeight={1.2}
-              color="#222222"
-              sx={{ opacity: 0.8 }}
-            >
-              Welcome to the new Zuzalu City
-            </Typography>
-            <Link href={doclink} target="_blank">
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: '#383838',
-                  color: 'white',
-                  borderRadius: '10px',
-                  p: '10px 14px',
-                  mt: '30px',
-                  width: 'auto',
-                  fontSize: '18px',
-                  fontWeight: 700,
-                  [theme.breakpoints.down('sm')]: {
-                    width: '100%',
-                  },
-                }}
-                startIcon={<RightArrowIcon />}
-              >
-                Join the Discussion
-              </Button>
-            </Link>
-          </Stack>
-        ),
-      },
-    ];
-    if (isMobile) {
-      return data;
-    }
-    return [...data, { image: '/banner/banner_2.png', text: '' }];
-  }, [isMobile, theme.breakpoints]);
-
+const Banner = () => {
   return (
-    <div className="relative h-[240px] w-full">
-      <div className="overflow-hidden h-full rounded-[30px]" ref={emblaRef}>
-        <div className="flex flex-col h-full">
-          {slides.map((slide, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0 h-full bg-center bg-no-repeat bg-cover relative"
-              style={{
-                backgroundImage: `url(${slide.image})`,
-              }}
-            >
-              {slide.text}
-            </div>
-          ))}
+    <>
+      <div className="h-[50px] p-[10px] border-b-w-10 border-b-1">1</div>
+      <div className="px-[42px] py-[32px] bg-[url('/banner/banner_bg.png')] bg-lightgray bg-center bg-cover bg-no-repeat">
+        <p className="text-[49px] font-[900] leading-[1.2] mb-[10px] font-[merriweather]">
+          Zuzalu City
+        </p>
+        <p className="text-[16px] font-[500] leading-[1.2] opacity-80 mb-[20px]">
+          Welcome to the new Zuzalu City! Stay up to date below.
+        </p>
+        <div className="flex items-center gap-[10px]">
+          <Button border startContent={<RightArrowIcon />}>
+            Join the Discussion
+          </Button>
         </div>
       </div>
-      {slides.length > 1 && (
-        <div
-          className="flex flex-col items-center justify-center 
-            absolute overflow-hidden 
-            pointer-events-auto
-            left-[10px] top-1/2 -translate-y-1/2
-            rounded-[50px]
-            bg-black/20 backdrop-blur-[4px]"
-        >
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => scrollTo(index)}
-              className="flex items-center justify-center 
-            overflow-hidden
-            bg-transparent
-            cursor-pointer
-            border-none
-            m-0
-            p-[6px_6px_5px]"
-            >
-              <div
-                className={`rounded-full 
-            bg-white
-            cursor-pointer
-            border-none
-            flex items-center justify-center
-            p-0
-            w-[6px] h-[6px]
-            ${selectedIndex === index ? 'opacity-100' : 'opacity-50'}`}
-              />
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 
-export default EmblaVerticalCarousel;
+export default Banner;
