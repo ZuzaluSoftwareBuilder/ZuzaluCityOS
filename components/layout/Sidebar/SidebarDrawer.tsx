@@ -4,6 +4,7 @@ import {
   EventIcon,
   HomeIcon,
   MenuIcon,
+  ShapeIcon,
   SpaceIcon,
 } from '@/components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
@@ -124,13 +125,14 @@ export default function SidebarDrawer({ open, onClose, selected }: PropTypes) {
         onClose();
       },
     },
-    // {
-    //     content: 'Zapps',
-    //     icon: <BoltIcon />,
-    //     function: () => {
-    //         onClose();
-    //     }
-    // }
+    {
+      content: 'dApps',
+      icon: <ShapeIcon />,
+      function: () => {
+        router.push('/dapps');
+        onClose();
+      },
+    },
   ];
 
   const footerItems = [
@@ -169,13 +171,20 @@ export default function SidebarDrawer({ open, onClose, selected }: PropTypes) {
   ];
 
   return (
-    <Drawer open={open} onClose={onClose}>
+    <Drawer
+      open={open}
+      onClose={onClose}
+      sx={{
+        '& .MuiDrawer-paper': {
+          bgcolor: '#2d2d2d',
+        },
+      }}
+    >
       <Box
         sx={{
           width: '260px',
           height: '100vh',
           position: 'sticky',
-          top: '50px',
           transitionProperty: 'width',
           transitionDuration: '300',
           transitionTimingFunction: 'ease-in-out',
