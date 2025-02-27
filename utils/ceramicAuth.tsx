@@ -109,6 +109,6 @@ const authenticateEthPKH = async (
       ceramic.did = session.did;
       localStorage.setItem('display did', session.did.toString());
       resolve(true);
-    }, 1000);
+    }, 2000);
   });
 };
