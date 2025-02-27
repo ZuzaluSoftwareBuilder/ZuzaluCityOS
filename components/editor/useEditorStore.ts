@@ -1,33 +1,28 @@
 import { OutputBlockData, OutputData } from '@editorjs/editorjs';
 import { useRef, useState } from 'react';
 import { once } from 'lodash';
-import he from 'he';
-import jsesc from 'jsesc';
 
 const escapeHtml = (text: string) => {
   return text
-    .replace(/\\/g, '\\\\')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/\//g, '\\/')
-    .replace(/(?<=&lt;[^&]*?)"/g, '\\"');
+    .replace(/(?<=&lt;[^&]*?)"/g, '\\"')
+    .replace(/\\"/g, '"')
+    .replace(/\\\\/g, '\\');
 };
 
 export const decodeOutputData = (value: any): OutputData => {
   if (typeof value !== 'string') return value;
   if (!value) return { time: 0, blocks: [] };
   try {
-    const decodedHtml = he.decode(value);
-    console.log('decodedHtml', decodedHtml);
-    const data = JSON.parse(decodedHtml) as OutputData;
+    const data = JSON.parse(escapeHtml(value)) as OutputData;
     if (data?.blocks) {
       data.blocks = data.blocks.map((block) => {
         if (block.data?.text) {
           block.data.text = block.data.text
             .replace(/&lt;/g, '<')
             .replace(/&gt;/g, '>')
-            .replace(/\\"/g, '"')
-            .replace(/\\\//g, '/');
+            .replace(/\\"/g, '"');
         }
         return block;
       });
@@ -35,15 +30,11 @@ export const decodeOutputData = (value: any): OutputData => {
 
     return data;
   } catch (e) {
+    console.log('error', e);
     try {
-      const processed = jsesc(value, {
-        json: true,
-        wrap: false,
-      });
-      console.log('processed', processed);
-      return JSON.parse(processed);
-    } catch {
       return JSON.parse(value);
+    } catch (e) {
+      return { time: 0, blocks: [] };
     }
   }
 };
