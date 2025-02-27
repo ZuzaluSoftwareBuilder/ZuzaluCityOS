@@ -1,9 +1,8 @@
-import { Button } from '@/components/base';
 import SpaceCard from '@/components/cards/SpaceCard';
-import { ArrowCircleRightIcon, BuildingsIcon } from '@/components/icons';
 import { Space } from '@/types';
 import { useRouter } from 'next/navigation';
-
+import CommonHeader from './CommonHeader';
+import { BuildingsIcon } from '@/components/icons';
 interface Community {
   data: Space[];
 }
@@ -11,23 +10,14 @@ interface Community {
 export default function Communities({ data }: Community) {
   const router = useRouter();
   return (
-    <div className="flex flex-col gap-[10px] border-b border-b-w-10">
-      <div className="flex items-center justify-between py-[10px] px-[20px]">
-        <div className="flex gap-[10px] items-center">
-          <BuildingsIcon />
-          <span className="text-[25px] font-[700] leading-[1.2]">
-            Communities
-          </span>
-          <span className="text-[14px] opacity-60">Newest Communities</span>
-        </div>
-        <Button
-          variant="light"
-          endContent={<ArrowCircleRightIcon />}
-          onPress={() => router.push('/spaces')}
-        >
-          View All Spaces
-        </Button>
-      </div>
+    <div className="flex flex-col gap-[10px] border-b border-b-w-10 pb-[20px]">
+      <CommonHeader
+        title="Communities"
+        icon={<BuildingsIcon />}
+        description="Newest Communities"
+        buttonText="View All Spaces"
+        buttonOnPress={() => router.push('/spaces')}
+      />
       <div className="flex gap-[20px] overflow-auto px-[20px]">
         {data.map((item) => (
           <SpaceCard
