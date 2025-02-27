@@ -51,3 +51,13 @@ body {
 .ce-toolbar__settings-btn {
   background-color: azure;
 }
+
+@keyframes eKXFfL {
+  0%,
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -100% center;
+  }
+}
