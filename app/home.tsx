@@ -25,6 +25,7 @@ import EventList from '@/components/event/EventList';
 import COMMON_STYLES from 'style/common';
 import { cn } from '@heroui/react';
 import { Button } from 'components/base';
+import Communities from './components/Communities';
 
 const Home: React.FC = () => {
   const theme = useTheme();
@@ -363,6 +364,7 @@ const Home: React.FC = () => {
           {!isTablet && <Sidebar selected="Home" />}
           <div className="flex-1 w-full lg:w-[calc(100vw-260px)] h-full overflow-y-auto overflow-x-hidden text-white">
             <Banner />
+            <Communities />
           </div>
           {/* <Box
             flex={1}

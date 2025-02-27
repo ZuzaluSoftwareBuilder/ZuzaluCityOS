@@ -38,7 +38,11 @@ const Banner = () => {
           Welcome to the new Zuzalu City! Stay up to date below.
         </p>
         <div className="flex items-center gap-[10px]">
-          <Button border startContent={<RightArrowIcon />}>
+          <Button
+            border
+            startContent={<RightArrowIcon />}
+            className="bg-[#383838] font-[600]"
+          >
             Join the Discussion
           </Button>
         </div>
