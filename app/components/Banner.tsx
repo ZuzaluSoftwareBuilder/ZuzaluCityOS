@@ -1,6 +1,10 @@
 import React from 'react';
 
-import { RightArrowIcon } from '@/components/icons';
+import {
+  ArrowCircleRightFillIcon,
+  ArrowCircleRightIcon,
+  RightArrowIcon,
+} from '@/components/icons';
 import { Button } from '@/components/base';
 
 const Banner = () => {
@@ -8,7 +12,11 @@ const Banner = () => {
     <>
       <div className="h-[50px] border-b-w-10 border-b-1 bg-[rgb(34,34,34)] hover:bg-[rgb(28,28,28)] cursor-pointer group">
         <div className="h-full p-[10px] w-full flex items-center justify-center gap-[10px]">
-          <div className="relative transition-transform duration-300 group-hover:-translate-x-[5px]">
+          <div className="relative w-[24px] h-[24px]">
+            <ArrowCircleRightIcon className="absolute inset-0 transition-opacity duration-300 opacity-100 group-hover:opacity-0" />
+            <ArrowCircleRightFillIcon className="absolute inset-0 transition-all duration-300 opacity-0 group-hover:opacity-100 transform group-hover:translate-x-[2px]" />
+          </div>
+          <div className="relative transition-transform duration-300 group-hover:-translate-x-[2px]">
             <p className="text-[14px] font-[600] leading-[1.2] text-white/80">
               Learn about Zuzalu City&apos;s focus on building decentralized,
               ethereum-based, privacy…

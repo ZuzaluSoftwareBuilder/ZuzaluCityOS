@@ -25,7 +25,7 @@ export default function CommonHeader({
       </div>
       <Button
         variant="light"
-        endContent={<ArrowCircleRightIcon />}
+        endContent={<ArrowCircleRightIcon size={5} />}
         onPress={buttonOnPress}
         className="h-[34px]"
       >

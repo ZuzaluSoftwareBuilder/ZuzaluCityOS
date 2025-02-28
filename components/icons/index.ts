@@ -117,6 +117,7 @@ import { NotePencilIcon } from './NotePencil';
 import { ArrowSquareRightIcon } from './ArrowSquareRight';
 import { BuildingsIcon } from './Buildings';
 import { ArrowCircleRightIcon } from './ArrowCircleRight';
+import { ArrowCircleRightFillIcon } from './ArrowCircleRight';
 import { CaretDoubleRightIcon } from './CaretDoubleRight';
 export {
   HomeIcon,
@@ -238,5 +239,6 @@ export {
   ArrowSquareRightIcon,
   BuildingsIcon,
   ArrowCircleRightIcon,
+  ArrowCircleRightFillIcon,
   CaretDoubleRightIcon,
 };
