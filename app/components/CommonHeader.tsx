@@ -17,7 +17,7 @@ export default function CommonHeader({
   buttonOnPress,
 }: CommonHeaderProps) {
   return (
-    <div className="flex items-center justify-between py-[10px] px-[20px]">
+    <div className="flex items-center justify-between py-[10px] px-[20px] sticky top-0 backdrop-blur-[10px] bg-[rgba(34, 34, 34, 0.90)] z-[1000]">
       <div className="flex gap-[10px] items-center">
         {icon}
         <span className="text-[25px] font-[700] leading-[1.2]">{title}</span>

@@ -29,13 +29,11 @@ interface EventListProps {
 }
 
 function EventList({ events, isLoading }: EventListProps) {
-  const theme = useTheme();
   const eventsData = useMemo(() => {
     const groupedEvents = {
       upcoming: [] as Event[],
     };
 
-    // 将所有事件放入 upcoming 数组中
     if (events && events.length > 0) {
       groupedEvents.upcoming = [...events];
     }
@@ -68,10 +66,7 @@ function EventList({ events, isLoading }: EventListProps) {
     };
 
     const data = {
-      ongoing: {} as { [key: string]: Event[] },
       upcoming: {} as { [key: string]: Event[] },
-      past: {} as { [key: string]: Event[] },
-      legacy: {} as { [key: string]: Event[] },
     };
     data.upcoming = getData(groupedEvents.upcoming);
 
@@ -110,14 +105,14 @@ function EventList({ events, isLoading }: EventListProps) {
             {Object.entries(eventsData['upcoming']).map(
               ([month, eventsList]) => {
                 return (
-                  <Fragment key={month}>
-                    <div className="py-[8px] px-[14px] text-[18px] leading-[1.2] font-[500] text-center rounded-[40px] border border-b-w-10 backdrop-blur-[10px] bg-[rgba(34,34,34,0.80)]">
+                  <div key={month}>
+                    <div className="py-[8px] px-[14px] text-[18px] leading-[1.2] font-[500] text-center rounded-[40px] border border-b-w-10 backdrop-blur-[10px] bg-[rgba(34,34,34,0.8)] sticky top-[60px] z-[1000]">
                       {month}
                     </div>
                     {(eventsList as Event[]).map((event: Event) => (
                       <EventCard key={event.id} data={event} />
                     ))}
-                  </Fragment>
+                  </div>
                 );
               },
             )}
@@ -216,22 +211,8 @@ export default function UpcomingEventList() {
                 <SmallEventCardSkeleton key={index} />
               ))}
             </div>
-          ) : upcomingEvents.length > 0 ? (
-            <EventList
-              events={upcomingEvents}
-              headerStyle={{
-                [theme.breakpoints.down('sm')]: {
-                  top: '-13px',
-                  padding: '10px 10px',
-                  margin: '0 -10px',
-                },
-              }}
-              isLoading={isLoading}
-            />
           ) : (
-            <div className="py-[20px] px-[10px] text-center">
-              No upcoming events
-            </div>
+            <EventList events={upcomingEvents} isLoading={isLoading} />
           )}
         </div>
         <div className="w-full md:w-[360px] px-[20px] flex flex-col gap-[20px]">
