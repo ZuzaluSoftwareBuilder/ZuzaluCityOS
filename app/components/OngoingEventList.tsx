@@ -80,6 +80,9 @@ export default function OngoingEventList() {
                     username
                     avatar
                   }
+                  space {
+                    name
+                  }
                   tracks
                 }
               }

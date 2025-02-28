@@ -47,7 +47,7 @@ function EventList({ events, isLoading }: EventListProps) {
       let keys = Object.keys(data).sort((a, b) => {
         const dateA = dayjs(a, 'MMMM YYYY');
         const dateB = dayjs(b, 'MMMM YYYY');
-        return dateA.isBefore(dateB) ? 1 : -1;
+        return dateA.isAfter(dateB) ? 1 : -1;
       });
 
       const invalidDateIndex = keys.findIndex((key) => key === 'Invalid Date');
@@ -118,7 +118,6 @@ function EventList({ events, isLoading }: EventListProps) {
 
 export default function UpcomingEventList() {
   const router = useRouter();
-  const theme = useTheme();
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [dateForCalendar, setDateForCalendar] = useState<Dayjs>(
     dayjs(new Date()).add(1, 'day'),
@@ -163,6 +162,9 @@ export default function UpcomingEventList() {
                     avatar
                   }
                   tracks
+                  space {
+                    name
+                  }
                 }
               }
             }
@@ -187,6 +189,20 @@ export default function UpcomingEventList() {
     },
   });
 
+  const filteredEvents = useMemo(() => {
+    if (!upcomingEvents) return [];
+    if (!selectedDate) return upcomingEvents;
+
+    return upcomingEvents.filter((event: Event) => {
+      const eventStartDate = dayjs(event.startTime);
+      return (
+        eventStartDate.date() === selectedDate.date() &&
+        eventStartDate.month() === selectedDate.month() &&
+        eventStartDate.year() === selectedDate.year()
+      );
+    });
+  }, [upcomingEvents, selectedDate]);
+
   return (
     <div className="flex flex-col gap-[10px] border-b border-b-w-10 pb-[20px]">
       <CommonHeader
@@ -205,7 +221,7 @@ export default function UpcomingEventList() {
               ))}
             </div>
           ) : (
-            <EventList events={upcomingEvents} isLoading={isLoading} />
+            <EventList events={filteredEvents} isLoading={isLoading} />
           )}
         </div>
         <div className="w-full md:w-[360px] px-[20px] flex flex-col gap-[20px]">
@@ -214,7 +230,17 @@ export default function UpcomingEventList() {
           </p>
           <ZuCalendar
             onChange={(val) => {
-              setSelectedDate(val);
+              if (
+                selectedDate &&
+                val &&
+                selectedDate.date() === val.date() &&
+                selectedDate.month() === val.month() &&
+                selectedDate.year() === val.year()
+              ) {
+                setSelectedDate(null);
+              } else {
+                setSelectedDate(val);
+              }
             }}
             minDate={dayjs(new Date()).add(1, 'day')}
             slots={{ day: SlotDates }}
@@ -228,21 +254,25 @@ export default function UpcomingEventList() {
                       dayjs(event.startTime).year() === dateForCalendar.year()
                     );
                   })
-                  .filter((event: Event) => {
-                    if (selectedDate) {
-                      return (
-                        dayjs(event.startTime).date() !== selectedDate.date()
-                      );
-                    }
-                    return true;
-                  })
                   .map((event: Event) => {
                     return dayjs(event.startTime).utc().date();
                   }),
+                selectedDay: selectedDate ? selectedDate.date() : undefined,
               } as any,
             }}
-            onMonthChange={(val) => setDateForCalendar(val)}
-            onYearChange={(val) => setDateForCalendar(val)}
+            onMonthChange={(val) => {
+              setDateForCalendar(val);
+              if (selectedDate && selectedDate.month() !== val.month()) {
+                setSelectedDate(null);
+              }
+            }}
+            onYearChange={(val) => {
+              setDateForCalendar(val);
+              if (selectedDate && selectedDate.year() !== val.year()) {
+                setSelectedDate(null);
+              }
+            }}
+            value={selectedDate}
           />
         </div>
       </div>
