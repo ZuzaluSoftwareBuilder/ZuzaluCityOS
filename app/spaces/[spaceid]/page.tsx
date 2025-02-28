@@ -112,7 +112,7 @@ export default function SpaceDetailPage() {
       }}
     >
       {/* <JoinSpaceNoGate /> */}
-      <JoinSpaceWithGate />
+      {/* <JoinSpaceWithGate /> */}
       <SubSidebar
         title={space?.name}
         spaceId={params.spaceid.toString()}

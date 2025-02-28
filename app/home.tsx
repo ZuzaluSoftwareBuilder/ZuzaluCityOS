@@ -117,218 +117,22 @@ const Home: React.FC = () => {
       }
     `);
 
-      const { data: legacyEvents, error } = await supabase
-        .from('legacyEvents')
-        .select('*');
-
-      if (error) throw error;
-
       let allEvents: Event[] = [];
       if (ceramicResponse?.data?.zucityEventIndex) {
-        const ceramicEvents: Event[] =
-          ceramicResponse.data.zucityEventIndex.edges.map((edge: any) => ({
+        allEvents = ceramicResponse.data.zucityEventIndex.edges.map(
+          (edge: any) => ({
             ...edge.node,
             source: 'ceramic',
-          }));
-        allEvents = [...ceramicEvents];
+          }),
+        );
       }
-
-      if (legacyEvents) {
-        const convertedLegacyEvents: Event[] = legacyEvents
-          .filter((legacy): legacy is NonNullable<typeof legacy> => !!legacy.id)
-          .map((legacy) => ({
-            id: legacy.id,
-            title: legacy.name ?? '',
-            description: legacy.description ?? '',
-            startTime: legacy.start_date ?? '',
-            endTime: legacy.end_date ?? '',
-            status: legacy.status ?? '',
-            tagline: legacy.tagline ?? '',
-            imageUrl: legacy.image_url ?? '',
-            profileId: '',
-            spaceId: '',
-            timezone: 'UTC',
-            tracks: legacy.event_type || [],
-            source: 'Legacy',
-            participantCount: 0,
-            minParticipant: 0,
-            maxParticipant: 0,
-            createdAt: legacy.start_date,
-            gated: false,
-            externalUrl: '',
-            meetingUrl: '',
-            legacyData: {
-              event_space_type: legacy.event_space_type,
-              format: legacy.format,
-              experience_level: legacy.experience_level,
-              social_links: legacy.social_links,
-              extra_links: legacy.extra_links,
-            },
-          }));
-        allEvents = [...allEvents, ...convertedLegacyEvents];
-      }
-
-      allEvents.sort(
-        (a, b) =>
-          new Date(b.startTime).getTime() - new Date(a.startTime).getTime(),
-      );
+      console.log('allEvents', allEvents);
 
       setEvents(allEvents);
       setIsEventsLoading(false);
-
-      const getEvent = allEvents.find((event) => event.id === dashboardEvent);
-      if (getEvent) {
-        setTargetEvent(getEvent);
-        const userDid = ceramic.did?.parent.toString().toLowerCase() || '';
-        if (getEvent) {
-          const memberIds = new Set(
-            getEvent.members?.map((member) => member.id.toLowerCase()),
-          );
-          const adminIds = new Set(
-            getEvent.admins?.map((admin) => admin.id.toLowerCase()),
-          );
-          const superAdminIds = new Set(
-            getEvent.superAdmin?.map((sa) => sa.id.toLowerCase()),
-          );
-
-          const canView =
-            memberIds.has(userDid) ||
-            adminIds.has(userDid) ||
-            superAdminIds.has(userDid);
-          if (canView) {
-            setTargetEventView(canView);
-          }
-        }
-      }
     } catch (error) {
       console.error('Failed to fetch events:', error);
       setIsEventsLoading(false);
-    }
-  };
-
-  const getEventsByDate = async () => {
-    try {
-      // TODO: clean selectedDate
-      if (selectedDate) {
-        const getEventsByDate_QUERY = `
-          query ($input:ZucityEventFiltersInput!) {
-          zucityEventIndex(filters:$input, first: 20){
-            edges {
-              node {
-                createdAt
-                description
-                endTime
-                externalUrl
-                gated
-                id
-                imageUrl
-                meetingUrl
-                profileId
-                spaceId
-                startTime
-                status
-                tagline
-                timezone
-                title
-                profile {
-                  username
-                  avatar
-                }
-                tracks
-              }
-            }
-          }
-        }
-      `;
-        setIsEventsLoading(true);
-        const response: any = await composeClient.executeQuery(
-          getEventsByDate_QUERY,
-          {
-            input: {
-              where: {
-                startTime: {
-                  lessThanOrEqualTo:
-                    selectedDate.format('YYYY-MM-DD') + 'T23:59:59Z',
-                  greaterThanOrEqualTo:
-                    selectedDate.format('YYYY-MM-DD') + 'T00:00:00Z',
-                },
-              },
-            },
-          },
-        );
-        if (response && response.data && 'zucityEventIndex' in response.data) {
-          const eventData: EventData = response.data as EventData;
-          const fetchedEvents: Event[] = eventData.zucityEventIndex.edges.map(
-            (edge) => edge.node,
-          );
-          setEvents(fetchedEvents);
-        } else {
-          console.error('Invalid data structure:', response.data);
-        }
-        setIsEventsLoading(false);
-      }
-    } catch (error) {
-      setIsEventsLoading(false);
-      console.error('Failed to fetch events:', error);
-    }
-  };
-
-  const getEventsInMonth = async () => {
-    const getEventsByDate_QUERY = `
-        query ($input:ZucityEventFiltersInput!) {
-        zucityEventIndex(filters:$input, first: 20){
-          edges {
-            node {
-              description
-              externalUrl
-              gated
-              imageUrl
-              meetingUrl
-              profileId
-              spaceId
-              status
-              tagline
-              timezone
-              title
-              profile {
-                username
-                avatar
-              }
-              createdAt
-              endTime
-              id
-              startTime
-              tracks
-            }
-          }
-        }
-      }
-    `;
-    const response: any = await composeClient.executeQuery(
-      getEventsByDate_QUERY,
-      {
-        input: {
-          where: {
-            startTime: {
-              lessThanOrEqualTo: dateForCalendar
-                ?.endOf('month')
-                .format('YYYY-MM-DDTHH:mm:ss[Z]'),
-              greaterThanOrEqualTo: dateForCalendar
-                ?.startOf('month')
-                .format('YYYY-MM-DDTHH:mm:ss[Z]'),
-            },
-          },
-        },
-      },
-    );
-    if (response && response.data && 'zucityEventIndex' in response.data) {
-      const eventData: EventData = response.data as EventData;
-      const fetchedEvents: Event[] = eventData.zucityEventIndex.edges.map(
-        (edge) => edge.node,
-      );
-      setEventsForCalendar(fetchedEvents);
-    } else {
-      console.error('Invalid data structure:', response.data);
     }
   };
 
@@ -338,18 +142,6 @@ const Home: React.FC = () => {
       console.error('An error occurred:', error);
     });
   }, [ceramic.did?.parent]);
-
-  useEffect(() => {
-    getEventsByDate().catch((error) => {
-      console.error('An error occurred:', error);
-    });
-  }, [selectedDate]);
-
-  useEffect(() => {
-    getEventsInMonth().catch((e) => {
-      console.error('Failed to fetch events:', e);
-    });
-  }, [dateForCalendar]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -368,7 +160,7 @@ const Home: React.FC = () => {
             <Banner />
             <Communities data={spaces} />
             <OngoingEventList data={events} />
-            <UpcomingEventList />
+            <UpcomingEventList events={events} />
           </div>
           {/* <Box
             flex={1}

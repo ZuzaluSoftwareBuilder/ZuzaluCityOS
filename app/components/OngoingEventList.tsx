@@ -7,6 +7,8 @@ import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import minMax from 'dayjs/plugin/minMax';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { useQuery } from '@tanstack/react-query';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -36,28 +38,74 @@ const getDateRangeDescription = (events: Event[]) => {
   return `${startMonth} ${startYear} - ${endMonth} ${endYear}`;
 };
 
-const filterOngoingEvents = (events: Event[]) => {
-  return events
-    .filter((event) => {
-      const now = dayjs();
-      const startTime = dayjs(event.startTime);
-      const endTime = dayjs(event.endTime);
-      return now.isSameOrAfter(startTime) && now.isSameOrBefore(endTime);
-    })
-    .sort((a, b) => {
-      const aEndTime = dayjs(a.endTime);
-      const bEndTime = dayjs(b.endTime);
-      return aEndTime.isBefore(bEndTime) ? -1 : 1;
-    });
-};
-
-interface OngoingEventListProps {
-  data: Event[];
-}
-
-export default function OngoingEventList({ data }: OngoingEventListProps) {
+export default function OngoingEventList() {
   const router = useRouter();
-  const ongoingEvents = filterOngoingEvents(data);
+  const { composeClient } = useCeramicContext();
+
+  const { data: ongoingCeramicEvents, isLoading } = useQuery({
+    queryKey: ['ongoingEvents'],
+    queryFn: async () => {
+      try {
+        const today = dayjs();
+        const todayStart = today.format('YYYY-MM-DD') + 'T00:00:00Z';
+        const getOngoingEvents_QUERY = `
+          query {
+            zucityEventIndex(
+              filters: {
+                where: {
+                  startTime: { lessThanOrEqualTo: "${todayStart}" },
+                  endTime: { greaterThanOrEqualTo: "${todayStart}" }
+                }
+              },
+              first: 100
+            ) {
+              edges {
+                node {
+                  createdAt
+                  description
+                  endTime
+                  externalUrl
+                  gated
+                  id
+                  imageUrl
+                  meetingUrl
+                  profileId
+                  spaceId
+                  startTime
+                  status
+                  tagline
+                  timezone
+                  title
+                  profile {
+                    username
+                    avatar
+                  }
+                  tracks
+                }
+              }
+            }
+          }
+        `;
+
+        const response: any = await composeClient.executeQuery(
+          getOngoingEvents_QUERY,
+        );
+
+        if (response?.data?.zucityEventIndex) {
+          return response.data.zucityEventIndex.edges.map((edge: any) => ({
+            ...edge.node,
+            source: 'ceramic',
+          }));
+        }
+        return [];
+      } catch (error) {
+        console.error('Error fetching ongoing events:', error);
+        return [];
+      }
+    },
+  });
+
+  const ongoingEvents = [...(ongoingCeramicEvents || [])];
   const dateRangeDescription = getDateRangeDescription(ongoingEvents);
 
   return (
@@ -70,13 +118,17 @@ export default function OngoingEventList({ data }: OngoingEventListProps) {
         buttonOnPress={() => router.push('/events')}
       />
       <div className="flex gap-[20px] overflow-auto px-[20px] cursor-pointer">
-        {ongoingEvents.length > 0
-          ? ongoingEvents.map((event) => (
-              <SmallEventCard key={event.id} data={event} />
-            ))
-          : Array.from({ length: 6 }).map((_, index) => (
+        {isLoading
+          ? Array.from({ length: 6 }).map((_, index) => (
               <SmallEventCardSkeleton key={index} />
-            ))}
+            ))
+          : ongoingEvents.length > 0
+            ? ongoingEvents.map((event) => (
+                <SmallEventCard key={event.id} data={event} />
+              ))
+            : Array.from({ length: 6 }).map((_, index) => (
+                <SmallEventCardSkeleton key={index} />
+              ))}
       </div>
     </div>
   );
