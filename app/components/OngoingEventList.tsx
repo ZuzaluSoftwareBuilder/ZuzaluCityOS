@@ -122,13 +122,9 @@ export default function OngoingEventList() {
           ? Array.from({ length: 6 }).map((_, index) => (
               <SmallEventCardSkeleton key={index} />
             ))
-          : ongoingEvents.length > 0
-            ? ongoingEvents.map((event) => (
-                <SmallEventCard key={event.id} data={event} />
-              ))
-            : Array.from({ length: 6 }).map((_, index) => (
-                <SmallEventCardSkeleton key={index} />
-              ))}
+          : ongoingEvents.map((event) => (
+              <SmallEventCard key={event.id} data={event} />
+            ))}
       </div>
     </div>
   );

@@ -159,8 +159,8 @@ const Home: React.FC = () => {
           <div className="flex-1 w-full lg:w-[calc(100vw-260px)] h-full overflow-y-auto overflow-x-hidden text-white">
             <Banner />
             <Communities data={spaces} />
-            <OngoingEventList data={events} />
-            <UpcomingEventList events={events} />
+            <OngoingEventList />
+            <UpcomingEventList />
           </div>
           {/* <Box
             flex={1}
