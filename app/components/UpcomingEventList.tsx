@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { ZuCalendar } from '@/components/core';
 import dayjs, { Dayjs } from 'dayjs';
 import SlotDates from '@/components/calendar/SlotDate';
-import { useState, useMemo, Fragment } from 'react';
+import { useState, useMemo } from 'react';
 import { Event } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useQuery } from '@tanstack/react-query';
@@ -13,8 +13,12 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import minMax from 'dayjs/plugin/minMax';
 import { useTheme } from '@mui/material';
-import { groupEventsByMonth } from '@/components/cards/EventCard';
+import {
+  EventCardSkeleton,
+  groupEventsByMonth,
+} from '@/components/cards/EventCard';
 import { EventCard } from './EventCard';
+import { Skeleton } from '@heroui/react';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -76,25 +80,14 @@ function EventList({ events, isLoading }: EventListProps) {
   return (
     <div className="flex flex-col gap-[10px] pl-[20px] pb-[20px]">
       {isLoading ? (
-        <>
-          <div className="py-2 px-4 text-gray-400 font-medium">
-            <div className="w-[60px] h-4 bg-gray-200 animate-pulse rounded"></div>
-          </div>
+        <div className="flex flex-col gap-[20px] w-full">
+          <Skeleton className="w-full h-[40px] rounded-[40px]">
+            <div className="h-[38px] w-full"></div>
+          </Skeleton>
           {Array.from({ length: 5 }).map((_, index) => (
-            <div
-              key={index}
-              className="bg-gray-100 bg-opacity-10 p-4 rounded-lg animate-pulse"
-            >
-              <div className="flex items-center gap-3">
-                <div className="bg-gray-200 w-12 h-12 rounded"></div>
-                <div className="flex flex-col gap-2 flex-1">
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                </div>
-              </div>
-            </div>
+            <EventCardSkeleton key={index} />
           ))}
-        </>
+        </div>
       ) : events.length === 0 ? (
         <div className="flex h-[200px] items-center justify-center">
           <p className="text-[#ccc]">No data at the moment</p>
@@ -105,7 +98,7 @@ function EventList({ events, isLoading }: EventListProps) {
             {Object.entries(eventsData['upcoming']).map(
               ([month, eventsList]) => {
                 return (
-                  <div key={month}>
+                  <div key={month} className="flex flex-col gap-[20px]">
                     <div className="py-[8px] px-[14px] text-[18px] leading-[1.2] font-[500] text-center rounded-[40px] border border-b-w-10 backdrop-blur-[10px] bg-[rgba(34,34,34,0.8)] sticky top-[60px] z-[1000]">
                       {month}
                     </div>

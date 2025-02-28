@@ -108,6 +108,10 @@ export default function OngoingEventList() {
   const ongoingEvents = [...(ongoingCeramicEvents || [])];
   const dateRangeDescription = getDateRangeDescription(ongoingEvents);
 
+  if (!isLoading && ongoingEvents.length === 0) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col gap-[10px] border-b border-b-w-10 pb-[20px]">
       <CommonHeader

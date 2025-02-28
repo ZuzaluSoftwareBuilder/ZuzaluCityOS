@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { Event } from '@/types';
-import { Avatar } from '@heroui/react';
+import { Avatar, Skeleton } from '@heroui/react';
 import { MapIcon } from '@/components/icons';
 import dayjs from 'dayjs';
 interface EventCardProps {
@@ -14,6 +14,30 @@ interface EventCardProps {
 interface Location {
   name: string;
   eventId: string;
+}
+
+export function EventCardSkeleton() {
+  return (
+    <div className="border-1 border-b-w-10 rounded-[10px] flex gap-[14px] p-[10px] hover:bg-white/5">
+      <Skeleton className="rounded-[10px]">
+        <div className="w-[140px] h-[140px] flex-0"></div>
+      </Skeleton>
+      <div className="flex flex-col gap-[10px] w-[300px]">
+        <Skeleton className="rounded-[4px]">
+          <div className="h-[30px]">By:</div>
+        </Skeleton>
+        <Skeleton className="rounded-[4px]">
+          <div className="h-[24px]"></div>
+        </Skeleton>
+        <Skeleton className="rounded-[4px]">
+          <div className="h-[20px]"></div>
+        </Skeleton>
+        <Skeleton className="rounded-[4px]">
+          <div className="h-[16px]"></div>
+        </Skeleton>
+      </div>
+    </div>
+  );
 }
 
 export function EventCard({ data }: EventCardProps) {
@@ -53,7 +77,7 @@ export function EventCard({ data }: EventCardProps) {
         }}
       />
       <div className="flex flex-col gap-[10px]">
-        <div className="flex gap-[10px] items-center">
+        <div className="flex gap-[10px] items-center h-[30px]">
           <div className="flex gap-[6px] items-center">
             <span className="text-[10px] leading-[1.2] opacity-60">By:</span>
             <Avatar
@@ -69,7 +93,7 @@ export function EventCard({ data }: EventCardProps) {
               {space?.name}
             </span>
           </div>
-          <span className="text-[14px] leading-[1.6] opacity-60 whitespace-nowrap">
+          <span className="text-[16px] leading-[1.6] opacity-60 whitespace-nowrap">
             {dayjs(startTime).utc().format('MMMM D')} -{' '}
             {dayjs(endTime).utc().format('MMMM D')}
           </span>
