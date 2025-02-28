@@ -27,6 +27,7 @@ import { cn } from '@heroui/react';
 import { Button } from 'components/base';
 import Communities from './components/Communities';
 import OngoingEventList from './components/OngoingEventList';
+import UpcomingEventList from './components/UpcomingEventList';
 
 const Home: React.FC = () => {
   const theme = useTheme();
@@ -367,6 +368,7 @@ const Home: React.FC = () => {
             <Banner />
             <Communities data={spaces} />
             <OngoingEventList data={events} />
+            <UpcomingEventList />
           </div>
           {/* <Box
             flex={1}

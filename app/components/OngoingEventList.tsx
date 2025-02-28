@@ -66,7 +66,7 @@ export default function OngoingEventList({ data }: OngoingEventListProps) {
         title="On-Going Events"
         icon={<CaretDoubleRightIcon />}
         description={dateRangeDescription}
-        buttonText="View All Events"
+        buttonText="View All On-Going"
         buttonOnPress={() => router.push('/events')}
       />
       <div className="flex gap-[20px] overflow-auto px-[20px] cursor-pointer">

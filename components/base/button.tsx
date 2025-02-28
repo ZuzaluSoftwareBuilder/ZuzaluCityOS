@@ -7,13 +7,17 @@ interface IButtonProps extends ButtonProps {
   border?: boolean;
 }
 
-export default function Button({ children, ...props }: IButtonProps) {
+export default function Button({
+  children,
+  className,
+  ...props
+}: IButtonProps) {
   return (
     <HButton
       className={cn(
         'p-[10px] text-[16px] leading-[1.2] text-white rounded-[10px] gap-[10px]',
         props.border && COMMON_STYLES.border,
-        props.className,
+        className,
       )}
       {...props}
     >
