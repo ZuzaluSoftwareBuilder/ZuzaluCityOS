@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import styles from './index.module.css';
 import { useTheme, useMediaQuery } from '@mui/material';
-import { MenuIcon } from 'components/icons';
+import { MenuIcon, WalletIcon } from 'components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
 import SidebarDrawer from '../Sidebar/SidebarDrawer';
 import { useAppContext } from '@/context/AppContext';
@@ -85,7 +85,7 @@ const Header = () => {
   return (
     <Box
       height="50px"
-      bgcolor="rgba(48, 48, 48, 0.8)"
+      bgcolor="rgba(44, 44, 44, 0.8)"
       display="flex"
       alignItems="center"
       justifyContent="space-between"
@@ -121,46 +121,31 @@ const Header = () => {
 
         <Box
           component="img"
-          src={isMobile ? '/ZuCityLogo-IconOnly.svg' : '/ZuCityLogo.svg'}
-          height="40px"
+          src={
+            isMobile ? '/ZuCityLogo-IconOnly.svg' : '/header/logoWithText.png'
+          }
+          height="30px"
           onClick={() => router.push('/')}
         />
-        <Typography
-          variant="body2"
-          color={theme.palette.text.primary}
-          sx={{
-            fontStyle: 'italic',
-            opacity: 0.8,
-          }}
-        >
-          beta
-        </Typography>
       </Box>
       {isAuthenticated ? (
         <>
           <Button
             sx={{
-              textAlign: 'center',
               color: 'white',
               fontSize: 16,
-              fontFamily: 'Inter',
-              fontWeight: 600,
-              wordWrap: 'break-word',
-              background: 'rgba(255, 255, 255, 0.05)',
-              '&:hover': {
-                background: 'rgba(255, 255, 255, 0.05)',
-                boxShadow: 'none',
-              },
-              gap: '8px',
-              borderRadius: '10px',
+              fontWeight: 500,
+              lineHeight: 1.2,
+              background: 'transparent',
+              gap: '6px',
             }}
             onClick={handleMenuClick}
           >
             <Image
               src={profile?.avatar ?? '/user/avatar_p.png'}
               alt="avatar"
-              height={24}
-              width={24}
+              height={28}
+              width={28}
             />
             {formattedName}
           </Button>
@@ -321,22 +306,21 @@ const Header = () => {
           sx={{
             textAlign: 'center',
             color: 'white',
-            fontSize: 16,
-            fontFamily: 'Inter',
-            fontWeight: 600,
-            lineHeight: '19.2px',
-            wordWrap: 'break-word',
-            background: 'rgba(255, 255, 255, 0.05)',
+            fontSize: '14px',
+            fontWeight: 500,
+            lineHeight: 1.2,
             '&:hover': {
-              background: 'rgba(255, 255, 255, 0.05)',
-              boxShadow: 'none',
+              bgcolor: 'rgba(255, 255, 255, 0.1)',
             },
-            gap: '8px',
-            borderRadius: '10px',
+            gap: '10px',
+            border: '1px solid rgba(255, 255, 255, 0.10)',
+            bgcolor: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '8px',
+            padding: '5px 10px',
           }}
+          startIcon={<WalletIcon size={5} />}
           onClick={showAuthPrompt}
         >
-          <Image src="/user/wallet.png" alt="wallet" height={24} width={24} />
           Connect
         </ZuButton>
       )}
