@@ -99,7 +99,9 @@ export function SmallEventCard({ data }: SmallEventCardProps) {
         <p className="text-[20px] font-bold leading-[1.2] truncate">{title}</p>
         <div className="flex gap-[6px] items-center opacity-50">
           <MapIcon size={4} />
-          <span className="text-[10px] leading-[1.2]">{eventLocation}</span>
+          <span className="text-[10px] leading-[1.2] uppercase">
+            {eventLocation}
+          </span>
         </div>
       </div>
     </div>
