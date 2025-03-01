@@ -12,7 +12,6 @@ import { SmallEventCardSkeleton } from './SmallEventCard';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import minMax from 'dayjs/plugin/minMax';
-import { useTheme } from '@mui/material';
 import {
   EventCardSkeleton,
   groupEventsByMonth,
@@ -212,7 +211,7 @@ export default function UpcomingEventList() {
         buttonText="View All Events"
         buttonOnPress={() => router.push('/events')}
       />
-      <div className="flex flex-col md:flex-row gap-[20px]">
+      <div className="flex flex-row gap-[20px]">
         <div className="flex-1">
           {isLoading ? (
             <div className="flex gap-[20px] overflow-auto px-[20px]">
@@ -224,7 +223,7 @@ export default function UpcomingEventList() {
             <EventList events={filteredEvents} isLoading={isLoading} />
           )}
         </div>
-        <div className="w-full md:w-[360px] px-[20px] flex flex-col gap-[20px]">
+        <div className="w-[360px] px-[20px] flex flex-col gap-[20px]">
           <p className="py-[20px] px-[10px] text-[18px] font-[700] leading-[1.2] border-b border-b-w-10">
             Sort & Filter Events
           </p>
