@@ -18,7 +18,37 @@ export default function Communities() {
         const response: any = await composeClient.executeQuery(getSpacesQuery);
         if ('zucitySpaceIndex' in response.data) {
           const spaceData: SpaceData = response.data as SpaceData;
-          return spaceData.zucitySpaceIndex.edges.map((edge) => edge.node);
+          const spaces = spaceData.zucitySpaceIndex.edges.map(
+            (edge) => edge.node,
+          );
+
+          const getCreatedTime = (space: Space): number | null => {
+            if (!space.customAttributes?.length) return null;
+
+            for (const attr of space.customAttributes) {
+              if (!attr || !('tbd' in attr)) continue;
+
+              try {
+                const parsedAttr = JSON.parse(attr.tbd);
+                if (parsedAttr.key === 'createdTime' && parsedAttr.value) {
+                  return new Date(parsedAttr.value).getTime();
+                }
+              } catch {
+                // do nothing
+              }
+            }
+            return null;
+          };
+
+          return spaces.sort((a, b) => {
+            const timeA = getCreatedTime(a);
+            const timeB = getCreatedTime(b);
+
+            if (timeA && timeB) return timeB - timeA;
+            if (timeA) return -1;
+            if (timeB) return 1;
+            return 0;
+          });
         } else {
           console.error('Invalid data structure:', response.data);
           return [];

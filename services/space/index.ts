@@ -92,6 +92,9 @@ export const getSpacesQuery = `
               telegram
               twitter
               website
+              customAttributes {
+                tbd
+              }
             }
           }
         }

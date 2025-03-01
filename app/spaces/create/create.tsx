@@ -29,6 +29,7 @@ import { createUrl } from '@/services/url';
 
 import dynamic from 'next/dynamic';
 import FormUploader from '@/components/form/FormUploader';
+import dayjs from 'dayjs';
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,
 });
@@ -182,6 +183,14 @@ const Create = () => {
                 banner ||
                 'https://nftstorage.link/ipfs/bafybeifqan4j2n7gygwkmekcty3dsp7v4rxbjimpo7nrktclwxgxreiyay',
               category: categories.join(', '),
+              customAttributes: [
+                {
+                  tbd: JSON.stringify({
+                    key: 'createdTime',
+                    value: dayjs().utc().toISOString(),
+                  }),
+                },
+              ],
             },
           },
         },

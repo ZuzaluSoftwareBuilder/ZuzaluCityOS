@@ -63,7 +63,6 @@ export default function CalendarConfigForm({
 
   const configCalendarMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      console.log(data, space);
       const customAttributes = space.customAttributes || [];
       const result = await composeClient.executeQuery(
         `
