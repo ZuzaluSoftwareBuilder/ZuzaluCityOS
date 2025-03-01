@@ -1,4 +1,4 @@
-import { SpaceCard } from './SpaceCard';
+import { SpaceCard, SpaceCardSkeleton } from './SpaceCard';
 import { Space, SpaceData } from '@/types';
 import { useRouter } from 'next/navigation';
 import CommonHeader from './CommonHeader';
@@ -70,7 +70,11 @@ export default function Communities() {
         buttonOnPress={() => router.push('/spaces')}
       />
       <div className="flex gap-[20px] overflow-auto px-[20px]">
-        {spacesData?.map((item) => <SpaceCard key={item.id} data={item} />)}
+        {isLoading
+          ? Array.from({ length: 5 }).map((_, index) => (
+              <SpaceCardSkeleton key={index} />
+            ))
+          : spacesData?.map((item) => <SpaceCard key={item.id} data={item} />)}
       </div>
     </div>
   );

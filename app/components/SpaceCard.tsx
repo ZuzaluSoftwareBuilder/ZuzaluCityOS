@@ -1,4 +1,4 @@
-import { Image, Avatar } from '@heroui/react';
+import { Image, Avatar, Skeleton } from '@heroui/react';
 import { useMemo } from 'react';
 
 import { Space } from '@/types';
@@ -10,8 +10,37 @@ import {
 import { Button } from '@/components/base';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useRouter } from 'next/navigation';
+
 export function SpaceCardSkeleton() {
-  return <div>SpaceCardSkeleton</div>;
+  return (
+    <div className="w-[276px] flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden">
+      <div className="relative">
+        <Skeleton className="rounded-none">
+          <div className="w-full h-[108px]"></div>
+        </Skeleton>
+        <Skeleton className="absolute left-[11px] w-[60px] h-[60px] bottom-[-21px] z-10 rounded-full" />
+      </div>
+      <div className="p-[10px]">
+        <div className="flex items-center gap-[6px] justify-end opacity-50 mb-[7px] h-[18px]">
+          <Skeleton className="w-[16px] h-[16px] rounded-full" />
+          <Skeleton className="w-[30px] h-[13px] rounded-[4px]" />
+        </div>
+        <Skeleton className="mb-[6px] rounded-[4px]">
+          <div className="h-[21px]"></div>
+        </Skeleton>
+        <Skeleton className="mb-[20px] rounded-[4px]">
+          <div className="h-[42px]"></div>
+        </Skeleton>
+        <div className="mb-[10px] flex items-center gap-[10px]">
+          <Skeleton className="w-[40px] h-[12px] rounded-[4px]" />
+          <Skeleton className="w-[40px] h-[12px] rounded-[4px]" />
+        </div>
+        <Skeleton className="rounded-[8px]">
+          <div className="w-full h-[40px]"></div>
+        </Skeleton>
+      </div>
+    </div>
+  );
 }
 
 const formatMemberCount = (count: number): string => {

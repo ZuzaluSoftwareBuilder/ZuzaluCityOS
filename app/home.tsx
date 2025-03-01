@@ -1,12 +1,9 @@
 'use client';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { Space, SpaceData } from '@/types';
 import { Box, useMediaQuery, useTheme } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Sidebar } from 'components/layout';
-import React, { useEffect, useState } from 'react';
-import { getSpacesQuery } from '@/services/space';
+import React, {  } from 'react';
 import Banner from './components/Banner';
 import Communities from './components/Communities';
 import OngoingEventList from './components/OngoingEventList';
