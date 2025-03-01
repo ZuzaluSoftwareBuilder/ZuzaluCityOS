@@ -1,4 +1,4 @@
-import SpaceCard from '@/components/cards/SpaceCard';
+import { SpaceCard } from './SpaceCard';
 import { Space } from '@/types';
 import { useRouter } from 'next/navigation';
 import CommonHeader from './CommonHeader';
@@ -20,29 +20,7 @@ export default function Communities({ data }: Community) {
       />
       <div className="flex gap-[20px] overflow-auto px-[20px]">
         {data.map((item) => (
-          <SpaceCard
-            id={item.id}
-            key={`SpaceCard-${item.id}`}
-            logoImage={
-              item.avatar !== 'undefined' &&
-              item.avatar &&
-              !item.avatar.includes('blob')
-                ? item.avatar
-                : '/1.webp'
-            }
-            bgImage={
-              item.banner !== 'undefined' &&
-              item.banner &&
-              !item.banner.includes('blob')
-                ? item.banner
-                : '/5.webp'
-            }
-            title={item.name}
-            description={item.description}
-            members={item.members}
-            categories={item.category}
-            tagline={item.tagline}
-          />
+          <SpaceCard key={item.id} data={item} />
         ))}
       </div>
     </div>
