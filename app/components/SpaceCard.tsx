@@ -9,7 +9,7 @@ import {
 } from '@/components/icons';
 import { Button } from '@/components/base';
 import { useCeramicContext } from '@/context/CeramicContext';
-
+import { useRouter } from 'next/navigation';
 export function SpaceCardSkeleton() {
   return <div>SpaceCardSkeleton</div>;
 }
@@ -26,8 +26,18 @@ interface SpaceCardProps {
 }
 
 export function SpaceCard({ data }: SpaceCardProps) {
-  const { banner, name, tagline, avatar, members, admins, superAdmin } = data;
+  const {
+    banner,
+    name,
+    tagline,
+    avatar,
+    members,
+    admins,
+    superAdmin,
+    category,
+  } = data;
   const { profile } = useCeramicContext();
+  const router = useRouter();
 
   const currentUserId = profile?.author?.id;
 
@@ -82,13 +92,28 @@ export function SpaceCard({ data }: SpaceCardProps) {
         <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] text-[18px] font-bold leading-[1.2] truncate mb-[6px]">
           {name}
         </p>
-        <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] text-[13px] leading-[1.6] opacity-60 line-clamp-2 h-[42px] mb-[33px]">
+        <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] text-[13px] leading-[1.6] opacity-60 line-clamp-2 h-[42px] mb-[20px]">
           {tagline}
         </p>
-        <div className="mb-[10px] flex items-center"></div>
+        <div className="mb-[10px] flex items-center gap-[10px] opacity-40">
+          {category
+            ?.split(',')
+            .slice(0, 2)
+            .map((item) => (
+              <span key={item} className="text-[10px] leading-[1.2] uppercase">
+                {item}
+              </span>
+            ))}
+          {category && category.split(',').length > 2 && (
+            <span className="text-[10px] leading-[1.2]">
+              +{category.split(',').length - 2}
+            </span>
+          )}
+        </div>
         <Button
           startContent={<ArrowSquareRightIcon />}
           className="w-full text-[14px] bg-[#363636]"
+          onPress={() => router.push(`/spaces/${data.id}`)}
         >
           View Community
         </Button>
