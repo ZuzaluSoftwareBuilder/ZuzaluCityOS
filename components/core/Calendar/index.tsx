@@ -29,7 +29,8 @@ const ZuCalendar = styled(DateCalendar)({
   },
   '& .Mui-disabled.MuiPickersDay-dayWithMargin': {
     fontFamily: 'Inter',
-    color: '#ccc',
+    color: '#fff !important',
+    opacity: 0.5,
     fontSize: '16px',
     fontWeight: 500,
     textDecoration: 'line-through',
@@ -39,6 +40,9 @@ const ZuCalendar = styled(DateCalendar)({
   '& .MuiPickersYear-yearButton': {
     lineHeight: 1.75,
     fontSize: '1.25rem',
+  },
+  '& .MuiPickersDay-root:not(.Mui-selected)': {
+    border: 'none',
   },
 });
 
