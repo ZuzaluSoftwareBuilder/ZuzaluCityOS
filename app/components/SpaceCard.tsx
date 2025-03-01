@@ -88,7 +88,7 @@ export function SpaceCard({ data }: SpaceCardProps) {
   }, [members?.length, admins?.length, superAdmin?.length]);
 
   return (
-    <div className="w-[276px] flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden">
+    <div className="w-[276px] flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden hover:bg-white/5 transition-colors">
       <div className="relative">
         <Image
           src={banner}

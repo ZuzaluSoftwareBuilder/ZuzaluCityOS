@@ -62,7 +62,7 @@ export function SmallEventCard({ data }: SmallEventCardProps) {
 
   return (
     <div
-      className="border-1 border-b-w-10 rounded-[10px] flex gap-[14px] p-[10px] hover:bg-white/5"
+      className="border-1 border-b-w-10 rounded-[10px] flex gap-[14px] p-[10px] hover:bg-white/5 transition-colors"
       onClick={handleNavigation}
     >
       <Avatar
