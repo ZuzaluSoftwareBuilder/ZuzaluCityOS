@@ -82,6 +82,12 @@ export const getSpacesQuery = `
               superAdmin {
                 id
               }
+              admins {
+                id
+              }
+              members {
+                id
+              }
               tagline
               telegram
               twitter

@@ -46,11 +46,10 @@ export function SpaceCard({ data }: SpaceCardProps) {
           <span className="text-[13px] leading-[1.4]">1.4k</span>
         </div>
         <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] text-[18px] font-bold leading-[1.2] truncate mb-[6px]">
-          {data.name || 'Zu_Builders Guild'}
+          {data.name}
         </p>
         <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] text-[13px] leading-[1.6] opacity-60 line-clamp-2 h-[42px] mb-[33px]">
-          {data.tagline ||
-            'Community tagline. Kept short, another line for good measure.'}
+          {data.tagline}
         </p>
         <div className="mb-[10px] flex items-center"></div>
         <Button
