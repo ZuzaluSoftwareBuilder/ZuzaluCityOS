@@ -37,7 +37,7 @@ const Header = () => {
   const router = useRouter();
   const pathName = usePathname();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
+  const isTablet = useMediaQuery(theme.breakpoints.down(1200));
   const { isAuthenticated, showAuthPrompt, logout, username, profile } =
     useCeramicContext();
   const { litDisconnect } = useLitContext();
@@ -121,9 +121,7 @@ const Header = () => {
 
         <Box
           component="img"
-          src={
-            isMobile ? '/ZuCityLogo-IconOnly.svg' : '/header/logoWithText.png'
-          }
+          src={isMobile ? '/header/logo.png' : '/header/logoWithText.png'}
           height="30px"
           onClick={() => router.push('/')}
         />
