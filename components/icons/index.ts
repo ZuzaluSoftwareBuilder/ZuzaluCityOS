@@ -119,6 +119,8 @@ import { BuildingsIcon } from './Buildings';
 import { ArrowCircleRightIcon } from './ArrowCircleRight';
 import { ArrowCircleRightFillIcon } from './ArrowCircleRight';
 import { CaretDoubleRightIcon } from './CaretDoubleRight';
+import { StorefrontIcon } from './Storefront';
+import { VideoIcon } from './Video';
 export {
   HomeIcon,
   SearchIcon,
@@ -241,4 +243,6 @@ export {
   ArrowCircleRightIcon,
   ArrowCircleRightFillIcon,
   CaretDoubleRightIcon,
+  StorefrontIcon,
+  VideoIcon,
 };
