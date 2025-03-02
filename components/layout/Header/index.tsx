@@ -1,24 +1,15 @@
 'use client';
 import React, { useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import {
-  Box,
-  Typography,
-  Button,
-  Menu,
-  MenuItem,
-  Divider,
-  Stack,
-} from '@mui/material';
-import styles from './index.module.css';
+import { Box, Typography, Menu, Stack } from '@mui/material';
 import { useTheme, useMediaQuery } from '@mui/material';
 import { MenuIcon, WalletIcon } from 'components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
 import SidebarDrawer from '../Sidebar/SidebarDrawer';
 import { useAppContext } from '@/context/AppContext';
-import { useAccount, useDisconnect, useEnsName } from 'wagmi';
+import { useDisconnect } from 'wagmi';
 import Image from 'next/image';
-import { ZuButton } from '@/components/core';
+import { Button } from '@/components/base';
 import { formatUserName } from '@/utils/format';
 import { useLitContext } from '@/context/LitContext';
 import Profile from '@/components/profile';
@@ -305,27 +296,14 @@ const Header = () => {
           </Menu>
         </>
       ) : (
-        <ZuButton
-          sx={{
-            textAlign: 'center',
-            color: 'white',
-            fontSize: '14px',
-            fontWeight: 500,
-            lineHeight: 1.2,
-            '&:hover': {
-              bgcolor: 'rgba(255, 255, 255, 0.1)',
-            },
-            gap: '10px',
-            border: '1px solid rgba(255, 255, 255, 0.10)',
-            bgcolor: 'rgba(255, 255, 255, 0.05)',
-            borderRadius: '8px',
-            padding: '5px 10px',
-          }}
-          startIcon={<WalletIcon size={5} />}
-          onClick={showAuthPrompt}
+        <Button
+          startContent={<WalletIcon size={5} />}
+          onPress={showAuthPrompt}
+          border
+          className="text-[14px] font-[500] leading-[1.2] text-white rounded-[8px] bg-white/5 h-[30px]"
         >
           Connect
-        </ZuButton>
+        </Button>
       )}
       <SidebarDrawer
         selected={'Home'}
