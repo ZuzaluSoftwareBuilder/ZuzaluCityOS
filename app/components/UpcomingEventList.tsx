@@ -18,6 +18,7 @@ import {
 } from '@/components/cards/EventCard';
 import { EventCard } from './EventCard';
 import { Skeleton } from '@heroui/react';
+import { UPCOMING_EVENTS_QUERY } from '@/graphql/eventQueries';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -129,49 +130,12 @@ export default function UpcomingEventList() {
       try {
         const tomorrow = dayjs().add(1, 'day');
         const tomorrowStart = tomorrow.format('YYYY-MM-DD') + 'T00:00:00Z';
-        const getUpcomingEvents_QUERY = `
-          query {
-            zucityEventIndex(
-              filters: {
-                where: {
-                  startTime: { greaterThanOrEqualTo: "${tomorrowStart}" }
-                }
-              },
-              first: 100
-            ) {
-              edges {
-                node {
-                  createdAt
-                  description
-                  endTime
-                  externalUrl
-                  gated
-                  id
-                  imageUrl
-                  meetingUrl
-                  profileId
-                  spaceId
-                  startTime
-                  status
-                  tagline
-                  timezone
-                  title
-                  profile {
-                    username
-                    avatar
-                  }
-                  tracks
-                  space {
-                    name
-                  }
-                }
-              }
-            }
-          }
-        `;
 
         const response: any = await composeClient.executeQuery(
-          getUpcomingEvents_QUERY,
+          UPCOMING_EVENTS_QUERY,
+          {
+            startTime: tomorrowStart,
+          },
         );
 
         if (response?.data?.zucityEventIndex) {

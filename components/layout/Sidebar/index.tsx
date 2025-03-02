@@ -14,11 +14,12 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import { EventData, SpaceData } from '@/types';
 import { useCallback, useState, useMemo } from 'react';
 import Image from 'next/image';
-import { cn, Tab, Tabs, ScrollShadow } from '@heroui/react';
+import { cn, Tab, Tabs, ScrollShadow, Skeleton } from '@heroui/react';
 import { Button } from '@/components/base';
 import { useQuery } from '@tanstack/react-query';
 import { isUserAssociated } from '@/utils/permissions';
 import { getSpacesQuery } from '@/services/space';
+import { EVENTS_QUERY } from '@/graphql/eventQueries';
 
 interface SidebarProps {
   selected: string;
@@ -111,37 +112,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
     queryKey: ['userEvents'],
     queryFn: async () => {
       try {
-        const response: any = await composeClient.executeQuery(`
-          query {
-            zucityEventIndex(first: 100) {
-              edges {
-                node {
-                  id
-                  imageUrl
-                  title
-                  members{
-                  id
-                  }
-                  admins{
-                  id
-                  }
-                  superAdmin{
-                  id
-                  }
-                  profile {
-                    username
-                    avatar
-                  }
-                  space {
-                    name
-                    avatar
-                  }
-                  tracks
-                }
-              }
-            }
-          }
-        `);
+        const response: any = await composeClient.executeQuery(EVENTS_QUERY);
 
         if (response && response.data && 'zucityEventIndex' in response.data) {
           const eventData: EventData = response.data as EventData;
@@ -204,12 +175,13 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
 
   const renderLoadingSkeleton = useCallback(() => {
     return Array.from({ length: 3 }).map((_, index) => (
-      <div
-        key={index}
-        className="flex items-center gap-[10px] p-[6px_10px] opacity-70 cursor-pointer"
-      >
-        <div className="w-[20px] h-[20px] bg-gray-300 rounded animate-pulse"></div>
-        <div className="w-[190px] h-[17px] bg-gray-300 rounded animate-pulse"></div>
+      <div key={index} className="flex items-center gap-[10px] p-[6px_10px]">
+        <Skeleton className="rounded-[2px]">
+          <div className="w-[20px] h-[20px]"></div>
+        </Skeleton>
+        <Skeleton className="rounded-[4px]">
+          <div className="h-[17px] w-[190px]"></div>
+        </Skeleton>
       </div>
     ));
   }, []);

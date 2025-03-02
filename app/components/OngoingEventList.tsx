@@ -9,6 +9,7 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import minMax from 'dayjs/plugin/minMax';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useQuery } from '@tanstack/react-query';
+import { ONGOING_EVENTS_QUERY } from '@/graphql/eventQueries';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -48,50 +49,12 @@ export default function OngoingEventList() {
       try {
         const today = dayjs();
         const todayStart = today.format('YYYY-MM-DD') + 'T00:00:00Z';
-        const getOngoingEvents_QUERY = `
-          query {
-            zucityEventIndex(
-              filters: {
-                where: {
-                  startTime: { lessThanOrEqualTo: "${todayStart}" },
-                  endTime: { greaterThanOrEqualTo: "${todayStart}" }
-                }
-              },
-              first: 100
-            ) {
-              edges {
-                node {
-                  createdAt
-                  description
-                  endTime
-                  externalUrl
-                  gated
-                  id
-                  imageUrl
-                  meetingUrl
-                  profileId
-                  spaceId
-                  startTime
-                  status
-                  tagline
-                  timezone
-                  title
-                  profile {
-                    username
-                    avatar
-                  }
-                  space {
-                    name
-                  }
-                  tracks
-                }
-              }
-            }
-          }
-        `;
 
         const response: any = await composeClient.executeQuery(
-          getOngoingEvents_QUERY,
+          ONGOING_EVENTS_QUERY,
+          {
+            referenceTime: todayStart,
+          },
         );
 
         if (response?.data?.zucityEventIndex) {
