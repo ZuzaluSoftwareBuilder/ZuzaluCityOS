@@ -125,6 +125,11 @@ const Header = () => {
           height="30px"
           onClick={() => router.push('/')}
         />
+        {!isMobile ? (
+          <span className="text-[14px] font-[300] opacity-80 leading-[1.2] italic text-white">
+            beta
+          </span>
+        ) : null}
       </Box>
       {isAuthenticated ? (
         <>

@@ -23,6 +23,7 @@ import { EVENTS_QUERY } from '@/graphql/eventQueries';
 
 interface SidebarProps {
   selected: string;
+  isMobile?: boolean;
 }
 
 const naviButtons = [
@@ -99,7 +100,7 @@ const footerItems = [
   },
 ];
 
-const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
+const Sidebar: React.FC<SidebarProps> = ({ selected, isMobile = false }) => {
   const router = useRouter();
   const pathname = usePathname();
   const { isAuthenticated, composeClient, ceramic } = useCeramicContext();
@@ -246,7 +247,11 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
 
   return (
     <div
-      className={`${selected !== 'Space Details' ? 'w-[260px]' : 'w-auto'} h-[calc(100vh-50px)] sticky top-[50px] transition-[width] duration-300 ease-in-out bg-[rgba(34,34,34,0.9)] flex flex-col border-r border-[#383838]`}
+      className={cn(
+        'h-[calc(100vh-50px)] sticky top-[50px] bg-[rgba(34,34,34,0.8)] flex flex-col border-r border-[#383838]',
+        selected !== 'Space Details' ? 'w-[260px]' : 'w-auto',
+        isMobile && 'w-full border-none bg-transparent',
+      )}
     >
       <ScrollShadow className="flex-1 overflow-y-auto" visibility="bottom">
         <div className="flex flex-col p-[10px] gap-[10px]">
