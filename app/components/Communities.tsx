@@ -6,6 +6,7 @@ import { BuildingsIcon } from '@/components/icons';
 import { getSpacesQuery } from '@/services/space';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 export default function Communities() {
   const router = useRouter();
@@ -22,33 +23,7 @@ export default function Communities() {
             (edge) => edge.node,
           );
 
-          const getCreatedTime = (space: Space): number | null => {
-            if (!space.customAttributes?.length) return null;
-
-            for (const attr of space.customAttributes) {
-              if (!attr || !('tbd' in attr)) continue;
-
-              try {
-                const parsedAttr = JSON.parse(attr.tbd);
-                if (parsedAttr.key === 'createdTime' && parsedAttr.value) {
-                  return new Date(parsedAttr.value).getTime();
-                }
-              } catch {
-                // do nothing
-              }
-            }
-            return null;
-          };
-
-          return spaces.sort((a, b) => {
-            const timeA = getCreatedTime(a);
-            const timeB = getCreatedTime(b);
-
-            if (timeA && timeB) return timeB - timeA;
-            if (timeA) return -1;
-            if (timeB) return 1;
-            return 0;
-          });
+          return spaces;
         } else {
           console.error('Invalid data structure:', response.data);
           return [];
@@ -59,6 +34,36 @@ export default function Communities() {
       }
     },
   });
+
+  const filteredSpacesData = useMemo(() => {
+    const getCreatedTime = (space: Space): number | null => {
+      if (!space.customAttributes?.length) return null;
+
+      for (const attr of space.customAttributes) {
+        if (!attr || !('tbd' in attr)) continue;
+
+        try {
+          const parsedAttr = JSON.parse(attr.tbd);
+          if (parsedAttr.key === 'createdTime' && parsedAttr.value) {
+            return new Date(parsedAttr.value).getTime();
+          }
+        } catch {
+          // do nothing
+        }
+      }
+      return null;
+    };
+
+    return spacesData?.sort((a, b) => {
+      const timeA = getCreatedTime(a);
+      const timeB = getCreatedTime(b);
+
+      if (timeA && timeB) return timeB - timeA;
+      if (timeA) return -1;
+      if (timeB) return 1;
+      return 0;
+    });
+  }, [spacesData]);
 
   return (
     <div className="flex flex-col gap-[10px] border-b border-b-w-10 pb-[20px]">
@@ -74,7 +79,9 @@ export default function Communities() {
           ? Array.from({ length: 5 }).map((_, index) => (
               <SpaceCardSkeleton key={index} />
             ))
-          : spacesData?.map((item) => <SpaceCard key={item.id} data={item} />)}
+          : filteredSpacesData?.map((item) => (
+              <SpaceCard key={item.id} data={item} />
+            ))}
       </div>
     </div>
   );
