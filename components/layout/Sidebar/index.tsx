@@ -11,11 +11,14 @@ import {
   VideoIcon,
 } from 'components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { EventData, Event } from '@/types';
-import { useCallback, useEffect, useState } from 'react';
+import { EventData, SpaceData } from '@/types';
+import { useCallback, useState, useMemo } from 'react';
 import Image from 'next/image';
-import { cn, Tab, Tabs } from '@heroui/react';
+import { cn, Tab, Tabs, ScrollShadow } from '@heroui/react';
 import { Button } from '@/components/base';
+import { useQuery } from '@tanstack/react-query';
+import { isUserAssociated } from '@/utils/permissions';
+import { getSpacesQuery } from '@/services/space';
 
 interface SidebarProps {
   selected: string;
@@ -100,92 +103,93 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
   const pathname = usePathname();
   const { isAuthenticated, composeClient, ceramic } = useCeramicContext();
 
-  const [events, setEvents] = useState<Event[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState('events');
 
-  const getEvents = async () => {
-    try {
-      setIsLoading(true);
-      const response: any = await composeClient.executeQuery(`
-      query {
-        zucityEventIndex(first: 100) {
-          edges {
-            node {
-              id
-              imageUrl
-              title
-              members{
-              id
+  const userDID = ceramic?.did?.parent?.toString();
+
+  const { data: allEvents, isLoading: isEventsLoading } = useQuery({
+    queryKey: ['userEvents'],
+    queryFn: async () => {
+      try {
+        const response: any = await composeClient.executeQuery(`
+          query {
+            zucityEventIndex(first: 100) {
+              edges {
+                node {
+                  id
+                  imageUrl
+                  title
+                  members{
+                  id
+                  }
+                  admins{
+                  id
+                  }
+                  superAdmin{
+                  id
+                  }
+                  profile {
+                    username
+                    avatar
+                  }
+                  space {
+                    name
+                    avatar
+                  }
+                  tracks
+                }
               }
-              admins{
-              id
-              }
-              superAdmin{
-              id
-              }
-              profile {
-                username
-                avatar
-              }
-              space {
-                name
-                avatar
-              }
-              tracks
             }
           }
+        `);
+
+        if (response && response.data && 'zucityEventIndex' in response.data) {
+          const eventData: EventData = response.data as EventData;
+          return eventData.zucityEventIndex.edges.map((edge) => edge.node);
+        } else {
+          console.error('Invalid data structure:', response.data);
+          return [];
         }
+      } catch (error) {
+        console.error('Failed to fetch events:', error);
+        return [];
       }
-    `);
+    },
+    enabled: isAuthenticated,
+  });
 
-      if (response && response.data && 'zucityEventIndex' in response.data) {
-        const eventData: EventData = response.data as EventData;
-        return eventData.zucityEventIndex.edges.map((edge) => edge.node);
-      } else {
-        console.error('Invalid data structure:', response.data);
-      }
-    } catch (error) {
-      console.error('Failed to fetch events:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
+  const { data: spacesData, isLoading: isSpacesLoading } = useQuery({
+    queryKey: ['spaces'],
+    queryFn: async () => {
       try {
-        let eventsData = await getEvents();
-        if (eventsData) {
-          eventsData =
-            eventsData.filter((eventDetails) => {
-              const admins =
-                eventDetails?.admins?.map((admin) => admin.id.toLowerCase()) ||
-                [];
-              const superadmins =
-                eventDetails?.superAdmin?.map((superAdmin) =>
-                  superAdmin.id.toLowerCase(),
-                ) || [];
-              const members =
-                eventDetails?.members?.map((member) =>
-                  member.id.toLowerCase(),
-                ) || [];
-              const userDID =
-                ceramic?.did?.parent.toString().toLowerCase() || '';
-              return (
-                superadmins.includes(userDID) ||
-                admins.includes(userDID) ||
-                members.includes(userDID)
-              );
-            }) || [];
-          setEvents(eventsData);
+        const response: any = await composeClient.executeQuery(getSpacesQuery);
+        if ('zucitySpaceIndex' in response.data) {
+          const spaceData: SpaceData = response.data as SpaceData;
+
+          return spaceData.zucitySpaceIndex.edges.map((edge) => edge.node);
+        } else {
+          console.error('Invalid data structure:', response.data);
+          return [];
         }
-      } catch (err) {
-        console.log(err);
+      } catch (error) {
+        console.error('Failed to fetch spaces:', error);
+        throw error;
       }
-    };
-    isAuthenticated && fetchData();
-  }, [ceramic?.did?.parent, isAuthenticated]);
+    },
+    enabled: isAuthenticated,
+  });
+
+  const userEvents = useMemo(() => {
+    if (!allEvents || !userDID) return [];
+
+    return allEvents.filter((event) => isUserAssociated(event, userDID));
+  }, [allEvents, userDID]);
+
+  const userSpaces = useMemo(() => {
+    if (!spacesData || !userDID) return [];
+
+    return spacesData.filter((space) => isUserAssociated(space, userDID));
+  }, [spacesData, userDID]);
 
   const handleClick = useCallback(
     (item: any) => {
@@ -198,11 +202,81 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
     setSelectedTab(key as string);
   }, []);
 
+  const renderLoadingSkeleton = useCallback(() => {
+    return Array.from({ length: 3 }).map((_, index) => (
+      <div
+        key={index}
+        className="flex items-center gap-[10px] p-[6px_10px] opacity-70 cursor-pointer"
+      >
+        <div className="w-[20px] h-[20px] bg-gray-300 rounded animate-pulse"></div>
+        <div className="w-[190px] h-[17px] bg-gray-300 rounded animate-pulse"></div>
+      </div>
+    ));
+  }, []);
+
+  const renderItem = useCallback(
+    (item: any, isEvent: boolean) => {
+      const itemId = item.id;
+      const itemImage = isEvent
+        ? item.imageUrl
+        : item.avatar || '/default-space-avatar.png';
+      const itemTitle = isEvent ? item.title : item.name;
+      const itemPath = isEvent ? `/events/${itemId}` : `/spaces/${itemId}`;
+
+      return (
+        <div
+          key={itemId}
+          className="flex items-center gap-[10px] p-[6px_10px] opacity-70 cursor-pointer hover:bg-[rgba(255,255,255,0.05)] rounded-[10px]"
+          onClick={() => {
+            router.push(itemPath);
+          }}
+        >
+          <Image
+            src={itemImage}
+            alt={itemTitle}
+            width={20}
+            height={20}
+            style={{
+              objectFit: 'cover',
+              borderRadius: '2px',
+              height: '20px',
+              width: '20px',
+            }}
+          />
+          <p className="text-white text-[14px] font-semibold leading-[1.6] truncate">
+            {itemTitle}
+          </p>
+        </div>
+      );
+    },
+    [router],
+  );
+
+  const renderTabContent = useCallback(() => {
+    const isEventsTab = selectedTab === 'events';
+    const isLoading = isEventsTab ? isEventsLoading : isSpacesLoading;
+    const items = isEventsTab ? userEvents : userSpaces;
+
+    if (isLoading) {
+      return renderLoadingSkeleton();
+    }
+
+    return items.map((item) => renderItem(item, isEventsTab));
+  }, [
+    selectedTab,
+    isEventsLoading,
+    isSpacesLoading,
+    userEvents,
+    userSpaces,
+    renderLoadingSkeleton,
+    renderItem,
+  ]);
+
   return (
     <div
       className={`${selected !== 'Space Details' ? 'w-[260px]' : 'w-auto'} h-[calc(100vh-50px)] sticky top-[50px] transition-[width] duration-300 ease-in-out bg-[rgba(34,34,34,0.9)] flex flex-col border-r border-[#383838]`}
     >
-      <div className="flex-1 overflow-y-auto">
+      <ScrollShadow className="flex-1 overflow-y-auto" visibility="bottom">
         <div className="flex flex-col p-[10px] gap-[10px]">
           {naviButtons.map((item, index) => {
             return (
@@ -272,47 +346,9 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
             <Tab key="events" title="Events" />
             <Tab key="communities" title="Communities" />
           </Tabs>
-          <div className="flex flex-col gap-[10px]">
-            {isLoading
-              ? Array.from({ length: 3 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-[10px] p-[6px_10px] opacity-70 cursor-pointer"
-                  >
-                    <div className="w-[20px] h-[20px] bg-gray-300 rounded animate-pulse"></div>
-                    <div className="w-[190px] h-[17px] bg-gray-300 rounded animate-pulse"></div>
-                  </div>
-                ))
-              : events.map((event, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="flex items-center gap-[10px] p-[6px_10px] opacity-70 cursor-pointer hover:bg-[rgba(255,255,255,0.05)] rounded-[10px]"
-                      onClick={() => {
-                        router.push(`/events/${event.id}`);
-                      }}
-                    >
-                      <Image
-                        src={event.imageUrl!}
-                        alt={event.title}
-                        width={20}
-                        height={20}
-                        style={{
-                          objectFit: 'cover',
-                          borderRadius: '2px',
-                          height: '20px',
-                          width: '20px',
-                        }}
-                      />
-                      <p className="text-white text-[14px] font-semibold leading-[1.6] truncate">
-                        {event.title}
-                      </p>
-                    </div>
-                  );
-                })}
-          </div>
+          <div className="flex flex-col gap-[10px]">{renderTabContent()}</div>
         </div>
-      </div>
+      </ScrollShadow>
       <div className="flex flex-col p-[10px] flex-shrink-0 border-t border-[#383838] gap-[10px]">
         <div className="flex flex-row flex-wrap gap-[10px] p-[10px]">
           {footerItems.map((item, index) => {
