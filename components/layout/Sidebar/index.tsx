@@ -24,6 +24,7 @@ import { EVENTS_QUERY } from '@/graphql/eventQueries';
 interface SidebarProps {
   selected: string;
   isMobile?: boolean;
+  onClose?: () => void;
 }
 
 const naviButtons = [
@@ -100,7 +101,11 @@ const footerItems = [
   },
 ];
 
-const Sidebar: React.FC<SidebarProps> = ({ selected, isMobile = false }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  selected,
+  isMobile = false,
+  onClose,
+}) => {
   const router = useRouter();
   const pathname = usePathname();
   const { isAuthenticated, composeClient, ceramic } = useCeramicContext();
@@ -166,8 +171,9 @@ const Sidebar: React.FC<SidebarProps> = ({ selected, isMobile = false }) => {
   const handleClick = useCallback(
     (item: any) => {
       !item.isSoon && router.push(item.url);
+      onClose?.();
     },
-    [router],
+    [router, onClose],
   );
 
   const handleTabChange = useCallback((key: React.Key) => {
@@ -202,6 +208,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected, isMobile = false }) => {
           className="flex items-center gap-[10px] p-[6px_10px] opacity-70 cursor-pointer hover:bg-[rgba(255,255,255,0.05)] rounded-[10px]"
           onClick={() => {
             router.push(itemPath);
+            onClose?.();
           }}
         >
           <Image
@@ -222,7 +229,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected, isMobile = false }) => {
         </div>
       );
     },
-    [router],
+    [router, onClose],
   );
 
   const renderTabContent = useCallback(() => {

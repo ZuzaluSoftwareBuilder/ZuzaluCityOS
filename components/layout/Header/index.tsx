@@ -13,6 +13,7 @@ import { Button } from '@/components/base';
 import { formatUserName } from '@/utils/format';
 import { useLitContext } from '@/context/LitContext';
 import Profile from '@/components/profile';
+import { PressEvent } from '@heroui/react';
 
 export function formatAddressString(str?: string, maxLength: number = 10) {
   if (!str) return;
@@ -36,8 +37,8 @@ const Header = () => {
   const [showProfile, setShowProfile] = useState(false);
   const { disconnect } = useDisconnect();
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleMenuClick = (e: PressEvent) => {
+    setAnchorEl(e.target as HTMLElement);
   };
 
   const handleMenuClose = () => {
@@ -89,22 +90,14 @@ const Header = () => {
       sx={{ backdropFilter: 'blur(20px)' }}
     >
       <Profile showModal={showProfile} onClose={() => setShowProfile(false)} />
-      <Box
-        display="flex"
-        alignItems="center"
-        gap="10px"
-        sx={{ cursor: 'pointer' }}
-      >
+      <Box display="flex" alignItems="center" sx={{ cursor: 'pointer' }}>
         {(isTablet ||
           (pathName.split('/')[1] === 'spaces' &&
             pathName.split('/').length > 2)) && (
           <Button
-            sx={{
-              padding: '10px',
-              width: '40px',
-              minWidth: 'unset',
-            }}
-            onClick={() => setOpenSidebar(true)}
+            variant="light"
+            className="w-[40px] min-w-[40px] p-[10px]"
+            onPress={() => setOpenSidebar(true)}
           >
             <MenuIcon />
           </Button>
@@ -117,7 +110,7 @@ const Header = () => {
           onClick={() => router.push('/')}
         />
         {!isMobile ? (
-          <span className="text-[14px] font-[300] opacity-80 leading-[1.2] italic text-white">
+          <span className="text-[14px] font-[300] opacity-80 leading-[1.2] italic text-white pl-[10px]">
             beta
           </span>
         ) : null}
@@ -125,15 +118,8 @@ const Header = () => {
       {isAuthenticated ? (
         <>
           <Button
-            sx={{
-              color: 'white',
-              fontSize: 16,
-              fontWeight: 500,
-              lineHeight: 1.2,
-              background: 'transparent',
-              gap: '6px',
-            }}
-            onClick={handleMenuClick}
+            className="text-[16px] font-[500] leading-[1.2] text-white bg-transparent gap-[6px]"
+            onPress={handleMenuClick}
           >
             <Image
               src={profile?.avatar ?? '/user/avatar_p.png'}

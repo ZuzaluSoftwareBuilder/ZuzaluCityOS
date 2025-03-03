@@ -38,7 +38,7 @@ export default function SidebarDrawer({ open, onClose, selected }: PropTypes) {
             radius="none"
           />
         </div>
-        <Sidebar selected={selected} isMobile />
+        <Sidebar selected={selected} onClose={onClose} isMobile />
       </div>
     </Drawer>
   );
