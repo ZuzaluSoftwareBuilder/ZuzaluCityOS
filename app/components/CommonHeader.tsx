@@ -17,7 +17,7 @@ export default function CommonHeader({
   buttonOnPress,
 }: CommonHeaderProps) {
   return (
-    <div className="flex items-center justify-between py-[10px] px-[20px] sticky top-0 backdrop-blur-[10px] bg-[rgba(34, 34, 34, 0.90)] z-[1000] mobile:flex-col mobile:items-start mobile:gap-[5px] mobile:px-[10px]">
+    <div className="flex items-center justify-between py-[10px] px-[20px] sticky top-0 backdrop-blur-[10px] bg-[rgba(34, 34, 34, 0.90)] z-[1000] mobile:flex-col mobile:items-start mobile:gap-[5px] mobile:px-[10px] mobile:pb-0">
       <div className="flex gap-[10px] mobile:gap-[10px] items-center">
         <div className="flex gap-[10px] items-center">
           {icon}
@@ -33,7 +33,7 @@ export default function CommonHeader({
         variant="light"
         endContent={<ArrowCircleRightIcon size={5} />}
         onPress={buttonOnPress}
-        className="h-[34px] mobile:p-[4px]"
+        className="h-[34px] mobile:p-[4px] mobile:text-[14px]"
       >
         {buttonText}
       </Button>

@@ -20,6 +20,7 @@ import { EventCard } from './EventCard';
 import { Select, SelectItem, Skeleton } from '@heroui/react';
 import { UPCOMING_EVENTS_QUERY } from '@/graphql/eventQueries';
 import { supabase } from '@/utils/supabase/client';
+import { useMediaQuery } from '@/hooks';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -124,6 +125,7 @@ export default function UpcomingEventList() {
     dayjs(new Date()).add(1, 'day'),
   );
   const { composeClient } = useCeramicContext();
+  const { isMobile } = useMediaQuery();
 
   const { data: upcomingEvents, isLoading } = useQuery({
     queryKey: ['upcomingEvents'],
@@ -212,7 +214,7 @@ export default function UpcomingEventList() {
     <div className="flex flex-col gap-[10px] border-b border-b-w-10 pb-[20px]">
       <CommonHeader
         title="Upcoming Events"
-        icon={<TicketIcon size={5} />}
+        icon={<TicketIcon size={isMobile ? 5 : 6} />}
         description=""
         buttonText="View All Events"
         buttonOnPress={() => router.push('/events')}
@@ -287,7 +289,6 @@ export default function UpcomingEventList() {
             startContent={<MapIcon size={5} />}
             classNames={{
               trigger: 'border-b-w-10',
-              value: 'opacity-60',
             }}
             onSelectionChange={(keys) => {
               const selectedKey = Array.from(keys)[0] as string;

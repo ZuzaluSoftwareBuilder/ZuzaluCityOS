@@ -8,10 +8,13 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { ScrollShadow } from '@heroui/react';
+import { useMediaQuery } from '@/hooks';
 
 export default function Communities() {
   const router = useRouter();
   const { composeClient } = useCeramicContext();
+  const { isMobile } = useMediaQuery();
+  console.log(isMobile);
 
   const { data: spacesData, isLoading } = useQuery({
     queryKey: ['spaces'],
@@ -66,13 +69,11 @@ export default function Communities() {
     });
   }, [spacesData]);
 
-  console.log(filteredSpacesData);
-
   return (
     <div className="flex flex-col gap-[10px] border-b border-b-w-10 pb-[20px]">
       <CommonHeader
         title="Communities"
-        icon={<BuildingsIcon />}
+        icon={<BuildingsIcon size={isMobile ? 5 : 6} />}
         description="Newest Communities"
         buttonText="View All Spaces"
         buttonOnPress={() => router.push('/spaces')}
@@ -80,7 +81,6 @@ export default function Communities() {
       <ScrollShadow
         visibility="right"
         orientation="horizontal"
-        size={80}
         className="flex-1 overflow-auto"
       >
         <div className="flex gap-[20px] overflow-auto px-[20px]">

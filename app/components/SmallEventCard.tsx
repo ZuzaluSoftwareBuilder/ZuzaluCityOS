@@ -1,8 +1,6 @@
 import { MapIcon } from '@/components/icons';
 import { Event } from '@/types';
-import { supabase } from '@/utils/supabase/client';
-import { Avatar, Card, Skeleton } from '@heroui/react';
-import { useQuery } from '@tanstack/react-query';
+import { Avatar, Skeleton } from '@heroui/react';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
@@ -11,16 +9,11 @@ interface SmallEventCardProps {
   data: Event;
 }
 
-interface Location {
-  name: string;
-  eventId: string;
-}
-
 export function SmallEventCardSkeleton() {
   return (
     <div className="border-1 border-b-w-10 rounded-[10px] flex gap-[14px] p-[10px] hover:bg-white/5">
       <Skeleton className="rounded-[10px]">
-        <div className="w-[100px] h-[100px] flex-0"></div>
+        <div className="w-[6px] h-[6px] flex-0"></div>
       </Skeleton>
       <div className="flex flex-col gap-[10px] h-[100px] w-[250px]">
         <Skeleton className="rounded-[4px]">
@@ -49,7 +42,7 @@ export function SmallEventCard({ data }: SmallEventCardProps) {
 
   return (
     <div
-      className="border-1 border-b-w-10 rounded-[10px] flex gap-[14px] p-[10px] hover:bg-white/5 transition-colors"
+      className="border-1 border-b-w-10 rounded-[10px] flex gap-[14px] p-[10px] hover:bg-white/5 transition-colors cursor-pointer"
       onClick={handleNavigation}
     >
       <Avatar
@@ -58,7 +51,7 @@ export function SmallEventCard({ data }: SmallEventCardProps) {
           'https://framerusercontent.com/images/UkqE1HWpcAnCDpQzQYeFjpCWhRM.png'
         }
         classNames={{
-          base: 'w-[100px] h-[100px] flex-0 rounded-[10px] border-1 border-b-w-10',
+          base: 'w-[60px] h-[60px] flex-0 rounded-[10px] border-1 border-b-w-10',
         }}
       />
       <div className="flex flex-col gap-[10px]">

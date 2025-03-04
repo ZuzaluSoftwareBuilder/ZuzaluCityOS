@@ -137,7 +137,7 @@ export function SpaceCard({ data }: SpaceCardProps) {
         </div>
         <Button
           startContent={<ArrowSquareRightIcon />}
-          className="w-full text-[14px] bg-[#363636]"
+          className="w-full text-[14px] bg-[#363636] py-[6px]"
           onPress={() => router.push(`/spaces/${data.id}`)}
         >
           View Community

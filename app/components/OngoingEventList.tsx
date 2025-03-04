@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ONGOING_EVENTS_QUERY } from '@/graphql/eventQueries';
 import { supabase } from '@/utils/supabase/client';
 import { ScrollShadow } from '@heroui/react';
+import { useMediaQuery } from '@/hooks';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -44,6 +45,7 @@ const getDateRangeDescription = (events: Event[]) => {
 export default function OngoingEventList() {
   const router = useRouter();
   const { composeClient } = useCeramicContext();
+  const { isMobile } = useMediaQuery();
 
   const { data: ongoingCeramicEvents, isLoading } = useQuery({
     queryKey: ['ongoingEvents'],
@@ -98,7 +100,7 @@ export default function OngoingEventList() {
     <div className="flex flex-col gap-[10px] border-b border-b-w-10 pb-[20px]">
       <CommonHeader
         title="On-Going Events"
-        icon={<CaretDoubleRightIcon />}
+        icon={<CaretDoubleRightIcon size={isMobile ? 5 : 6} />}
         description={dateRangeDescription}
         buttonText="View All On-Going"
         buttonOnPress={() => router.push('/events')}
