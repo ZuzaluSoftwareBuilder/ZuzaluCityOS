@@ -41,26 +41,14 @@ export function EventCardSkeleton() {
 }
 
 export function EventCard({ data }: EventCardProps) {
-  const { space, id, title, imageUrl, startTime, endTime } = data;
+  const { space, id, title, imageUrl, startTime, endTime, location } = data;
   const router = useRouter();
-  const { data: locationData } = useQuery({
-    queryKey: ['location', id],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('locations')
-        .select('*')
-        .eq('eventId', id)
-        .single();
-
-      return data as Location | null;
-    },
-  });
 
   const handleNavigation = useCallback(() => {
     router.push(`/events/${id}`);
   }, [router, id]);
 
-  const eventLocation = locationData?.name || 'Not Available';
+  const eventLocation = location || 'Not Available';
   return (
     <div
       key={id}

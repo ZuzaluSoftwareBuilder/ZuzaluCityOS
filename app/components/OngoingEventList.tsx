@@ -10,6 +10,7 @@ import minMax from 'dayjs/plugin/minMax';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useQuery } from '@tanstack/react-query';
 import { ONGOING_EVENTS_QUERY } from '@/graphql/eventQueries';
+import { supabase } from '@/utils/supabase/client';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -58,10 +59,24 @@ export default function OngoingEventList() {
         );
 
         if (response?.data?.zucityEventIndex) {
-          return response.data.zucityEventIndex.edges.map((edge: any) => ({
-            ...edge.node,
-            source: 'ceramic',
-          }));
+          const events = response.data.zucityEventIndex.edges.map(
+            (edge: any) => ({
+              ...edge.node,
+              source: 'ceramic',
+            }),
+          ) as Event[];
+          const eventIds = events.map((event) => event.id);
+          const { data } = await supabase
+            .from('locations')
+            .select('*')
+            .in('eventId', eventIds);
+          data?.forEach((location: any) => {
+            const event = events.find((event) => event.id === location.eventId);
+            if (event) {
+              event.location = location.name;
+            }
+          });
+          return events;
         }
         return [];
       } catch (error) {
