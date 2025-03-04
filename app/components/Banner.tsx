@@ -6,11 +6,16 @@ import {
   RightArrowIcon,
 } from '@/components/icons';
 import { Button } from '@/components/base';
+import { useRouter } from 'next/navigation';
 
 const Banner = () => {
+  const router = useRouter();
   return (
     <>
-      <div className="h-[50px] border-b-w-10 border-b-1 bg-[rgb(34,34,34)] hover:bg-[rgb(28,28,28)] cursor-pointer group">
+      <div
+        className="h-[40px] border-b-w-10 border-b-1 bg-[rgb(34,34,34)] hover:bg-[rgb(28,28,28)] cursor-pointer group"
+        onClick={() => router.push('/dapps')}
+      >
         <div className="h-full p-[10px] w-full flex items-center justify-center gap-[10px]">
           <div className="relative w-[24px] h-[24px]">
             <ArrowCircleRightIcon className="absolute inset-0 transition-opacity duration-300 opacity-100 group-hover:opacity-0" />
@@ -18,8 +23,7 @@ const Banner = () => {
           </div>
           <div className="relative transition-transform duration-300 group-hover:-translate-x-[2px]">
             <p className="text-[14px] font-[600] leading-[1.2] text-white/80">
-              Learn about Zuzalu City&apos;s focus on building decentralized,
-              ethereum-based, privacy…
+              dApp Explore Open! List your dApps now!
             </p>
             <p
               className="text-[14px] font-[600] leading-[1.2] text-transparent animate-gradient absolute top-0 left-0 z-10"
@@ -32,8 +36,7 @@ const Banner = () => {
                 animation: '4s linear 0s infinite normal none running eKXFfL',
               }}
             >
-              Learn about Zuzalu City&apos;s focus on building decentralized,
-              ethereum-based, privacy…
+              dApp Explore Open! List your dApps now!
             </p>
           </div>
         </div>

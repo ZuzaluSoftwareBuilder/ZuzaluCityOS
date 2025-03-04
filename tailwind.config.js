@@ -33,7 +33,20 @@ const config = {
       }),
     },
   },
-  plugins: [heroui()],
+  plugins: [
+    heroui({
+      layout: {
+        borderWidth: {
+          small: '1px',
+          medium: '1px',
+          large: '2px',
+        },
+        radius: {
+          medium: '10px',
+        },
+      },
+    }),
+  ],
 };
 
 export default config;

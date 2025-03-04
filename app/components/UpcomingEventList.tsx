@@ -1,4 +1,4 @@
-import { TicketIcon } from '@/components/icons';
+import { MapIcon, TicketIcon } from '@/components/icons';
 import CommonHeader from './CommonHeader';
 import { useRouter } from 'next/navigation';
 import { ZuCalendar } from '@/components/core';
@@ -17,7 +17,7 @@ import {
   groupEventsByMonth,
 } from '@/components/cards/EventCard';
 import { EventCard } from './EventCard';
-import { Skeleton } from '@heroui/react';
+import { Select, SelectItem, Skeleton } from '@heroui/react';
 import { UPCOMING_EVENTS_QUERY } from '@/graphql/eventQueries';
 import { supabase } from '@/utils/supabase/client';
 
@@ -167,19 +167,46 @@ export default function UpcomingEventList() {
     },
   });
 
+  const locations = useMemo(() => {
+    if (!upcomingEvents || upcomingEvents.length === 0)
+      return [{ key: 'anywhere', label: 'Anywhere' }];
+
+    const locationSet = new Set<string>();
+    upcomingEvents.forEach((event) => {
+      if (event.location) {
+        locationSet.add(event.location);
+      }
+    });
+
+    const locationOptions = Array.from(locationSet).map((location) => ({
+      key: location.toLowerCase().replace(/\s+/g, '-'),
+      label: location.toUpperCase(),
+    }));
+
+    return [{ key: 'anywhere', label: 'Anywhere' }, ...locationOptions];
+  }, [upcomingEvents]);
+
+  const [selectedLocation, setSelectedLocation] = useState<string>('anywhere');
+
   const filteredEvents = useMemo(() => {
     if (!upcomingEvents) return [];
-    if (!selectedDate) return upcomingEvents;
 
     return upcomingEvents.filter((event: Event) => {
-      const eventStartDate = dayjs(event.startTime);
-      return (
-        eventStartDate.date() === selectedDate.date() &&
-        eventStartDate.month() === selectedDate.month() &&
-        eventStartDate.year() === selectedDate.year()
-      );
+      const dateMatches =
+        !selectedDate ||
+        (dayjs(event.startTime).date() === selectedDate.date() &&
+          dayjs(event.startTime).month() === selectedDate.month() &&
+          dayjs(event.startTime).year() === selectedDate.year());
+
+      const locationMatches =
+        selectedLocation === 'anywhere' ||
+        (event.location &&
+          event.location.toLowerCase().replace(/\s+/g, '-') ===
+            selectedLocation);
+
+      return dateMatches && locationMatches;
     });
-  }, [upcomingEvents, selectedDate]);
+  }, [upcomingEvents, selectedDate, selectedLocation]);
 
   return (
     <div className="flex flex-col gap-[10px] border-b border-b-w-10 pb-[20px]">
@@ -252,6 +279,24 @@ export default function UpcomingEventList() {
             }}
             value={selectedDate}
           />
+          <Select
+            variant="bordered"
+            className="max-w-xs"
+            defaultSelectedKeys={['anywhere']}
+            placeholder="Select location"
+            startContent={<MapIcon size={5} />}
+            classNames={{
+              trigger: 'border-b-w-10',
+            }}
+            onSelectionChange={(keys) => {
+              const selectedKey = Array.from(keys)[0] as string;
+              setSelectedLocation(selectedKey);
+            }}
+          >
+            {locations.map((location) => (
+              <SelectItem key={location.key}>{location.label}</SelectItem>
+            ))}
+          </Select>
         </div>
       </div>
     </div>

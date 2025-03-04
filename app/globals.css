@@ -23,7 +23,7 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+  color: #fff;
   background-color: #222;
   margin: 0;
 }
