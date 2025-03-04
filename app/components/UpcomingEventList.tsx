@@ -212,7 +212,7 @@ export default function UpcomingEventList() {
     <div className="flex flex-col gap-[10px] border-b border-b-w-10 pb-[20px]">
       <CommonHeader
         title="Upcoming Events"
-        icon={<TicketIcon />}
+        icon={<TicketIcon size={5} />}
         description=""
         buttonText="View All Events"
         buttonOnPress={() => router.push('/events')}
@@ -229,7 +229,7 @@ export default function UpcomingEventList() {
             <EventList events={filteredEvents} isLoading={isLoading} />
           )}
         </div>
-        <div className="w-[360px] px-[20px] flex flex-col gap-[20px]">
+        <div className="w-[360px] px-[20px] flex flex-col gap-[20px] tablet:hidden mobile:hidden">
           <p className="py-[20px] px-[10px] text-[18px] font-[700] leading-[1.2] border-b border-b-w-10">
             Sort & Filter Events
           </p>
@@ -287,6 +287,7 @@ export default function UpcomingEventList() {
             startContent={<MapIcon size={5} />}
             classNames={{
               trigger: 'border-b-w-10',
+              value: 'opacity-60',
             }}
             onSelectionChange={(keys) => {
               const selectedKey = Array.from(keys)[0] as string;

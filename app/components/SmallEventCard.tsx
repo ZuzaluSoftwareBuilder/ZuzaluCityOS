@@ -79,8 +79,8 @@ export function SmallEventCard({ data }: SmallEventCardProps) {
             </span>
           </div>
           <span className="text-[14px] leading-[1.6] opacity-60 whitespace-nowrap">
-            {dayjs(startTime).utc().format('MMMM D')} -{' '}
-            {dayjs(endTime).utc().format('MMMM D')}
+            {dayjs(startTime).utc().format('MMM D')} -{' '}
+            {dayjs(endTime).utc().format('MMM D')}
           </span>
         </div>
         <p className="text-[20px] font-bold leading-[1.2] truncate">{title}</p>

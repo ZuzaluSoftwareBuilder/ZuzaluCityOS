@@ -11,6 +11,7 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import { useQuery } from '@tanstack/react-query';
 import { ONGOING_EVENTS_QUERY } from '@/graphql/eventQueries';
 import { supabase } from '@/utils/supabase/client';
+import { ScrollShadow } from '@heroui/react';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -30,8 +31,8 @@ const getDateRangeDescription = (events: Event[]) => {
   const startYear = earliestStart.year();
   const endYear = latestEnd.year();
 
-  const startMonth = earliestStart.format('MMMM');
-  const endMonth = latestEnd.format('MMMM');
+  const startMonth = earliestStart.format('MMM');
+  const endMonth = latestEnd.format('MMM');
 
   if (startYear === endYear) {
     return `${startMonth} - ${endMonth} ${startYear}`;
@@ -102,15 +103,22 @@ export default function OngoingEventList() {
         buttonText="View All On-Going"
         buttonOnPress={() => router.push('/events')}
       />
-      <div className="flex gap-[20px] overflow-auto px-[20px] cursor-pointer">
-        {isLoading
-          ? Array.from({ length: 6 }).map((_, index) => (
-              <SmallEventCardSkeleton key={index} />
-            ))
-          : ongoingEvents.map((event) => (
-              <SmallEventCard key={event.id} data={event} />
-            ))}
-      </div>
+      <ScrollShadow
+        visibility="right"
+        orientation="horizontal"
+        size={80}
+        className="flex-1 overflow-auto"
+      >
+        <div className="flex gap-[20px] overflow-auto px-[20px]">
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, index) => (
+                <SmallEventCardSkeleton key={index} />
+              ))
+            : ongoingEvents.map((event) => (
+                <SmallEventCard key={event.id} data={event} />
+              ))}
+        </div>
+      </ScrollShadow>
     </div>
   );
 }

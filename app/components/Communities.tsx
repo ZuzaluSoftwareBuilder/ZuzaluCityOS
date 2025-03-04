@@ -7,6 +7,7 @@ import { getSpacesQuery } from '@/services/space';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { ScrollShadow } from '@heroui/react';
 
 export default function Communities() {
   const router = useRouter();
@@ -65,6 +66,8 @@ export default function Communities() {
     });
   }, [spacesData]);
 
+  console.log(filteredSpacesData);
+
   return (
     <div className="flex flex-col gap-[10px] border-b border-b-w-10 pb-[20px]">
       <CommonHeader
@@ -74,15 +77,22 @@ export default function Communities() {
         buttonText="View All Spaces"
         buttonOnPress={() => router.push('/spaces')}
       />
-      <div className="flex gap-[20px] overflow-auto px-[20px]">
-        {isLoading
-          ? Array.from({ length: 5 }).map((_, index) => (
-              <SpaceCardSkeleton key={index} />
-            ))
-          : filteredSpacesData?.map((item) => (
-              <SpaceCard key={item.id} data={item} />
-            ))}
-      </div>
+      <ScrollShadow
+        visibility="right"
+        orientation="horizontal"
+        size={80}
+        className="flex-1 overflow-auto"
+      >
+        <div className="flex gap-[20px] overflow-auto px-[20px]">
+          {isLoading
+            ? Array.from({ length: 5 }).map((_, index) => (
+                <SpaceCardSkeleton key={index} />
+              ))
+            : filteredSpacesData?.map((item) => (
+                <SpaceCard key={item.id} data={item} />
+              ))}
+        </div>
+      </ScrollShadow>
     </div>
   );
 }
