@@ -7,7 +7,8 @@ const escapeHtml = (text: string) => {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/(?<=&lt;[^&]*?)"/g, '\\"')
-    .replace(/\\"/g, '"');
+    .replace(/\\"/g, '"')
+    .replace(/\\\\/g, '\\');
 };
 
 export const decodeOutputData = (value: any): OutputData => {
@@ -29,7 +30,12 @@ export const decodeOutputData = (value: any): OutputData => {
 
     return data;
   } catch (e) {
-    return JSON.parse(value);
+    console.log('error', e);
+    try {
+      return JSON.parse(value);
+    } catch (e) {
+      return { time: 0, blocks: [] };
+    }
   }
 };
 
