@@ -12,10 +12,10 @@ interface SmallEventCardProps {
 export function SmallEventCardSkeleton() {
   return (
     <div className="border-1 border-b-w-10 rounded-[10px] flex gap-[14px] p-[10px] hover:bg-white/5">
-      <Skeleton className="rounded-[10px]">
-        <div className="w-[6px] h-[6px] flex-0"></div>
+      <Skeleton className="rounded-[10px] w-[100px] h-[100px] mobile:w-[60px] mobile:h-[60px]">
+        <div className="flex-0"></div>
       </Skeleton>
-      <div className="flex flex-col gap-[10px] h-[100px] w-[250px]">
+      <div className="flex flex-col gap-[10px] w-[250px]">
         <Skeleton className="rounded-[4px]">
           <div className="h-[22px]">By:</div>
         </Skeleton>
@@ -51,11 +51,11 @@ export function SmallEventCard({ data }: SmallEventCardProps) {
           'https://framerusercontent.com/images/UkqE1HWpcAnCDpQzQYeFjpCWhRM.png'
         }
         classNames={{
-          base: 'w-[60px] h-[60px] flex-0 rounded-[10px] border-1 border-b-w-10',
+          base: 'w-[100px] h-[100px] flex-0 rounded-[10px] border-1 border-b-w-10 mobile:w-[60px] mobile:h-[60px]',
         }}
       />
       <div className="flex flex-col gap-[10px]">
-        <div className="flex gap-[10px] items-center">
+        <div className="flex gap-[10px] items-center mobile:gap-[5px]">
           <div className="flex gap-[6px] items-center">
             <span className="text-[10px] leading-[1.2] opacity-60">By:</span>
             <Avatar

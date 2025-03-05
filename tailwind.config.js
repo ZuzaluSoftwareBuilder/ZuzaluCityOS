@@ -13,8 +13,7 @@ const config = {
   ],
   theme: {
     screens: {
-      lg: { min: '1400px' },
-      pc: { min: '1200px', max: '1399px' },
+      pc: { min: '1200px' },
       tablet: { min: '810px', max: '1199px' },
       mobile: { min: '1px', max: '809px' },
     },
@@ -43,6 +42,7 @@ const config = {
         },
         radius: {
           medium: '10px',
+          large: '14px',
         },
       },
     }),

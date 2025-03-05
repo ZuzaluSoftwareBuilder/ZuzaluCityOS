@@ -14,7 +14,6 @@ export default function Communities() {
   const router = useRouter();
   const { composeClient } = useCeramicContext();
   const { isMobile } = useMediaQuery();
-  console.log(isMobile);
 
   const { data: spacesData, isLoading } = useQuery({
     queryKey: ['spaces'],

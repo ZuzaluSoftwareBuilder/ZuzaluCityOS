@@ -1,9 +1,7 @@
 import { MapIcon, TicketIcon } from '@/components/icons';
 import CommonHeader from './CommonHeader';
 import { useRouter } from 'next/navigation';
-import { ZuCalendar } from '@/components/core';
 import dayjs, { Dayjs } from 'dayjs';
-import SlotDates from '@/components/calendar/SlotDate';
 import { useState, useMemo } from 'react';
 import { Event } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
@@ -17,10 +15,12 @@ import {
   groupEventsByMonth,
 } from '@/components/cards/EventCard';
 import { EventCard } from './EventCard';
-import { Select, SelectItem, Skeleton } from '@heroui/react';
+import { DateValue, Select, SelectItem, Skeleton } from '@heroui/react';
 import { UPCOMING_EVENTS_QUERY } from '@/graphql/eventQueries';
 import { supabase } from '@/utils/supabase/client';
 import { useMediaQuery } from '@/hooks';
+import { getLocalTimeZone, today } from '@internationalized/date';
+import { Calendar } from '@/components/base';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -80,7 +80,7 @@ function EventList({ events, isLoading }: EventListProps) {
   }, [events]);
 
   return (
-    <div className="flex flex-col gap-[10px] pl-[20px] pb-[20px]">
+    <div className="flex flex-col gap-[10px] px-[20px] pb-[20px] pc:pr-0">
       {isLoading ? (
         <div className="flex flex-col gap-[20px] w-full">
           <Skeleton className="w-full h-[40px] rounded-[40px]">
@@ -120,7 +120,7 @@ function EventList({ events, isLoading }: EventListProps) {
 
 export default function UpcomingEventList() {
   const router = useRouter();
-  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+  const [selectedDate, setSelectedDate] = useState<DateValue | null>(null);
   const [dateForCalendar, setDateForCalendar] = useState<Dayjs>(
     dayjs(new Date()).add(1, 'day'),
   );
@@ -196,9 +196,9 @@ export default function UpcomingEventList() {
     return upcomingEvents.filter((event: Event) => {
       const dateMatches =
         !selectedDate ||
-        (dayjs(event.startTime).date() === selectedDate.date() &&
-          dayjs(event.startTime).month() === selectedDate.month() &&
-          dayjs(event.startTime).year() === selectedDate.year());
+        (dayjs(event.startTime).date() === selectedDate.day &&
+          dayjs(event.startTime).month() === selectedDate.month &&
+          dayjs(event.startTime).year() === selectedDate.year);
 
       const locationMatches =
         selectedLocation === 'anywhere' ||
@@ -211,7 +211,7 @@ export default function UpcomingEventList() {
   }, [upcomingEvents, selectedDate, selectedLocation]);
 
   return (
-    <div className="flex flex-col gap-[10px] border-b border-b-w-10 pb-[20px]">
+    <div className="flex flex-col gap-[10px] pb-[20px]">
       <CommonHeader
         title="Upcoming Events"
         icon={<TicketIcon size={isMobile ? 5 : 6} />}
@@ -235,51 +235,11 @@ export default function UpcomingEventList() {
           <p className="py-[20px] px-[10px] text-[18px] font-[700] leading-[1.2] border-b border-b-w-10">
             Sort & Filter Events
           </p>
-          <ZuCalendar
-            onChange={(val) => {
-              if (
-                selectedDate &&
-                val &&
-                selectedDate.date() === val.date() &&
-                selectedDate.month() === val.month() &&
-                selectedDate.year() === val.year()
-              ) {
-                setSelectedDate(null);
-              } else {
-                setSelectedDate(val);
-              }
-            }}
-            minDate={dayjs(new Date()).add(1, 'day')}
-            slots={{ day: SlotDates }}
-            slotProps={{
-              day: {
-                highlightedDays: (upcomingEvents ?? [])
-                  .filter((event: Event) => {
-                    return (
-                      dayjs(event.startTime).month() ===
-                        dateForCalendar.month() &&
-                      dayjs(event.startTime).year() === dateForCalendar.year()
-                    );
-                  })
-                  .map((event: Event) => {
-                    return dayjs(event.startTime).utc().date();
-                  }),
-                selectedDay: selectedDate ? selectedDate.date() : undefined,
-              } as any,
-            }}
-            onMonthChange={(val) => {
-              setDateForCalendar(val);
-              if (selectedDate && selectedDate.month() !== val.month()) {
-                setSelectedDate(null);
-              }
-            }}
-            onYearChange={(val) => {
-              setDateForCalendar(val);
-              if (selectedDate && selectedDate.year() !== val.year()) {
-                setSelectedDate(null);
-              }
-            }}
-            value={selectedDate}
+          <Calendar
+            calendarWidth="320px"
+            weekdayStyle="short"
+            minValue={today(getLocalTimeZone()).add({ days: 1 })}
+            onChange={setSelectedDate}
           />
           <Select
             variant="bordered"

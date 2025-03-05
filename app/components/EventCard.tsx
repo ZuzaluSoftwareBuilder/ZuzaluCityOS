@@ -61,7 +61,7 @@ export function EventCard({ data }: EventCardProps) {
           'https://framerusercontent.com/images/UkqE1HWpcAnCDpQzQYeFjpCWhRM.png'
         }
         classNames={{
-          base: 'w-[140px] h-[140px] flex-0 rounded-[10px] border-1 border-b-w-10',
+          base: 'w-[140px] h-[140px] flex-0 rounded-[10px] border-1 border-b-w-10 mobile:w-[80px] mobile:h-[80px]',
         }}
       />
       <div className="flex flex-col gap-[10px]">
@@ -86,8 +86,10 @@ export function EventCard({ data }: EventCardProps) {
             {dayjs(endTime).utc().format('MMMM D')}
           </span>
         </div>
-        <p className="text-[20px] font-bold leading-[1.2]">{title}</p>
-        <p className="text-[14px] leading-[1.4] opacity-60">{title}</p>
+        <div className="flex flex-col gap-[6px]">
+          <p className="text-[20px] font-bold leading-[1.2]">{title}</p>
+          <p className="text-[14px] leading-[1.4] opacity-60">{title}</p>
+        </div>
         <div className="flex gap-[6px] items-center opacity-50">
           <MapIcon size={4} />
           <span className="text-[10px] leading-[1.2] uppercase">

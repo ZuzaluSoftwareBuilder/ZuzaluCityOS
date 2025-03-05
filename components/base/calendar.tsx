@@ -1,0 +1,20 @@
+import { CalendarProps } from '@heroui/react';
+
+import { Calendar as HCalendar } from '@heroui/react';
+
+export default function Calendar({ classNames, ...props }: CalendarProps) {
+  return (
+    <HCalendar
+      classNames={{
+        base: 'border-b-w-10 border-1 rounded-larg shadow-none bg-transparent',
+        headerWrapper: 'bg-transparent',
+        title: 'text-white',
+        gridHeader: 'bg-transparent',
+        gridHeaderRow: 'justify-between pb-0 text-white/80',
+        gridBodyRow: 'justify-between px-[14px]',
+        ...classNames,
+      }}
+      {...props}
+    />
+  );
+}
