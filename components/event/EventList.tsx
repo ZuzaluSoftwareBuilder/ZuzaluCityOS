@@ -132,7 +132,7 @@ export default function EventList({
           )
             return null;
           return (
-            <div key={item.key}>
+            <div key={item.key} className="w-full flex flex-col gap-[20px]">
               <Box
                 sx={{
                   backgroundColor: 'rgba(34, 34, 34, 0.9)',

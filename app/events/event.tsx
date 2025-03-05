@@ -1,30 +1,21 @@
 'use client';
-import React, { useState, useEffect, Fragment, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Box,
-  Typography,
   useTheme,
   useMediaQuery,
   Stack,
   OutlinedInput,
   InputAdornment,
-  Skeleton,
 } from '@mui/material';
 import debounce from 'lodash/debounce';
 import { Sidebar } from 'components/layout';
 import SidebarLeft from './components/Sidebar';
-import { EventCard } from '@/components/cards';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useCeramicContext } from '../../context/CeramicContext';
 import { Event } from '@/types';
-import { EventIcon, SearchIcon } from '@/components/icons';
+import { SearchIcon } from '@/components/icons';
 import EventHeader from './components/EventHeader';
-import {
-  EventCardMonthGroup,
-  EventCardSkeleton,
-  groupEventsByMonth,
-} from '@/components/cards/EventCard';
 import { supabase } from '@/utils/supabase/client';
 import dayjs from 'dayjs';
 import EventList from '@/components/event/EventList';

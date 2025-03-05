@@ -1,352 +1,355 @@
 'use client';
 import * as React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Box, Skeleton, Stack, Typography } from '@mui/material';
 import {
-  EventIcon,
-  SpaceIcon,
   HomeIcon,
   ArrowUpRightIcon,
   ShapeIcon,
-  DIcon,
+  BuildingsIcon,
+  TicketIcon,
+  StorefrontIcon,
+  VideoIcon,
 } from 'components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { ZuButton } from '@/components/core';
-import { EventData, Event } from '@/types';
-import { useEffect, useState } from 'react';
+import { EventData, SpaceData } from '@/types';
+import { useCallback, useState, useMemo } from 'react';
 import Image from 'next/image';
+import { cn, Tab, Tabs, ScrollShadow, Skeleton } from '@heroui/react';
+import { Button } from '@/components/base';
+import { useQuery } from '@tanstack/react-query';
+import { isUserAssociated } from '@/utils/permissions';
+import { getSpacesQuery } from '@/services/space';
+import { EVENTS_QUERY } from '@/graphql/eventQueries';
 
 interface SidebarProps {
   selected: string;
+  isMobile?: boolean;
+  onClose?: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
+const naviButtons = [
+  {
+    content: 'Home',
+    icon: <HomeIcon />,
+    url: '/',
+  },
+  {
+    content: 'Communities',
+    icon: <BuildingsIcon />,
+    url: '/spaces',
+    version: 'V0.5',
+  },
+  {
+    content: 'Events',
+    icon: <TicketIcon />,
+    url: '/events',
+    version: 'V0.5',
+  },
+  {
+    content: 'dApps',
+    icon: <ShapeIcon />,
+    url: '/dapps',
+    isNew: true,
+    version: 'V0.1',
+  },
+  {
+    content: 'Shop',
+    icon: <StorefrontIcon />,
+    url: '/shop',
+    isSoon: true,
+  },
+  {
+    content: 'Watch',
+    icon: <VideoIcon />,
+    url: '/watch',
+    isSoon: true,
+  },
+];
+
+const footerItems = [
+  {
+    content: 'Docs',
+    url: 'https://bit.ly/ZuSoftware-doc',
+  },
+  {
+    content: 'About',
+    url: 'https://zuzalu.gitbook.io/zuzalu-beta-docs/welcome/zuzalu.city-vision-and-mission',
+  },
+  {
+    content: 'X/Twitter',
+    url: 'https://x.com/Zuzalu_city',
+  },
+  {
+    content: 'Farcaster',
+    url: 'https://warpcast.com/zuzalucity',
+  },
+  {
+    content: 'Builder Chat',
+    url: 'https://matrix.to/#/#zuzalusoftware:matrix.org',
+  },
+  {
+    content: 'Medium',
+    url: 'https://medium.com/@Zuzalu_city',
+  },
+  {
+    content: 'Paragraph',
+    url: 'https://paragraph.xyz/@zuzalu.city',
+  },
+  {
+    content: 'Podcast',
+    url: 'https://youtube.com/@ZuzaluCity',
+  },
+];
+
+const Sidebar: React.FC<SidebarProps> = ({
+  selected,
+  isMobile = false,
+  onClose,
+}) => {
   const router = useRouter();
   const pathname = usePathname();
   const { isAuthenticated, composeClient, ceramic } = useCeramicContext();
 
-  const [events, setEvents] = useState<Event[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [selectedTab, setSelectedTab] = useState('events');
 
-  const getEvents = async () => {
-    try {
-      setIsLoading(true);
-      const response: any = await composeClient.executeQuery(`
-      query {
-        zucityEventIndex(first: 100) {
-          edges {
-            node {
-              id
-              imageUrl
-              title
-              members{
-              id
-              }
-              admins{
-              id
-              }
-              superAdmin{
-              id
-              }
-              profile {
-                username
-                avatar
-              }
-              space {
-                name
-                avatar
-              }
-              tracks
-            }
-          }
-        }
-      }
-    `);
+  const userDID = ceramic?.did?.parent?.toString();
 
-      if (response && response.data && 'zucityEventIndex' in response.data) {
-        const eventData: EventData = response.data as EventData;
-        return eventData.zucityEventIndex.edges.map((edge) => edge.node);
-      } else {
-        console.error('Invalid data structure:', response.data);
-      }
-    } catch (error) {
-      console.error('Failed to fetch events:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
+  const { data: allEvents, isLoading: isEventsLoading } = useQuery({
+    queryKey: ['userEvents'],
+    queryFn: async () => {
       try {
-        let eventsData = await getEvents();
-        if (eventsData) {
-          eventsData =
-            eventsData.filter((eventDetails) => {
-              const admins =
-                eventDetails?.admins?.map((admin) => admin.id.toLowerCase()) ||
-                [];
-              const superadmins =
-                eventDetails?.superAdmin?.map((superAdmin) =>
-                  superAdmin.id.toLowerCase(),
-                ) || [];
-              const members =
-                eventDetails?.members?.map((member) =>
-                  member.id.toLowerCase(),
-                ) || [];
-              const userDID =
-                ceramic?.did?.parent.toString().toLowerCase() || '';
-              return (
-                superadmins.includes(userDID) ||
-                admins.includes(userDID) ||
-                members.includes(userDID)
-              );
-            }) || [];
-          setEvents(eventsData);
+        const response: any = await composeClient.executeQuery(EVENTS_QUERY);
+
+        if (response && response.data && 'zucityEventIndex' in response.data) {
+          const eventData: EventData = response.data as EventData;
+          return eventData.zucityEventIndex.edges.map((edge) => edge.node);
+        } else {
+          console.error('Invalid data structure:', response.data);
+          return [];
         }
-      } catch (err) {
-        console.log(err);
+      } catch (error) {
+        console.error('Failed to fetch events:', error);
+        return [];
       }
-    };
-    isAuthenticated && fetchData();
-  }, [ceramic?.did?.parent, isAuthenticated]);
+    },
+    enabled: isAuthenticated,
+  });
 
-  const naviButtons = [
-    {
-      content: 'Home',
-      icon: <HomeIcon />,
-      function: () => router.push('/'),
-      url: '/',
-    },
-    {
-      content: 'Communities',
-      icon: <SpaceIcon />,
-      function: () => router.push('/spaces'),
-      url: '/spaces',
-      version: 'V0.5',
-    },
-    {
-      content: 'Events',
-      icon: <EventIcon />,
-      function: () => router.push('/events'),
-      url: '/events',
-      version: 'V0.5',
-    },
-    {
-      content: 'dApps',
-      icon: <ShapeIcon />,
-      function: () => router.push('/dapps'),
-      url: '/dapps',
-      isNew: true,
-      version: 'V0.1',
-    },
-    // {
-    //   content: 'Zapps',
-    //   icon: <BoltIcon />,
-    //   function: () => { }
-    // }
-  ];
+  const { data: spacesData, isLoading: isSpacesLoading } = useQuery({
+    queryKey: ['spaces'],
+    queryFn: async () => {
+      try {
+        const response: any = await composeClient.executeQuery(getSpacesQuery);
+        if ('zucitySpaceIndex' in response.data) {
+          const spaceData: SpaceData = response.data as SpaceData;
 
-  const footerItems = [
-    {
-      content: 'Docs',
-      url: 'https://bit.ly/ZuSoftware-doc',
+          return spaceData.zucitySpaceIndex.edges.map((edge) => edge.node);
+        } else {
+          console.error('Invalid data structure:', response.data);
+          return [];
+        }
+      } catch (error) {
+        console.error('Failed to fetch spaces:', error);
+        throw error;
+      }
     },
-    {
-      content: 'About',
-      url: 'https://zuzalu.gitbook.io/zuzalu-beta-docs/welcome/zuzalu.city-vision-and-mission',
+    enabled: isAuthenticated,
+  });
+
+  const userEvents = useMemo(() => {
+    if (!allEvents || !userDID) return [];
+
+    return allEvents.filter((event) => isUserAssociated(event, userDID));
+  }, [allEvents, userDID]);
+
+  const userSpaces = useMemo(() => {
+    if (!spacesData || !userDID) return [];
+
+    return spacesData.filter((space) => isUserAssociated(space, userDID));
+  }, [spacesData, userDID]);
+
+  const handleClick = useCallback(
+    (item: any) => {
+      !item.isSoon && router.push(item.url);
+      onClose?.();
     },
-    {
-      content: 'X/Twitter',
-      url: 'https://x.com/Zuzalu_city',
+    [router, onClose],
+  );
+
+  const handleTabChange = useCallback((key: React.Key) => {
+    setSelectedTab(key as string);
+  }, []);
+
+  const renderLoadingSkeleton = useCallback(() => {
+    return Array.from({ length: 3 }).map((_, index) => (
+      <div key={index} className="flex items-center gap-[10px] p-[6px_10px]">
+        <Skeleton className="rounded-[2px]">
+          <div className="w-[20px] h-[20px]"></div>
+        </Skeleton>
+        <Skeleton className="rounded-[4px]">
+          <div className="h-[17px] w-[190px]"></div>
+        </Skeleton>
+      </div>
+    ));
+  }, []);
+
+  const renderItem = useCallback(
+    (item: any, isEvent: boolean) => {
+      const itemId = item.id;
+      const itemImage = isEvent
+        ? item.imageUrl
+        : item.avatar || '/default-space-avatar.png';
+      const itemTitle = isEvent ? item.title : item.name;
+      const itemPath = isEvent ? `/events/${itemId}` : `/spaces/${itemId}`;
+
+      return (
+        <div
+          key={itemId}
+          className="flex items-center gap-[10px] p-[6px_10px] opacity-70 cursor-pointer hover:bg-[rgba(255,255,255,0.05)] rounded-[10px]"
+          onClick={() => {
+            router.push(itemPath);
+            onClose?.();
+          }}
+        >
+          <Image
+            src={itemImage}
+            alt={itemTitle}
+            width={20}
+            height={20}
+            style={{
+              objectFit: 'cover',
+              borderRadius: '2px',
+              height: '20px',
+              width: '20px',
+            }}
+          />
+          <p className="text-white text-[14px] font-semibold leading-[1.6] truncate">
+            {itemTitle}
+          </p>
+        </div>
+      );
     },
-    {
-      content: 'Farcaster',
-      url: 'https://warpcast.com/zuzalucity',
-    },
-    {
-      content: 'Builder Chat',
-      url: 'https://matrix.to/#/#zuzalusoftware:matrix.org',
-    },
-    {
-      content: 'Medium',
-      url: 'https://medium.com/@Zuzalu_city',
-    },
-    {
-      content: 'Paragraph',
-      url: 'https://paragraph.xyz/@zuzalu.city',
-    },
-    {
-      content: 'Podcast',
-      url: 'https://youtube.com/@ZuzaluCity',
-    },
-  ];
+    [router, onClose],
+  );
+
+  const renderTabContent = useCallback(() => {
+    const isEventsTab = selectedTab === 'events';
+    const isLoading = isEventsTab ? isEventsLoading : isSpacesLoading;
+    const items = isEventsTab ? userEvents : userSpaces;
+
+    if (isLoading) {
+      return renderLoadingSkeleton();
+    }
+
+    return items.map((item) => renderItem(item, isEventsTab));
+  }, [
+    selectedTab,
+    isEventsLoading,
+    isSpacesLoading,
+    userEvents,
+    userSpaces,
+    renderLoadingSkeleton,
+    renderItem,
+  ]);
 
   return (
-    <Box
-      sx={{
-        width: selected !== 'Space Details' ? '260px' : 'auto',
-        height: 'calc(100vh - 50px)',
-        position: 'sticky',
-        top: '50px',
-        transitionProperty: 'width',
-        transitionDuration: '300',
-        transitionTimingFunction: 'ease-in-out',
-        backgroundColor: 'rgba(34, 34, 34, 0.9)',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-      borderRight="1px solid #383838"
+    <div
+      className={cn(
+        'h-[calc(100vh-50px)] sticky top-[50px] bg-[rgba(34,34,34,0.8)] flex flex-col border-r border-[#383838]',
+        selected !== 'Space Details' ? 'w-[260px]' : 'w-auto',
+        isMobile && 'w-full border-none bg-transparent',
+      )}
     >
-      <Box display="flex" flexDirection="column" padding="10px" gap="10px">
-        {naviButtons.map((item, index) => {
-          return (
-            <Box
-              display="flex"
-              padding="8px 10px"
-              alignItems="center"
-              sx={{
-                cursor: 'pointer',
-                '&:hover': { bgcolor: '#383838' },
-                opacity: pathname === item.url ? 1 : 0.7,
-              }}
-              bgcolor={pathname === item.url ? '#383838' : 'transparent'}
-              gap="10px"
-              borderRadius="10px"
-              justifyContent="space-between"
-              onClick={item.function}
-              key={index}
-            >
-              <Stack direction="row" alignItems="center" gap="10px">
-                {item.icon}
-                {selected !== 'Space Details' && (
-                  <Typography color="white" variant="bodyMB">
-                    {item.content}
-                  </Typography>
+      <ScrollShadow className="flex-1 overflow-y-auto" visibility="bottom">
+        <div className="flex flex-col p-[10px] gap-[10px]">
+          {naviButtons.map((item, index) => {
+            return (
+              <div
+                className={cn(
+                  'flex p-[8px_10px] items-center gap-[10px] rounded-[10px] justify-between group transition-all duration-300 ease-in-out',
+                  !item.isSoon
+                    ? 'cursor-pointer hover:bg-[#383838]'
+                    : 'opacity-70',
+                  pathname === item.url ? 'bg-[#383838]' : 'bg-transparent',
                 )}
-                {item.isNew && (
-                  <Typography
-                    sx={{
-                      borderRadius: '4px',
-                      backgroundColor: 'rgba(125, 255, 209, 0.10)',
-                      padding: '2px 4px',
-                      fontSize: '12px',
-                      color: '#7dffd1',
-                      fontWeight: 600,
-                      lineHeight: 1.4,
-                    }}
+                onClick={() => handleClick(item)}
+                key={index}
+              >
+                <div className="flex flex-row items-center gap-[10px]">
+                  <div
+                    className={cn(
+                      'flex flex-row items-center gap-[10px] opacity-60 transition-opacity duration-300 ease-in-out',
+                      !item.isSoon ? 'group-hover:opacity-100' : 'opacity-20',
+                      pathname === item.url && 'opacity-100',
+                    )}
                   >
-                    New!
-                  </Typography>
-                )}
-              </Stack>
-              {item.version && (
-                <Typography
-                  fontSize={10}
-                  lineHeight={1.2}
-                  sx={{ opacity: 0.5 }}
-                  color="#fff"
-                >
-                  {item.version}
-                </Typography>
-              )}
-            </Box>
-          );
-        })}
-      </Box>
-      <Box
-        display="flex"
-        flexDirection="column"
-        gap="10px"
-        sx={{
-          borderTop: '1px solid #383838',
-          borderBottom: '1px solid #383838',
-          marginX: '10px',
-          padding: '20px 0 10px',
-          flex: 1,
-          flexDirection: isAuthenticated ? 'column' : 'column-reverse',
-          justifyContent: 'space-between',
-        }}
-      >
-        {isAuthenticated ? (
-          <>
-            <Typography fontSize={10} color="rgba(255, 255, 255, 0.7)" pl="6px">
-              YOUR RSVP&apos;D EVENTS
-            </Typography>
-            <Box
-              display="flex"
-              flexDirection="column"
-              gap="10px"
-              sx={{
-                overflowY: 'auto',
-                maxHeight: 'calc(100vh - 492px)',
-                flex: 1,
-              }}
-            >
-              {isLoading
-                ? Array.from({ length: 3 }).map((_, index) => (
-                    <Box
-                      key={index}
-                      display="flex"
-                      alignItems="center"
-                      gap="10px"
-                      sx={{
-                        padding: '6px 10px',
-                        opacity: 0.7,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <Skeleton variant="rounded" width={20} height={20} />
-                      <Skeleton variant="rounded" width={190} height={17} />
-                    </Box>
-                  ))
-                : events.map((event, index) => {
-                    return (
-                      <Box
-                        key={index}
-                        display="flex"
-                        alignItems="center"
-                        gap="10px"
-                        sx={{
-                          padding: '6px 10px',
-                          opacity: 0.7,
-                          cursor: 'pointer',
-                          '&:hover': {
-                            bgcolor: 'rgba(255, 255, 255, 0.05)',
-                          },
-                          borderRadius: '4px',
-                        }}
-                        onClick={() => {
-                          router.push(`/events/${event.id}`);
-                        }}
-                      >
-                        <Image
-                          src={event.imageUrl!}
-                          alt={event.title}
-                          width={20}
-                          height={20}
-                          style={{
-                            objectFit: 'cover',
-                            borderRadius: '2px',
-                            height: '20px',
-                            width: '20px',
-                          }}
-                        />
-                        <Typography color="white" variant="bodyM" noWrap>
-                          {event.title}
-                        </Typography>
-                      </Box>
-                    );
-                  })}
-            </Box>
-          </>
-        ) : null}
-        <Box
-          display="flex"
-          gap="10px"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ cursor: 'pointer' }}
+                    {item.icon}
+                    {selected !== 'Space Details' && (
+                      <p className="text-white font-medium text-[14px]">
+                        {item.content}
+                      </p>
+                    )}
+                  </div>
+                  {item.isNew && (
+                    <p className="rounded-[4px] bg-[rgba(125,255,209,0.10)] p-[2px_4px] text-[12px] text-[#7dffd1] font-semibold leading-[1.4]">
+                      New!
+                    </p>
+                  )}
+                </div>
+                {item.isSoon ? (
+                  <p className="text-[10px] leading-[1.2] opacity-50 text-white">
+                    SOON
+                  </p>
+                ) : item.version ? (
+                  <p className="text-[10px] leading-[1.2] opacity-30 text-white">
+                    {item.version}
+                  </p>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+        <div
+          className={`flex flex-col gap-[5px] border-t border-b-w-10 rounded-[10px] mx-[10px] py-[10px] justify-between`}
+        >
+          <p className="text-[10px] text-[rgba(255,255,255,0.7)] leading-[17px] text-center opacity-70 uppercase">
+            YOUR activities
+          </p>
+          <Tabs
+            aria-label="Tabs variants"
+            variant="light"
+            selectedKey={selectedTab}
+            onSelectionChange={handleTabChange}
+            className="w-full flex justify-center"
+            classNames={{
+              cursor: 'bg-white/5 shadow-none',
+              tabList: 'w-full',
+              tabContent: 'text-[14px] group-data-[selected=false]:opacity-50',
+            }}
+          >
+            <Tab key="events" title="Events" />
+            <Tab key="communities" title="Communities" />
+          </Tabs>
+          <div className="flex flex-col gap-[10px]">{renderTabContent()}</div>
+        </div>
+      </ScrollShadow>
+      <div className="flex flex-col p-[10px] flex-shrink-0 border-t border-[#383838] gap-[10px]">
+        <div className="flex flex-row flex-wrap gap-[10px] p-[10px]">
+          {footerItems.map((item, index) => {
+            return (
+              <a
+                key={index}
+                className="text-[rgba(225,225,225,0.7)] text-[13px] no-underline hover:underline hover:decoration-[#7dffd1] hover:text-[#7dffd1] hover:opacity-70"
+                href={item.url}
+                target="_blank"
+              >
+                {item.content}
+              </a>
+            );
+          })}
+        </div>
+        <div
+          className="flex gap-[10px] items-center justify-center cursor-pointer opacity-70 hover:opacity-100"
           onClick={() =>
             window.open(
               'https://github.com/ZuzaluSoftwareBuilder/ZuzaluCityOS',
@@ -354,117 +357,22 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
             )
           }
         >
-          <Typography fontSize={12} color="rgba(255, 255, 255, 0.7)">
-            Zuzalu.city is open source
-          </Typography>
+          <p className="text-[10px] text-white leading-[1.2] uppercase">
+            ZUZalu city is open source
+          </p>
           <Image
             src="/sidebar/gitHub.png"
             alt="github"
             width={24}
             height={24}
-            style={{ opacity: 0.7 }}
           />
-        </Box>
-      </Box>
-      <Box
-        display="flex"
-        flexDirection="column"
-        sx={{
-          marginX: '10px',
-          padding: '10px 0',
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            paddingLeft: '10px',
-          }}
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              gap: '10px',
-            }}
-          >
-            {footerItems.map((item, index) => {
-              return (
-                <Typography
-                  key={index}
-                  color="rgba(225, 225, 225, 0.7)"
-                  variant="body2"
-                  component="a"
-                  href={item.url}
-                  target="_blank"
-                  sx={{
-                    textDecoration: 'none',
-                    '&:hover': {
-                      textDecoration: 'underline',
-                      textDecorationColor: '#7dffd1',
-                      color: '#7dffd1',
-                      opacity: 0.7,
-                    },
-                  }}
-                >
-                  {item.content}
-                </Typography>
-              );
-            })}
-          </Box>
-          {/*<Typography
-            color="rgba(225, 225, 225, 0.7)"
-            variant="body2"
-            component="a"
-            href="https://zuzalu.gitbook.io/zuzalucitybeta/welcome/what-is-zuzalu.city/what-is-zuzalu"
-            target="_blank"
-            sx={{
-              textDecoration: 'none',
-              '&:hover': {
-                textDecoration: 'underline',
-                textDecorationColor: '#7dffd1',
-                color: '#7dffd1',
-                opacity: 0.7,
-              },
-            }}
-          >
-            About Zuzalu
-          </Typography>
-          <Typography
-            color="rgba(225, 225, 225, 0.7)"
-            variant="body2"
-            component="a"
-            href="https://zuzalu.gitbook.io/zuzalucitybeta"
-            target="_blank"
-            sx={{
-              textDecoration: 'none',
-              '&:hover': {
-                textDecoration: 'underline',
-                textDecorationColor: '#7dffd1',
-                color: '#7dffd1',
-                opacity: 0.7,
-              },
-            }}
-          >
-            About Zuzalu.city
-          </Typography>*/}
-        </Box>
-        <ZuButton
-          variant="outlined"
-          endIcon={<ArrowUpRightIcon size={5} />}
-          sx={{
-            width: '100%',
-            height: '32px',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            fontSize: '13px !important',
-            color: '#fff',
-            marginTop: '10px',
-            fontWeight: 400,
-            backgroundColor: 'transparent',
-          }}
-          onClick={() =>
+        </div>
+        <Button
+          variant="light"
+          border
+          className="text-[13px] leading-[1.4] p-[6px_14px]"
+          endContent={<ArrowUpRightIcon size={5} />}
+          onPress={() =>
             window.open(
               'https://zuzapp-v1-events-app-delta.vercel.app/dashboard/home',
               '_blank',
@@ -472,9 +380,9 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
           }
         >
           Legacy Registry App
-        </ZuButton>
-      </Box>
-    </Box>
+        </Button>
+      </div>
+    </div>
   );
 };
 

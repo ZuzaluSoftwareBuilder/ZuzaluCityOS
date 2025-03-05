@@ -1,27 +1,19 @@
 'use client';
 import React, { useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import {
-  Box,
-  Typography,
-  Button,
-  Menu,
-  MenuItem,
-  Divider,
-  Stack,
-} from '@mui/material';
-import styles from './index.module.css';
+import { Box, Typography, Menu, Stack } from '@mui/material';
 import { useTheme, useMediaQuery } from '@mui/material';
-import { MenuIcon } from 'components/icons';
+import { MenuIcon, WalletIcon } from 'components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
 import SidebarDrawer from '../Sidebar/SidebarDrawer';
 import { useAppContext } from '@/context/AppContext';
-import { useAccount, useDisconnect, useEnsName } from 'wagmi';
+import { useDisconnect } from 'wagmi';
 import Image from 'next/image';
-import { ZuButton } from '@/components/core';
+import { Button } from '@/components/base';
 import { formatUserName } from '@/utils/format';
 import { useLitContext } from '@/context/LitContext';
 import Profile from '@/components/profile';
+import { PressEvent } from '@heroui/react';
 
 export function formatAddressString(str?: string, maxLength: number = 10) {
   if (!str) return;
@@ -37,7 +29,7 @@ const Header = () => {
   const router = useRouter();
   const pathName = usePathname();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
+  const isTablet = useMediaQuery(theme.breakpoints.down(1200));
   const { isAuthenticated, showAuthPrompt, logout, username, profile } =
     useCeramicContext();
   const { litDisconnect } = useLitContext();
@@ -45,8 +37,8 @@ const Header = () => {
   const [showProfile, setShowProfile] = useState(false);
   const { disconnect } = useDisconnect();
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleMenuClick = (e: PressEvent) => {
+    setAnchorEl(e.target as HTMLElement);
   };
 
   const handleMenuClose = () => {
@@ -85,7 +77,7 @@ const Header = () => {
   return (
     <Box
       height="50px"
-      bgcolor="rgba(48, 48, 48, 0.8)"
+      bgcolor="rgba(44, 44, 44, 0.8)"
       display="flex"
       alignItems="center"
       justifyContent="space-between"
@@ -98,22 +90,14 @@ const Header = () => {
       sx={{ backdropFilter: 'blur(20px)' }}
     >
       <Profile showModal={showProfile} onClose={() => setShowProfile(false)} />
-      <Box
-        display="flex"
-        alignItems="center"
-        gap="10px"
-        sx={{ cursor: 'pointer' }}
-      >
+      <Box display="flex" alignItems="center" sx={{ cursor: 'pointer' }}>
         {(isTablet ||
           (pathName.split('/')[1] === 'spaces' &&
             pathName.split('/').length > 2)) && (
           <Button
-            sx={{
-              padding: '10px',
-              width: '40px',
-              minWidth: 'unset',
-            }}
-            onClick={() => setOpenSidebar(true)}
+            variant="light"
+            className="w-[40px] min-w-[40px] p-[10px]"
+            onPress={() => setOpenSidebar(true)}
           >
             <MenuIcon />
           </Button>
@@ -121,46 +105,27 @@ const Header = () => {
 
         <Box
           component="img"
-          src={isMobile ? '/ZuCityLogo-IconOnly.svg' : '/ZuCityLogo.svg'}
-          height="40px"
+          src={isMobile ? '/header/logo.png' : '/header/logoWithText.png'}
+          height="30px"
           onClick={() => router.push('/')}
         />
-        <Typography
-          variant="body2"
-          color={theme.palette.text.primary}
-          sx={{
-            fontStyle: 'italic',
-            opacity: 0.8,
-          }}
-        >
-          beta
-        </Typography>
+        {!isMobile ? (
+          <span className="text-[14px] font-[300] opacity-80 leading-[1.2] italic text-white pl-[10px]">
+            beta
+          </span>
+        ) : null}
       </Box>
       {isAuthenticated ? (
         <>
           <Button
-            sx={{
-              textAlign: 'center',
-              color: 'white',
-              fontSize: 16,
-              fontFamily: 'Inter',
-              fontWeight: 600,
-              wordWrap: 'break-word',
-              background: 'rgba(255, 255, 255, 0.05)',
-              '&:hover': {
-                background: 'rgba(255, 255, 255, 0.05)',
-                boxShadow: 'none',
-              },
-              gap: '8px',
-              borderRadius: '10px',
-            }}
-            onClick={handleMenuClick}
+            className="text-[16px] font-[500] leading-[1.2] text-white bg-transparent gap-[6px]"
+            onPress={handleMenuClick}
           >
             <Image
               src={profile?.avatar ?? '/user/avatar_p.png'}
               alt="avatar"
-              height={24}
-              width={24}
+              height={28}
+              width={28}
             />
             {formattedName}
           </Button>
@@ -317,28 +282,14 @@ const Header = () => {
           </Menu>
         </>
       ) : (
-        <ZuButton
-          sx={{
-            textAlign: 'center',
-            color: 'white',
-            fontSize: 16,
-            fontFamily: 'Inter',
-            fontWeight: 600,
-            lineHeight: '19.2px',
-            wordWrap: 'break-word',
-            background: 'rgba(255, 255, 255, 0.05)',
-            '&:hover': {
-              background: 'rgba(255, 255, 255, 0.05)',
-              boxShadow: 'none',
-            },
-            gap: '8px',
-            borderRadius: '10px',
-          }}
-          onClick={showAuthPrompt}
+        <Button
+          startContent={<WalletIcon size={5} />}
+          onPress={showAuthPrompt}
+          border
+          className="text-[14px] font-[500] leading-[1.2] text-white rounded-[8px] bg-white/5 h-[30px]"
         >
-          <Image src="/user/wallet.png" alt="wallet" height={24} width={24} />
           Connect
-        </ZuButton>
+        </Button>
       )}
       <SidebarDrawer
         selected={'Home'}

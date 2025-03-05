@@ -88,6 +88,7 @@ export interface Event {
   superAdmin?: {
     id: string;
   }[];
+  location?: string;
 }
 export interface LegacyEvent {
   id?: string;

@@ -27,9 +27,22 @@ const ZuCalendar = styled(DateCalendar)({
     color: '#7DFFD1',
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
   },
+  '& .Mui-disabled.MuiPickersDay-dayWithMargin': {
+    fontFamily: 'Inter',
+    color: '#fff !important',
+    opacity: 0.5,
+    fontSize: '16px',
+    fontWeight: 500,
+    textDecoration: 'line-through',
+    cursor: 'not-allowed',
+    pointerEvents: 'none',
+  },
   '& .MuiPickersYear-yearButton': {
     lineHeight: 1.75,
     fontSize: '1.25rem',
+  },
+  '& .MuiPickersDay-root:not(.Mui-selected)': {
+    border: 'none',
   },
 });
 
