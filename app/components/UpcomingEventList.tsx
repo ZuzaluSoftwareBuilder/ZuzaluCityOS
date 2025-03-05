@@ -1,7 +1,12 @@
-import { ArrowCircleRightIcon, MapIcon, TicketIcon } from '@/components/icons';
+import {
+  ArrowCircleRightIcon,
+  ArrowsCounterClockwiseIcon,
+  MapIcon,
+  TicketIcon,
+} from '@/components/icons';
 import CommonHeader from './CommonHeader';
 import { useRouter } from 'next/navigation';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { useState, useMemo } from 'react';
 import { Event } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
@@ -18,7 +23,6 @@ import { EventCard } from './EventCard';
 import {
   AccordionItem,
   Accordion,
-  Button,
   DateValue,
   Select,
   SelectItem,
@@ -27,14 +31,8 @@ import {
 import { UPCOMING_EVENTS_QUERY } from '@/graphql/eventQueries';
 import { supabase } from '@/utils/supabase/client';
 import { useMediaQuery } from '@/hooks';
-import {
-  fromAbsolute,
-  getLocalTimeZone,
-  parseDate,
-  toCalendarDate,
-  today,
-} from '@internationalized/date';
-import { Calendar } from '@/components/base';
+import { fromAbsolute, getLocalTimeZone, today } from '@internationalized/date';
+import { Calendar, Button } from '@/components/base';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -327,6 +325,20 @@ export default function UpcomingEventList() {
             weekdayStyle="short"
             minValue={today(getLocalTimeZone()).add({ days: 1 })}
             isDateUnavailable={isDateUnavailable}
+            bottomContent={
+              <div className="p-[14px] w-full pt-0">
+                <Button
+                  border
+                  variant="light"
+                  fullWidth
+                  className="text-[14px] h-[30px] opacity-80"
+                  startContent={<ArrowsCounterClockwiseIcon />}
+                  onPress={() => setSelectedDate(null)}
+                >
+                  Reset
+                </Button>
+              </div>
+            }
             onChange={setSelectedDate}
           />
           <Select
