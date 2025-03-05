@@ -27,7 +27,13 @@ import {
 import { UPCOMING_EVENTS_QUERY } from '@/graphql/eventQueries';
 import { supabase } from '@/utils/supabase/client';
 import { useMediaQuery } from '@/hooks';
-import { getLocalTimeZone, today } from '@internationalized/date';
+import {
+  fromAbsolute,
+  getLocalTimeZone,
+  parseDate,
+  toCalendarDate,
+  today,
+} from '@internationalized/date';
 import { Calendar } from '@/components/base';
 
 dayjs.extend(isSameOrAfter);
@@ -129,9 +135,6 @@ function EventList({ events, isLoading }: EventListProps) {
 export default function UpcomingEventList() {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<DateValue | null>(null);
-  const [dateForCalendar, setDateForCalendar] = useState<Dayjs>(
-    dayjs(new Date()).add(1, 'day'),
-  );
   const { composeClient } = useCeramicContext();
   const { isMobile } = useMediaQuery();
 
@@ -205,7 +208,7 @@ export default function UpcomingEventList() {
       const dateMatches =
         !selectedDate ||
         (dayjs(event.startTime).date() === selectedDate.day &&
-          dayjs(event.startTime).month() === selectedDate.month &&
+          dayjs(event.startTime).month() + 1 === selectedDate.month &&
           dayjs(event.startTime).year() === selectedDate.year);
 
       const locationMatches =
@@ -217,6 +220,22 @@ export default function UpcomingEventList() {
       return dateMatches && locationMatches;
     });
   }, [upcomingEvents, selectedDate, selectedLocation]);
+
+  let isDateUnavailable = (date: any) => {
+    return (
+      (upcomingEvents ?? []).findIndex((item) => {
+        const date1 = fromAbsolute(
+          dayjs(item.startTime).unix() * 1000,
+          getLocalTimeZone(),
+        );
+        return (
+          date1.month === date.month &&
+          date1.year === date.year &&
+          date1.day === date.day
+        );
+      }) === -1
+    );
+  };
 
   return (
     <div className="flex flex-col gap-[10px] pb-[20px]">
@@ -307,6 +326,7 @@ export default function UpcomingEventList() {
             calendarWidth="320px"
             weekdayStyle="short"
             minValue={today(getLocalTimeZone()).add({ days: 1 })}
+            isDateUnavailable={isDateUnavailable}
             onChange={setSelectedDate}
           />
           <Select
