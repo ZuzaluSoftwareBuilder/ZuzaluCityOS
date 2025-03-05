@@ -5,8 +5,9 @@ interface CommonHeaderProps {
   title: string;
   icon: React.ReactNode;
   description: string;
-  buttonText: string;
-  buttonOnPress: () => void;
+  buttonText?: string;
+  buttonOnPress?: () => void;
+  rightContent?: React.ReactNode;
 }
 
 export default function CommonHeader({
@@ -15,6 +16,7 @@ export default function CommonHeader({
   description,
   buttonText,
   buttonOnPress,
+  rightContent,
 }: CommonHeaderProps) {
   return (
     <div className="flex items-center justify-between py-[10px] px-[20px] sticky top-0 backdrop-blur-[10px] bg-[rgba(34, 34, 34, 0.90)] z-[1000] mobile:flex-col mobile:items-start mobile:gap-[5px] mobile:px-[10px] mobile:pb-0">
@@ -29,14 +31,18 @@ export default function CommonHeader({
           {description}
         </span>
       </div>
-      <Button
-        variant="light"
-        endContent={<ArrowCircleRightIcon size={5} />}
-        onPress={buttonOnPress}
-        className="h-[34px] mobile:p-[4px] mobile:text-[14px]"
-      >
-        {buttonText}
-      </Button>
+      {rightContent ? (
+        rightContent
+      ) : (
+        <Button
+          variant="light"
+          endContent={<ArrowCircleRightIcon size={5} />}
+          onPress={buttonOnPress}
+          className="h-[34px] mobile:p-[4px] mobile:text-[14px]"
+        >
+          {buttonText}
+        </Button>
+      )}
     </div>
   );
 }

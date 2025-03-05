@@ -1,4 +1,4 @@
-import { MapIcon, TicketIcon } from '@/components/icons';
+import { ArrowCircleRightIcon, MapIcon, TicketIcon } from '@/components/icons';
 import CommonHeader from './CommonHeader';
 import { useRouter } from 'next/navigation';
 import dayjs, { Dayjs } from 'dayjs';
@@ -15,7 +15,15 @@ import {
   groupEventsByMonth,
 } from '@/components/cards/EventCard';
 import { EventCard } from './EventCard';
-import { DateValue, Select, SelectItem, Skeleton } from '@heroui/react';
+import {
+  AccordionItem,
+  Accordion,
+  Button,
+  DateValue,
+  Select,
+  SelectItem,
+  Skeleton,
+} from '@heroui/react';
 import { UPCOMING_EVENTS_QUERY } from '@/graphql/eventQueries';
 import { supabase } from '@/utils/supabase/client';
 import { useMediaQuery } from '@/hooks';
@@ -216,8 +224,67 @@ export default function UpcomingEventList() {
         title="Upcoming Events"
         icon={<TicketIcon size={isMobile ? 5 : 6} />}
         description=""
-        buttonText="View All Events"
-        buttonOnPress={() => router.push('/events')}
+        rightContent={
+          isMobile ? (
+            <div className="flex items-center justify-between w-full">
+              <Accordion fullWidth>
+                <AccordionItem
+                  key="1"
+                  title={
+                    <Button
+                      variant="light"
+                      endContent={<ArrowCircleRightIcon size={5} />}
+                      onPress={() => router.push('/events')}
+                      className="h-[34px] mobile:p-[4px] mobile:text-[14px]"
+                    >
+                      View All Events
+                    </Button>
+                  }
+                  classNames={{
+                    trigger: 'p-0',
+                    base: 'mx-[-0.5rem]',
+                    content: 'py-0 pt-[5px]',
+                  }}
+                >
+                  <Select
+                    defaultSelectedKeys={['anywhere']}
+                    placeholder="Select location"
+                    startContent={<MapIcon size={5} />}
+                    onSelectionChange={(keys) => {
+                      const selectedKey = Array.from(keys)[0] as string;
+                      setSelectedLocation(selectedKey);
+                    }}
+                    classNames={{
+                      trigger: 'bg-[#4A4A4A]',
+                    }}
+                    popoverProps={{
+                      offset: 10,
+                      classNames: {
+                        content:
+                          'backdrop-blur-[12px] border-b-w-10 border-[2px] bg-[rgba(34,34,34,0.8)]',
+                      },
+                    }}
+                  >
+                    {locations.map((location) => (
+                      <SelectItem key={location.key}>
+                        {location.label}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                </AccordionItem>
+              </Accordion>
+            </div>
+          ) : (
+            <Button
+              variant="light"
+              endContent={<ArrowCircleRightIcon size={5} />}
+              onPress={() => router.push('/events')}
+              className="h-[34px] mobile:p-[4px] mobile:text-[14px]"
+            >
+              View All Events
+            </Button>
+          )
+        }
       />
       <div className="flex flex-row gap-[20px]">
         <div className="flex-1">
@@ -236,6 +303,7 @@ export default function UpcomingEventList() {
             Sort & Filter Events
           </p>
           <Calendar
+            value={selectedDate}
             calendarWidth="320px"
             weekdayStyle="short"
             minValue={today(getLocalTimeZone()).add({ days: 1 })}
