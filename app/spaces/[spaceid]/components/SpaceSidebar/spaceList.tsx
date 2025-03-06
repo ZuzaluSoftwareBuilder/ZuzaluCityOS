@@ -44,7 +44,7 @@ const SpaceList = () => {
   }, [spacesData, userDID]);
 
   return (
-    <div className="mt-2.5 w-full h-full overflow-y-auto flex flex-col items-center gap-2.5">
+    <div className="pt-2.5 w-full h-full overflow-y-auto flex flex-col items-center gap-2.5">
       {userSpaces.length > 0 &&
         userSpaces.map((space) => <SpaceItem key={space.id} space={space} />)}
     </div>
@@ -58,16 +58,22 @@ const SpaceItem = ({ space }: { space: Space }) => {
   const isActive = pathname.includes(`/spaces/${space.id}`);
 
   return (
-    // TODO active state ui
     <Link href={`/spaces/${space.id}`} className="cursor-pointer">
       <div
         className={`
-          w-12 h-12 rounded-full flex items-center justify-center cursor-pointer
-          ${isActive ? 'border-2 border-white' : 'border-none'}
+          w-10 h-10 box-content rounded-full flex items-center justify-center cursor-pointer
+          hover:shadow-[0_0_0_2px_rgba(255,255,255,0.2)]
+          ${isActive ? 'border-2 border-[#2C2C2C] shadow-[0_0_0_2px_rgba(255,255,255,0.9)] hover:shadow-[0_0_0_2px_rgba(255,255,255,0.9)]' : 'border-none'}
         `}
       >
         {space.avatar ? (
-          <Image src={space.avatar} alt={space.name} width={40} height={40} className='rounded-full object-cover' />
+          <Image
+            src={space.avatar}
+            alt={space.name}
+            width={40}
+            height={40}
+            className="rounded-full object-cover"
+          />
         ) : (
           <div className="w-10 h-10 rounded-full bg-[#363636]" />
         )}

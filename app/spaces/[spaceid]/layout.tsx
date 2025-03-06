@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import React from 'react';
 import type { Metadata } from 'next';
 import SpaceLayoutSidebar from './components/SpaceSidebar/sidebar';
+import NewSubSidebar from './components/SpaceSidebar/subSidebar';
 interface SpacePageLayoutPropTypes {
   children: React.ReactNode;
 }
@@ -33,8 +34,9 @@ export default function SpacePageLayout({
       minHeight={'calc(100vh - 50px)'}
     >
       <SpaceLayoutSidebar />
+      <NewSubSidebar />
       <div className='flex-1 overflow-auto'>
-      {children}
+        {children}
       </div>
     </Box>
   );
