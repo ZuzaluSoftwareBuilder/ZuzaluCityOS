@@ -41,7 +41,11 @@ function RootLayout({
     setIsClient(true);
   }, []);
   return (
-    <html lang="en" className="dark" style={{ backgroundColor: '#222' }}>
+    <html
+      lang="en"
+      className="dark"
+      style={{ backgroundColor: '#222', height: '100vh' }}
+    >
       <head>
         <link rel="icon" href="/logo.webp" />
       </head>
