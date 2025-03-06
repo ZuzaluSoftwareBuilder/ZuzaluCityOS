@@ -1,163 +1,65 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import useEmblaCarousel from 'embla-carousel-react';
-import Autoplay from 'embla-carousel-autoplay';
+import React from 'react';
+
 import {
-  Button,
-  Link,
-  Stack,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
-import { RightArrowIcon } from '@/components/icons';
+  ArrowCircleRightFillIcon,
+  ArrowCircleRightIcon,
+  RightArrowIcon,
+} from '@/components/icons';
+import { Button } from '@/components/base';
+import { useRouter } from 'next/navigation';
 
-const doclink = process.env.NEXT_PUBLIC_LEARN_DOC_V2_URL || '';
-
-const EmblaVerticalCarousel = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [emblaRef, emblaApi] = useEmblaCarousel({ axis: 'y', loop: true }, [
-    Autoplay({ stopOnInteraction: true }),
-  ]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  const scrollTo = useCallback(
-    (index: number) => {
-      emblaApi && emblaApi.scrollTo(index);
-    },
-    [emblaApi],
-  );
-
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    onSelect();
-    emblaApi.on('select', onSelect);
-    emblaApi.on('reInit', onSelect);
-  }, [emblaApi, onSelect]);
-
-  const slides = useMemo(() => {
-    const data = [
-      {
-        image: '/banner/banner_1.png',
-        text: (
-          <Stack
-            ml="40px"
-            mt="30px"
-            sx={{
-              [theme.breakpoints.down('sm')]: {
-                p: '40px 25px',
-                m: 0,
-              },
-            }}
-          >
-            <Typography
-              fontSize="49px"
-              fontWeight={700}
-              lineHeight={1.2}
-              color="#222222"
-            >
-              Zuzalu City
-            </Typography>
-            <Typography
-              mt="10px"
-              fontSize="16px"
-              fontWeight={600}
-              lineHeight={1.2}
-              color="#222222"
-              sx={{ opacity: 0.8 }}
-            >
-              Welcome to the new Zuzalu City
-            </Typography>
-            <Link href={doclink} target="_blank">
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: '#383838',
-                  color: 'white',
-                  borderRadius: '10px',
-                  p: '10px 14px',
-                  mt: '30px',
-                  width: 'auto',
-                  fontSize: '18px',
-                  fontWeight: 700,
-                  [theme.breakpoints.down('sm')]: {
-                    width: '100%',
-                  },
-                }}
-                startIcon={<RightArrowIcon />}
-              >
-                Join the Discussion
-              </Button>
-            </Link>
-          </Stack>
-        ),
-      },
-    ];
-    if (isMobile) {
-      return data;
-    }
-    return [...data, { image: '/banner/banner_2.png', text: '' }];
-  }, [isMobile, theme.breakpoints]);
-
+const Banner = () => {
+  const router = useRouter();
   return (
-    <div className="relative h-[240px] w-full">
-      <div className="overflow-hidden h-full rounded-[30px]" ref={emblaRef}>
-        <div className="flex flex-col h-full">
-          {slides.map((slide, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0 h-full bg-center bg-no-repeat bg-cover relative"
+    <>
+      <div
+        className="h-[40px] border-b-w-10 border-b-1 bg-[rgb(34,34,34)] hover:bg-[rgb(28,28,28)] cursor-pointer group"
+        onClick={() => router.push('/dapps')}
+      >
+        <div className="h-full p-[10px] w-full flex items-center justify-center gap-[10px]">
+          <div className="relative w-[24px] h-[24px]">
+            <ArrowCircleRightIcon className="absolute inset-0 transition-opacity duration-300 opacity-100 group-hover:opacity-0" />
+            <ArrowCircleRightFillIcon className="absolute inset-0 transition-all duration-300 opacity-0 group-hover:opacity-100 transform group-hover:translate-x-[2px]" />
+          </div>
+          <div className="relative transition-transform duration-300 group-hover:-translate-x-[2px]">
+            <p className="text-[14px] font-[600] leading-[1.2] text-white/80">
+              dApp Explore Open! List your dApps now!
+            </p>
+            <p
+              className="text-[14px] font-[600] leading-[1.2] text-transparent animate-gradient absolute top-0 left-0 z-10"
               style={{
-                backgroundImage: `url(${slide.image})`,
+                animationTimeline: 'auto',
+                animationRangeStart: 'normal',
+                animationRangeEnd: 'normal',
+                background:
+                  'linear-gradient(90deg, transparent 0%, transparent 41%, rgb(125, 255, 209) 50%, transparent 59%, transparent 100%) 0% 0% / 200% 200% no-repeat text',
+                animation: '4s linear 0s infinite normal none running eKXFfL',
               }}
             >
-              {slide.text}
-            </div>
-          ))}
+              dApp Explore Open! List your dApps now!
+            </p>
+          </div>
         </div>
       </div>
-      {slides.length > 1 && (
-        <div
-          className="flex flex-col items-center justify-center 
-            absolute overflow-hidden 
-            pointer-events-auto
-            left-[10px] top-1/2 -translate-y-1/2
-            rounded-[50px]
-            bg-black/20 backdrop-blur-[4px]"
-        >
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => scrollTo(index)}
-              className="flex items-center justify-center 
-            overflow-hidden
-            bg-transparent
-            cursor-pointer
-            border-none
-            m-0
-            p-[6px_6px_5px]"
-            >
-              <div
-                className={`rounded-full 
-            bg-white
-            cursor-pointer
-            border-none
-            flex items-center justify-center
-            p-0
-            w-[6px] h-[6px]
-            ${selectedIndex === index ? 'opacity-100' : 'opacity-50'}`}
-              />
-            </button>
-          ))}
+      <div className="border-b-w-10 border-b-1 px-[42px] py-[32px] bg-[url('/banner/banner_bg.png')] bg-lightgray bg-center bg-cover bg-no-repeat mobile:p-[20px]">
+        <p className="text-[49px] font-[900] leading-[1.2] mb-[10px] font-[merriweather] mobile:text-[42px] mobile:mb-0">
+          Zuzalu City
+        </p>
+        <p className="text-[16px] font-[500] leading-[1.2] opacity-80 mb-[20px]">
+          Welcome to the new Zuzalu City! Stay up to date below.
+        </p>
+        <div className="flex items-center gap-[10px] mobile:flex-col mobile:items-start">
+          <Button
+            border
+            startContent={<RightArrowIcon />}
+            className="bg-[#383838] font-[600] mobile:w-full"
+          >
+            Join the Discussion
+          </Button>
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 };
 
-export default EmblaVerticalCarousel;
+export default Banner;

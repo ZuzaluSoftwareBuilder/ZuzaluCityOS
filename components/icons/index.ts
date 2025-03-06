@@ -114,6 +114,13 @@ import { WindowIcon } from './Window';
 import { HourglassHighIcon } from './HourglassHigh';
 import { GearSixIcon } from './GearSix';
 import { NotePencilIcon } from './NotePencil';
+import { ArrowSquareRightIcon } from './ArrowSquareRight';
+import { BuildingsIcon } from './Buildings';
+import { ArrowCircleRightIcon } from './ArrowCircleRight';
+import { ArrowCircleRightFillIcon } from './ArrowCircleRight';
+import { CaretDoubleRightIcon } from './CaretDoubleRight';
+import { StorefrontIcon } from './Storefront';
+import { VideoIcon } from './Video';
 export {
   HomeIcon,
   SearchIcon,
@@ -231,4 +238,11 @@ export {
   HourglassHighIcon,
   GearSixIcon,
   NotePencilIcon,
+  ArrowSquareRightIcon,
+  BuildingsIcon,
+  ArrowCircleRightIcon,
+  ArrowCircleRightFillIcon,
+  CaretDoubleRightIcon,
+  StorefrontIcon,
+  VideoIcon,
 };

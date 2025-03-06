@@ -32,15 +32,6 @@ const Carousel: React.FC<CarouselProps> = ({ items }) => {
     }
   };
 
-  function isValidJSON(str: string): boolean {
-    try {
-      JSON.parse(str);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
   return (
     <Box
       ref={carouselRef}
@@ -85,7 +76,6 @@ const Carousel: React.FC<CarouselProps> = ({ items }) => {
           tagline={item.tagline}
         />
       ))}
-      {/*<SpaceComingSoonCard />*/}
     </Box>
   );
 };
