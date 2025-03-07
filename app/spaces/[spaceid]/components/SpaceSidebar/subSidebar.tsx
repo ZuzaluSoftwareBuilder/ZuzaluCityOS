@@ -8,6 +8,7 @@ import { useTheme } from '@mui/material/styles';
 import { useCeramicContext } from '@/context/CeramicContext';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { LockIcon, MegaPhoneIcon, SearchIcon } from '@/components/icons';
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 
 const NewSubSidebar = () => {
   const params = useParams();
@@ -100,11 +101,7 @@ const NewSubSidebar = () => {
           </span>
         </div>
         <Button isIconOnly variant="light" className="p-0">
-          <img
-            src="/icons/chevron-down-icon.svg"
-            alt="Expand"
-            className="w-5 h-5"
-          />
+          <ChevronDownIcon className='size-5 text-white' />
         </Button>
       </div>
 
