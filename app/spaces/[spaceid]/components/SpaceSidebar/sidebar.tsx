@@ -17,22 +17,22 @@ type SidebarItem = {
 const SidebarList: SidebarItem[] = [
   {
     name: 'home',
-    icon: <House size={24} />,
+    icon: <House />,
     href: '/',
   },
   {
     name: 'space',
-    icon: <Buildings size={24} />,
+    icon: <Buildings />,
     href: '/spaces',
   },
   {
     name: 'event',
-    icon: <Ticket size={24} />,
+    icon: <Ticket />,
     href: '/events',
   },
   {
     name: 'dapp',
-    icon: <Shapes size={24} />,
+    icon: <Shapes />,
     href: '/dapps',
   },
 ];
