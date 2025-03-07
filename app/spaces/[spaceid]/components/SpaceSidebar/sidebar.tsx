@@ -1,37 +1,56 @@
-import { Image, Link } from '@heroui/react';
+'use client';
+import { Link } from '@heroui/react';
 import SpaceList from './spaceList';
+import {
+  House,
+  Buildings,
+  Ticket,
+  Shapes,
+  IconContext,
+} from '@phosphor-icons/react';
+
 type SidebarItem = {
   name: string;
-  icon: string;
+  icon: React.ReactNode;
   href: string;
 };
 const SidebarList: SidebarItem[] = [
   {
     name: 'home',
-    icon: '/space/House.png',
+    icon: <House size={24} />,
     href: '/',
   },
   {
     name: 'space',
-    icon: '/space/Buildings.png',
+    icon: <Buildings size={24} />,
     href: '/spaces',
   },
   {
     name: 'event',
-    icon: '/space/Ticket.png',
+    icon: <Ticket size={24} />,
     href: '/events',
   },
   {
     name: 'dapp',
-    icon: '/space/Shapes.png',
+    icon: <Shapes size={24} />,
     href: '/dapps',
   },
 ];
 const Item = ({ item }: { item: SidebarItem }) => {
   return (
-    <Link className="w-[40px] h-[40px] bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)] rounded-lg flex items-center justify-center cursor-pointer">
-      <Image src={item.icon} alt={item.name} width={24} height={24} />
-    </Link>
+    <IconContext.Provider
+      value={{
+        size: 24,
+        weight: 'fill',
+        color: '#ffffff',
+        format: 'Stroke',
+        opacity: 0.6,
+      }}
+    >
+      <Link className="w-[40px] h-[40px] bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)] rounded-lg flex items-center justify-center cursor-pointer">
+        {item.icon}
+      </Link>
+    </IconContext.Provider>
   );
 };
 
