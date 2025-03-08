@@ -113,13 +113,14 @@ export default function SpaceDetailPage() {
     >
       {/* <JoinSpaceNoGate /> */}
       {/* <JoinSpaceWithGate /> */}
-      <SubSidebar
-        title={space?.name}
-        spaceId={params.spaceid.toString()}
-        avatar={space?.avatar}
-        banner={space?.banner}
-        isAdmin={isAdmin}
-      />
+      {/* hide in 2025.03.06*/}
+      {/*<SubSidebar*/}
+      {/*  title={space?.name}*/}
+      {/*  spaceId={params.spaceid.toString()}*/}
+      {/*  avatar={space?.avatar}*/}
+      {/*  banner={space?.banner}*/}
+      {/*  isAdmin={isAdmin}*/}
+      {/*/>*/}
       <Box
         sx={{
           width: 'calc(100% - 280px)',

@@ -1,6 +1,6 @@
 'use client';
 import { useParams, useRouter } from 'next/navigation';
-import { Image, Button, Tooltip } from '@heroui/react';
+import { Image, Button, Tooltip, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
 import { getSpaceEventsQuery } from '@/services/space';
 import { Event, Space, SpaceEventData } from '@/types';
 import { useEffect, useState } from 'react';
@@ -19,6 +19,9 @@ import {
   Gear,
 } from '@phosphor-icons/react';
 import TabItem from './tabItem';
+import SubTabItemContainer from './subTabItemContainer';
+import SidebarHeader from '@/app/spaces/[spaceid]/components/SpaceSidebar/subSidebar/sidebarHeader';
+
 
 const NewSubSidebar = () => {
   const params = useParams();
@@ -87,30 +90,8 @@ const NewSubSidebar = () => {
 
   return (
     <div className="w-[260px] h-[calc(100vh-50px)] mobile:hidden tablet:hidden border-r border-[#363636] bg-[#222222] flex flex-col pb-[90px] relative">
-      {/* 社区头部 */}
-      <div
-        className="w-[259px] h-[55px] relative group cursor-pointer"
-        style={{
-          background: 'linear-gradient(90deg, #7DFFD1 0%, #FFCA7A 100%)',
-        }}
-      >
-        <div className="absolute top-0 left-0 w-full h-full z-10 bg-[rgba(34,34,34,0.8)] backdrop-blur-[44px] transition-colors group-hover:bg-[rgba(34,34,34,0.5)]"></div>
-        <div className="absolute top-0 left-0 w-full h-full z-20 flex justify-between items-center px-[14px] py-[10px]">
-          <div className="flex justify-between items-center gap-2.5">
-            <Image
-              src={space?.avatar || '/placeholder-avatar.png'}
-              alt={space?.name || 'Community'}
-              width={35}
-              height={35}
-              className="rounded-full object-cover"
-            />
-            <span className="w-[156px] text-white font-semibold text-base truncate">
-              {space?.name || 'Community'}
-            </span>
-          </div>
-          <ChevronDownIcon className="size-5 text-white" />
-        </div>
-      </div>
+
+      <SidebarHeader space={space} />
 
       {/* 主导航区域 */}
       <div className="flex flex-col p-[10px] gap-[5px] border-t border-b border-[rgba(255,255,255,0.1)]">
@@ -146,40 +127,51 @@ const NewSubSidebar = () => {
         />
       </div>
 
-      <div className="flex-1 pt-5 px-2.5">
+      <div className="flex-1 pt-5 px-2.5 overflow-y-auto">
         <div>
           <span className="text-[12px] leading-[14px] text-white px-2.5">
             Community Apps
           </span>
         </div>
 
-        <div className="mt-2.5">
+        <div className="mt-2.5 flex flex-col gap-[5px]">
           {/*TODO confirm click event */}
-          <TabItem label="Calendar" icon={<CalendarDots />} isActive={false} />
-          <TabItem
-            label="Public Activities"
-            icon={<GitBranch />}
-            isActive={false}
-            isSubTab={true}
-          />
+          <div>
+            <TabItem
+              href={`/spaces/${spaceId}/calendar`}
+              label="Calendar"
+              icon={<CalendarDots />}
+              isActive={false}
+            />
+            <SubTabItemContainer>
+              <TabItem
+                label="Public Activities"
+                icon={<GitBranch />}
+                isActive={false}
+              />
+            </SubTabItemContainer>
+          </div>
           <TabItem
             label="Discussions"
             icon={<Chats />}
             isActive={false}
             locked={true}
           />
-          <TabItem
-            label="Zu_Builders"
-            icon={<CalendarDots />}
-            isActive={false}
-            locked={true}
-          />
-          <TabItem
-            label="Public Activities"
-            icon={<GitBranch />}
-            isActive={false}
-            isSubTab={true}
-          />
+          <div>
+            <TabItem
+              label="Zu_Builders"
+              icon={<CalendarDots />}
+              isActive={false}
+              locked={true}
+            />
+            <SubTabItemContainer>
+              <TabItem
+                label="Public Activities"
+                icon={<GitBranch />}
+                isActive={false}
+              />
+            </SubTabItemContainer>
+          </div>
         </div>
       </div>
 

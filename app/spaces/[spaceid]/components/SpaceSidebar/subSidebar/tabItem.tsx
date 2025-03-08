@@ -14,7 +14,6 @@ export interface ITabItemProps extends Partial<LinkProps> {
   isActive: boolean;
   locked?: boolean;
   count?: number;
-  isSubTab?: boolean;
   onClick?: () => void;
 }
 
@@ -25,12 +24,11 @@ const TabItem = ({
   isActive,
   count,
   locked,
-  isSubTab,
   onClick,
   ...props
 }: ITabItemProps) => {
   const commonClassNames = cn(
-    'flex items-center py-2 px-2.5 gap-2.5 rounded-lg group',
+    'flex items-center w-full h-[30px] px-2.5 gap-2.5 rounded-lg group',
     isActive ? 'bg-[#363636]' : 'bg-transparent',
     'hover:bg-[#2C2C2C]',
     locked && 'cursor-not-allowed',
@@ -44,7 +42,6 @@ const TabItem = ({
         locked && 'opacity-30',
       )}
     >
-      {isSubTab && <DotOutline />}
       {icon}
       <span
         className={
