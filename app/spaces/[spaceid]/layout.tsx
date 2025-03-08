@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import React from 'react';
 import type { Metadata } from 'next';
 import SpaceLayoutSidebar from './components/SpaceSidebar/sidebar';
-import NewSubSidebar from './components/SpaceSidebar/subSidebar';
+import NewSubSidebar from './components/SpaceSidebar/subSidebar/subSidebar';
 interface SpacePageLayoutPropTypes {
   children: React.ReactNode;
 }
