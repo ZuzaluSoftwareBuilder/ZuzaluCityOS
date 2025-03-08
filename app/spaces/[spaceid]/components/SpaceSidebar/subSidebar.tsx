@@ -19,6 +19,7 @@ import {
   Gear,
 } from '@phosphor-icons/react';
 import TabItem from './tabItem';
+import SubTabItemContainer from './subTabItemContainer';
 
 const NewSubSidebar = () => {
   const params = useParams();
@@ -146,40 +147,51 @@ const NewSubSidebar = () => {
         />
       </div>
 
-      <div className="flex-1 pt-5 px-2.5">
+      <div className="flex-1 pt-5 px-2.5 overflow-y-auto">
         <div>
           <span className="text-[12px] leading-[14px] text-white px-2.5">
             Community Apps
           </span>
         </div>
 
-        <div className="mt-2.5">
+        <div className="mt-2.5 flex flex-col gap-[5px]">
           {/*TODO confirm click event */}
-          <TabItem label="Calendar" icon={<CalendarDots />} isActive={false} />
-          <TabItem
-            label="Public Activities"
-            icon={<GitBranch />}
-            isActive={false}
-            isSubTab={true}
-          />
+          <div>
+            <TabItem
+              href={`/spaces/${spaceId}/calendar`}
+              label="Calendar"
+              icon={<CalendarDots />}
+              isActive={false}
+            />
+            <SubTabItemContainer>
+              <TabItem
+                label="Public Activities"
+                icon={<GitBranch />}
+                isActive={false}
+              />
+            </SubTabItemContainer>
+          </div>
           <TabItem
             label="Discussions"
             icon={<Chats />}
             isActive={false}
             locked={true}
           />
-          <TabItem
-            label="Zu_Builders"
-            icon={<CalendarDots />}
-            isActive={false}
-            locked={true}
-          />
-          <TabItem
-            label="Public Activities"
-            icon={<GitBranch />}
-            isActive={false}
-            isSubTab={true}
-          />
+          <div>
+            <TabItem
+              label="Zu_Builders"
+              icon={<CalendarDots />}
+              isActive={false}
+              locked={true}
+            />
+            <SubTabItemContainer>
+              <TabItem
+                label="Public Activities"
+                icon={<GitBranch />}
+                isActive={false}
+              />
+            </SubTabItemContainer>
+          </div>
         </div>
       </div>
 
