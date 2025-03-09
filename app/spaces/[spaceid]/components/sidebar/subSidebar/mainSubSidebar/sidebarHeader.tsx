@@ -35,7 +35,7 @@ const SidebarHeader = ({
 
   return (
     <Dropdown>
-      <DropdownTrigger disableAnimation>
+      <DropdownTrigger>
         <div
           className="w-[259px] h-[55px] relative group cursor-pointer"
           style={{

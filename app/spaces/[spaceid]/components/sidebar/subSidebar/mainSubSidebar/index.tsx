@@ -20,10 +20,10 @@ import {
 } from '@phosphor-icons/react';
 import TabItem from './tabItem';
 import SubTabItemContainer from './subTabItemContainer';
-import SidebarHeader from '@/app/spaces/[spaceid]/components/SpaceSidebar/subSidebar/sidebarHeader';
+import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/subSidebar/mainSubSidebar/sidebarHeader';
 
 
-const NewSubSidebar = () => {
+const MainSubSidebar = () => {
   const params = useParams();
   const spaceId = params.spaceid.toString();
   const theme = useTheme();
@@ -175,21 +175,23 @@ const NewSubSidebar = () => {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 w-[260px] h-[90px] pt-5 px-2.5 border-t border-[rgba(255,255,255,0.1)]">
-        <div className="text-[12px] leading-[14px] text-white px-2.5">
-          ADMINS
+      {isAdmin && (
+        <div className="absolute bottom-0 left-0 w-[260px] h-[90px] pt-5 px-2.5 border-t border-[rgba(255,255,255,0.1)]">
+          <div className="text-[12px] leading-[14px] text-white px-2.5">
+            ADMINS
+          </div>
+          <div className={'mt-2.5'}>
+            <TabItem
+              label="Space Settings"
+              icon={<Gear />}
+              isActive={false}
+              onClick={() => router.push(`/spaces/${spaceId}/edit`)}
+            />
+          </div>
         </div>
-        <div className={'mt-2.5'}>
-          <TabItem
-            label="Space Settings"
-            icon={<Gear />}
-            isActive={false}
-            onClick={() => console.log('Space Settings', spaceId)}
-          />
-        </div>
-      </div>
+      )}
     </div>
   );
 };
 
-export default NewSubSidebar;
+export default MainSubSidebar;
