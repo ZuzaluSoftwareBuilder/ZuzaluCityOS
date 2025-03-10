@@ -436,14 +436,14 @@ const Calendar = () => {
   ]);
 
   return (
-    <Stack direction="row" width={'100%'}>
-      <SubSidebar
+    <Stack direction="row" width={'100%'} height={'100%'}>
+      {/* <SubSidebar
         title={spaceData?.name}
         spaceId={params.spaceid.toString()}
         avatar={spaceData?.avatar}
         banner={spaceData?.banner}
         isAdmin={isAdmin}
-      />
+      /> */}
       <Stack width="100%" position="relative">
         {content}
         <Drawer open={open} onClose={toggleDrawer} onOpen={toggleDrawer}>

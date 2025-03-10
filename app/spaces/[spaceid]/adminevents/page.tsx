@@ -69,13 +69,13 @@ const Home = () => {
 
   return (
     <Stack direction="row" width={'100%'}>
-      <SubSidebar
+      {/* <SubSidebar
         title={spaceData?.name}
         spaceId={params.spaceid.toString()}
         avatar={spaceData?.avatar}
         banner={spaceData?.banner}
         isAdmin={true}
-      />
+      /> */}
       <Box width="100%" borderLeft="1px solid #383838">
         <EventHeader />
         <CurrentEvents events={eventsData ?? []} onToggle={toggleDrawer} />

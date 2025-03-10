@@ -47,7 +47,7 @@ const Item = ({ item }: { item: SidebarItem }) => {
         opacity: 0.6,
       }}
     >
-      <Link className="w-[40px] h-[40px] bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)] rounded-lg flex items-center justify-center cursor-pointer">
+      <Link href={item.href} className="w-[40px] h-[40px] bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)] rounded-lg flex items-center justify-center cursor-pointer">
         {item.icon}
       </Link>
     </IconContext.Provider>

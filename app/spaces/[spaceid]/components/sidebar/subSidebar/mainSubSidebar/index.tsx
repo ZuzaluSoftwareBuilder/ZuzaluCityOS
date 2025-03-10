@@ -1,13 +1,11 @@
 'use client';
-import { useParams, useRouter } from 'next/navigation';
-import { Image, Button, Tooltip, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
+import { useParams, useRouter, usePathname } from 'next/navigation';
 import { getSpaceEventsQuery } from '@/services/space';
 import { Event, Space, SpaceEventData } from '@/types';
 import { useEffect, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useCeramicContext } from '@/context/CeramicContext';
 import useGetShareLink from '@/hooks/useGetShareLink';
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import {
   House,
   MagnifyingGlass,
@@ -22,8 +20,8 @@ import TabItem from './tabItem';
 import SubTabItemContainer from './subTabItemContainer';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/subSidebar/mainSubSidebar/sidebarHeader';
 
-
 const MainSubSidebar = () => {
+  const pathname = usePathname();
   const params = useParams();
   const spaceId = params.spaceid.toString();
   const theme = useTheme();
@@ -88,9 +86,24 @@ const MainSubSidebar = () => {
       });
   }, [ceramic?.did?.parent]);
 
+  const isRouteActive = (route: string) => {
+    if (pathname === `/spaces/${spaceId}/${route}`) {
+      return true;
+    }
+
+    if (route === 'home' && pathname === `/spaces/${spaceId}`) {
+      return true;
+    }
+
+    if (pathname.startsWith(`/spaces/${spaceId}/${route}/`)) {
+      return true;
+    }
+
+    return false;
+  };
+
   return (
     <div className="w-[260px] h-[calc(100vh-50px)] mobile:hidden tablet:hidden border-r border-[#363636] bg-[#222222] flex flex-col pb-[90px] relative">
-
       <SidebarHeader space={space} />
 
       {/* 主导航区域 */}
@@ -105,49 +118,47 @@ const MainSubSidebar = () => {
         <TabItem
           label="Home"
           icon={<House />}
-          href={`/spaces/${spaceId}/home`}
-          isActive={true}
+          href={`/spaces/${spaceId}`}
+          isActive={isRouteActive('home')}
+          height={36}
         />
         <TabItem
           label="Events"
           icon={<Ticket />}
           href={`/spaces/${spaceId}/events`}
-          isActive={false}
-          locked={true}
-          onClick={() => {
-            console.log('Events', spaceId);
-          }}
+          isActive={isRouteActive('events')}
+          height={36}
         />
         <TabItem
           label="Announcemnets"
           icon={<Megaphone />}
           href={`/spaces/${spaceId}/announcements`}
-          isActive={false}
+          isActive={isRouteActive('announcements')}
+          // locked={true}
           count={2}
+          height={36}
         />
       </div>
 
       <div className="flex-1 pt-5 px-2.5 overflow-y-auto">
-        <div>
-          <span className="text-[12px] leading-[14px] text-white px-2.5">
+          <div className="h-[14px] text-[12px] leading-[14px] text-white px-2.5">
             Community Apps
-          </span>
-        </div>
+          </div>
 
         <div className="mt-2.5 flex flex-col gap-[5px]">
-          {/*TODO confirm click event */}
           <div>
             <TabItem
-              href={`/spaces/${spaceId}/calendar`}
               label="Calendar"
               icon={<CalendarDots />}
               isActive={false}
             />
             <SubTabItemContainer>
               <TabItem
+                href={`/spaces/${spaceId}/calendar`}
                 label="Public Activities"
                 icon={<GitBranch />}
-                isActive={false}
+                isActive={isRouteActive('calendar')}
+                isSubTab={true}
               />
             </SubTabItemContainer>
           </div>
@@ -169,6 +180,7 @@ const MainSubSidebar = () => {
                 label="Public Activities"
                 icon={<GitBranch />}
                 isActive={false}
+                isSubTab={true}
               />
             </SubTabItemContainer>
           </div>
