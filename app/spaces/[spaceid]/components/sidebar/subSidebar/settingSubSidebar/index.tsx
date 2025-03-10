@@ -77,7 +77,7 @@ const SettingSubSidebar: React.FC<SettingSubSidebarProps> = ({
           <div className="flex items-center gap-[10px]">
             <Button
               className="h-[34px] bg-[#2C2C2C] hover:bg-[#363636] rounded-lg py-2 px-3.5 flex items-center gap-[5px]"
-              onClick={handleBack}
+              onPress={handleBack}
             >
               <CaretLeft size={20} weight="bold" />
               <span className="text-white text-[13px] font-medium">Back</span>

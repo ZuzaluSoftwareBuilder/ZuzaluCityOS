@@ -29,18 +29,11 @@ export default function SpacePageLayout({
   children,
 }: SpacePageLayoutPropTypes) {
   return (
-    <Box
-      sx={{
-        color: 'white',
-        display: 'flex',
-        flexDirection: 'row',
-        paddingLeft: '62px',
-      }}
-      minHeight={'calc(100vh - 50px)'}
-    >
+    <div className='flex pc:pl-[62px] text-white min-h-[calc(100vh-50px)]'>
+
       <SpaceLayout />
 
       <div className="flex-1 overflow-auto">{children}</div>
-    </Box>
+    </div>
   );
 }
