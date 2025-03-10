@@ -35,11 +35,12 @@ const SidebarHeader = ({
 
   return (
     <Dropdown>
-      <DropdownTrigger>
+      <DropdownTrigger className="transition-none transform-none">
         <div
-          className="w-[259px] h-[55px] relative group cursor-pointer"
+          className="w-[259px] h-[55px] relative group cursor-pointer select-none"
           style={{
             background: 'linear-gradient(90deg, #7DFFD1 0%, #FFCA7A 100%)',
+            transform: 'none'
           }}
         >
           <div className="absolute top-0 left-0 w-full h-full z-10 bg-[rgba(34,34,34,0.8)] backdrop-blur-[44px] transition-colors group-hover:bg-[rgba(34,34,34,0.5)]"></div>
