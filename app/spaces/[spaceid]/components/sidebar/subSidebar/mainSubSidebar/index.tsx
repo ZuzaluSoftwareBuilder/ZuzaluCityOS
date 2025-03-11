@@ -96,7 +96,7 @@ const MainSubSidebar = () => {
 
   return (
     <div className="w-[260px] h-[calc(100vh-50px)] border-r border-[#363636] bg-[#222222] flex flex-col pb-[90px] relative">
-      <SidebarHeader space={space} />
+      <SidebarHeader isAdmin={isAdmin} space={space} onSpaceSettings={() => router.push(`/spaces/${spaceId}/edit`)} />
 
       {/* 主导航区域 */}
       <div className="flex flex-col p-[10px] gap-[5px] border-t border-b border-[rgba(255,255,255,0.1)]">
@@ -179,7 +179,7 @@ const MainSubSidebar = () => {
         </div>
       </div>
 
-      {isAdmin && (
+      {/* {isAdmin && (
         <div className="absolute bottom-0 left-0 w-[260px] h-[90px] pt-5 px-2.5 border-t border-[rgba(255,255,255,0.1)]">
           <div className="text-[12px] leading-[14px] text-white px-2.5">
             ADMINS
@@ -193,7 +193,7 @@ const MainSubSidebar = () => {
             />
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

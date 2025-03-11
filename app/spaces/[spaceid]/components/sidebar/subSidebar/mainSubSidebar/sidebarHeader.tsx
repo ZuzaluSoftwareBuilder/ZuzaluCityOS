@@ -4,7 +4,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from '@heroui/react';
-import NextImage from 'next/image';
+import NextImage from 'next/image'
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Space } from '@/types';
 import { HTMLAttributes, ReactNode } from 'react';
@@ -16,6 +16,7 @@ import {
 } from '@heroicons/react/20/solid';
 
 export interface ISidebarHeaderProps {
+  isAdmin?: boolean;
   space?: Space;
   onInvitePeople?: () => void;
   onSpaceSettings?: () => void;
@@ -25,6 +26,7 @@ export interface ISidebarHeaderProps {
 
 const SidebarHeader = ({
   space,
+  isAdmin,
   onInvitePeople,
   onSpaceSettings,
   onPrivacySettings,
@@ -40,7 +42,7 @@ const SidebarHeader = ({
           className="w-[259px] h-[55px] relative group cursor-pointer select-none"
           style={{
             background: 'linear-gradient(90deg, #7DFFD1 0%, #FFCA7A 100%)',
-            transform: 'none',
+            transform: 'none'
           }}
         >
           <div className="w-full h-full flex justify-between items-center px-[14px] py-[10px] backdrop-blur-[44px] bg-[rgba(34,34,34,0.8)] group-hover:bg-[rgba(34,34,34,0.6)] transition-colors">
@@ -63,6 +65,7 @@ const SidebarHeader = ({
       <DropdownMenu
         aria-label="Space Actions"
         className="w-[240px] p-2.5 bg-[rgba(34,34,34,0.6)] border border-[rgba(255,255,255,0.1)] backdrop-blur-[20px] rounded-[10px] flex flex-col gap-2.5"
+        disabledKeys={isAdmin ? ['InvitePeople', 'PrivacySettings', 'NotificationSettings'] : ['InvitePeople', 'SpaceSettings', 'PrivacySettings', 'NotificationSettings']}
       >
         <DropdownItem
           key="InvitePeople"
