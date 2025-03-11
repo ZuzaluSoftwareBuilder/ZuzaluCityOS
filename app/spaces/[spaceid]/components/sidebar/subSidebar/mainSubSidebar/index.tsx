@@ -108,12 +108,11 @@ const MainSubSidebar = () => {
 
       {/* 主导航区域 */}
       <div className="flex flex-col p-[10px] gap-[5px] border-t border-b border-[rgba(255,255,255,0.1)]">
-        {/* 搜索 */}
-        <div className="flex items-center gap-[10px] px-[10px] py-[8px] rounded-[10px] opacity-40">
+        {/* TODO 暂无搜索功能 */}
+        {/* <div className="flex items-center gap-[10px] px-[10px] py-[8px] rounded-[10px] opacity-40">
           <MagnifyingGlass size={20} weight={'thin'} format="Stroke" />
-          {/* TODO useless for now */}
           <span className="text-white text-[13px] font-medium">Search</span>
-        </div>
+        </div> */}
 
         <TabItem
           label="Home"
@@ -129,7 +128,7 @@ const MainSubSidebar = () => {
           isActive={isRouteActive('events')}
           height={36}
         />
-        <TabItem
+        {/* <TabItem
           label="Announcemnets"
           icon={<Megaphone />}
           href={`/spaces/${spaceId}/announcements`}
@@ -137,7 +136,7 @@ const MainSubSidebar = () => {
           // locked={true}
           count={2}
           height={36}
-        />
+        /> */}
       </div>
 
       <div className="flex-1 pt-5 px-2.5 overflow-y-auto">
@@ -149,10 +148,11 @@ const MainSubSidebar = () => {
           <div>
             <TabItem
               label="Calendar"
+              href={`/spaces/${spaceId}/calendar`}
               icon={<CalendarDots />}
               isActive={false}
             />
-            <SubTabItemContainer>
+            {/* <SubTabItemContainer>
               <TabItem
                 href={`/spaces/${spaceId}/calendar`}
                 label="Public Activities"
@@ -160,7 +160,7 @@ const MainSubSidebar = () => {
                 isActive={isRouteActive('calendar')}
                 isSubTab={true}
               />
-            </SubTabItemContainer>
+            </SubTabItemContainer> */}
           </div>
           <TabItem
             label="Discussions"
