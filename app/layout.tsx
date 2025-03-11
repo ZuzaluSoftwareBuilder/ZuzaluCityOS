@@ -45,7 +45,7 @@ function RootLayout({
 }>) {
   const [isClient, setIsClient] = useState(false);
   const [show, setShow] = useState(ceramicDown);
-  
+
   const pathname = usePathname();
   const isMobile = useMediaQuery('(max-width: 809px)');
   const isSpaceEditPage = pathname?.includes('/spaces/') && pathname?.includes('/edit');
@@ -54,9 +54,13 @@ function RootLayout({
   useEffect(() => {
     setIsClient(true);
   }, []);
-  
+
   return (
-    <html lang="en" className={`dark ${inter.className}`} style={{ backgroundColor: '#222' }}>
+    <html
+      lang="en"
+      className={`dark ${inter.className}`}
+      style={{ backgroundColor: '#222', height: '100vh' }}
+    >
       <head>
         <link rel="icon" href="/logo.webp" />
       </head>
