@@ -18,6 +18,9 @@ const config = {
       mobile: { min: '1px', max: '809px' },
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
       colors: {
         'custom-green': 'rgba(125, 255, 209, var(--tw-bg-opacity))',
         'inactive-white': 'rgba(255, 255, 255, 0.05)',

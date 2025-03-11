@@ -1,6 +1,7 @@
 'use client';
 // import type { Metadata } from 'next';
 import './globals.css';
+import { Inter } from 'next/font/google';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from 'theme/theme';
@@ -22,6 +23,12 @@ import { ToastProvider } from '@/components/toast/ToastContext';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { HeroUIProvider } from '@heroui/react';
 
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
 const queryClient = new QueryClient();
 
 // export const metadata: Metadata = {
@@ -41,7 +48,7 @@ function RootLayout({
     setIsClient(true);
   }, []);
   return (
-    <html lang="en" className="dark" style={{ backgroundColor: '#222' }}>
+    <html lang="en" className={`dark ${inter.className}`} style={{ backgroundColor: '#222' }}>
       <head>
         <link rel="icon" href="/logo.webp" />
       </head>

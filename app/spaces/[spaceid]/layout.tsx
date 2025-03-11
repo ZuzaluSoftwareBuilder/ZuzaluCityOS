@@ -1,4 +1,3 @@
-import { Box } from '@mui/material';
 import React from 'react';
 import type { Metadata } from 'next';
 import SpaceLayout from '@/app/spaces/[spaceid]/components/spaceLayout';
@@ -29,7 +28,7 @@ export default function SpacePageLayout({
   children,
 }: SpacePageLayoutPropTypes) {
   return (
-    <div className='flex pc:pl-[62px] text-white min-h-[calc(100vh-50px)]'>
+    <div className="flex pc:pl-[62px] text-white min-h-[calc(100vh-50px)]">
 
       <SpaceLayout />
 
