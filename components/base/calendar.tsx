@@ -5,6 +5,7 @@ import { Calendar as HCalendar } from '@heroui/react';
 export default function Calendar({ classNames, ...props }: CalendarProps) {
   return (
     <HCalendar
+      className="text-decoration-line-none"
       classNames={{
         base: 'border-b-w-10 border-1 rounded-larg shadow-none bg-transparent',
         headerWrapper: 'bg-transparent',
@@ -12,6 +13,7 @@ export default function Calendar({ classNames, ...props }: CalendarProps) {
         gridHeader: 'bg-transparent',
         gridHeaderRow: 'justify-between pb-0 text-white/80',
         gridBodyRow: 'justify-between px-[14px]',
+        cellButton: '!no-underline',
         ...classNames,
       }}
       {...props}
