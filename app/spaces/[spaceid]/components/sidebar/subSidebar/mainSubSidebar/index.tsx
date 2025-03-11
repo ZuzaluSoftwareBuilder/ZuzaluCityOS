@@ -24,22 +24,14 @@ const MainSubSidebar = () => {
   const pathname = usePathname();
   const params = useParams();
   const spaceId = params.spaceid.toString();
-  const theme = useTheme();
   const router = useRouter();
   const { composeClient, ceramic } = useCeramicContext();
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-  const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
   const [space, setSpace] = useState<Space>();
-  const [showCopyToast, setShowCopyToast] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
   const [isEventsLoading, setIsEventsLoading] = useState<boolean>(true);
   const [currentHref, setCurrentHref] = useState('');
-  const [activeTab, setActiveTab] = useState('home');
-  const [isChannelsExpanded, setIsChannelsExpanded] = useState(true);
 
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-
-  const { shareUrl } = useGetShareLink({ id: spaceId, name: space?.name });
 
   const getSpaceByID = async () => {
     setIsEventsLoading(true);
@@ -103,7 +95,7 @@ const MainSubSidebar = () => {
   };
 
   return (
-    <div className="w-[260px] h-[calc(100vh-50px)] mobile:hidden tablet:hidden border-r border-[#363636] bg-[#222222] flex flex-col pb-[90px] relative">
+    <div className="w-[260px] h-[calc(100vh-50px)] border-r border-[#363636] bg-[#222222] flex flex-col pb-[90px] relative">
       <SidebarHeader space={space} />
 
       {/* 主导航区域 */}

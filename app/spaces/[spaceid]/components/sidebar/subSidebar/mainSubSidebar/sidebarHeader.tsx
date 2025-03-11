@@ -4,7 +4,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from '@heroui/react';
-import NextImage from 'next/image'
+import NextImage from 'next/image';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Space } from '@/types';
 import { HTMLAttributes, ReactNode } from 'react';
@@ -40,11 +40,10 @@ const SidebarHeader = ({
           className="w-[259px] h-[55px] relative group cursor-pointer select-none"
           style={{
             background: 'linear-gradient(90deg, #7DFFD1 0%, #FFCA7A 100%)',
-            transform: 'none'
+            transform: 'none',
           }}
         >
-          <div className="absolute top-0 left-0 w-full h-full z-10 bg-[rgba(34,34,34,0.8)] backdrop-blur-[44px] transition-colors group-hover:bg-[rgba(34,34,34,0.5)]"></div>
-          <div className="absolute top-0 left-0 w-full h-full z-20 flex justify-between items-center px-[14px] py-[10px]">
+          <div className="w-full h-full flex justify-between items-center px-[14px] py-[10px] backdrop-blur-[44px] bg-[rgba(34,34,34,0.8)] group-hover:bg-[rgba(34,34,34,0.6)] transition-colors">
             <div className="flex justify-between items-center gap-2.5">
               <NextImage
                 src={space?.avatar || '/placeholder-avatar.png'}
