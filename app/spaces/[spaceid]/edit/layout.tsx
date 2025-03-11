@@ -1,6 +1,11 @@
 'use client';
+import { useState } from 'react';
 import { usePathname, useParams } from 'next/navigation';
-import SettingSubSidebar from './components/settingSidebar';
+import { useRouter } from 'next/navigation';
+import { CaretUpDown } from '@phosphor-icons/react';
+import PcSidebar from './components/settingSidebar/PcSidebar';
+import MobileSidebar from './components/settingSidebar/MobileSidebar';
+import BackHeader from './components/backHeader';
 
 // 标题映射表
 const TITLE_MAP: Record<string, string> = {
@@ -16,29 +21,54 @@ const TITLE_MAP: Record<string, string> = {
 const SpaceEditLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const params = useParams();
+  const router = useRouter();
   const spaceId = params.spaceid.toString();
-  
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const getCurrentTitle = () => {
     if (pathname === `/spaces/${spaceId}/edit`) {
       return 'Community Overview';
     }
-    
+
     const segments = pathname.split('/');
     const lastSegment = segments[segments.length - 1];
-    
+
     return TITLE_MAP[lastSegment] || 'Space Settings';
   };
 
   return (
     <div className="flex h-[calc(100vh-50px)]">
-      <SettingSubSidebar 
-        currentPath={pathname} 
-        hasChanges={false} 
+      <PcSidebar
+        currentPath={pathname}
+        hasChanges={false}
       />
+
+      <MobileSidebar
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        currentPath={pathname}
+      />
+
       <div className="flex-1 flex flex-col">
-        <div className="h-[50px] border-[#2C2C2C] border-b border-[rgba(255,255,255,0.1)] flex items-center px-5 backdrop-blur-[40px]">
-          <h1 className="text-[18px] font-bold text-white box-shadow-[0px_5px_10px_0px_rgba(0,0,0,0.15)]">{getCurrentTitle()}</h1>
+        {/* PC */}
+        <div className="pc:flex tablet:hidden mobile:hidden h-[50px] border-[#2C2C2C] border-b border-[rgba(255,255,255,0.1)] flex items-center px-5 backdrop-blur-[40px] ">
+          <h1 className="text-[18px] font-bold text-white shadow-[0px_5px_10px_0px_rgba(0,0,0,0.15)]">{getCurrentTitle()}</h1>
         </div>
+
+        {/* Mobile */}
+        <div className='pc:hidden p-5 border-b border-[rgba(255,255,255,0.1)]'>
+          <BackHeader spaceId={spaceId} />
+          <div className="pc:hidden mt-5 h-[28px] px-2 ">
+            <div
+              className="flex justify-between items-center w-full cursor-pointer"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <h1 className="text-[16px] font-bold text-white shadow-[0px_5px_10px_0px_rgba(0,0,0,0.15)]">{getCurrentTitle()}</h1>
+              <CaretUpDown size={20} weight="light" className="text-white" />
+            </div>
+          </div>
+        </div>
+
         <div className="flex-1 overflow-auto p-6">
           {children}
         </div>

@@ -28,7 +28,7 @@ export default function SpacePageLayout({
   children,
 }: SpacePageLayoutPropTypes) {
   return (
-    <div className="flex pc:pl-[62px] text-white min-h-[calc(100vh-50px)]">
+    <div className="flex pc:pl-[62px] tablet:pl-[62px] text-white min-h-[calc(100vh-50px)]">
 
       <SpaceLayout />
 
