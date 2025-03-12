@@ -57,11 +57,12 @@ const MobileSpaceSettingSidebar: React.FC<MobileSettingSidebarProps> = ({
       placement="bottom"
       classNames={{
         base: "bg-transparent",
-        backdrop: "bg-[rgba(34,34,34,0.6)] backdrop-filter backdrop-blur-[20px]",
+        backdrop: "bg-[rgba(34,34,34,0.6)]",
         closeButton: "hidden",
+        body: 'bg-transparent',
       }}
     >
-      <DrawerContent className="max-h-[600px] bg-[rgba(44,44,44,0.8)] border-t-2 border-[rgba(255,255,255,0.1)] rounded-t-[20px] shadow-[0px_-6px_24px_0px_rgba(0,0,0,0.25)] backdrop-blur-[44px]">
+      <DrawerContent className="max-h-[600px] bg-[rgba(44,44,44,0.8)] border-t-2 border-[rgba(255,255,255,0.1)] rounded-t-[20px] backdrop-filter backdrop-blur-[44px] shadow-[0px_-6px_24px_0px_rgba(0,0,0,0.25)]">
         <DrawerHeader className="flex justify-between items-center h-[56px] px-5 border-b border-[rgba(255,255,255,0.1)]">
           <div className="flex flex-col justify-center">
             <h2 className="text-white text-[18px] font-bold">Navigate Settings</h2>
