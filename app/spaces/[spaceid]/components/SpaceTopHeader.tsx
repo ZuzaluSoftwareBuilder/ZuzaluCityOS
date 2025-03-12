@@ -104,14 +104,14 @@ const SpaceTopHeader: React.FC = () => {
           <DrawerBody className="p-0 flex flex-col h-full gap-0">
             <div className="flex items-center h-[36px] px-[10px]">
               <div
-                className="h-[34px] bg-[#363636] bg-transparent flex items-center gap-[5px] cursor-pointer"
+                className="h-[36px] bg-[#363636] bg-transparent flex items-center gap-[5px] cursor-pointer"
                 onClick={handleBack}
               >
                 <CaretLeft
-                  size={18}
+                  size={20}
                   weight="light"
                   format={'Stroke'}
-                  className="text-white"
+                  className="text-[#EDDCDC]"
                 />
                 <span className="text-white text-[13px] font-medium">
                   Exit Space
