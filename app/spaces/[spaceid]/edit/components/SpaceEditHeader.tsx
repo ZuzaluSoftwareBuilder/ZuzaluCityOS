@@ -26,7 +26,7 @@ const SpaceEditHeader: React.FC<SpaceEditHeaderProps> = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleBack = () => {
-    router.push(`/spaces/${spaceId}`);
+    router.replace(`/spaces`);
   };
 
   const toggleDrawer = (open: boolean) => {

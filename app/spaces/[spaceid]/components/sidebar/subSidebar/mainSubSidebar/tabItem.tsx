@@ -17,6 +17,7 @@ export interface ITabItemProps extends Partial<LinkProps> {
    */
   height?: number;
   locked?: boolean;
+  hideLockIcon?: boolean;
   count?: number;
   isSubTab?: boolean;
   onClick?: () => void;
@@ -30,6 +31,7 @@ const TabItem = ({
   isActive,
   count,
   locked,
+  hideLockIcon,
   onClick,
   isSubTab,
   ...props
@@ -39,7 +41,7 @@ const TabItem = ({
     isActive ? 'bg-[#363636]' : 'bg-transparent',
     locked ? 'cursor-not-allowed' : 'cursor-pointer',
     isSubTab
-      ? 'opacity-50 hover:bg-transparent'
+      ? 'opacity-50 hover:bg-[rgba(255,255,255,0.1)]'
       : locked
         ? 'hover:bg-[#363636]'
         : 'hover:bg-[#2C2C2C]',
@@ -48,11 +50,11 @@ const TabItem = ({
   const content = (
     <div
       className={cn(
-        'flex-1 flex items-center gap-2.5',
+        'flex-1 flex items-center gap-2.5 rounded-lg py-[5px]',
         isActive ? 'opacity-100' : 'opacity-65',
         locked
           ? isSubTab
-            ? 'opacity-60'
+            ? 'opacity-100'
             : 'opacity-30 group-hover:opacity-60'
           : 'group-hover:opacity-100',
       )}
@@ -68,8 +70,8 @@ const TabItem = ({
     </div>
   );
 
-  const lockDisplay = locked && (
-    <Lock size={18} weight={'fill'} format="Stroke" className="opacity-50" />
+  const lockDisplay = locked && !hideLockIcon && (
+    <Lock size={18} weight={'fill'} format="Stroke" className="opacity-80" />
   );
 
   const countDisplay = !!count && (

@@ -7,33 +7,38 @@ import {
   Shapes,
   Ticket,
 } from '@phosphor-icons/react';
-import { Link } from '@heroui/react';
+import { Link, Tooltip } from '@heroui/react';
 
 type SidebarItem = {
   name: string;
   icon: React.ReactNode;
   href: string;
+  tooltipName: string;
 };
 const SidebarList: SidebarItem[] = [
   {
     name: 'home',
     icon: <House />,
     href: '/',
+    tooltipName: 'Home',
   },
   {
     name: 'space',
     icon: <Buildings />,
     href: '/spaces',
+    tooltipName: 'Communities',
   },
   {
     name: 'event',
     icon: <Ticket />,
     href: '/events',
+    tooltipName: 'Events',
   },
   {
     name: 'dapp',
     icon: <Shapes />,
     href: '/dapps',
+    tooltipName: 'dApps',
   },
 ];
 const Item = ({ item }: { item: SidebarItem }) => {
@@ -47,9 +52,17 @@ const Item = ({ item }: { item: SidebarItem }) => {
         opacity: 0.6,
       }}
     >
-      <Link href={item.href} className="w-[40px] h-[40px] bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)] rounded-lg flex items-center justify-center cursor-pointer">
-        {item.icon}
-      </Link>
+      <Tooltip placement="right" classNames={{
+        base: ['bg-transparent'],
+        content: [
+          'px-2.5 py-1 bg-[rgba(44,44,44,0.8)] border border-[rgba(255,255,255,0.1)] rounded-lg text-white text-sm'
+        ]
+      }}
+        content={item.tooltipName} >
+        <Link href={item.href} className="w-[40px] h-[40px] bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)] rounded-lg flex items-center justify-center cursor-pointer">
+          {item.icon}
+        </Link>
+      </Tooltip>
     </IconContext.Provider>
   );
 };

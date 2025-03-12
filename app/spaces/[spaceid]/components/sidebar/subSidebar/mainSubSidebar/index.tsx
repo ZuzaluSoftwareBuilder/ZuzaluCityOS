@@ -96,6 +96,7 @@ const MainSubSidebar = () => {
 
   return (
     <div className="w-[260px] h-[calc(100vh-50px)] border-r border-[#363636] bg-[#222222] flex flex-col pb-[90px] relative">
+      
       <SidebarHeader isAdmin={isAdmin} space={space} onSpaceSettings={() => router.push(`/spaces/${spaceId}/edit`)} />
 
       {/* 主导航区域 */}
@@ -173,6 +174,8 @@ const MainSubSidebar = () => {
                 icon={<GitBranch />}
                 isActive={false}
                 isSubTab={true}
+                locked={true}
+                hideLockIcon={true}
               />
             </SubTabItemContainer>
           </div>

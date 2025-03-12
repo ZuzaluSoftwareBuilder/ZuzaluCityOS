@@ -45,7 +45,7 @@ const SidebarHeader = ({
             transform: 'none'
           }}
         >
-          <div className="w-full h-full flex justify-between items-center px-[14px] py-[10px] backdrop-blur-[44px] bg-[rgba(34,34,34,0.8)] group-hover:bg-[rgba(34,34,34,0.6)] transition-colors">
+          <div className="w-full h-full flex justify-between items-center px-[14px] py-[10px] backdrop-blur-[44px] bg-[rgba(34,34,34,0.8)] group-hover:bg-[rgba(34,34,34,0.5)] transition-colors">
             <div className="flex justify-between items-center gap-2.5">
               <NextImage
                 src={space?.avatar || '/placeholder-avatar.png'}
