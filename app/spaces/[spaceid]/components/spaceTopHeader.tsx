@@ -9,6 +9,7 @@ import {
   DrawerContent,
   DrawerBody,
   Button,
+  cn,
 } from '@heroui/react';
 import UserProfileSection from '@/components/layout/UserProfileSection';
 import SpaceSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/spaceSubSidebar';
@@ -19,6 +20,7 @@ import { getSpaceEventsQuery } from '@/services/space';
 
 const SpaceTopHeader: React.FC = () => {
   const router = useRouter();
+  const { isAuthenticated } = useCeramicContext();
   const params = useParams();
   const spaceId = params.spaceid.toString();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -58,7 +60,12 @@ const SpaceTopHeader: React.FC = () => {
   return (
     isClient && (
       <div className="pc:hidden tablet:block mobile:block">
-        <div className="h-[50px] bg-[rgba(44,44,44,0.8)] backdrop-blur-[40px] border-b border-[rgba(255,255,255,0.1)] flex items-center justify-between pl-[10px] py-[8px]">
+        <div
+          className={cn(
+            'h-[50px] bg-[rgba(44,44,44,0.8)] backdrop-blur-[40px] border-b border-[rgba(255,255,255,0.1)] flex items-center justify-between py-[8px]',
+            isAuthenticated ? 'pl-[10px]' : 'px-[10px]',
+          )}
+        >
           <Button
             className="h-[34px] min-w-[auto] bg-[#363636] hover:bg-[#424242] rounded-[10px] flex items-center justify-center p-1 gap-1"
             onPress={() => toggleDrawer(true)}
@@ -113,7 +120,10 @@ const SpaceTopHeader: React.FC = () => {
                 </div>
               </div>
 
-              <SpaceSubSidebar needBlur={true} onCloseDrawer={handleCloseDrawer} />
+              <SpaceSubSidebar
+                needBlur={true}
+                onCloseDrawer={handleCloseDrawer}
+              />
             </DrawerBody>
           </DrawerContent>
         </Drawer>
