@@ -82,7 +82,7 @@ const MainSubSidebar = ({ onCloseDrawer }: MainSubSidebarProps) => {
   );
 
   return (
-    <div className="w-[260px] h-[calc(100vh-50px)] border-r border-[#363636] flex flex-col relative">
+    <div className="w-[260px] h-[calc(100vh-50px)] bg-[#222222] border-r border-[rgba(255,255,255,0.1)] flex flex-col relative">
       <SidebarHeader
         isAdmin={isAdmin}
         isLoading={isLoading}

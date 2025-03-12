@@ -57,7 +57,7 @@ const MobileSidebar: React.FC<MobileSettingSidebarProps> = ({
       placement="bottom"
       classNames={{
         base: "bg-transparent",
-        backdrop: "bg-black/50 backdrop-blur-sm",
+        backdrop: "bg-[rgba(34,34,34,0.6)] backdrop-filter backdrop-blur-[20px]",
         closeButton: "hidden",
       }}
     >

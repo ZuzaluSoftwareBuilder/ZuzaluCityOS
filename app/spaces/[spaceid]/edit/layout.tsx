@@ -60,7 +60,7 @@ const SpaceEditLayout = ({ children }: { children: React.ReactNode }) => {
         {/* Mobile */}
         <div className="pc:hidden p-5 border-b border-[rgba(255,255,255,0.1)]">
           <BackHeader spaceId={spaceId} />
-          <div className="pc:hidden mt-5 h-[30px] flex items-center px-2 hover:bg-[#363636] rounded-lg">
+          <div className="pc:hidden mt-5 h-[36px] flex items-center px-2 hover:bg-[#363636] rounded-lg">
             <div
               className="flex justify-between items-center w-full cursor-pointer"
               onClick={() => setIsMobileMenuOpen(true)}
