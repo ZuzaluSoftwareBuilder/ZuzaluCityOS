@@ -7,7 +7,8 @@ import {
   Shapes,
   Ticket,
 } from '@phosphor-icons/react';
-import { Link, Tooltip } from '@heroui/react';
+import { Tooltip } from '@heroui/react';
+import Link from 'next/link';
 
 type SidebarItem = {
   name: string;
