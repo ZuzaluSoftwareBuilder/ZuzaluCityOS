@@ -1,4 +1,4 @@
-import { Image, Avatar, Skeleton } from '@heroui/react';
+import { Image, Avatar, Skeleton, cn } from '@heroui/react';
 import { useMemo } from 'react';
 
 import { Space } from '@/types';
@@ -11,9 +11,12 @@ import { Button } from '@/components/base';
 import { useRouter } from 'next/navigation';
 import useUserJoinSpace from '@/hooks/useUserJoin';
 
-export function SpaceCardSkeleton() {
+export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
   return (
-    <div className="w-[276px] flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden">
+    <div className={cn(
+      autoWidth ? 'w-full' : 'w-[276px]',
+      'flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden'
+    )}>
       <div className="relative">
         <Skeleton className="rounded-none">
           <div className="w-full h-[108px]"></div>
@@ -52,9 +55,10 @@ const formatMemberCount = (count: number): string => {
 
 interface SpaceCardProps {
   data: Space;
+  autoWidth?: boolean;
 }
 
-export function SpaceCard({ data }: SpaceCardProps) {
+export function SpaceCard({ data, autoWidth }: SpaceCardProps) {
   const {
     banner,
     name,
@@ -78,7 +82,12 @@ export function SpaceCard({ data }: SpaceCardProps) {
   }, [members?.length, admins?.length, superAdmin?.length]);
 
   return (
-    <div className="w-[276px] flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden hover:bg-white/5 transition-colors">
+    <div
+      className={cn(
+        autoWidth ? 'w-full' : 'w-[276px]',
+        'flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden hover:bg-white/5 transition-colors',
+      )}
+    >
       <div className="relative">
         <Image
           src={banner}
