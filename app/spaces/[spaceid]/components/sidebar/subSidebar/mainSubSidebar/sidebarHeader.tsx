@@ -64,6 +64,7 @@ const SidebarHeader = ({
 
   return (
     <Dropdown classNames={{
+      base: ['bg-[rgba(34,34,34,0.6)] backdrop-filter backdrop-blur-[20px] p-0 rounded-[10px]'],
       content: ['bg-transparent p-0']
     }}>
       <DropdownTrigger className="transition-none transform-none">
@@ -95,16 +96,16 @@ const SidebarHeader = ({
       </DropdownTrigger>
       <DropdownMenu
         aria-label="Space Actions"
-        className="w-[240px] p-2.5 bg-[rgba(34,34,34,0.6)] border border-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-[20px] rounded-[10px] flex flex-col gap-2.5"
+        className="w-[240px] p-[10px] rounded-[10px] bg-transparent flex flex-col gap-2.5 border border-[rgba(255,255,255,0.1)]"
         disabledKeys={
           isAdmin
             ? ['InvitePeople', 'PrivacySettings', 'NotificationSettings']
             : [
-                'InvitePeople',
-                'SpaceSettings',
-                'PrivacySettings',
-                'NotificationSettings',
-              ]
+              'InvitePeople',
+              'SpaceSettings',
+              'PrivacySettings',
+              'NotificationSettings',
+            ]
         }
       >
         <DropdownItem
