@@ -112,7 +112,7 @@ const MainSubSidebar = ({ onCloseDrawer }: MainSubSidebarProps) => {
         />
         <TabItem
           label="Manage Events"
-          icon={<TableIcon />}
+          icon={<TableIcon size={20} />}
           href={`/spaces/${spaceId}/adminevents`}
           isActive={isRouteActive('adminevents')}
           height={36}
