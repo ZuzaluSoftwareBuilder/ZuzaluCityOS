@@ -2,19 +2,14 @@
 import { useParams, useRouter, usePathname } from 'next/navigation';
 import { getSpaceEventsQuery } from '@/services/space';
 import { Event, Space, SpaceEventData } from '@/types';
-import { useEffect, useState } from 'react';
-import { useTheme } from '@mui/material/styles';
+import { useCallback, useEffect, useState } from 'react';
 import { useCeramicContext } from '@/context/CeramicContext';
-import useGetShareLink from '@/hooks/useGetShareLink';
 import {
   House,
-  MagnifyingGlass,
   Ticket,
-  Megaphone,
   CalendarDots,
   Chats,
   GitBranch,
-  Gear,
 } from '@phosphor-icons/react';
 import TabItem from './tabItem';
 import SubTabItemContainer from './subTabItemContainer';
@@ -44,7 +39,6 @@ const MainSubSidebar = () => {
       },
     );
     const spaceData: Space = response.data.node as Space;
-    console.log('spaceData', spaceData);
     setSpace(spaceData);
     const eventData: SpaceEventData = response.data.node
       .events as SpaceEventData;
@@ -78,7 +72,7 @@ const MainSubSidebar = () => {
       });
   }, [ceramic?.did?.parent]);
 
-  const isRouteActive = (route: string) => {
+  const isRouteActive = useCallback((route: string) => {
     if (pathname === `/spaces/${spaceId}/${route}`) {
       return true;
     }
@@ -92,20 +86,14 @@ const MainSubSidebar = () => {
     }
 
     return false;
-  };
+  }, [pathname, spaceId]);
 
   return (
     <div className="w-[260px] h-[calc(100vh-50px)] border-r border-[#363636] bg-[#222222] flex flex-col pb-[90px] relative">
       
       <SidebarHeader isAdmin={isAdmin} space={space} onSpaceSettings={() => router.push(`/spaces/${spaceId}/edit`)} />
 
-      {/* 主导航区域 */}
       <div className="flex flex-col p-[10px] gap-[5px] border-t border-b border-[rgba(255,255,255,0.1)]">
-        {/* TODO 暂无搜索功能 */}
-        {/* <div className="flex items-center gap-[10px] px-[10px] py-[8px] rounded-[10px] opacity-40">
-          <MagnifyingGlass size={20} weight={'thin'} format="Stroke" />
-          <span className="text-white text-[13px] font-medium">Search</span>
-        </div> */}
 
         <TabItem
           label="Home"
@@ -121,15 +109,6 @@ const MainSubSidebar = () => {
           isActive={isRouteActive('events')}
           height={36}
         />
-        {/* <TabItem
-          label="Announcemnets"
-          icon={<Megaphone />}
-          href={`/spaces/${spaceId}/announcements`}
-          isActive={isRouteActive('announcements')}
-          // locked={true}
-          count={2}
-          height={36}
-        /> */}
       </div>
 
       <div className="flex-1 pt-5 px-2.5 overflow-y-auto">
@@ -143,17 +122,8 @@ const MainSubSidebar = () => {
               label="Calendar"
               href={`/spaces/${spaceId}/calendar`}
               icon={<CalendarDots />}
-              isActive={false}
+              isActive={isRouteActive('calendar')}
             />
-            {/* <SubTabItemContainer>
-              <TabItem
-                href={`/spaces/${spaceId}/calendar`}
-                label="Public Activities"
-                icon={<GitBranch />}
-                isActive={isRouteActive('calendar')}
-                isSubTab={true}
-              />
-            </SubTabItemContainer> */}
           </div>
           <TabItem
             label="Discussions"
@@ -182,6 +152,7 @@ const MainSubSidebar = () => {
         </div>
       </div>
 
+      {/* not decide where to push this ui */}
       {/* {isAdmin && (
         <div className="absolute bottom-0 left-0 w-[260px] h-[90px] pt-5 px-2.5 border-t border-[rgba(255,255,255,0.1)]">
           <div className="text-[12px] leading-[14px] text-white px-2.5">
