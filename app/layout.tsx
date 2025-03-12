@@ -25,12 +25,6 @@ import { HeroUIProvider } from '@heroui/react';
 import { usePathname } from 'next/navigation';
 import { useMediaQuery } from '@mui/material';
 
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
-});
-
 const queryClient = new QueryClient();
 
 const ceramicDown = process.env.NEXT_PUBLIC_CERAMIC_DOWN === 'true';
@@ -54,7 +48,7 @@ function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${inter.className}`}
+      className="dark"
       style={{ backgroundColor: '#222', height: '100vh' }}
     >
       <head>
