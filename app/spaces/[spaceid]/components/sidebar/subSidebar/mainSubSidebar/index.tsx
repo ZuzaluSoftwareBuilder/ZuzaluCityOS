@@ -14,6 +14,7 @@ import {
 import TabItem from './tabItem';
 import SubTabItemContainer from './subTabItemContainer';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/subSidebar/mainSubSidebar/sidebarHeader';
+import { useQuery } from '@tanstack/react-query';
 
 const MainSubSidebar = () => {
   const pathname = usePathname();
@@ -21,80 +22,69 @@ const MainSubSidebar = () => {
   const spaceId = params.spaceid.toString();
   const router = useRouter();
   const { composeClient, ceramic } = useCeramicContext();
-  const [space, setSpace] = useState<Space>();
-  const [events, setEvents] = useState<Event[]>([]);
-  const [isEventsLoading, setIsEventsLoading] = useState<boolean>(true);
-  const [currentHref, setCurrentHref] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isMember, setIsMember] = useState(false);
 
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-
-  const getSpaceByID = async () => {
-    setIsEventsLoading(true);
-    const spaceId = params.spaceid.toString();
-
-    const response: any = await composeClient.executeQuery(
-      getSpaceEventsQuery(),
-      {
+  const { data: spaceData, refetch } = useQuery({
+    queryKey: ['getSpaceByID', spaceId],
+    queryFn: () => {
+      return composeClient.executeQuery(getSpaceEventsQuery(), {
         id: spaceId,
-      },
-    );
-    const spaceData: Space = response.data.node as Space;
-    setSpace(spaceData);
-    const eventData: SpaceEventData = response.data.node
-      .events as SpaceEventData;
-    const fetchedEvents: Event[] = eventData.edges.map((edge) => edge.node);
-    setEvents(fetchedEvents);
-    return spaceData;
-  };
+      });
+    },
+    select: (data) => {
+      return data?.data?.node as Space;
+    },
+  });
 
   useEffect(() => {
-    const fetchData = async () => {
-      setCurrentHref(window.location.href);
-      const space = await getSpaceByID();
-      document.title = space?.name + ' - ' + 'Zuzalu City';
+    if (spaceData) {
       const admins =
-        space?.admins?.map((admin) => admin.id.toLowerCase()) || [];
+        spaceData?.admins?.map((admin) => admin.id.toLowerCase()) || [];
       const superAdmins =
-        space?.superAdmin?.map((superAdmin) => superAdmin.id.toLowerCase()) ||
-        [];
+        spaceData?.superAdmin?.map((superAdmin) =>
+          superAdmin.id.toLowerCase(),
+        ) || [];
+      const members =
+        spaceData?.members?.map((member) => member.id.toLowerCase()) || [];
       const userDID = ceramic?.did?.parent.toString().toLowerCase() || '';
       if (admins.includes(userDID) || superAdmins.includes(userDID)) {
         setIsAdmin(true);
       }
-    };
-
-    fetchData()
-      .catch((error) => {
-        console.error('An error occurred:', error);
-      })
-      .finally(() => {
-        setIsEventsLoading(false);
-      });
-  }, [ceramic?.did?.parent]);
-
-  const isRouteActive = useCallback((route: string) => {
-    if (pathname === `/spaces/${spaceId}/${route}`) {
-      return true;
+      if (members.includes(userDID)) {
+        setIsMember(true);
+      }
     }
+  }, [spaceData]);
 
-    if (route === 'home' && pathname === `/spaces/${spaceId}`) {
-      return true;
-    }
+  const isRouteActive = useCallback(
+    (route: string) => {
+      if (pathname === `/spaces/${spaceId}/${route}`) {
+        return true;
+      }
 
-    if (pathname.startsWith(`/spaces/${spaceId}/${route}/`)) {
-      return true;
-    }
+      if (route === 'home' && pathname === `/spaces/${spaceId}`) {
+        return true;
+      }
 
-    return false;
-  }, [pathname, spaceId]);
+      if (pathname.startsWith(`/spaces/${spaceId}/${route}/`)) {
+        return true;
+      }
+
+      return false;
+    },
+    [pathname, spaceId],
+  );
 
   return (
     <div className="w-[260px] h-[calc(100vh-50px)] border-r border-[#363636] bg-[#222222] flex flex-col pb-[90px] relative">
-
-      <SidebarHeader isAdmin={isAdmin} space={space} onSpaceSettings={() => router.push(`/spaces/${spaceId}/edit`)} />
+      <SidebarHeader
+        isAdmin={isAdmin}
+        space={spaceData}
+        onSpaceSettings={() => router.push(`/spaces/${spaceId}/edit`)}
+      />
 
       <div className="flex flex-col p-[10px] gap-[5px] border-t border-b border-[rgba(255,255,255,0.1)]">
-
         <TabItem
           label="Home"
           icon={<House />}
@@ -112,7 +102,7 @@ const MainSubSidebar = () => {
       </div>
 
       <div className="flex-1 pt-5 px-2.5 overflow-y-auto">
-        <div className='h-[20px] flex items-center'>
+        <div className="h-[20px] flex items-center">
           <span className="h-[14px] text-[12px] leading-[14px] text-white px-2.5">
             Community Apps
           </span>
