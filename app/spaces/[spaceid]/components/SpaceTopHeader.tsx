@@ -23,7 +23,7 @@ const SpaceTopHeader: React.FC = () => {
     setIsClient(true);
   }, []);
 
-  const { data: spaceData } = useQuery({
+  const { data: spaceData, isLoading } = useQuery({
     queryKey: ['getSpaceByID', spaceId],
     enabled: !!spaceId && !!composeClient,
     queryFn: () => {
@@ -52,7 +52,9 @@ const SpaceTopHeader: React.FC = () => {
             className="h-[34px] min-w-[auto] bg-[#363636] hover:bg-[#424242] rounded-[10px] flex items-center justify-center p-1 gap-1"
             onPress={() => toggleDrawer(true)}
           >
-            {spaceData?.avatar && (
+            {isLoading ? (
+              <div className="w-[30px] h-[30px] rounded-full bg-[rgba(34,34,34,0.8)] animate-pulse"></div>
+            ) : spaceData?.avatar ? (
               <Image
                 src={spaceData.avatar}
                 alt={spaceData.name}
@@ -60,7 +62,8 @@ const SpaceTopHeader: React.FC = () => {
                 height={30}
                 className="rounded-full object-cover"
               />
-            )}
+            ) : null}
+
             <List size={20} weight="light" className="text-white" />
           </Button>
 
