@@ -1,29 +1,63 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import { CaretLeft, List } from '@phosphor-icons/react';
 import { Image, Drawer, DrawerContent, DrawerBody } from '@heroui/react';
-import SpaceList from '@/app/spaces/[spaceid]/components/sidebar/spaceList';
 import UserProfileSection from '@/components/layout/UserProfileSection';
-import MainSidebar from '@/app/spaces/[spaceid]/components/sidebar/mainSidebar';
 import MainSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/subSidebar/mainSubSidebar';
+import { useQuery } from '@tanstack/react-query';
+import { Space } from '@/types';
+import { useCeramicContext } from '@/context/CeramicContext';
 
-interface SpaceEditHeaderProps {
-  spaceId: string;
-  spaceName: string;
-  spaceAvatar?: string;
-  title: string;
-}
+const getSpaceByIdQuery = (id: string) => `
+  query GetSpace($id: ID!) {
+    node(id: $id) {
+      ...on ZucitySpace {
+        id
+        avatar
+        name
+        description
+        banner
+      }
+    }
+  }
+`;
 
-const SpaceEditHeader: React.FC<SpaceEditHeaderProps> = ({
-  spaceId,
-  spaceName,
-  spaceAvatar,
-  title,
-}) => {
+const SpaceTopHeader: React.FC = () => {
   const router = useRouter();
+  const params = useParams();
+  const spaceId = params.spaceid.toString();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { composeClient } = useCeramicContext();
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+
+  const { data: spaceData } = useQuery({
+    queryKey: ['getSpaceByIdQuery', spaceId],
+    queryFn: async () => {
+      try {
+        const response = await composeClient.executeQuery(
+          getSpaceByIdQuery(spaceId),
+          {
+            id: spaceId,
+          },
+        );
+        if (response.data && response.data.node) {
+          return response.data.node as Space;
+        }
+        return null;
+      } catch (error) {
+        console.error('Failed to fetch space:', error);
+        return null;
+      }
+    },
+    enabled: !!spaceId && !!composeClient,
+  });
 
   const handleBack = () => {
     router.replace(`/spaces`);
@@ -33,17 +67,17 @@ const SpaceEditHeader: React.FC<SpaceEditHeaderProps> = ({
     setDrawerOpen(open);
   };
 
-  return (
-    <>
-      <div className="h-[50px] bg-[rgba(44,44,44,0.8)] backdrop-blur-[40px] border-b border-[rgba(255,255,255,0.1)] flex items-center justify-between px-[10px] py-[8px]">
+  return isClient && (
+    <div className="pc:hidden tablet:hidden mobile:block">
+      <div className="h-[50px] bg-[rgba(44,44,44,0.8)] backdrop-blur-[40px] border-b border-[rgba(255,255,255,0.1)] flex items-center justify-between pl-[10px] py-[8px]">
         <button
           className="h-[34px] bg-[#363636] hover:bg-[#424242] rounded-[10px] flex items-center justify-center p-1 gap-1"
           onClick={() => toggleDrawer(true)}
         >
-          {spaceAvatar && (
+          {spaceData?.avatar && (
             <Image
-              src={spaceAvatar}
-              alt={spaceName}
+              src={spaceData.avatar}
+              alt={spaceData.name}
               width={30}
               height={30}
               className="rounded-full object-cover"
@@ -56,7 +90,6 @@ const SpaceEditHeader: React.FC<SpaceEditHeaderProps> = ({
           <UserProfileSection avatarSize={30} />
         </div>
       </div>
-
       <Drawer
         isOpen={drawerOpen}
         onClose={() => toggleDrawer(false)}
@@ -89,8 +122,8 @@ const SpaceEditHeader: React.FC<SpaceEditHeaderProps> = ({
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-    </>
+    </div>
   );
 };
 
-export default SpaceEditHeader;
+export default SpaceTopHeader;

@@ -33,10 +33,6 @@ const inter = Inter({
 
 const queryClient = new QueryClient();
 
-// export const metadata: Metadata = {
-//   title: 'Zuzalu City',
-//   description: 'Zuzalu City Powered By Ethereum Community Fund',
-// };
 const ceramicDown = process.env.NEXT_PUBLIC_CERAMIC_DOWN === 'true';
 function RootLayout({
   children,
@@ -48,8 +44,8 @@ function RootLayout({
 
   const pathname = usePathname();
   const isMobile = useMediaQuery('(max-width: 809px)');
-  const isSpaceEditPage = pathname?.includes('/spaces/') && pathname?.includes('/edit');
-  const shouldHideHeader = isMobile && isSpaceEditPage;
+  const isSpacePage = pathname?.startsWith('/spaces/')
+  const shouldHideHeader = isMobile && isSpacePage;
 
   useEffect(() => {
     setIsClient(true);
