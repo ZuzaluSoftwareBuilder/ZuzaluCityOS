@@ -11,6 +11,7 @@ import { Button } from '@/components/base';
 import Profile from '@/components/profile';
 import { formatUserName } from '@/utils/format';
 import { WalletIcon } from 'components/icons';
+import { PressEvent } from '@heroui/react';
 
 export function formatAddressString(str?: string, maxLength: number = 10) {
   if (!str) return;
@@ -36,8 +37,8 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showProfile, setShowProfile] = useState(false);
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleMenuClick = (e: PressEvent) => {
+    setAnchorEl(e.target as HTMLElement);
   };
 
   const handleMenuClose = () => {
@@ -73,7 +74,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
         <>
           <Button
             className={buttonClassName}
-            onClick={handleMenuClick}
+            onPress={handleMenuClick}
           >
             <Image
               src={profile?.avatar ?? '/user/avatar_p.png'}
