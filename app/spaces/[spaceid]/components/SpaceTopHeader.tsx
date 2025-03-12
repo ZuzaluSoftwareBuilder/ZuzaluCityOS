@@ -46,7 +46,7 @@ const SpaceTopHeader: React.FC = () => {
 
   return (
     isClient && (
-      <div className="pc:hidden tablet:hidden mobile:block">
+      <div className="pc:hidden tablet:block mobile:block">
         <div className="h-[50px] bg-[rgba(44,44,44,0.8)] backdrop-blur-[40px] border-b border-[rgba(255,255,255,0.1)] flex items-center justify-between pl-[10px] py-[8px]">
           <Button
             className="h-[34px] min-w-[auto] bg-[#363636] hover:bg-[#424242] rounded-[10px] flex items-center justify-center p-1 gap-1"
@@ -68,6 +68,7 @@ const SpaceTopHeader: React.FC = () => {
             <UserProfileSection avatarSize={30} />
           </div>
         </div>
+
         <Drawer
           isOpen={drawerOpen}
           onClose={() => toggleDrawer(false)}
@@ -78,11 +79,11 @@ const SpaceTopHeader: React.FC = () => {
             closeButton: 'hidden',
           }}
         >
-          <DrawerContent className="w-[260px] h-[calc(100vh)] bg-[rgba(44,44,44,0.8)] rounded-none border-r border-[rgba(255,255,255,0.1)] backdrop-blur-[20px]">
+          <DrawerContent className="w-[260px] h-[calc(100vh)] bg-[rgba(44,44,44,0.8)] rounded-none border-r border-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-[24px]">
             <DrawerBody className="p-0 flex flex-col h-full gap-0">
-              <div className="flex items-center h-[36px] px-[10px]">
+              <div className="flex items-center h-[50px] px-[10px]">
                 <div
-                  className="h-[36px] bg-[#363636] bg-transparent flex items-center gap-[5px] cursor-pointer"
+                  className="h-full bg-[#363636] bg-transparent flex items-center gap-[5px] cursor-pointer"
                   onClick={handleBack}
                 >
                   <CaretLeft
@@ -96,7 +97,9 @@ const SpaceTopHeader: React.FC = () => {
                   </span>
                 </div>
               </div>
+
               <MainSubSidebar />
+
             </DrawerBody>
           </DrawerContent>
         </Drawer>

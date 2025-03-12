@@ -77,7 +77,7 @@ const MainSubSidebar = () => {
   );
 
   return (
-    <div className="w-[260px] h-[calc(100vh-50px)] border-r border-[#363636] bg-[#222222] flex flex-col pb-[90px] relative">
+    <div className="w-[260px] h-[calc(100vh-50px)] border-r border-[#363636] flex flex-col relative">
       <SidebarHeader
         isAdmin={isAdmin}
         isLoading={isLoading}

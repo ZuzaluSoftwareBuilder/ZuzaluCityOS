@@ -43,9 +43,9 @@ function RootLayout({
   const [show, setShow] = useState(ceramicDown);
 
   const pathname = usePathname();
-  const isMobile = useMediaQuery('(max-width: 809px)');
+  const isMobileAndTablet = useMediaQuery('(max-width: 1199px)');
   const isSpacePage = pathname?.startsWith('/spaces/')
-  const shouldHideHeader = isMobile && isSpacePage;
+  const shouldHideHeader = isMobileAndTablet && isSpacePage;
 
   useEffect(() => {
     setIsClient(true);
