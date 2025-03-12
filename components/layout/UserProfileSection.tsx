@@ -21,13 +21,11 @@ export function formatAddressString(str?: string, maxLength: number = 10) {
 }
 
 interface UserProfileSectionProps {
-  showUsername?: boolean;
   avatarSize?: number;
   buttonClassName?: string;
 }
 
 const UserProfileSection: React.FC<UserProfileSectionProps> = ({
-  showUsername = false,
   avatarSize = 28,
   buttonClassName = "text-[16px] font-[500] leading-[1.2] text-white bg-transparent gap-[6px]",
 }) => {
@@ -83,7 +81,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
               height={avatarSize}
               width={avatarSize}
             />
-            {showUsername && formattedName}
+            {formattedName}
           </Button>
           <Menu
             anchorEl={anchorEl}

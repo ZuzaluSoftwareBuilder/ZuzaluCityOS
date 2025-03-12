@@ -60,7 +60,7 @@ const Header = () => {
         ) : null}
       </Box>
       
-      <UserProfileSection showUsername={!isMobile} />
+      <UserProfileSection />
       
       <SidebarDrawer
         selected={'Home'}
