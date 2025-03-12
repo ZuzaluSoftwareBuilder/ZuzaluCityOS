@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { Button, Drawer, DrawerContent, DrawerHeader, DrawerBody } from '@heroui/react';
 import { X } from '@phosphor-icons/react';
 import { SettingSection, getSettingSections } from './settingsData';
-import SectionGroup from './SectionGroup';
+import SectionGroup from './sectionGroup';
 
 interface MobileSettingSidebarProps {
   isOpen: boolean;
@@ -13,7 +13,7 @@ interface MobileSettingSidebarProps {
   currentPath?: string;
 }
 
-const MobileSidebar: React.FC<MobileSettingSidebarProps> = ({
+const MobileSpaceSettingSidebar: React.FC<MobileSettingSidebarProps> = ({
   isOpen,
   onClose,
   currentPath,
@@ -91,4 +91,4 @@ const MobileSidebar: React.FC<MobileSettingSidebarProps> = ({
   );
 };
 
-export default MobileSidebar;
+export default MobileSpaceSettingSidebar;

@@ -11,7 +11,7 @@ import {
   Button,
 } from '@heroui/react';
 import UserProfileSection from '@/components/layout/UserProfileSection';
-import MainSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/subSidebar/mainSubSidebar';
+import SpaceSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/spaceSubSidebar';
 import { useQuery } from '@tanstack/react-query';
 import { Space } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
@@ -113,7 +113,7 @@ const SpaceTopHeader: React.FC = () => {
                 </div>
               </div>
 
-              <MainSubSidebar needBlur={true} onCloseDrawer={handleCloseDrawer} />
+              <SpaceSubSidebar needBlur={true} onCloseDrawer={handleCloseDrawer} />
             </DrawerBody>
           </DrawerContent>
         </Drawer>

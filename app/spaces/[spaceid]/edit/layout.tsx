@@ -1,16 +1,10 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { usePathname, useParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
 import { CaretUpDown } from '@phosphor-icons/react';
-import PcSidebar from './components/settingSidebar/PcSidebar';
-import MobileSidebar from './components/settingSidebar/MobileSidebar';
+import PcSpaceSettingSidebar from './components/settingSidebar/pcSpaceSettingSidebar';
+import MobileSpaceSettingSidebar from './components/settingSidebar/mobileSpaceSettingSidebar';
 import BackHeader from './components/backHeader';
-import SpaceTopHeader from '../components/SpaceTopHeader';
-import { useQuery } from '@tanstack/react-query';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { getSpacesQuery } from '@/services/space';
-import { Space } from '@/types';
 
 const TITLE_MAP: Record<string, string> = {
   overview: 'Community Overview',
@@ -41,9 +35,9 @@ const SpaceEditLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="flex h-[calc(100vh-50px)]">
-      <PcSidebar currentPath={pathname} hasChanges={false} />
+      <PcSpaceSettingSidebar currentPath={pathname} hasChanges={false} />
 
-      <MobileSidebar
+      <MobileSpaceSettingSidebar
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
         currentPath={pathname}

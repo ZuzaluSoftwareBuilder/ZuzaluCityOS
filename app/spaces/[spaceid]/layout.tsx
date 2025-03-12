@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import SpaceLayout from '@/app/spaces/[spaceid]/components/spaceLayout';
-import SpaceTopHeader from '@/app/spaces/[spaceid]/components/SpaceTopHeader';
+import SpaceTopHeader from '@/app/spaces/[spaceid]/components/spaceTopHeader';
 
 interface SpacePageLayoutPropTypes {
   children: React.ReactNode;

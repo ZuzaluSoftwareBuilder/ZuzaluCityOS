@@ -7,7 +7,7 @@ import { Button } from '@heroui/react';
 import { ArrowLineDown, X } from '@phosphor-icons/react';
 import BackHeader from '@/app/spaces/[spaceid]/edit/components/backHeader';
 import { SettingSection, getSettingSections } from './settingsData';
-import SectionGroup from './SectionGroup';
+import SectionGroup from './sectionGroup';
 
 interface SettingSubSidebarProps {
   currentPath?: string;
@@ -17,7 +17,7 @@ interface SettingSubSidebarProps {
   hasChanges?: boolean;
 }
 
-const PcSidebar: React.FC<SettingSubSidebarProps> = ({
+const PcSpaceSettingSidebar: React.FC<SettingSubSidebarProps> = ({
   currentPath,
   onBack,
   onSave,
@@ -110,4 +110,4 @@ const PcSidebar: React.FC<SettingSubSidebarProps> = ({
   );
 };
 
-export default PcSidebar;
+export default PcSpaceSettingSidebar;

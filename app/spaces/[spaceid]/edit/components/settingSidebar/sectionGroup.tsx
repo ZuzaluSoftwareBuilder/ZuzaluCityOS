@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { SettingSection } from './settingsData';
-import SectionItem from './SectionItem';
+import SectionItem from './sectionItem';
 
 interface SectionGroupProps {
   section: SettingSection;

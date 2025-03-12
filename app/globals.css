@@ -77,7 +77,3 @@ html {
     background-position: -100% center;
   }
 }
-
-.__className_*[class*="__Inter_Fallback"] {
-  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif !important;
-}

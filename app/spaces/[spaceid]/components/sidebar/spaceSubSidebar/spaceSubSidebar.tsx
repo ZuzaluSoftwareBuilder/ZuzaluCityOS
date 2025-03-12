@@ -13,7 +13,7 @@ import {
 } from '@phosphor-icons/react';
 import TabItem from './tabItem';
 import SubTabItemContainer from './subTabItemContainer';
-import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/subSidebar/mainSubSidebar/sidebarHeader';
+import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/sidebarHeader';
 import { useQuery } from '@tanstack/react-query';
 import { TableIcon } from '@/components/icons';
 import { cn } from '@heroui/react';
@@ -23,7 +23,7 @@ interface MainSubSidebarProps {
   onCloseDrawer?: () => void;
 }
 
-const MainSubSidebar = ({ onCloseDrawer, needBlur = false }: MainSubSidebarProps) => {
+const SpaceSubSidebar = ({ onCloseDrawer, needBlur = false }: MainSubSidebarProps) => {
   const pathname = usePathname();
   const params = useParams();
   const spaceId = params.spaceid.toString();
@@ -190,4 +190,4 @@ const MainSubSidebar = ({ onCloseDrawer, needBlur = false }: MainSubSidebarProps
   );
 };
 
-export default MainSubSidebar;
+export default SpaceSubSidebar;
