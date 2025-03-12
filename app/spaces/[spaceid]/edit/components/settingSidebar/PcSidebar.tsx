@@ -88,7 +88,7 @@ const PcSidebar: React.FC<SettingSubSidebarProps> = ({
         <div className="flex flex-col items-center gap-[20px] p-[20px] border-t border-[rgba(255,255,255,0.1)]">
           <Button
             className="w-full bg-[rgba(103,219,255,0.1)] hover:bg-[rgba(103,219,255,0.2)] rounded-lg py-2 px-3.5 flex justify-center items-center gap-[10px]"
-            onClick={onSave}
+            onPress={onSave}
           >
             <ArrowLineDown size={20} weight="bold" className="text-[#67DBFF]" />
             <span className="text-[#67DBFF] text-[13px] font-medium">
@@ -97,7 +97,7 @@ const PcSidebar: React.FC<SettingSubSidebarProps> = ({
           </Button>
           <Button
             className="w-full bg-[#363636] hover:bg-[#424242] opacity-60 rounded-lg py-2 px-3.5 flex justify-center items-center gap-[10px]"
-            onClick={onDiscard}
+            onPress={onDiscard}
           >
             <X size={20} weight="bold" className="text-white" />
             <span className="text-white text-[13px] font-medium">

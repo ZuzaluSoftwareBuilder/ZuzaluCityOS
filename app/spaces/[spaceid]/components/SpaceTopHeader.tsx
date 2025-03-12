@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { CaretLeft, List } from '@phosphor-icons/react';
-import { Image, Drawer, DrawerContent, DrawerBody } from '@heroui/react';
+import { Image, Drawer, DrawerContent, DrawerBody, Button } from '@heroui/react';
 import UserProfileSection from '@/components/layout/UserProfileSection';
 import MainSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/subSidebar/mainSubSidebar';
 import { useQuery } from '@tanstack/react-query';
@@ -48,9 +48,9 @@ const SpaceTopHeader: React.FC = () => {
     isClient && (
       <div className="pc:hidden tablet:hidden mobile:block">
         <div className="h-[50px] bg-[rgba(44,44,44,0.8)] backdrop-blur-[40px] border-b border-[rgba(255,255,255,0.1)] flex items-center justify-between pl-[10px] py-[8px]">
-          <button
-            className="h-[34px] bg-[#363636] hover:bg-[#424242] rounded-[10px] flex items-center justify-center p-1 gap-1"
-            onClick={() => toggleDrawer(true)}
+          <Button
+            className="h-[34px] min-w-[auto] bg-[#363636] hover:bg-[#424242] rounded-[10px] flex items-center justify-center p-1 gap-1"
+            onPress={() => toggleDrawer(true)}
           >
             {spaceData?.avatar && (
               <Image
@@ -62,7 +62,7 @@ const SpaceTopHeader: React.FC = () => {
               />
             )}
             <List size={20} weight="light" className="text-white" />
-          </button>
+          </Button>
 
           <div className="flex items-center">
             <UserProfileSection avatarSize={30} />
