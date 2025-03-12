@@ -89,13 +89,14 @@ const SpaceTopHeader: React.FC = () => {
           placement="left"
           classNames={{
             base: 'bg-transparent',
-            backdrop: 'bg-black/50 backdrop-blur-sm',
+            backdrop: 'bg-[rgba(34,34,34,0.6)]',
             closeButton: 'hidden',
+            body: 'bg-transparent',
           }}
         >
-          <DrawerContent className="w-[260px] h-[calc(100vh)] bg-[rgba(44,44,44,0.8)] rounded-none border-r border-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-[24px]">
+          <DrawerContent className="w-[260px] h-[calc(100vh)] border-r border-[rgba(255,255,255,0.1)] rounded-none bg-[rgba(34,34,34,0.8)] backdrop-filter backdrop-blur-[24px]">
             <DrawerBody className="p-0 flex flex-col h-full gap-0">
-              <div className="flex items-center h-[50px] px-[10px]">
+              <div className="flex items-center h-[50px] px-[10px] bg-[#2C2C2C]">
                 <div
                   className="h-full bg-[#363636] bg-transparent flex items-center gap-[5px] cursor-pointer"
                   onClick={handleBack}
@@ -112,7 +113,7 @@ const SpaceTopHeader: React.FC = () => {
                 </div>
               </div>
 
-              <MainSubSidebar onCloseDrawer={handleCloseDrawer} />
+              <MainSubSidebar needBlur={true} onCloseDrawer={handleCloseDrawer} />
             </DrawerBody>
           </DrawerContent>
         </Drawer>

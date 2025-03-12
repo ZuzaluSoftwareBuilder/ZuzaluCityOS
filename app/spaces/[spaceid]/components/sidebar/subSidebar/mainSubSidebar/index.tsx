@@ -16,12 +16,14 @@ import SubTabItemContainer from './subTabItemContainer';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/subSidebar/mainSubSidebar/sidebarHeader';
 import { useQuery } from '@tanstack/react-query';
 import { TableIcon } from '@/components/icons';
+import { cn } from '@heroui/react';
 
 interface MainSubSidebarProps {
+  needBlur?: boolean;
   onCloseDrawer?: () => void;
 }
 
-const MainSubSidebar = ({ onCloseDrawer }: MainSubSidebarProps) => {
+const MainSubSidebar = ({ onCloseDrawer, needBlur = false }: MainSubSidebarProps) => {
   const pathname = usePathname();
   const params = useParams();
   const spaceId = params.spaceid.toString();
@@ -82,7 +84,10 @@ const MainSubSidebar = ({ onCloseDrawer }: MainSubSidebarProps) => {
   );
 
   return (
-    <div className="w-[260px] h-[calc(100vh-50px)] bg-[#222222] border-r border-[rgba(255,255,255,0.1)] flex flex-col relative">
+    <div className={cn(
+      'w-[260px] h-[calc(100vh-50px)]  border-r border-[rgba(255,255,255,0.1)] flex flex-col relative',
+      needBlur ? 'bg-transparent' : 'bg-[#222222]'
+    )}>
       <SidebarHeader
         isAdmin={isAdmin}
         isLoading={isLoading}
