@@ -16,7 +16,11 @@ import SubTabItemContainer from './subTabItemContainer';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/subSidebar/mainSubSidebar/sidebarHeader';
 import { useQuery } from '@tanstack/react-query';
 
-const MainSubSidebar = () => {
+interface MainSubSidebarProps {
+  onCloseDrawer?: () => void;
+}
+
+const MainSubSidebar = ({ onCloseDrawer }: MainSubSidebarProps) => {
   const pathname = usePathname();
   const params = useParams();
   const spaceId = params.spaceid.toString();
@@ -82,7 +86,10 @@ const MainSubSidebar = () => {
         isAdmin={isAdmin}
         isLoading={isLoading}
         space={spaceData}
-        onSpaceSettings={() => router.push(`/spaces/${spaceId}/edit`)}
+        onSpaceSettings={() => {
+          router.push(`/spaces/${spaceId}/edit`);
+          if (onCloseDrawer) onCloseDrawer();
+        }}
       />
 
       <div className="flex flex-col p-[10px] gap-[5px] border-t border-b border-[rgba(255,255,255,0.1)]">
@@ -92,6 +99,7 @@ const MainSubSidebar = () => {
           href={`/spaces/${spaceId}`}
           isActive={isRouteActive('home')}
           height={36}
+          onClick={onCloseDrawer}
         />
         <TabItem
           label="Events"
@@ -99,6 +107,7 @@ const MainSubSidebar = () => {
           href={`/spaces/${spaceId}/events`}
           isActive={isRouteActive('events')}
           height={36}
+          onClick={onCloseDrawer}
         />
       </div>
 
@@ -116,6 +125,7 @@ const MainSubSidebar = () => {
               href={`/spaces/${spaceId}/calendar`}
               icon={<CalendarDots />}
               isActive={isRouteActive('calendar')}
+              onClick={onCloseDrawer}
             />
           </div>
           <TabItem

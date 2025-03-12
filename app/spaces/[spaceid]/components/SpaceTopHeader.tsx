@@ -1,9 +1,15 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { CaretLeft, List } from '@phosphor-icons/react';
-import { Image, Drawer, DrawerContent, DrawerBody, Button } from '@heroui/react';
+import {
+  Image,
+  Drawer,
+  DrawerContent,
+  DrawerBody,
+  Button,
+} from '@heroui/react';
 import UserProfileSection from '@/components/layout/UserProfileSection';
 import MainSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/subSidebar/mainSubSidebar';
 import { useQuery } from '@tanstack/react-query';
@@ -38,11 +44,16 @@ const SpaceTopHeader: React.FC = () => {
 
   const handleBack = () => {
     router.replace(`/spaces`);
+    setDrawerOpen(false);
   };
 
   const toggleDrawer = (open: boolean) => {
     setDrawerOpen(open);
   };
+
+  const handleCloseDrawer = useCallback(() => {
+    setDrawerOpen(false);
+  }, []);
 
   return (
     isClient && (
@@ -101,8 +112,7 @@ const SpaceTopHeader: React.FC = () => {
                 </div>
               </div>
 
-              <MainSubSidebar />
-
+              <MainSubSidebar onCloseDrawer={handleCloseDrawer} />
             </DrawerBody>
           </DrawerContent>
         </Drawer>
