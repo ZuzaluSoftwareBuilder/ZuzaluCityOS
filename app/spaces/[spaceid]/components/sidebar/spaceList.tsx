@@ -29,7 +29,6 @@ const SpaceList = () => {
   const { isAuthenticated, composeClient, ceramic } = useCeramicContext();
   const [isClientReady, setIsClientReady] = useState(false);
 
-  // 确保在客户端渲染时立即设置状态
   useEffect(() => {
     setIsClientReady(true);
   }, []);

@@ -15,7 +15,6 @@ const BackHeader = ({ spaceId }: IBackHeaderProps) => {
 
   return (
     <div className="flex items-center gap-[10px] w-full ">
-      {/* 返回按钮 */}
       <Button
         className="h-[34px] bg-[#363636] hover:bg-[#424242] rounded-lg px-3.5 flex items-center gap-[5px]"
         onPress={handleBack}
