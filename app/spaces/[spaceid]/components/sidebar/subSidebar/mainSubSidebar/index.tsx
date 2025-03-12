@@ -15,6 +15,7 @@ import TabItem from './tabItem';
 import SubTabItemContainer from './subTabItemContainer';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/subSidebar/mainSubSidebar/sidebarHeader';
 import { useQuery } from '@tanstack/react-query';
+import { TableIcon } from '@/components/icons';
 
 interface MainSubSidebarProps {
   onCloseDrawer?: () => void;
@@ -109,6 +110,15 @@ const MainSubSidebar = ({ onCloseDrawer }: MainSubSidebarProps) => {
           height={36}
           onClick={onCloseDrawer}
         />
+        <TabItem
+          label="Manage Events"
+          icon={<TableIcon />}
+          href={`/spaces/${spaceId}/adminevents`}
+          isActive={isRouteActive('adminevents')}
+          height={36}
+          onClick={onCloseDrawer}
+        />
+
       </div>
 
       <div className="flex-1 pt-5 px-2.5 overflow-y-auto">
