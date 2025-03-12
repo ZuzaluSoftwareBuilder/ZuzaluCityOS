@@ -3,7 +3,8 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Image
+  Image,
+  Skeleton,
 } from '@heroui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Space } from '@/types';
@@ -22,6 +23,27 @@ export interface ISidebarHeaderProps {
   onSpaceSettings?: () => void;
   onPrivacySettings?: () => void;
   onNotificationSettings?: () => void;
+  isLoading?: boolean;
+}
+
+export function SidebarHeaderSkeleton() {
+  return (
+    <div
+      className="w-[259px] h-[55px] relative cursor-default select-none backdrop-filter backdrop-blur-[44px]"
+      style={{
+        background: 'linear-gradient(90deg, #7DFFD1 0%, #FFCA7A 100%)',
+        transform: 'none',
+      }}
+    >
+      <div className="w-full h-full flex justify-between items-center px-[14px] py-[10px] bg-[rgba(34,34,34,0.8)]">
+        <div className="flex justify-between items-center gap-2.5">
+          <Skeleton className="w-[35px] h-[35px] rounded-full" />
+          <Skeleton className="w-[156px] h-[21px] rounded-[4px]" />
+        </div>
+        <ChevronDownIcon className="size-5 text-white opacity-50" />
+      </div>
+    </div>
+  );
 }
 
 const SidebarHeader = ({
@@ -31,33 +53,36 @@ const SidebarHeader = ({
   onSpaceSettings,
   onPrivacySettings,
   onNotificationSettings,
+  isLoading,
 }: ISidebarHeaderProps) => {
   const dropdownItemClass = `w-[220px] h-[32px] bg-transparent focus:bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.05)] group`;
   const iconClass = `w-5 h-5 text-white opacity-50 group-hover:opacity-100 group-focus:opacity-100`;
+
+  if (isLoading || !space) {
+    return <SidebarHeaderSkeleton />;
+  }
 
   return (
     <Dropdown>
       <DropdownTrigger className="transition-none transform-none">
         <div
-          className="w-[259px] h-[55px] relative group cursor-pointer select-none"
+          className="w-[259px] h-[55px] relative group cursor-pointer select-none backdrop-filter backdrop-blur-[44px]"
           style={{
             background: 'linear-gradient(90deg, #7DFFD1 0%, #FFCA7A 100%)',
-            transform: 'none'
+            transform: 'none',
           }}
         >
-          <div className="w-full h-full flex justify-between items-center px-[14px] py-[10px] backdrop-blur-[44px] bg-[rgba(34,34,34,0.8)] group-hover:bg-[rgba(34,34,34,0.5)] transition-colors">
+          <div className="w-full h-full flex justify-between items-center px-[14px] py-[10px] bg-[rgba(34,34,34,0.8)] group-hover:bg-[rgba(34,34,34,0.5)] transition-colors">
             <div className="flex justify-between items-center gap-2.5">
-              {
-                space?.avatar && (
-                  <Image
-                    src={space?.avatar}
-                    alt={space?.name || 'Community'}
-                    width={35}
-                    height={35}
-                    className="w-[35px] h-[35px] rounded-full object-cover"
-                  />
-                )
-              }
+              {space?.avatar && (
+                <Image
+                  src={space?.avatar}
+                  alt={space?.name || 'Community'}
+                  width={35}
+                  height={35}
+                  className="w-[35px] h-[35px] rounded-full object-cover"
+                />
+              )}
               <span className="w-[156px] text-white font-semibold text-base truncate">
                 {space?.name || 'Community'}
               </span>
@@ -69,7 +94,16 @@ const SidebarHeader = ({
       <DropdownMenu
         aria-label="Space Actions"
         className="w-[240px] p-2.5 bg-[rgba(34,34,34,0.6)] border border-[rgba(255,255,255,0.1)] backdrop-blur-[20px] rounded-[10px] flex flex-col gap-2.5"
-        disabledKeys={isAdmin ? ['InvitePeople', 'PrivacySettings', 'NotificationSettings'] : ['InvitePeople', 'SpaceSettings', 'PrivacySettings', 'NotificationSettings']}
+        disabledKeys={
+          isAdmin
+            ? ['InvitePeople', 'PrivacySettings', 'NotificationSettings']
+            : [
+                'InvitePeople',
+                'SpaceSettings',
+                'PrivacySettings',
+                'NotificationSettings',
+              ]
+        }
       >
         <DropdownItem
           key="InvitePeople"

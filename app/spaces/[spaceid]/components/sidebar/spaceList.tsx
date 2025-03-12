@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getSpacesQuery } from '@/services/space';
 import { Space, SpaceData } from '@/types';
@@ -8,15 +8,39 @@ import { isUserAssociated } from '@/utils/permissions';
 import { useCeramicContext } from '@/context/CeramicContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Image, Tooltip } from '@heroui/react';
+import { Image, Tooltip, Skeleton } from '@heroui/react';
+
+const SpaceItemSkeleton = () => {
+  return (
+    <div
+      className="w-10 h-10 box-content rounded-full flex items-center justify-center relative"
+      style={{
+        background: 'linear-gradient(90deg, #7DFFD1 0%, #FFCA7A 100%)',
+        transform: 'none',
+      }}
+    >
+      <Skeleton className="w-10 h-10 rounded-full bg-[rgba(34,34,34,0.8)]" />
+    </div>
+  );
+};
 
 const SpaceList = () => {
   const [selected, setSelected] = useState('Spaces');
   const { isAuthenticated, composeClient, ceramic } = useCeramicContext();
+  const [isClientReady, setIsClientReady] = useState(false);
+
+  // 确保在客户端渲染时立即设置状态
+  useEffect(() => {
+    setIsClientReady(true);
+  }, []);
 
   const userDID = ceramic?.did?.parent?.toString();
 
-  const { data: spacesData, isLoading: isSpacesLoading } = useQuery({
+  const {
+    data: spacesData,
+    isLoading: isSpacesLoading,
+    isFetched,
+  } = useQuery({
     queryKey: ['spaces'],
     queryFn: async () => {
       try {
@@ -43,10 +67,21 @@ const SpaceList = () => {
     return spacesData.filter((space) => isUserAssociated(space, userDID));
   }, [spacesData, userDID]);
 
+  const shouldShowSkeleton =
+    isClientReady && (isSpacesLoading || !isFetched || !isAuthenticated);
+
   return (
     <div className="pt-2.5 w-full h-full overflow-y-auto flex flex-col items-center gap-2.5">
-      {userSpaces.length > 0 &&
-        userSpaces.map((space) => <SpaceItem key={space.id} space={space} />)}
+      {shouldShowSkeleton ? (
+        <>
+          <SpaceItemSkeleton />
+          <SpaceItemSkeleton />
+          <SpaceItemSkeleton />
+        </>
+      ) : (
+        userSpaces.length > 0 &&
+        userSpaces.map((space) => <SpaceItem key={space.id} space={space} />)
+      )}
     </div>
   );
 };
@@ -58,13 +93,16 @@ const SpaceItem = ({ space }: { space: Space }) => {
   const isActive = pathname.includes(`/spaces/${space.id}`);
 
   return (
-    <Tooltip placement="right" classNames={{
-      base: ['bg-transparent'],
-      content: [
-        'px-2.5 py-1 bg-[rgba(44,44,44,0.8)] border border-[rgba(255,255,255,0.1)] rounded-lg text-white text-sm'
-      ]
-    }}
-      content={space.name} >
+    <Tooltip
+      placement="right"
+      classNames={{
+        base: ['bg-transparent'],
+        content: [
+          'px-2.5 py-1 bg-[rgba(44,44,44,0.8)] border border-[rgba(255,255,255,0.1)] rounded-lg text-white text-sm',
+        ],
+      }}
+      content={space.name}
+    >
       <Link href={`/spaces/${space.id}`} className="cursor-pointer">
         <div
           className={`
