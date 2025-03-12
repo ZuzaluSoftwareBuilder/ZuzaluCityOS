@@ -3,8 +3,8 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Image
 } from '@heroui/react';
-import NextImage from 'next/image'
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Space } from '@/types';
 import { HTMLAttributes, ReactNode } from 'react';
@@ -47,13 +47,17 @@ const SidebarHeader = ({
         >
           <div className="w-full h-full flex justify-between items-center px-[14px] py-[10px] backdrop-blur-[44px] bg-[rgba(34,34,34,0.8)] group-hover:bg-[rgba(34,34,34,0.5)] transition-colors">
             <div className="flex justify-between items-center gap-2.5">
-              <NextImage
-                src={space?.avatar || '/placeholder-avatar.png'}
-                alt={space?.name || 'Community'}
-                width={35}
-                height={35}
-                className="w-[35px] h-[35px] rounded-full object-cover"
-              />
+              {
+                space?.avatar && (
+                  <Image
+                    src={space?.avatar}
+                    alt={space?.name || 'Community'}
+                    width={35}
+                    height={35}
+                    className="w-[35px] h-[35px] rounded-full object-cover"
+                  />
+                )
+              }
               <span className="w-[156px] text-white font-semibold text-base truncate">
                 {space?.name || 'Community'}
               </span>

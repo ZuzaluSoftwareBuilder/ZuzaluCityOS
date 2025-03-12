@@ -9,7 +9,6 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Image, Tooltip } from '@heroui/react';
-import { divIcon } from 'leaflet';
 
 const SpaceList = () => {
   const [selected, setSelected] = useState('Spaces');
