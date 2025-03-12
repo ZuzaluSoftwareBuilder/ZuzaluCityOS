@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { Button } from '@heroui/react';
@@ -46,7 +46,7 @@ const PcSidebar: React.FC<SettingSubSidebarProps> = ({
     }
   }, [currentPath]);
 
-  const handleItemClick = (sectionId: string, itemId: string) => {
+  const handleItemClick = useCallback((sectionId: string, itemId: string) => {
     const section = sections.find((s) => s.id === sectionId);
     const item = section?.items.find((i) => i.id === itemId);
 
@@ -63,7 +63,7 @@ const PcSidebar: React.FC<SettingSubSidebarProps> = ({
         })),
       );
     }
-  };
+  }, [sections, router, setSections]);
 
   return (
     <div className="w-[260px] h-[calc(100vh-50px)] tablet:hidden mobile:hidden bg-[#222222] border-r border-[rgba(255,255,255,0.1)] flex flex-col justify-between">

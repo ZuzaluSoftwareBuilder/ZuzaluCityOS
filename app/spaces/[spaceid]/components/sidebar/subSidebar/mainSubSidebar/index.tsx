@@ -25,7 +25,7 @@ const MainSubSidebar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isMember, setIsMember] = useState(false);
 
-  const { data: spaceData, refetch } = useQuery({
+  const { data: spaceData, isLoading } = useQuery({
     queryKey: ['getSpaceByID', spaceId],
     queryFn: () => {
       return composeClient.executeQuery(getSpaceEventsQuery(), {
@@ -80,6 +80,7 @@ const MainSubSidebar = () => {
     <div className="w-[260px] h-[calc(100vh-50px)] border-r border-[#363636] bg-[#222222] flex flex-col pb-[90px] relative">
       <SidebarHeader
         isAdmin={isAdmin}
+        isLoading={isLoading}
         space={spaceData}
         onSpaceSettings={() => router.push(`/spaces/${spaceId}/edit`)}
       />

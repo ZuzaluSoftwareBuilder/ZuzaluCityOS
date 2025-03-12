@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { Button, Drawer, DrawerContent, DrawerHeader, DrawerBody } from '@heroui/react';
 import { X } from '@phosphor-icons/react';
@@ -40,7 +40,7 @@ const MobileSidebar: React.FC<MobileSettingSidebarProps> = ({
     }
   }, [currentPath]);
 
-  const handleItemClick = (sectionId: string, itemId: string) => {
+  const handleItemClick = useCallback((sectionId: string, itemId: string) => {
     const section = sections.find((s) => s.id === sectionId);
     const item = section?.items.find((i) => i.id === itemId);
 
@@ -48,7 +48,7 @@ const MobileSidebar: React.FC<MobileSettingSidebarProps> = ({
       router.push(item.path);
       onClose();
     }
-  };
+  }, [sections, router, onClose]);
 
   return (
     <Drawer 

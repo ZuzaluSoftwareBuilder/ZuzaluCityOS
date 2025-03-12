@@ -1,5 +1,6 @@
 import { CaretLeft } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@heroui/react';
 
 export interface IBackHeaderProps {
   spaceId: string;
@@ -15,13 +16,13 @@ const BackHeader = ({ spaceId }: IBackHeaderProps) => {
   return (
     <div className="flex items-center gap-[10px] w-full ">
       {/* 返回按钮 */}
-      <button
+      <Button
         className="h-[34px] bg-[#363636] hover:bg-[#424242] rounded-lg px-3.5 flex items-center gap-[5px]"
-        onClick={handleBack}
+        onPress={handleBack}
       >
         <CaretLeft size={18} weight="light" format={'Stroke'} className="text-white" />
         <span className="text-white text-[13px] font-medium">Back</span>
-      </button>
+      </Button>
 
       <span className="text-white text-[14px]">Space Settings</span>
     </div>
