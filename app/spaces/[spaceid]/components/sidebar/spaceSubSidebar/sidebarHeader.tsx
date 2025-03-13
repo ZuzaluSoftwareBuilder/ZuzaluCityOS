@@ -119,7 +119,7 @@ const SidebarHeader = ({
     <Dropdown 
       classNames={{
         base: ['bg-[rgba(34,34,34,0.6)] backdrop-filter backdrop-blur-[20px] p-0 rounded-[10px]'],
-        content: ['bg-[transparent)] p-0 z-[50]']
+        content: ['bg-transparent p-0 z-[50]']
       }}
       motionProps={{
         variants: {
