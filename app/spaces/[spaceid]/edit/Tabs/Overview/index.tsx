@@ -335,7 +335,7 @@ const Overview = () => {
   return (
     <Stack
       spacing="20px"
-      padding="40px"
+      padding="20px"
       sx={{ width: '100%', maxWidth: 762, margin: '0 auto', gap: '10px' }}
     >
       <Box

@@ -118,11 +118,11 @@ const Home = () => {
 
   return (
     <Stack direction="row" height="calc(100vh - 50px)" width="100%">
-      <SubSidebar
+      {/* <SubSidebar
         title={space?.name}
         spaceId={params.spaceid.toString()}
         isAdmin={isAdmin}
-      />
+      /> */}
       <Stack
         flex={1}
         sx={{

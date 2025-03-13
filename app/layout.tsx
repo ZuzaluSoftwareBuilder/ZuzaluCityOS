@@ -1,6 +1,7 @@
 'use client';
 // import type { Metadata } from 'next';
 import './globals.css';
+import { Inter } from 'next/font/google';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from 'theme/theme';
@@ -21,13 +22,11 @@ import { GlobalDialog } from '@/components/dialog/GlobalDialog';
 import { ToastProvider } from '@/components/toast/ToastContext';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { HeroUIProvider } from '@heroui/react';
+import { usePathname } from 'next/navigation';
+import { useMediaQuery } from '@mui/material';
 
 const queryClient = new QueryClient();
 
-// export const metadata: Metadata = {
-//   title: 'Zuzalu City',
-//   description: 'Zuzalu City Powered By Ethereum Community Fund',
-// };
 const ceramicDown = process.env.NEXT_PUBLIC_CERAMIC_DOWN === 'true';
 function RootLayout({
   children,
@@ -37,9 +36,15 @@ function RootLayout({
   const [isClient, setIsClient] = useState(false);
   const [show, setShow] = useState(ceramicDown);
 
+  const pathname = usePathname();
+  const isMobileAndTablet = useMediaQuery('(max-width: 1199px)');
+  const isSpacePage = pathname?.startsWith('/spaces/')
+  const shouldHideHeader = isMobileAndTablet && isSpacePage;
+
   useEffect(() => {
     setIsClient(true);
   }, []);
+
   return (
     <html
       lang="en"
@@ -68,7 +73,7 @@ function RootLayout({
                             <ZupassProvider>
                               <AppContextProvider>
                                 <ReactQueryDevtools initialIsOpen={false} />
-                                <Header />
+                                {!shouldHideHeader && <Header />}
                                 {isClient && <AuthPrompt />}
                                 <GlobalDialog />
                                 {isClient && ceramicDown && (

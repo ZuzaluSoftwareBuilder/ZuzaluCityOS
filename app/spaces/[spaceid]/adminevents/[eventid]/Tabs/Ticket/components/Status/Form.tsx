@@ -31,9 +31,9 @@ import { RegistrationAndAccess } from '@/types';
 import { isAddress } from 'viem';
 import { isDev } from '@/constant';
 import { scrollSepolia, scroll } from 'wagmi/chains';
-import { formatAddressString } from '@/components/layout/Header';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
+import { formatAddressString } from '@/components/layout/UserProfileSection';
 
 interface FormProps {
   regAndAccess?: RegistrationAndAccess;

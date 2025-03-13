@@ -1,11 +1,14 @@
 'use client';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Stack } from '@mui/material';
-import SpaceEditSidebar from './components/Sidebar';
 import { Overview, Invite } from './Tabs';
+import { Button } from '@heroui/react';
+import { CaretLeft } from '@phosphor-icons/react';
+import { useRouter } from 'next/navigation';
 
 export default function SpaceEditPage() {
   const [tabName, setTabName] = useState<string>('Overview');
+  const router = useRouter();
 
   const renderPage = () => {
     switch (tabName) {
@@ -19,8 +22,7 @@ export default function SpaceEditPage() {
   };
 
   return (
-    <Stack flexDirection="row" width={'100%'} height={'calc(100vh - 50px)'}>
-      <SpaceEditSidebar tabName={tabName} setTabName={setTabName} />
+    <Stack width={'100%'} height={'calc(100vh - 50px)'}>
       <Stack sx={{ width: '100%', overflowY: 'auto' }}>{renderPage()}</Stack>
     </Stack>
   );

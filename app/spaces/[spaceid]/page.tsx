@@ -12,11 +12,11 @@ import {
 import { EventCard } from '@/components/cards';
 // import AnnouncementCard from 'components/AnnouncementCart';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { ChevronDownIcon, ShareIcon } from 'components/icons';
-import SidebarButton from 'components/layout/Sidebar/SidebarButton';
+import { ChevronDownIcon, ShareIcon } from '@/components/icons';
+import SidebarButton from '@/components/layout/Sidebar/SidebarButton';
 import Image from 'next/image';
 import React, { Fragment, useEffect, useState } from 'react';
-import SubSidebar from 'components/layout/Sidebar/SubSidebar';
+import SubSidebar from '@/components/layout/Sidebar/SubSidebar';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { Space, Event, SpaceEventData } from '@/types';
 import {
@@ -113,13 +113,14 @@ export default function SpaceDetailPage() {
     >
       {/* <JoinSpaceNoGate /> */}
       {/* <JoinSpaceWithGate /> */}
-      <SubSidebar
-        title={space?.name}
-        spaceId={params.spaceid.toString()}
-        avatar={space?.avatar}
-        banner={space?.banner}
-        isAdmin={isAdmin}
-      />
+      {/* hide in 2025.03.06*/}
+      {/*<SubSidebar*/}
+      {/*  title={space?.name}*/}
+      {/*  spaceId={params.spaceid.toString()}*/}
+      {/*  avatar={space?.avatar}*/}
+      {/*  banner={space?.banner}*/}
+      {/*  isAdmin={isAdmin}*/}
+      {/*/>*/}
       <Box
         sx={{
           width: 'calc(100% - 280px)',

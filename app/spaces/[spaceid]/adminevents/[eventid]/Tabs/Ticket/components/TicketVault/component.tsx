@@ -61,7 +61,7 @@ import { createFileFromJSON } from '@/utils/generateNFTMetadata';
 import { fetchEmailJsConfig } from '@/utils/emailService';
 import { send } from '@emailjs/browser';
 import { Contract, Event } from '@/types';
-import { formatAddressString } from '@/components/layout/Header';
+import { formatAddressString } from '@/components/layout/UserProfileSection';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import * as yup from 'yup';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
