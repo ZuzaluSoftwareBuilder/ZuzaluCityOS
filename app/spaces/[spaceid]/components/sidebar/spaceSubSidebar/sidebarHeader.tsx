@@ -29,7 +29,7 @@ export interface ISidebarHeaderProps {
 export function SidebarHeaderSkeleton() {
   return (
     <div
-      className="w-[259px] h-[55px] relative cursor-default select-none backdrop-filter backdrop-blur-[44px]"
+      className="w-[259px] h-[55px] relative cursor-default select-none backdrop-filter"
       style={{
         background: 'linear-gradient(90deg, #7DFFD1 0%, #FFCA7A 100%)',
         transform: 'none',
@@ -103,7 +103,14 @@ const SidebarHeader = ({
         </DropdownItem>
       </>
     );
-  }, [dropdownItemClass, iconClass, onInvitePeople, onSpaceSettings, onPrivacySettings, onNotificationSettings]);
+  }, [
+    dropdownItemClass,
+    iconClass,
+    onInvitePeople,
+    onSpaceSettings,
+    onPrivacySettings,
+    onNotificationSettings,
+  ]);
 
   const dropdownStyles = {
     willChange: 'opacity, transform',
@@ -116,31 +123,33 @@ const SidebarHeader = ({
   }
 
   return (
-    <Dropdown 
+    <Dropdown
       classNames={{
-        base: ['bg-[rgba(34,34,34,0.6)] backdrop-filter backdrop-blur-[20px] p-0 rounded-[10px]'],
-        content: ['bg-transparent p-0 z-[50]']
+        base: [
+          'bg-[rgba(34,34,34,0.6)] backdrop-filter backdrop-blur-[20px] p-0 rounded-[10px]',
+        ],
+        content: ['bg-transparent p-0 z-[50]'],
       }}
       motionProps={{
         variants: {
           enter: {
             opacity: 1,
             scale: 1,
-            transition: { duration: 0.15, ease: "easeOut" }
+            transition: { duration: 0.15, ease: 'easeOut' },
           },
           exit: {
             opacity: 0,
             scale: 0.98,
-            transition: { duration: 0.1, ease: "easeIn" }
-          }
-        }
+            transition: { duration: 0.1, ease: 'easeIn' },
+          },
+        },
       }}
       shouldBlockScroll={false}
       placement="bottom"
     >
       <DropdownTrigger className="transition-none transform-none">
         <div
-          className="w-[259px] h-[55px] relative group cursor-pointer select-none backdrop-filter backdrop-blur-[44px]"
+          className="w-[259px] h-[55px] relative group cursor-pointer select-none backdrop-filter backdrop-blur-[22px]"
           style={{
             background: 'linear-gradient(90deg, #7DFFD1 0%, #FFCA7A 100%)',
             transform: 'none',
@@ -173,11 +182,11 @@ const SidebarHeader = ({
           isAdmin
             ? ['InvitePeople', 'PrivacySettings', 'NotificationSettings']
             : [
-              'InvitePeople',
-              'SpaceSettings',
-              'PrivacySettings',
-              'NotificationSettings',
-            ]
+                'InvitePeople',
+                'SpaceSettings',
+                'PrivacySettings',
+                'NotificationSettings',
+              ]
         }
       >
         {menuItems}
