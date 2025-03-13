@@ -23,7 +23,10 @@ interface MainSubSidebarProps {
   onCloseDrawer?: () => void;
 }
 
-const SpaceSubSidebar = ({ onCloseDrawer, needBlur = false }: MainSubSidebarProps) => {
+const SpaceSubSidebar = ({
+  onCloseDrawer,
+  needBlur = false,
+}: MainSubSidebarProps) => {
   const pathname = usePathname();
   const params = useParams();
   const spaceId = params.spaceid.toString();
@@ -84,10 +87,12 @@ const SpaceSubSidebar = ({ onCloseDrawer, needBlur = false }: MainSubSidebarProp
   );
 
   return (
-    <div className={cn(
-      'w-[260px] h-[calc(100vh-50px)]  border-r border-[rgba(255,255,255,0.1)] flex flex-col relative',
-      needBlur ? 'bg-transparent' : 'bg-[#222222]'
-    )}>
+    <div
+      className={cn(
+        'w-[260px] h-[calc(100vh-50px)]  border-r border-[rgba(255,255,255,0.1)] flex flex-col relative',
+        needBlur ? 'bg-transparent' : 'bg-[#222222]',
+      )}
+    >
       <SidebarHeader
         isAdmin={isAdmin}
         isLoading={isLoading}
@@ -115,15 +120,16 @@ const SpaceSubSidebar = ({ onCloseDrawer, needBlur = false }: MainSubSidebarProp
           height={36}
           onClick={onCloseDrawer}
         />
-        <TabItem
-          label="Manage Events"
-          icon={<TableIcon size={20} />}
-          href={`/spaces/${spaceId}/adminevents`}
-          isActive={isRouteActive('adminevents')}
-          height={36}
-          onClick={onCloseDrawer}
-        />
-
+        {isAdmin && (
+          <TabItem
+            label="Manage Events"
+            icon={<TableIcon size={20} />}
+            href={`/spaces/${spaceId}/adminevents`}
+            isActive={isRouteActive('adminevents')}
+            height={36}
+            onClick={onCloseDrawer}
+          />
+        )}
       </div>
 
       <div className="flex-1 pt-5 px-2.5 overflow-y-auto">
