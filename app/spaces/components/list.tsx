@@ -2,21 +2,19 @@ import {
   Grid,
   InputAdornment,
   OutlinedInput,
-  Skeleton,
   Stack,
-  Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { GearSixIcon, SearchIcon } from '@/components/icons';
+import { SearchIcon } from '@/components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getSpacesQuery } from '@/services/space';
-import { Space, SpaceData } from '@/types';
+import { SpaceData } from '@/types';
 import { SpaceCard, SpaceCardSkeleton } from '@/app/components/SpaceCard';
 import { Broadcast } from '@phosphor-icons/react';
-import { Button } from '@heroui/react';
+import ResponsiveGridItem from '@/app/components/explore/responsiveGridItem';
 
 const SpaceList = () => {
   const theme = useTheme();
@@ -105,68 +103,14 @@ const SpaceList = () => {
       >
         {isLoading
           ? Array.from({ length: 8 }).map((_, index) => (
-              <Grid
-                item
-                xl={3}
-                lg={4}
-                md={6}
-                sm={12}
-                xs={12}
-                gap={20}
-                sx={{
-                  '@media (max-width: 809px)': {
-                    maxWidth: '100% !important',
-                    flexBasis: '100% !important',
-                  },
-                  '@media (min-width: 810px) and (max-width: 1199px)': {
-                    maxWidth: '50% !important',
-                    flexBasis: '50% !important',
-                  },
-                  '@media (min-width: 1200px) and (max-width: 1399px)': {
-                    maxWidth: '33.333% !important',
-                    flexBasis: '33.333% !important',
-                  },
-                  '@media (min-width: 1400px)': {
-                    maxWidth: '25% !important',
-                    flexBasis: '25% !important',
-                  },
-                }}
-                key={index}
-              >
+              <ResponsiveGridItem key={index}>
                 <SpaceCardSkeleton autoWidth={true} key={index} />
-              </Grid>
+              </ResponsiveGridItem>
             ))
-          : filteredSpacesData?.map((item, index) => (
-              <Grid
-                item
-                xl={3}
-                lg={4}
-                md={6}
-                sm={12}
-                xs={12}
-                gap={20}
-                sx={{
-                  '@media (max-width: 809px)': {
-                    maxWidth: '100% !important',
-                    flexBasis: '100% !important',
-                  },
-                  '@media (min-width: 810px) and (max-width: 1199px)': {
-                    maxWidth: '50% !important',
-                    flexBasis: '50% !important',
-                  },
-                  '@media (min-width: 1200px) and (max-width: 1399px)': {
-                    maxWidth: '33.333% !important',
-                    flexBasis: '33.333% !important',
-                  },
-                  '@media (min-width: 1400px)': {
-                    maxWidth: '25% !important',
-                    flexBasis: '25% !important',
-                  },
-                }}
-                key={item.id}
-              >
+          : filteredSpacesData?.map((item) => (
+              <ResponsiveGridItem key={item.id}>
                 <SpaceCard key={item.id} data={item} autoWidth={true} />
-              </Grid>
+              </ResponsiveGridItem>
             ))}
       </Grid>
     </Stack>

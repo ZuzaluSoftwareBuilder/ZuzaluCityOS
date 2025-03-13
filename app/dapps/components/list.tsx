@@ -16,6 +16,7 @@ import Filter from './filter';
 import { useQuery } from '@tanstack/react-query';
 import { Dapp } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
+import ResponsiveGridItem from '@/app/components/explore/responsiveGridItem';
 
 interface ListProps {
   onDetailClick: (data: Dapp) => void;
@@ -195,34 +196,7 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
       >
         {isLoading
           ? Array.from({ length: 4 }).map((_, index) => (
-              <Grid
-                item
-                xl={3}
-                lg={4}
-                md={6}
-                sm={12}
-                xs={12}
-                gap={20}
-                sx={{
-                  '@media (max-width: 809px)': {
-                    maxWidth: '100% !important',
-                    flexBasis: '100% !important',
-                  },
-                  '@media (min-width: 810px) and (max-width: 1199px)': {
-                    maxWidth: '50% !important',
-                    flexBasis: '50% !important',
-                  },
-                  '@media (min-width: 1200px) and (max-width: 1399px)': {
-                    maxWidth: '33.333% !important',
-                    flexBasis: '33.333% !important',
-                  },
-                  '@media (min-width: 1400px)': {
-                    maxWidth: '25% !important',
-                    flexBasis: '25% !important',
-                  },
-                }}
-                key={index}
-              >
+              <ResponsiveGridItem key={index}>
                 <Stack p="10px">
                   <Skeleton
                     variant="rounded"
@@ -254,39 +228,12 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
                   </Stack>
                   <Skeleton variant="rounded" width="100%" height="12px" />
                 </Stack>
-              </Grid>
+              </ResponsiveGridItem>
             ))
           : currentData?.map((data, index) => (
-              <Grid
-                item
-                xl={3}
-                lg={4}
-                md={6}
-                sm={12}
-                xs={12}
-                gap={20}
-                sx={{
-                  '@media (max-width: 809px)': {
-                    maxWidth: '100% !important',
-                    flexBasis: '100% !important',
-                  },
-                  '@media (min-width: 810px) and (max-width: 1199px)': {
-                    maxWidth: '50% !important',
-                    flexBasis: '50% !important',
-                  },
-                  '@media (min-width: 1200px) and (max-width: 1399px)': {
-                    maxWidth: '33.333% !important',
-                    flexBasis: '33.333% !important',
-                  },
-                  '@media (min-width: 1400px)': {
-                    maxWidth: '25% !important',
-                    flexBasis: '25% !important',
-                  },
-                }}
-                key={index}
-              >
+              <ResponsiveGridItem key={index}>
                 <Item data={data} onClick={() => onDetailClick(data)} />
-              </Grid>
+              </ResponsiveGridItem>
             ))}
       </Grid>
     </Stack>
