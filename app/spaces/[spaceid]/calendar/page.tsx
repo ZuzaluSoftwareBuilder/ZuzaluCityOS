@@ -364,7 +364,7 @@ const Calendar = () => {
         setIsMember(true);
       }
     }
-  }, [spaceData]);
+  }, [ceramic?.did?.parent, spaceData]);
 
   useEffect(() => {
     if (currentEvent && !currentEvent.recurring) {

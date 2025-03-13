@@ -65,7 +65,7 @@ const SpaceSubSidebar = ({
         setIsMember(true);
       }
     }
-  }, [spaceData]);
+  }, [ceramic?.did?.parent, spaceData]);
 
   const isRouteActive = useCallback(
     (route: string) => {
