@@ -28,7 +28,7 @@ const EventContent: React.FC = () => {
   const spaceId = params.spaceid.toString();
 
   const { data: spaceData } = useQuery({
-    queryKey: ['getSpaceByID', spaceId],
+    queryKey: ['getSpaceByIDInAdminEvents', spaceId],
     queryFn: () => {
       return composeClient.executeQuery(getSpacesQuery, {
         id: spaceId,
