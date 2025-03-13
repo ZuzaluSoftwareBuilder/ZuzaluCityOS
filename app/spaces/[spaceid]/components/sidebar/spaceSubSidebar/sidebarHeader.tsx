@@ -15,14 +15,12 @@ import {
   ShieldCheckIcon,
   BellAlertIcon,
 } from '@heroicons/react/20/solid';
+import { useRouter } from 'next/navigation';
 
 export interface ISidebarHeaderProps {
   isAdmin?: boolean;
   space?: Space;
-  onInvitePeople?: () => void;
-  onSpaceSettings?: () => void;
-  onPrivacySettings?: () => void;
-  onNotificationSettings?: () => void;
+  onCloseDrawer?: () => void;
   isLoading?: boolean;
 }
 
@@ -49,14 +47,12 @@ export function SidebarHeaderSkeleton() {
 const SidebarHeader = ({
   space,
   isAdmin,
-  onInvitePeople,
-  onSpaceSettings,
-  onPrivacySettings,
-  onNotificationSettings,
+  onCloseDrawer,
   isLoading,
 }: ISidebarHeaderProps) => {
   const dropdownItemClass = `w-[220px] h-[32px] bg-transparent focus:bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.05)] group`;
   const iconClass = `w-5 h-5 text-white opacity-50 group-hover:opacity-100 group-focus:opacity-100`;
+  const router = useRouter();
 
   const menuItems = useMemo(() => {
     return (
@@ -64,7 +60,7 @@ const SidebarHeader = ({
         <DropdownItem
           key="InvitePeople"
           className={dropdownItemClass}
-          onPress={onInvitePeople}
+          onPress={() => {}}
         >
           <Item
             name="Invite People"
@@ -74,7 +70,10 @@ const SidebarHeader = ({
         <DropdownItem
           key="SpaceSettings"
           className={dropdownItemClass}
-          onPress={onSpaceSettings}
+          onPress={() => {
+            router.push(`/spaces/${space?.id}/edit`);
+            if (onCloseDrawer) onCloseDrawer();
+          }}
         >
           <Item
             name="Space Settings"
@@ -84,7 +83,7 @@ const SidebarHeader = ({
         <DropdownItem
           key="PrivacySettings"
           className={dropdownItemClass}
-          onPress={onPrivacySettings}
+          onPress={() => {}}
         >
           <Item
             name="Privacy Settings"
@@ -94,7 +93,7 @@ const SidebarHeader = ({
         <DropdownItem
           key="NotificationSettings"
           className={dropdownItemClass}
-          onPress={onNotificationSettings}
+          onPress={() => {}}
         >
           <Item
             name="Notification Settings"
@@ -103,14 +102,7 @@ const SidebarHeader = ({
         </DropdownItem>
       </>
     );
-  }, [
-    dropdownItemClass,
-    iconClass,
-    onInvitePeople,
-    onSpaceSettings,
-    onPrivacySettings,
-    onNotificationSettings,
-  ]);
+  }, [onCloseDrawer, router, space?.id]);
 
   const dropdownStyles = {
     willChange: 'opacity, transform',

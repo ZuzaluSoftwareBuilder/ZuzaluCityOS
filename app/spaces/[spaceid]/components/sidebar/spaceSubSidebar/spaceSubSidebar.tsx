@@ -1,7 +1,7 @@
 'use client';
 import { useParams, useRouter, usePathname } from 'next/navigation';
 import { getSpaceEventsQuery } from '@/services/space';
-import { Event, Space, SpaceEventData } from '@/types';
+import { Space } from '@/types';
 import { useCallback, useEffect, useState } from 'react';
 import { useCeramicContext } from '@/context/CeramicContext';
 import {
@@ -97,10 +97,7 @@ const SpaceSubSidebar = ({
         isAdmin={isAdmin}
         isLoading={isLoading}
         space={spaceData}
-        onSpaceSettings={() => {
-          router.push(`/spaces/${spaceId}/edit`);
-          if (onCloseDrawer) onCloseDrawer();
-        }}
+        onCloseDrawer={onCloseDrawer}
       />
 
       <div className="flex flex-col p-[10px] gap-[5px] border-t border-b border-[rgba(255,255,255,0.1)]">
