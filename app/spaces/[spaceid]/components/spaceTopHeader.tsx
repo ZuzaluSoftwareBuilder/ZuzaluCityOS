@@ -10,6 +10,7 @@ import {
   DrawerBody,
   Button,
   cn,
+  Skeleton
 } from '@heroui/react';
 import UserProfileSection from '@/components/layout/UserProfileSection';
 import SpaceSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/spaceSubSidebar';
@@ -71,7 +72,7 @@ const SpaceTopHeader: React.FC = () => {
             onPress={() => toggleDrawer(true)}
           >
             {isLoading ? (
-              <div className="w-[30px] h-[30px] rounded-full bg-[rgba(34,34,34,0.8)] animate-pulse"></div>
+              <Skeleton className="w-[30px] h-[30px] rounded-full bg-[rgba(34,34,34,0.8)]"></Skeleton>
             ) : spaceData?.avatar ? (
               <Image
                 src={spaceData.avatar}
