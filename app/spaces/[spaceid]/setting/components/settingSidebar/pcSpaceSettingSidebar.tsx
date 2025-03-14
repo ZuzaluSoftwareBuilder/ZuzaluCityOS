@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { Button } from '@heroui/react';
 import { ArrowLineDown, X } from '@phosphor-icons/react';
-import BackHeader from '@/app/spaces/[spaceid]/edit/components/backHeader';
+import BackHeader from '@/app/spaces/[spaceid]/setting/components/backHeader';
 import { SettingSection, getSettingSections } from './settingsData';
 import SectionGroup from './sectionGroup';
 
@@ -28,8 +28,8 @@ const PcSpaceSettingSidebar: React.FC<SettingSubSidebarProps> = ({
   const params = useParams();
   const spaceId = params.spaceid.toString();
 
-  const [sections, setSections] = useState<SettingSection[]>(() => 
-    getSettingSections(spaceId)
+  const [sections, setSections] = useState<SettingSection[]>(() =>
+    getSettingSections(spaceId),
   );
 
   useEffect(() => {
@@ -46,24 +46,27 @@ const PcSpaceSettingSidebar: React.FC<SettingSubSidebarProps> = ({
     }
   }, [currentPath]);
 
-  const handleItemClick = useCallback((sectionId: string, itemId: string) => {
-    const section = sections.find((s) => s.id === sectionId);
-    const item = section?.items.find((i) => i.id === itemId);
+  const handleItemClick = useCallback(
+    (sectionId: string, itemId: string) => {
+      const section = sections.find((s) => s.id === sectionId);
+      const item = section?.items.find((i) => i.id === itemId);
 
-    if (item && !item.locked && item.path) {
-      router.push(item.path);
+      if (item && !item.locked && item.path) {
+        router.push(item.path);
 
-      setSections((prevSections) =>
-        prevSections.map((section) => ({
-          ...section,
-          items: section.items.map((item) => ({
-            ...item,
-            active: item.id === itemId && section.id === sectionId,
+        setSections((prevSections) =>
+          prevSections.map((section) => ({
+            ...section,
+            items: section.items.map((item) => ({
+              ...item,
+              active: item.id === itemId && section.id === sectionId,
+            })),
           })),
-        })),
-      );
-    }
-  }, [sections, router, setSections]);
+        );
+      }
+    },
+    [sections, router, setSections],
+  );
 
   return (
     <div className="w-[260px] h-[calc(100vh-50px)] tablet:hidden mobile:hidden bg-[#222222] border-r border-[rgba(255,255,255,0.1)] flex flex-col justify-between">
@@ -73,7 +76,7 @@ const PcSpaceSettingSidebar: React.FC<SettingSubSidebarProps> = ({
 
           <div className="flex flex-col gap-[10px]">
             {sections.map((section) => (
-              <SectionGroup 
+              <SectionGroup
                 key={section.id}
                 section={section}
                 onItemClick={handleItemClick}

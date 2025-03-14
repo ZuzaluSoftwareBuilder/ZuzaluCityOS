@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { usePathname, useParams } from 'next/navigation';
 import { CaretUpDown } from '@phosphor-icons/react';
 import PcSpaceSettingSidebar from './components/settingSidebar/pcSpaceSettingSidebar';
@@ -16,14 +16,14 @@ const TITLE_MAP: Record<string, string> = {
   invitations: 'Invitations',
 };
 
-const SpaceEditLayout = ({ children }: { children: React.ReactNode }) => {
+const SettingLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const params = useParams();
   const spaceId = params.spaceid.toString();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const getCurrentTitle = () => {
-    if (pathname === `/spaces/${spaceId}/edit`) {
+  const getCurrentTitle = useMemo(() => {
+    if (pathname === `/spaces/${spaceId}/setting`) {
       return 'Community Overview';
     }
 
@@ -31,7 +31,7 @@ const SpaceEditLayout = ({ children }: { children: React.ReactNode }) => {
     const lastSegment = segments[segments.length - 1];
 
     return TITLE_MAP[lastSegment] || 'Space Settings';
-  };
+  }, [pathname, spaceId]);
 
   return (
     <div className="flex h-[calc(100vh-50px)]">
@@ -47,7 +47,7 @@ const SpaceEditLayout = ({ children }: { children: React.ReactNode }) => {
         {/* PC */}
         <div className="pc:flex tablet:hidden mobile:hidden h-[50px] border-[#2C2C2C] border-b border-[rgba(255,255,255,0.1)] flex items-center px-5 backdrop-blur-[40px] ">
           <h1 className="text-[18px] font-bold text-white shadow-[0px_5px_10px_0px_rgba(0,0,0,0.15)]">
-            {getCurrentTitle()}
+            {getCurrentTitle}
           </h1>
         </div>
 
@@ -60,7 +60,7 @@ const SpaceEditLayout = ({ children }: { children: React.ReactNode }) => {
               onClick={() => setIsMobileMenuOpen(true)}
             >
               <h1 className="text-[16px] font-bold text-white shadow-[0px_5px_10px_0px_rgba(0,0,0,0.15)]">
-                {getCurrentTitle()}
+                {getCurrentTitle}
               </h1>
               <CaretUpDown size={20} weight="light" className="text-white" />
             </div>
@@ -73,4 +73,4 @@ const SpaceEditLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default SpaceEditLayout;
+export default SettingLayout;
