@@ -7,7 +7,7 @@ import {
 import CommonHeader from './CommonHeader';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Event } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useQuery } from '@tanstack/react-query';
@@ -24,15 +24,15 @@ import {
   AccordionItem,
   Accordion,
   DateValue,
-  Select,
   SelectItem,
   Skeleton,
+  Select as HSelect
 } from '@heroui/react';
 import { UPCOMING_EVENTS_QUERY } from '@/graphql/eventQueries';
 import { supabase } from '@/utils/supabase/client';
 import { useMediaQuery } from '@/hooks';
 import { fromAbsolute, getLocalTimeZone, today } from '@internationalized/date';
-import { Calendar, Button } from '@/components/base';
+import { Calendar, Button, Select } from '@/components/base';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -133,6 +133,7 @@ function EventList({ events, isLoading }: EventListProps) {
 export default function UpcomingEventList() {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<DateValue | null>(null);
+
   const { composeClient } = useCeramicContext();
   const { isMobile } = useMediaQuery();
 
@@ -263,7 +264,7 @@ export default function UpcomingEventList() {
                     content: 'py-0 pt-[5px]',
                   }}
                 >
-                  <Select
+                  <HSelect
                     defaultSelectedKeys={['anywhere']}
                     placeholder="Select location"
                     startContent={<MapIcon size={5} />}
@@ -287,7 +288,7 @@ export default function UpcomingEventList() {
                         {location.label}
                       </SelectItem>
                     ))}
-                  </Select>
+                  </HSelect>
                 </AccordionItem>
               </Accordion>
             </div>
@@ -341,24 +342,18 @@ export default function UpcomingEventList() {
             }
             onChange={setSelectedDate}
           />
-          <Select
-            variant="bordered"
-            className="max-w-xs"
-            defaultSelectedKeys={['anywhere']}
-            placeholder="Select location"
-            startContent={<MapIcon size={5} />}
-            classNames={{
-              trigger: 'border-b-w-10',
-            }}
-            onSelectionChange={(keys) => {
-              const selectedKey = Array.from(keys)[0] as string;
-              setSelectedLocation(selectedKey);
-            }}
-          >
-            {locations.map((location) => (
-              <SelectItem key={location.key}>{location.label}</SelectItem>
-            ))}
-          </Select>
+
+          <div className='w-full flex flex-col gap-[10px]'>
+            <Select
+              options={locations}
+              defaultSelectedKey="anywhere"
+              placeholder="Select location"
+              startContent={<MapIcon size={5} />}
+              onSelectionChange={(key) => {
+                setSelectedLocation(key);
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

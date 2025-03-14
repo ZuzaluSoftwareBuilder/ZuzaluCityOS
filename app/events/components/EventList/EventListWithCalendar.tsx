@@ -1,8 +1,7 @@
-import { SmallEventCardSkeleton } from '@/app/components/SmallEventCard';
-import { Button, Calendar } from '@/components/base';
+import { Button, Calendar, Select } from '@/components/base';
 import { fromAbsolute, getLocalTimeZone, today } from '@internationalized/date';
 import { ArrowsCounterClockwiseIcon, MapIcon } from '@/components/icons';
-import { DateValue, Select, SelectItem } from '@heroui/react';
+import { DateValue } from '@heroui/react';
 import React, { useMemo, useState } from 'react';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useQuery } from '@tanstack/react-query';
@@ -13,6 +12,7 @@ import { supabase } from '@/utils/supabase/client';
 import EventList from './EventList';
 import { Ticket } from '@phosphor-icons/react';
 import MobileNav from '@/app/events/components/MobileNav';
+import { AdjustmentsHorizontalIcon } from '@heroicons/react/20/solid'
 
 const EventListWithCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<DateValue | null>(null);
@@ -178,41 +178,31 @@ const EventListWithCalendar = () => {
             }
             onChange={setSelectedDate}
           />
-          <Select
-            variant="bordered"
-            className="max-w-xs"
-            defaultSelectedKeys={['anywhere']}
-            placeholder="Select location"
-            startContent={<MapIcon size={5} />}
-            classNames={{
-              trigger: 'border-b-w-10',
-            }}
-            onSelectionChange={(keys) => {
-              const selectedKey = Array.from(keys)[0] as string;
-              setSelectedLocation(selectedKey);
-            }}
-          >
-            {locations.map((location) => (
-              <SelectItem key={location.key}>{location.label}</SelectItem>
-            ))}
-          </Select>
-          
-          <Select
-            variant="bordered"
-            className="max-w-xs"
-            defaultSelectedKeys={['upcoming']}
-            placeholder="Select time filter"
-            classNames={{
-              trigger: 'border-b-w-10',
-            }}
-            onSelectionChange={(keys) => {
-              const selectedKey = Array.from(keys)[0] as string;
-              setTimeFilter(selectedKey);
-            }}
-          >
-            <SelectItem key="upcoming">Upcoming</SelectItem>
-            <SelectItem key="past">Past</SelectItem>
-          </Select>
+
+          <div className='w-full flex flex-col gap-[10px]'>
+            <Select
+              options={[
+                { key: 'upcoming', label: 'Upcoming' },
+                { key: 'past', label: 'Past' }
+              ]}
+              defaultSelectedKey="upcoming"
+              placeholder="Select time filter"
+              startContent={<AdjustmentsHorizontalIcon className='size-[20px] text-white' />}
+              onSelectionChange={(key) => {
+                setTimeFilter(key);
+              }}
+            />
+
+            <Select
+              options={locations}
+              defaultSelectedKey="anywhere"
+              placeholder="Select location"
+              startContent={<MapIcon size={5} />}
+              onSelectionChange={(key) => {
+                setSelectedLocation(key);
+              }}
+            />
+          </div>
         </div>
       </div>
     </>
