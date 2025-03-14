@@ -2,10 +2,7 @@ import type { Metadata } from 'next';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from 'theme/theme';
-
-import { Header } from 'components/layout';
-import ExploreLayout from '@/components/layout/explore/exploreLayout';
-import { isMobile } from '@/utils';
+import SpaceHomeLayout from '@/app/spaces/components/spaceHomeLayout';
 
 export const metadata: Metadata = {
   title: 'Zuzalu City',
@@ -20,7 +17,7 @@ function SpaceLayout({
   return (
     <AppRouterCacheProvider>
       <ThemeProvider theme={theme}>
-        <ExploreLayout selected={'Spaces'}>{children}</ExploreLayout>
+        <SpaceHomeLayout>{children}</SpaceHomeLayout>
       </ThemeProvider>
     </AppRouterCacheProvider>
   );
