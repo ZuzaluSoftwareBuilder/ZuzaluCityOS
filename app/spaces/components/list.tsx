@@ -14,7 +14,7 @@ import { getSpacesQuery } from '@/services/space';
 import { SpaceData } from '@/types';
 import { SpaceCard, SpaceCardSkeleton } from '@/app/components/SpaceCard';
 import { Broadcast } from '@phosphor-icons/react';
-import ResponsiveGridItem from '@/app/components/explore/responsiveGridItem';
+import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
 
 const SpaceList = () => {
   const theme = useTheme();

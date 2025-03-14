@@ -110,6 +110,7 @@ export default function ExploreHeader({
             background: 'linear-gradient(272deg, #222 2.52%, #2C2C2C 107.14%)',
           },
         },
+        borderBottom: '1px solid rgba(255, 255, 255, 0.10)'
       }}
     >
       <Typography

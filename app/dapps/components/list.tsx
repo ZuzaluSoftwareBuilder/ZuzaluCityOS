@@ -16,7 +16,7 @@ import Filter from './filter';
 import { useQuery } from '@tanstack/react-query';
 import { Dapp } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
-import ResponsiveGridItem from '@/app/components/explore/responsiveGridItem';
+import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
 
 interface ListProps {
   onDetailClick: (data: Dapp) => void;

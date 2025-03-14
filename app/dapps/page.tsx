@@ -52,52 +52,50 @@ export default function DappsPage() {
   }, [openDetail]);
 
   return (
-    <Stack direction="row" sx={{ backgroundColor: '#222222' }}>
-      {!isTablet && <Sidebar selected="dapps" />}
-      <Stack direction="column" flex={1} width="100%">
-        <Header onAdd={toggleForm} />
-        <Nav />
-        <List
-          onDetailClick={handleDetailClick}
-          onOwnedDappsClick={toggleOwnedDapps}
-        />
-        <Drawer open={openForm} onClose={toggleForm} onOpen={toggleForm}>
-          <DappForm handleClose={toggleForm} />
-        </Drawer>
-        <Drawer open={openDetail} onClose={toggleDetail} onOpen={toggleDetail}>
-          <DappDetail handleClose={toggleDetail} data={detailData} />
-        </Drawer>
-        <Drawer
-          open={openOwnedDapps}
-          onClose={toggleOwnedDapps}
-          onOpen={toggleOwnedDapps}
-        >
-          {openOwnedDapps &&
-            (showOwnedDapps ? (
-              <DappDetail
-                handleClose={() => {
-                  setShowOwnedDapps(false);
-                  setDetailData(undefined);
-                }}
-                data={detailData}
-              />
-            ) : showEditDapp ? (
-              <DappForm
-                handleClose={() => {
-                  setShowEditDapp(false);
-                  setDetailData(undefined);
-                }}
-                initialData={detailData}
-              />
-            ) : (
-              <OwnedDappList
-                onViewDapp={(dapp) => handleDetailClick(dapp, true)}
-                onEditDapp={handleEditDapp}
-                handleClose={toggleOwnedDapps}
-              />
-            ))}
-        </Drawer>
-      </Stack>
-    </Stack>
+    <>
+
+      <Header onAdd={toggleForm} />
+      <Nav />
+      <List
+        onDetailClick={handleDetailClick}
+        onOwnedDappsClick={toggleOwnedDapps}
+      />
+      <Drawer open={openForm} onClose={toggleForm} onOpen={toggleForm}>
+        <DappForm handleClose={toggleForm} />
+      </Drawer>
+      <Drawer open={openDetail} onClose={toggleDetail} onOpen={toggleDetail}>
+        <DappDetail handleClose={toggleDetail} data={detailData} />
+      </Drawer>
+      <Drawer
+        open={openOwnedDapps}
+        onClose={toggleOwnedDapps}
+        onOpen={toggleOwnedDapps}
+      >
+        {openOwnedDapps &&
+          (showOwnedDapps ? (
+            <DappDetail
+              handleClose={() => {
+                setShowOwnedDapps(false);
+                setDetailData(undefined);
+              }}
+              data={detailData}
+            />
+          ) : showEditDapp ? (
+            <DappForm
+              handleClose={() => {
+                setShowEditDapp(false);
+                setDetailData(undefined);
+              }}
+              initialData={detailData}
+            />
+          ) : (
+            <OwnedDappList
+              onViewDapp={(dapp) => handleDetailClick(dapp, true)}
+              onEditDapp={handleEditDapp}
+              handleClose={toggleOwnedDapps}
+            />
+          ))}
+      </Drawer>
+    </>
   );
 }
