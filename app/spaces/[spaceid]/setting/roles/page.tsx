@@ -27,14 +27,18 @@ export default function RolesPage() {
     { id: 4, name: 'Follower', members: 0 },
   ];
 
-  const handleMemberMenu = useCallback((key: Key) => {
+  const handleRoleClick = useCallback(() => {
+    console.log('role click');
+  }, []);
+
+  const handleRoleMenu = useCallback((key: Key) => {
     console.log(key);
   }, []);
 
   return (
-    <div className="w-full h-full p-[20px_40px_0] flex flex-col gap-10">
+    <div className="w-full h-full p-[20px_40px_0] flex flex-col gap-10 mobile:p-[20px]">
       <div className="w-full">
-        <div className="w-[560px] box-content p-[20px] mx-auto flex flex-col gap-[40px]">
+        <div className="w-full pc:w-[560px] pc:box-content p-[20px] mx-auto flex flex-col gap-[40px] mobile:p-0">
           <h2 className="text-white text-lg font-semibold leading-[1.2]">
             Fixed Roles
           </h2>
@@ -44,7 +48,7 @@ export default function RolesPage() {
               <span className="flex-1 text-white opacity-60 text-sm font-semibold">
                 Roles
               </span>
-              <span className="flex-1 text-white opacity-60 text-sm font-semibold">
+              <span className="flex-1 text-white opacity-60 text-sm font-semibold mobile:w-[100px] mobile:flex-none">
                 Members
               </span>
             </div>
@@ -53,7 +57,7 @@ export default function RolesPage() {
               {fixedRoles.map((role) => (
                 <div
                   key={role.id}
-                  className="flex items-center w-full border-b border-[rgba(255,255,255,0.1)] pb-[10px]"
+                  className="flex items-center w-full border-b border-[rgba(255,255,255,0.1)] pb-[10px] h-[40px] box-content gap-[5px]"
                 >
                   <div className="flex items-center gap-[5px] flex-1">
                     <IdentificationBadge
@@ -61,12 +65,15 @@ export default function RolesPage() {
                       weight="fill"
                       className="text-white opacity-40"
                     />
-                    <span className="text-white text-base font-medium">
+                    <span className="text-white text-base font-medium mobile:w-[50vw] truncate">
                       {role.name}
                     </span>
                   </div>
 
-                  <div className="flex justify-between flex-1">
+                  <div
+                    className="flex justify-between flex-1 mobile:w-[100px] mobile:flex-none mobile:shrink-0"
+                    onClick={handleRoleClick}
+                  >
                     <div className="flex items-center gap-1.5 w-24">
                       <span className="text-white text-[13px]">
                         {role.members}
@@ -83,13 +90,13 @@ export default function RolesPage() {
                         <Button
                           isIconOnly
                           radius="full"
-                          className="w-10 h-10 bg-[rgba(255,255,255,0.05)]"
+                          className="w-10 h-10 bg-[rgba(255,255,255,0.05)] mobile:hidden"
                           variant="flat"
                         >
                           <DotsThreeVertical size={16} className="text-white" />
                         </Button>
                       </DropdownTrigger>
-                      <DropdownMenu onAction={handleMemberMenu}>
+                      <DropdownMenu onAction={handleRoleMenu}>
                         <DropdownItem key="permissions">
                           View Permissions
                         </DropdownItem>
