@@ -27,7 +27,7 @@ export const getSettingSections = (spaceId: string): SettingSection[] => {
           id: 'Roles',
           label: 'Roles',
           path: `/spaces/${spaceId}/setting/roles`,
-          locked: true,
+          locked: false,
         },
         {
           id: 'AccessManagement',
@@ -80,4 +80,4 @@ export const getSettingSections = (spaceId: string): SettingSection[] => {
       ],
     },
   ];
-}; 
+};
