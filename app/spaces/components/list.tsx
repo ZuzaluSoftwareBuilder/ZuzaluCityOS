@@ -15,6 +15,7 @@ import { SpaceData } from '@/types';
 import { SpaceCard, SpaceCardSkeleton } from '@/app/components/SpaceCard';
 import { Broadcast } from '@phosphor-icons/react';
 import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
+import ExploreSearch from '@/components/layout/explore/exploreSearch';
 
 const SpaceList = () => {
   const theme = useTheme();
@@ -61,34 +62,13 @@ const SpaceList = () => {
       p={isMobile ? '20px 10px' : '20px'}
       gap={isMobile ? '10px' : '20px'}
     >
-      <div className="flex h-[40px] mb-[10px]">
-        <div className="w-[40px] h-[40px] flex justify-center items-center opacity-50">
-          <Broadcast size={24} weight={'fill'} format={'Stroke'} />
-        </div>
-        <OutlinedInput
-          placeholder="Search Spaces"
-          sx={{
-            backgroundColor: 'var(--Inactive-White, rgba(255, 255, 255, 0.05))',
-            p: '12px 14px',
-            borderRadius: '10px',
-            height: '40px',
-            width: '100%',
-            border: '1px solid var(--Hover-White, rgba(255, 255, 255, 0.10))',
-            opacity: 0.7,
-            color: 'white',
-            fontSize: '16px',
-            '& .MuiOutlinedInput-notchedOutline': {
-              border: 'none',
-            },
-          }}
-          onChange={(e) => setSearchVal(e.target.value)}
-          startAdornment={
-            <InputAdornment position="start" sx={{ opacity: 0.6 }}>
-              <SearchIcon />
-            </InputAdornment>
-          }
-        />
-      </div>
+
+      <ExploreSearch
+        value={searchVal}
+        onChange={setSearchVal}
+        placeholder="Search Spaces"
+        className="mb-[10px]"
+      />
 
       <Grid
         container
@@ -103,15 +83,15 @@ const SpaceList = () => {
       >
         {isLoading
           ? Array.from({ length: 8 }).map((_, index) => (
-              <ResponsiveGridItem key={index}>
-                <SpaceCardSkeleton autoWidth={true} key={index} />
-              </ResponsiveGridItem>
-            ))
+            <ResponsiveGridItem key={index}>
+              <SpaceCardSkeleton autoWidth={true} key={index} />
+            </ResponsiveGridItem>
+          ))
           : filteredSpacesData?.map((item) => (
-              <ResponsiveGridItem key={item.id}>
-                <SpaceCard key={item.id} data={item} autoWidth={true} />
-              </ResponsiveGridItem>
-            ))}
+            <ResponsiveGridItem key={item.id}>
+              <SpaceCard key={item.id} data={item} autoWidth={true} />
+            </ResponsiveGridItem>
+          ))}
       </Grid>
     </Stack>
   );
