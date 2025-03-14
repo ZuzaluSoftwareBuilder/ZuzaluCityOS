@@ -57,7 +57,8 @@ export default function RolesPage() {
               {fixedRoles.map((role) => (
                 <div
                   key={role.id}
-                  className="flex items-center w-full border-b border-[rgba(255,255,255,0.1)] pb-[10px] h-[40px] box-content gap-[5px]"
+                  className="flex items-center w-full border-b border-[rgba(255,255,255,0.1)] pb-[10px] h-[40px] box-content gap-[5px] cursor-pointer"
+                  onClick={handleRoleClick}
                 >
                   <div className="flex items-center gap-[5px] flex-1">
                     <IdentificationBadge
@@ -70,10 +71,7 @@ export default function RolesPage() {
                     </span>
                   </div>
 
-                  <div
-                    className="flex justify-between flex-1 mobile:w-[100px] mobile:flex-none mobile:shrink-0"
-                    onClick={handleRoleClick}
-                  >
+                  <div className="flex justify-between flex-1 mobile:w-[100px] mobile:flex-none mobile:shrink-0">
                     <div className="flex items-center gap-1.5 w-24">
                       <span className="text-white text-[13px]">
                         {role.members}
