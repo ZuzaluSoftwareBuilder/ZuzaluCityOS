@@ -12,14 +12,11 @@ import {
   TextField,
 } from '@mui/material';
 import { ZuInput, ZuButton } from '@/components/core';
-import { Uploader3 } from '@lxdao/uploader3';
-import { PreviewFile } from '@/components';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { Space } from '@/types';
-import { useUploaderPreview } from '@/components/PreviewFile/useUploaderPreview';
 import { useEditorStore } from '@/components/editor/useEditorStore';
 import SaveAsRoundedIcon from '@mui/icons-material/SaveAsRounded';
-import { createUrl, createUrlWhenEdit } from '@/services/url';
+import { createUrlWhenEdit } from '@/services/url';
 import { covertNameToUrlName } from '@/utils/format';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -32,7 +29,6 @@ const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
 });
 
 const Overview = () => {
-  const theme = useTheme();
   const params = useParams();
   const { composeClient } = useCeramicContext();
 
