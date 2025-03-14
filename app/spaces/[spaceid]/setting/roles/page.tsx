@@ -32,7 +32,7 @@ export default function RolesPage() {
   }, []);
 
   return (
-    <div className="w-full h-[calc(100vh-50px)] p-[20px_40px_0] flex flex-col gap-10">
+    <div className="w-full h-full p-[20px_40px_0] flex flex-col gap-10">
       <div className="w-full">
         <div className="w-[560px] box-content p-[20px] mx-auto flex flex-col gap-[40px]">
           <h2 className="text-white text-lg font-semibold leading-[1.2]">
