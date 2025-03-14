@@ -129,7 +129,7 @@ const EventListWithCalendar = () => {
       {/* desktop navigation - hidden on mobile */}
       <div className="mobile:hidden flex items-center gap-[10px] bg-[rgba(34,34,34,0.90)] backdrop-blur-[10px] py-[10px] ">
         <Ticket size={24} weight="fill" format='Stroke' />
-        <p className="text-[25px] font-bold text-white leading-[30px] shadow-[0px_5px_10px_rgba(0,0,0,0.15)]">
+        <p className="text-[25px] tablet:text-[20px] font-bold text-white leading-[1.2] shadow-[0px_5px_10px_rgba(0,0,0,0.15)]">
           Events
         </p>
       </div>
