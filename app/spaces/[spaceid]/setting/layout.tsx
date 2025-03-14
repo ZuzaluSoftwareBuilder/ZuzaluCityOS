@@ -5,16 +5,7 @@ import { CaretUpDown } from '@phosphor-icons/react';
 import PcSpaceSettingSidebar from './components/settingSidebar/pcSpaceSettingSidebar';
 import MobileSpaceSettingSidebar from './components/settingSidebar/mobileSpaceSettingSidebar';
 import BackHeader from './components/backHeader';
-
-const TITLE_MAP: Record<string, string> = {
-  overview: 'Community Overview',
-  access: 'Access Management',
-  event: 'Event',
-  'explore-apps': 'Explore Apps',
-  'manage-apps': 'Manage Apps',
-  'member-list': 'Member List',
-  invitations: 'Invitations',
-};
+import { getSettingSections } from './components/settingSidebar/settingsData';
 
 const SettingLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -23,14 +14,17 @@ const SettingLayout = ({ children }: { children: React.ReactNode }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const getCurrentTitle = useMemo(() => {
-    if (pathname === `/spaces/${spaceId}/setting`) {
-      return 'Community Overview';
+    const settingSections = getSettingSections(spaceId);
+
+    for (const section of settingSections) {
+      for (const item of section.items) {
+        if (item.path === pathname) {
+          return item.label;
+        }
+      }
     }
 
-    const segments = pathname.split('/');
-    const lastSegment = segments[segments.length - 1];
-
-    return TITLE_MAP[lastSegment] || 'Space Settings';
+    return 'Space Settings';
   }, [pathname, spaceId]);
 
   return (
