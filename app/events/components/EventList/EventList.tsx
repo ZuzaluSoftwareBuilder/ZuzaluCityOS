@@ -1,9 +1,9 @@
 import { Event } from '@/types';
 import { useMemo } from 'react';
-import { EventCardSkeleton, groupEventsByMonth } from '@/components/cards/EventCard';
 import dayjs from 'dayjs';
 import { Skeleton } from '@heroui/react';
-import { EventCard } from '@/app/components/EventCard';
+import { EventCard, EventCardSkeleton } from './EventCard';
+import { groupEventsByMonth } from '@/components/cards/EventCard';
 
 export interface EventListProps {
   events: Event[];
@@ -59,7 +59,7 @@ function EventList({ events, isLoading }: EventListProps) {
   }, [events]);
 
   return (
-    <div className="flex flex-col gap-[10px] px-[20px] pb-[20px] pc:pr-0">
+    <div className="flex-1 flex flex-col gap-[10px] pb-[20px] pc:pr-0">
       {isLoading ? (
         <div className="flex flex-col gap-[20px] w-full">
           <Skeleton className="w-full h-[40px] rounded-[40px]">
@@ -75,11 +75,11 @@ function EventList({ events, isLoading }: EventListProps) {
         </div>
       ) : (
         <>
-          <div className="flex flex-col gap-[20px]">
+          <div className="flex flex-col gap-[10px]">
             {Object.entries(eventsData['upcoming']).map(
               ([month, eventsList]) => {
                 return (
-                  <div key={month} className="flex flex-col gap-[20px]">
+                  <div key={month} className="flex flex-col gap-[10px]">
                     <div className="py-[8px] px-[14px] text-[18px] leading-[1.2] font-[500] text-center rounded-[40px] border border-b-w-10 backdrop-blur-[10px] bg-[rgba(34,34,34,0.8)] sticky top-[60px] z-[1000]">
                       {month}
                     </div>

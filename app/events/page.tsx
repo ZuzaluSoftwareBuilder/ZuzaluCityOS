@@ -79,7 +79,6 @@ const EventPage = () => {
         direction="column"
         flex={1}
         p={isMobile ? '20px 10px' : '20px'}
-        gap={isMobile ? '10px' : '20px'}
       >
         <ExploreSearch
           value={searchVal}

@@ -12,10 +12,12 @@ import { Event } from '@/types';
 import { supabase } from '@/utils/supabase/client';
 import EventList from './EventList';
 import { Ticket } from '@phosphor-icons/react';
+import MobileNav from '@/app/events/components/MobileNav';
 
 const EventListWithCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<DateValue | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<string>('anywhere');
+  const [timeFilter, setTimeFilter] = useState<string>('upcoming');
 
   const { composeClient } = useCeramicContext();
 
@@ -96,9 +98,15 @@ const EventListWithCalendar = () => {
           event.location.toLowerCase().replace(/\s+/g, '-') ===
             selectedLocation);
 
-      return dateMatches && locationMatches;
+      const now = dayjs();
+      const eventTime = dayjs(event.startTime);
+      const timeMatches = 
+        (timeFilter === 'upcoming' && eventTime.isAfter(now)) ||
+        (timeFilter === 'past' && eventTime.isBefore(now));
+
+      return dateMatches && locationMatches && timeMatches;
     });
-  }, [upcomingEvents, selectedDate, selectedLocation]);
+  }, [upcomingEvents, selectedDate, selectedLocation, timeFilter]);
 
   let isDateUnavailable = (date: any) => {
     return (
@@ -118,30 +126,33 @@ const EventListWithCalendar = () => {
 
   return (
     <>
-      <div className="flex items-center gap-[10px] bg-[rgba(34,34,34,0.90)] backdrop-blur-[10px] py-[10px] px-[20px]">
-        <Ticket size={20} weight="fill" format="Stroke" />
+      {/* desktop navigation - hidden on mobile */}
+      <div className="mobile:hidden flex items-center gap-[10px] bg-[rgba(34,34,34,0.90)] backdrop-blur-[10px] py-[10px] ">
+        <Ticket size={24} weight="fill" format='Stroke' />
         <p className="text-[25px] font-bold text-white leading-[30px] shadow-[0px_5px_10px_rgba(0,0,0,0.15)]">
           Events
         </p>
-        <div className="pc:hidden tablet:hidden">
-
-        </div>
       </div>
 
-      <div className="flex justify-start items-start">
-        <div className="flex-1">
-          {isLoading ? (
-            <div className="flex gap-[20px] overflow-auto px-[20px]">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <SmallEventCardSkeleton key={index} />
-              ))}
-            </div>
-          ) : (
-            <EventList events={filteredEvents} isLoading={isLoading} />
-          )}
-        </div>
+      {/* mobile navigation - only visible on mobile */}
+      <div className="hidden mobile:block">
+        <MobileNav 
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          selectedLocation={selectedLocation}
+          setSelectedLocation={setSelectedLocation}
+          locations={locations}
+          upcomingEvents={upcomingEvents || []}
+          timeFilter={timeFilter}
+          setTimeFilter={setTimeFilter}
+        />
+      </div>
 
-        <div className="w-[360px] px-[20px] flex flex-col gap-[20px] mobile:hidden">
+      <div className="flex justify-start items-start gap-[20px] mt-[10px]">
+        
+        <EventList events={filteredEvents} isLoading={isLoading} />
+
+        <div className="mobile:hidden w-[320px] px-[20px] flex flex-col gap-[20px] ">
           <p className="py-[20px] px-[10px] text-[18px] font-[700] leading-[1.2] border-b border-b-w-10">
             Sort & Filter Events
           </p>
@@ -184,6 +195,23 @@ const EventListWithCalendar = () => {
             {locations.map((location) => (
               <SelectItem key={location.key}>{location.label}</SelectItem>
             ))}
+          </Select>
+          
+          <Select
+            variant="bordered"
+            className="max-w-xs"
+            defaultSelectedKeys={['upcoming']}
+            placeholder="Select time filter"
+            classNames={{
+              trigger: 'border-b-w-10',
+            }}
+            onSelectionChange={(keys) => {
+              const selectedKey = Array.from(keys)[0] as string;
+              setTimeFilter(selectedKey);
+            }}
+          >
+            <SelectItem key="upcoming">Upcoming</SelectItem>
+            <SelectItem key="past">Past</SelectItem>
           </Select>
         </div>
       </div>
