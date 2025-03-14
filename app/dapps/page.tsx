@@ -1,18 +1,26 @@
 'use client';
 
-import { Sidebar } from 'components/layout';
 import { useTheme } from '@mui/material/styles';
 import { Stack, useMediaQuery } from '@mui/material';
-import { Header, List, Nav, DappDetail } from './components';
-import { useCallback, useEffect, useState } from 'react';
+import { List, DappDetail } from './components';
+import React, { useCallback, useEffect, useState } from 'react';
 import Drawer from '@/components/drawer';
 import DappForm from '@/components/form/DappForm';
 import { Dapp } from '@/types';
 import OwnedDappList from './components/ownedDappList';
+import ExploreHeader from '@/components/layout/explore/exploreHeader';
+import { Shapes, } from '@phosphor-icons/react';
+import { CubeIcon, DIcon, GlobalIcon } from '@/components/icons';
+import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
+
+const NavItems: INavItem[] = [
+  { label: 'Explore Apps', icon: <GlobalIcon /> },
+  { label: 'Ecosystem Projects', icon: <CubeIcon />, isComingSoon: true },
+];
 
 export default function DappsPage() {
   const theme = useTheme();
-  const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [openForm, setOpenForm] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
   const [openOwnedDapps, setOpenOwnedDapps] = useState(false);
@@ -51,11 +59,28 @@ export default function DappsPage() {
     }
   }, [openDetail]);
 
+  const handleNavChange = useCallback((item: INavItem, index: number) => {
+    // for session
+    // console.log('handleNavChange', item, index);
+  }, []);
+
   return (
     <>
+      <ExploreHeader
+        icon={
+          <Shapes size={isMobile ? 60 : 80} weight="duotone" format="Stroke" />
+        }
+        bgImage={'/dapps/header.png'}
+        title={'Apps'}
+        titlePrefixIcon={<DIcon />}
+        subTitle={'Zuzalu tools for Communities, Events & More'}
+        versionLabel={'dApps v0.1'}
+        addButtonText={'List Your App'}
+        onAdd={toggleForm}
+      />
 
-      <Header onAdd={toggleForm} />
-      <Nav />
+      <ExploreNav navItems={NavItems} onNavChange={handleNavChange} />
+
       <List
         onDetailClick={handleDetailClick}
         onOwnedDappsClick={toggleOwnedDapps}

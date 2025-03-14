@@ -27,7 +27,7 @@ const ExploreSearch: React.FC<IExploreSearchProps> = ({
         value={value}
         placeholder={placeholder}
         sx={{
-          backgroundColor: 'var(--Inactive-White, rgba(255, 255, 255, 0.05))',
+          background: 'transparent',
           p: '12px 14px',
           borderRadius: '10px',
           height: '40px',

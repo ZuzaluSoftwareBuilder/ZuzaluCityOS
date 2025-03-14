@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 
 const NavButton = styled(Button)(
   ({ isDisabled }: { isDisabled?: boolean }) => ({
+    height: '45px',
     color: '#fff',
     padding: '14px',
     minWidth: 'auto',

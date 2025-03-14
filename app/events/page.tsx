@@ -57,7 +57,6 @@ const EventPage = () => {
         title={'Events'}
         subTitle={'Subtitle'}
         versionLabel={'AppName v0.0.5'}
-        addButtonIcon={<Plus size={20} weight={'fill'} format={'Stroke'} />}
         addButtonText={'Create Event'}
         onAdd={createButtonHandler}
       />

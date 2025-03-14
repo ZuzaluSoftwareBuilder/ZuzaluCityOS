@@ -60,7 +60,6 @@ const SpacePage = () => {
         title={'Communities'}
         subTitle={'Zuzalu tools for communities, events and more'}
         versionLabel={'Communities v0.5.0'}
-        addButtonIcon={<Plus size={20} weight={'fill'} format={'Stroke'} />}
         addButtonText={'Create a Space'}
         onAdd={createButtonHandler}
       />

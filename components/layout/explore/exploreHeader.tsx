@@ -2,9 +2,9 @@ import { Stack, Typography, useTheme, useMediaQuery } from '@mui/material';
 import { HourglassHighIcon } from '@/components/icons';
 import { ZuButton } from '@/components/core';
 import Image from 'next/image';
-import { useQuery } from '@tanstack/react-query';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
+import { Plus } from '@phosphor-icons/react';
 
 export interface IAddButtonProps {
   isMobile: boolean;
@@ -27,6 +27,7 @@ export const AddButton = ({
     <ZuButton
       sx={{
         border: '1px solid rgba(255, 255, 255, 0.10)',
+        height: '40px',
         backgroundColor: '#222',
         p: '8px 14px',
         fontSize: '16px',
@@ -69,7 +70,7 @@ export interface IExploreHeaderProps {
   onAdd: () => void;
   bgImage?: string;
   addButtonText: string;
-  addButtonIcon: React.ReactNode;
+  addButtonIcon?: React.ReactNode;
   titlePrefixIcon?: React.ReactNode;
 }
 
@@ -87,6 +88,8 @@ export default function ExploreHeader({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { isAuthenticated, showAuthPrompt } = useCeramicContext();
+
+  const defaultAddButtonIcon = <Plus size={20} weight={'fill'} format={'Stroke'} />
 
   const handleClick = useCallback(() => {
     if (!isAuthenticated) {
@@ -183,7 +186,7 @@ export default function ExploreHeader({
               isDisabled={false}
               isAuthenticated={isAuthenticated}
               onClick={handleClick}
-              icon={addButtonIcon}
+              icon={addButtonIcon ?? defaultAddButtonIcon}
               btnText={addButtonText}
             />
           )}
@@ -195,7 +198,7 @@ export default function ExploreHeader({
           isDisabled={false}
           isAuthenticated={isAuthenticated}
           onClick={handleClick}
-          icon={addButtonIcon}
+          icon={addButtonIcon ?? defaultAddButtonIcon}
           btnText={addButtonText}
         />
       )}
