@@ -304,7 +304,7 @@ export default function UpcomingEventList() {
         }
       />
       <div className="flex flex-row gap-[20px]">
-        <div className="flex-1">
+        <div className="flex-1 w-full">
           {isLoading ? (
             <div className="flex gap-[20px] overflow-auto px-[20px]">
               {Array.from({ length: 6 }).map((_, index) => (

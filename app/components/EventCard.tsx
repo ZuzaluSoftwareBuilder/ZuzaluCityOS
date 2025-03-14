@@ -61,11 +61,11 @@ export function EventCard({ data }: EventCardProps) {
           'https://framerusercontent.com/images/UkqE1HWpcAnCDpQzQYeFjpCWhRM.png'
         }
         classNames={{
-          base: 'w-[140px] h-[140px] flex-0 rounded-[10px] border-1 border-b-w-10 mobile:w-[80px] mobile:h-[80px]',
+          base: 'w-[140px] h-[140px] flex-0 rounded-[10px] border-1 border-b-w-10 mobile:w-[80px] mobile:h-[80px] shrink-0',
         }}
       />
       <div className="flex flex-col gap-[10px]">
-        <div className="flex gap-[10px] items-center h-[30px]">
+        <div className="flex gap-[10px] items-center h-[30px] mobile:flex-col mobile:gap-[6px] mobile:items-start mobile:h-auto">
           <div className="flex gap-[6px] items-center">
             <span className="text-[10px] leading-[1.2] opacity-60">By:</span>
             <Avatar
@@ -81,7 +81,7 @@ export function EventCard({ data }: EventCardProps) {
               {space?.name}
             </span>
           </div>
-          <span className="text-[16px] leading-[1.6] opacity-60 whitespace-nowrap">
+          <span className="text-[16px] leading-[1.6] opacity-60 whitespace-nowrap mobile:text-[14px]">
             {dayjs(startTime).utc().format('MMMM D')} -{' '}
             {dayjs(endTime).utc().format('MMMM D')}
           </span>
