@@ -1,22 +1,16 @@
 'use client';
 
-import { Stack, useMediaQuery, useTheme } from '@mui/material';
+import { useMediaQuery, useTheme, Stack } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { Sidebar } from '@/components/layout';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import ExploreHeader from '@/components/layout/explore/exploreHeader';
-import {
-  Buildings,
-  CalendarDots,
-  Globe,
-  Plus,
-  Ticket,
-} from '@phosphor-icons/react';
+import { CalendarDots, Globe, Plus, Ticket } from '@phosphor-icons/react';
 import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
-import { useRouter } from 'next/navigation';
 import { useCeramicContext } from '@/context/CeramicContext';
-import EventList from '@/app/events/components/eventList';
+import ExploreSearch from '@/components/layout/explore/exploreSearch';
+import EventListWithCalendar from '@/app/events/components/EventList/EventListWithCalendar';
+import Dialog from '@/app/spaces/components/Modal/Dialog';
 
 const NavItems: INavItem[] = [
   {
@@ -34,8 +28,9 @@ const EventPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const [showModal, setShowModal] = React.useState(false);
-  const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
+  const [searchVal, setSearchVal] = useState<string>('');
+
   const { isAuthenticated, showAuthPrompt } = useCeramicContext();
 
   const createButtonHandler = useCallback(() => {
@@ -67,9 +62,35 @@ const EventPage = () => {
         onAdd={createButtonHandler}
       />
 
+      <Dialog
+        title="Warning"
+        message="Login to Create Event"
+        showModal={showModal}
+        onClose={() => setShowModal(false)}
+        onConfirm={() => {
+          showAuthPrompt();
+          setShowModal(false);
+        }}
+      />
+
       <ExploreNav navItems={NavItems} onNavChange={handleNavChange} />
 
-      <EventList />
+      <Stack
+        direction="column"
+        flex={1}
+        p={isMobile ? '20px 10px' : '20px'}
+        gap={isMobile ? '10px' : '20px'}
+      >
+        <ExploreSearch
+          value={searchVal}
+          onChange={setSearchVal}
+          placeholder="Search Spaces"
+          className="mb-[10px]"
+        />
+
+        <EventListWithCalendar />
+
+      </Stack>
     </LocalizationProvider>
   );
 };
