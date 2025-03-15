@@ -92,7 +92,7 @@ export const Permission = ({
   };
 
   return (
-    <div className="flex flex-col gap-5 w-full">
+    <div className="flex flex-col gap-5 w-full mt-5">
       <span className="text-white/60 font-semibold text-sm leading-[1.2em] w-full">
         General Space Permissions
       </span>

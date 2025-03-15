@@ -6,7 +6,7 @@ interface DisplayProps {
 
 export default function Display({ roleName }: DisplayProps) {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 mt-5">
       <div className="flex flex-col gap-2">
         <label className="text-white text-[16px] font-medium">Role Name</label>
         <Input
