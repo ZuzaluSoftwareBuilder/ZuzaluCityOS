@@ -9,6 +9,7 @@ import {
   IdentificationBadge,
 } from '@phosphor-icons/react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import Display from './display';
 
 interface RoleType {
   id: number;
@@ -19,10 +20,9 @@ export default function RoleDetail() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const [selectedTab, setSelectedTab] = useState('display');
-  const [roleName, setRoleName] = useState('RoleOne');
-
   const currentRole = searchParams.get('role') || 'Owner';
+  const currentTab = searchParams.get('tab') || 'display';
+  const [roleName, setRoleName] = useState('RoleOne');
 
   const fixedRoles: RoleType[] = [
     { id: 1, name: 'Owner' },
@@ -34,9 +34,14 @@ export default function RoleDetail() {
     router.push(pathname);
   }, [router, pathname]);
 
-  const handleTabChange = useCallback((key: React.Key) => {
-    setSelectedTab(key.toString());
-  }, []);
+  const handleTabChange = useCallback(
+    (key: React.Key) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('tab', key.toString());
+      router.push(`${pathname}?${params.toString()}`);
+    },
+    [router, pathname, searchParams],
+  );
 
   const handleRoleSelect = useCallback(
     (roleName: string) => {
@@ -110,7 +115,7 @@ export default function RoleDetail() {
               <div className="border-b border-[rgba(255,255,255,0.1)]">
                 <Tabs
                   variant="underlined"
-                  selectedKey={selectedTab}
+                  selectedKey={currentTab}
                   onSelectionChange={handleTabChange}
                   classNames={{
                     tabList: 'gap-0 w-full p-0',
@@ -138,19 +143,7 @@ export default function RoleDetail() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-5">
-              <div className="flex flex-col gap-2">
-                <label className="text-white text-[16px] font-medium">
-                  Role Name
-                </label>
-                <Input
-                  className="bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.1)] rounded-lg"
-                  value={roleName}
-                  onChange={(e) => setRoleName(e.target.value)}
-                  isDisabled
-                />
-              </div>
-            </div>
+            {currentTab === 'display' && <Display roleName={roleName} />}
           </div>
         </div>
       </div>
