@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Tabs, Tab, Input, cn } from '@heroui/react';
 import {
   CaretLeft,
@@ -30,23 +30,23 @@ export default function RoleDetail() {
     { id: 3, name: 'Member' },
   ];
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     router.push(pathname);
-  };
+  }, [router, pathname]);
 
-  const handleTabChange = (key: React.Key) => {
+  const handleTabChange = useCallback((key: React.Key) => {
     setSelectedTab(key.toString());
-  };
+  }, []);
 
-  // 处理角色选择，更新 URL
-  const handleRoleSelect = (roleName: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('role', roleName);
-    console.log(params.toString());
-    router.push(`${pathname}?${params.toString()}`);
-  };
+  const handleRoleSelect = useCallback(
+    (roleName: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('role', roleName);
+      router.push(`${pathname}?${params.toString()}`);
+    },
+    [router, pathname, searchParams],
+  );
 
-  // 根据当前选中的角色设置角色名称
   useEffect(() => {
     setRoleName(currentRole);
   }, [currentRole]);
@@ -94,9 +94,9 @@ export default function RoleDetail() {
                   <h2 className="text-white text-[18px] font-semibold">
                     Edit Fixed Role:
                   </h2>
-                  <div className="flex items-center gap-[5px] bg-[rgba(255,255,255,0.05)] px-2 py-1 rounded">
+                  <div className="flex items-center gap-[5px] rounded">
                     <IdentificationBadge
-                      size={20}
+                      size={24}
                       weight="fill"
                       className="text-white opacity-40"
                     />
@@ -109,28 +109,28 @@ export default function RoleDetail() {
 
               <div className="border-b border-[rgba(255,255,255,0.1)]">
                 <Tabs
+                  variant="underlined"
                   selectedKey={selectedTab}
                   onSelectionChange={handleTabChange}
                   classNames={{
-                    tabList: 'gap-0 w-full',
-                    cursor: 'bg-white',
-                    tab: 'px-5 py-2.5 text-[16px] font-semibold text-white',
+                    tabList: 'gap-0 w-full p-0',
+                    tab: 'p-[10px] text-[16px] font-semibold text-white',
+                    cursor: 'w-full',
                   }}
                 >
                   <Tab key="display" title="Display" />
-                  <Tab
-                    key="permissions"
-                    title={<span className="opacity-60">Permissions</span>}
-                  />
-                  <Tab
-                    key="members"
-                    title={<span className="opacity-60">Members</span>}
-                  />
+                  <Tab key="permissions" title="Permissions" />
+                  <Tab key="members" title="Members" />
                 </Tabs>
               </div>
 
               <div className="flex items-center gap-2.5 bg-[rgba(255,156,102,0.1)] border border-[rgba(255,156,102,0.1)] rounded-lg p-2.5">
-                <Info size={20} className="text-[#FF9C66]" weight="fill" />
+                <Info
+                  size={20}
+                  className="text-[#FF9C66]"
+                  weight="light"
+                  format="stroke"
+                />
                 <span className="text-[#FF9C66] text-[14px]">
                   Fixed roles cannot be configured as they are hard-coded into
                   the structure

@@ -39,8 +39,8 @@ const SettingLayout = ({ children }: { children: React.ReactNode }) => {
 
       <div className="flex-1 flex flex-col">
         {/* PC */}
-        <div className="pc:flex tablet:hidden mobile:hidden h-[40px] border-[#2C2C2C] border-b border-[rgba(255,255,255,0.1)] flex items-center px-5 backdrop-blur-[20px] bg-[#2c2c2c]">
-          <h1 className="text-[18px] font-bold text-white shadow-[0px_5px_10px_0px_rgba(0,0,0,0.15)]">
+        <div className="pc:flex tablet:hidden mobile:hidden h-[50px] border-[#2C2C2C] border-b border-[rgba(255,255,255,0.1)] flex items-center px-5 backdrop-blur-[20px] bg-[#2c2c2c]">
+          <h1 className="text-[18px] font-bold text-white">
             {getCurrentTitle}
           </h1>
         </div>
