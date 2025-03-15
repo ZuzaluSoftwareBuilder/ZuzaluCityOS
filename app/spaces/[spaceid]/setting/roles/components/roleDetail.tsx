@@ -11,6 +11,7 @@ import {
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import Display from './display';
 import Permission from './permission';
+import MemberManagement from './members';
 
 interface RoleType {
   id: number;
@@ -93,7 +94,7 @@ export default function RoleDetail() {
         </div>
 
         <div className="flex flex-col gap-[30px] w-[600px] p-5">
-          <div className="w-full flex flex-col gap-10">
+          <div className="w-full flex flex-col gap-5">
             <div className="flex flex-col gap-5">
               <div className="flex justify-between items-center w-full">
                 <div className="flex items-center gap-5">
@@ -129,23 +130,24 @@ export default function RoleDetail() {
                   <Tab key="members" title="Members" />
                 </Tabs>
               </div>
-
-              <div className="flex items-center gap-2.5 bg-[rgba(255,156,102,0.1)] border border-[rgba(255,156,102,0.1)] rounded-lg p-2.5">
-                <Info
-                  size={20}
-                  className="text-[#FF9C66]"
-                  weight="light"
-                  format="stroke"
-                />
-                <span className="text-[#FF9C66] text-[14px]">
-                  Fixed roles cannot be configured as they are hard-coded into
-                  the structure
-                </span>
-              </div>
+              {currentTab !== 'members' && (
+                <div className="flex items-center gap-2.5 bg-[rgba(255,156,102,0.1)] border border-[rgba(255,156,102,0.1)] rounded-lg p-2.5">
+                  <Info
+                    size={20}
+                    className="text-[#FF9C66]"
+                    weight="light"
+                    format="stroke"
+                  />
+                  <span className="text-[#FF9C66] text-[14px]">
+                    Fixed roles cannot be configured as they are hard-coded into
+                    the structure
+                  </span>
+                </div>
+              )}
             </div>
-
             {currentTab === 'display' && <Display roleName={roleName} />}
             {currentTab === 'permissions' && <Permission />}
+            {currentTab === 'members' && <MemberManagement />}
           </div>
         </div>
       </div>
