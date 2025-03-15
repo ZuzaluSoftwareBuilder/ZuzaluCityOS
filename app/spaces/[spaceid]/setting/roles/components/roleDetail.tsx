@@ -10,6 +10,7 @@ import {
 } from '@phosphor-icons/react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import Display from './display';
+import Permission from './permission';
 
 interface RoleType {
   id: number;
@@ -144,6 +145,7 @@ export default function RoleDetail() {
             </div>
 
             {currentTab === 'display' && <Display roleName={roleName} />}
+            {currentTab === 'permissions' && <Permission />}
           </div>
         </div>
       </div>
