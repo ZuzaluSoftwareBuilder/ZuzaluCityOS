@@ -23,7 +23,8 @@ export async function GET(request: NextRequest) {
         *,
         role(
           id,
-          name
+          name,
+          level
         )
       `,
       )
