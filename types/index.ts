@@ -615,10 +615,23 @@ export interface Permission {
   resource: string;
 }
 
+export enum PermissionName {
+  MANAGE_ADMIN_ROLE = 'manage_admin_role',
+  MANAGE_MEMBER_ROLE = 'manage_member_role',
+  CREATE_EVENTS = 'create_events',
+  MANAGE_PROFILE = 'manage_profile',
+  VIEW_EVENTS = 'view_events',
+  INVITE_USERS = 'invite_users',
+  VIEW_LOGS = 'view_logs',
+  VIEW_ANALYTICS = 'view_analytics',
+  MANAGE_APPS = 'manage_apps',
+  VIEW_APPS = 'view_apps',
+}
+
 export interface Role {
   id: string;
   name: string;
-  level: number;
+  level: string;
 }
 
 export interface RolePermission {
