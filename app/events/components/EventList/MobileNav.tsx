@@ -100,6 +100,38 @@ const MobileNav: React.FC<MobileNavProps> = ({
     setIsLocationDropdownOpen(false);
   };
 
+  const dropdownClassNames = { content: ['bg-transparent', 'shadow-none'] };
+  const dropdownMotionProp = {
+    variants: {
+      enter: {
+        opacity: 1,
+        scale: 1,
+        transition: { duration: 0.15, ease: 'easeOut' },
+      },
+      exit: {
+        opacity: 0,
+        scale: 0.98,
+        transition: { duration: 0.1, ease: 'easeIn' },
+      },
+    },
+  };
+  const OptimizedDropdownStyles = {
+    willChange: 'opacity, transform',
+    transform: 'translateZ(0)',
+    backfaceVisibility: 'hidden' as const,
+  };
+  const dropdownMenuClassNames = {
+    base: [
+      'p-[10px] min-w-[202px]',
+      'bg-[rgba(34,34,34,0.8)] backdrop-blur-[12px]',
+      'border-2 border-[rgba(255,255,255,0.1)]',
+      'rounded-[10px]',
+    ],
+    list: ['gap-[4px]'],
+  };
+  const dropdownItemBaseClassName =
+    'px-[10px] rounded-[8px] text-white text-[13px] leading-[1.2] font-[500]';
+
   const filterButtonBaseStyle =
     'flex items-center min-w-[auto] h-[32px] gap-[5px] px-[10px] rounded-[5px] bg-[#363636] active:bg-[#4A4A4A] hover:bg-[#4A4A4A]';
 
@@ -139,6 +171,9 @@ const MobileNav: React.FC<MobileNavProps> = ({
             <Dropdown
               isOpen={isLocationDropdownOpen}
               onOpenChange={(open) => setIsLocationDropdownOpen(open)}
+              classNames={dropdownClassNames}
+              motionProps={dropdownMotionProp}
+
             >
               <DropdownTrigger>
                 <HeroButton className={filterButtonBaseStyle}>
@@ -148,18 +183,21 @@ const MobileNav: React.FC<MobileNavProps> = ({
               </DropdownTrigger>
               <DropdownMenu
                 aria-label="Location options"
-                className="bg-[rgba(34,34,34,0.8)] backdrop-blur-[24px] border border-[rgba(255,255,255,0.1)] rounded-[10px] p-[10px] min-w-[200px]"
+                selectedKeys={[selectedLocation]}
+                selectionMode="single"
+                classNames={dropdownMenuClassNames}
                 onAction={handleLocationChange}
+                style={OptimizedDropdownStyles}
               >
                 {locations.map((location) => (
                   <DropdownItem
                     key={location.key}
-                    className={`px-[10px] rounded-[8px] text-white text-[13px] leading-[1.2] font-[500] ${selectedLocation === location.key ? 'bg-[rgba(255,255,255,0.1)]' : 'bg-transparent'}`}
+                    className={cn(
+                      dropdownItemBaseClassName,
+                      `${selectedLocation === location.key ?? 'bg-[rgba(255,255,255,0.1)]'}`,
+                    )}
                   >
                     {location.label}
-                    {selectedLocation === location.key && (
-                      <span className="ml-[5px]">✓</span>
-                    )}
                   </DropdownItem>
                 ))}
               </DropdownMenu>
@@ -168,6 +206,8 @@ const MobileNav: React.FC<MobileNavProps> = ({
             <Dropdown
               isOpen={isTimeDropdownOpen}
               onOpenChange={(open) => setIsTimeDropdownOpen(open)}
+              classNames={dropdownClassNames}
+              motionProps={dropdownMotionProp}
             >
               <DropdownTrigger>
                 <HeroButton className={filterButtonBaseStyle}>
@@ -177,18 +217,18 @@ const MobileNav: React.FC<MobileNavProps> = ({
               </DropdownTrigger>
               <DropdownMenu
                 aria-label="Time options"
-                className="bg-[rgba(34,34,34,0.8)] backdrop-blur-[24px] border border-[rgba(255,255,255,0.1)] rounded-[10px] p-[10px] min-w-[200px]"
+                classNames={dropdownMenuClassNames}
                 onAction={handleTimeFilterChange}
                 selectedKeys={[timeFilter]}
+                style={OptimizedDropdownStyles}
               >
                 {TimeFilterOptions.map((option) => (
                   <DropdownItem
                     key={option.key}
-                    className={`py-[6px] px-[10px] rounded-[8px] text-white text-[13px] font-[500] ${
-                      timeFilter === option.key
-                        ? 'bg-[rgba(255,255,255,0.1)]'
-                        : 'bg-[rgba(255,255,255,0.05)]'
-                    }`}
+                    className={cn(
+                      dropdownItemBaseClassName,
+                      `${timeFilter === option.key} ?? bg-[rgba(255,255,255,0.1)]`,
+                    )}
                   >
                     {option.label}
                     {timeFilter === option.key && (
@@ -204,12 +244,8 @@ const MobileNav: React.FC<MobileNavProps> = ({
             isOpen={isCalendarDropdownOpen}
             onOpenChange={(open) => setIsCalendarDropdownOpen(open)}
             placement="bottom-end"
-            classNames={{
-              base: [
-                'bg-[rgba(34,34,34,0.8)] backdrop-blur-[12px] p-0 rounded-[10px] border border-2 border-[rgba(255,255,255,0.1)]',
-              ],
-              content: ['bg-transparent p-0 z-[50]'],
-            }}
+            classNames={dropdownClassNames}
+            motionProps={dropdownMotionProp}
           >
             <DropdownTrigger>
               <HeroButton
@@ -227,7 +263,13 @@ const MobileNav: React.FC<MobileNavProps> = ({
               className="w-[280px] bg-transparent"
               closeOnSelect={false}
               classNames={{
-                base: ['p-0'],
+                base: [
+                  'p-0',
+                  'bg-[rgba(34,34,34,0.8)] backdrop-blur-[12px]',
+                  'border-2 border-[rgba(255,255,255,0.1)]',
+                  'rounded-[10px]',
+                ],
+                list: ['gap-0'],
               }}
               itemClasses={{
                 base: [
