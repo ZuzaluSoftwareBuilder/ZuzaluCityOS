@@ -5,6 +5,7 @@ import { Switch } from '@heroui/react';
 import { getAllPermission } from '@/services/permission';
 import { useQuery } from '@tanstack/react-query';
 import { RolePermission } from '@/types';
+import { Skeleton } from '@heroui/react';
 
 interface PermissionItemProps {
   title: string;
@@ -49,6 +50,31 @@ const formatString = (str: string) => {
     .join(' ');
 };
 
+export const PermissionListSkeleton = () => {
+  return (
+    <div className="flex flex-col gap-5 w-full">
+      <Skeleton className="w-32 h-4 rounded-md" />
+      <div className="flex flex-col gap-2.5 w-full">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div
+            key={index}
+            className={`flex flex-col justify-center gap-1 w-full pb-2.5 border-b border-white/10 ${
+              index === 5 ? 'border-b-0' : ''
+            }`}
+          >
+            <div className="flex flex-col justify-center items-center w-full gap-[5px]">
+              <div className="flex flex-row justify-between items-center w-full">
+                <Skeleton className="w-48 h-6 rounded-md bg-white/10" />
+                <Skeleton className="w-10 h-5 rounded-md bg-white/10" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export const PermissionList = ({
   roleData,
   roleDataLoading,
@@ -87,7 +113,7 @@ export const PermissionList = ({
   return (
     <div className="flex flex-col gap-5 w-full mt-5">
       {isLoading || roleDataLoading ? (
-        <div className="text-white text-center py-4">加载权限中...</div>
+        <PermissionListSkeleton />
       ) : groupedPermissions && Object.keys(groupedPermissions).length > 0 ? (
         Object.entries(groupedPermissions).map(([resource, permissions]) => {
           const permissionArray = Array.isArray(permissions) ? permissions : [];
