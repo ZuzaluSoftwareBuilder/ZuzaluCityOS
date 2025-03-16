@@ -1,46 +1,15 @@
-import { Button, DropdownItem } from '@heroui/react';
-
-import { DropdownMenu } from '@heroui/react';
-
-import { DotsThreeVertical } from '@phosphor-icons/react';
-
-import { Dropdown, DropdownTrigger } from '@heroui/react';
-import { User } from '@phosphor-icons/react';
-import { IdentificationBadge } from '@phosphor-icons/react';
-import { Key } from 'react';
-
-import { useCallback } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-
-interface Role {
-  id: number;
-  name: string;
-  members: number;
-}
+import { useParams } from 'next/navigation';
+import { getRoles } from '@/services/role';
+import { useQuery } from '@tanstack/react-query';
+import { RoleItem, RoleItemSkeleton } from './roleItem';
 
 export default function ViewRole() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const fixedRoles: Role[] = [
-    { id: 2, name: 'Owner', members: 1 },
-    { id: 3, name: 'Admin', members: 0 },
-    { id: 1, name: 'Member', members: 0 },
-    { id: 4, name: 'Follower', members: 0 },
-  ];
+  const spaceId = useParams().spaceid;
 
-  const handleRoleClick = useCallback(
-    (role: Role) => {
-      router.push(`${pathname}?role=${role.name}&tab=display`);
-    },
-    [pathname, router],
-  );
-
-  const handleRoleMenu = useCallback(
-    (key: Key, role: Role) => {
-      router.push(`${pathname}?role=${role.name}&tab=${key}`);
-    },
-    [pathname, router],
-  );
+  const { data, isLoading } = useQuery({
+    queryKey: ['getRolesAndMembers'],
+    queryFn: () => getRoles('space', spaceId as string),
+  });
 
   return (
     <div className="w-full pc:w-[560px] pc:box-content p-[20px] mx-auto flex flex-col gap-[40px] mobile:p-0">
@@ -59,54 +28,11 @@ export default function ViewRole() {
         </div>
 
         <div className="flex flex-col gap-2.5">
-          {fixedRoles.map((role) => (
-            <div
-              key={role.id}
-              className="flex items-center w-full border-b border-[rgba(255,255,255,0.1)] pb-[10px] h-[40px] box-content gap-[5px] cursor-pointer"
-              onClick={() => handleRoleClick(role)}
-            >
-              <div className="flex items-center gap-[5px] flex-1">
-                <IdentificationBadge
-                  size={24}
-                  weight="fill"
-                  className="text-white opacity-40"
-                />
-                <span className="text-white text-base font-medium mobile:w-[50vw] truncate">
-                  {role.name}
-                </span>
-              </div>
-
-              <div className="flex justify-between flex-1 mobile:w-[100px] mobile:flex-none mobile:shrink-0">
-                <div className="flex items-center gap-1.5 w-24">
-                  <span className="text-white text-[13px]">{role.members}</span>
-                  <User
-                    size={24}
-                    weight="fill"
-                    className="text-white opacity-40"
-                  />
-                </div>
-
-                <Dropdown>
-                  <DropdownTrigger>
-                    <Button
-                      isIconOnly
-                      radius="full"
-                      className="w-10 h-10 bg-[rgba(255,255,255,0.05)] mobile:hidden"
-                      variant="flat"
-                    >
-                      <DotsThreeVertical size={16} className="text-white" />
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu onAction={(key) => handleRoleMenu(key, role)}>
-                    <DropdownItem key="permissions">
-                      View Permissions
-                    </DropdownItem>
-                    <DropdownItem key="members">View Members</DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              </div>
-            </div>
-          ))}
+          {isLoading
+            ? Array.from({ length: 3 }).map((_, index) => (
+                <RoleItemSkeleton key={index} />
+              ))
+            : data?.data.map((item) => <RoleItem key={item.id} item={item} />)}
         </div>
       </div>
     </div>

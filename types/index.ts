@@ -608,3 +608,21 @@ export interface Dapp {
     };
   };
 }
+
+export interface Permission {
+  id: string;
+  name: string;
+  resource: string;
+}
+
+export interface Role {
+  id: string;
+  name: string;
+  level: number;
+}
+
+export interface RolePermission {
+  id: string;
+  role: Role;
+  permission_ids: string[];
+}

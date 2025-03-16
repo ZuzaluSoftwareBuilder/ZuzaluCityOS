@@ -7,11 +7,11 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
-    const source = searchParams.get('source');
+    const resource = searchParams.get('resource');
 
-    if (!id || !source) {
+    if (!id || !resource) {
       return NextResponse.json(
-        { error: 'Missing required parameters: id and source are required' },
+        { error: 'Missing required parameters: id and resource are required' },
         { status: 400 },
       );
     }
@@ -28,8 +28,10 @@ export async function GET(request: NextRequest) {
         )
       `,
       )
-      .or(`resource.eq.${source},resource.is.null`)
-      .or(`resource_id.eq.${id},resource_id.is.null`);
+      .or(
+        `and(resource.eq.${resource},resource_id.eq.${id}),and(resource.is.null,resource_id.is.null)`,
+      )
+      .order('created_at', { ascending: true });
 
     if (error) {
       console.error('Supabase query error:', error);
