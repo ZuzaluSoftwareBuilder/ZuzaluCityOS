@@ -66,8 +66,8 @@ export default function RoleDetail({ roleData, isLoading }: RoleDetailProps) {
 
   return (
     <div className="w-full h-full flex flex-col gap-10">
-      <div className="flex gap-10">
-        <div className="flex flex-col gap-5 w-[180px] p-[10px]">
+      <div className="flex gap-10 relative">
+        <div className="hidden flex-col gap-5 w-[180px] p-[10px] absolute top-0 left-0 pc:flex">
           <Button
             className="bg-[#2C2C2C] text-white py-2 px-3.5 flex items-center gap-[5px] rounded-lg text-[13px] font-medium w-[82px] h-[30px]"
             startContent={<CaretLeft size={18} weight="light" />}
@@ -101,7 +101,7 @@ export default function RoleDetail({ roleData, isLoading }: RoleDetailProps) {
           </div>
         </div>
 
-        <div className="flex flex-col gap-[30px] w-[600px] p-5">
+        <div className="flex flex-col gap-[30px] w-[600px] p-5 ml-[220px] xl:mx-auto">
           <div className="w-full flex flex-col gap-5">
             <div className="flex flex-col gap-5">
               <div className="flex justify-between items-center w-full">
