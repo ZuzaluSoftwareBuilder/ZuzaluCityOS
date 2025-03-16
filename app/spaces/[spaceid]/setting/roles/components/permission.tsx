@@ -111,7 +111,7 @@ export const PermissionList = ({
   }, [permissionsData?.data, roleData, roleName]);
 
   return (
-    <div className="flex flex-col gap-5 w-full mt-5">
+    <div className="flex flex-col gap-10 w-full mt-5">
       {isLoading || roleDataLoading ? (
         <PermissionListSkeleton />
       ) : groupedPermissions && Object.keys(groupedPermissions).length > 0 ? (
