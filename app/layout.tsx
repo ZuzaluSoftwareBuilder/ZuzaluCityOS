@@ -24,6 +24,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { HeroUIProvider } from '@heroui/react';
 import { usePathname } from 'next/navigation';
 import { useMediaQuery } from '@mui/material';
+import NewAuthPrompt from '@/app/components/auth/NewAuthPrompt';
 
 const queryClient = new QueryClient();
 
@@ -74,7 +75,7 @@ function RootLayout({
                               <AppContextProvider>
                                 <ReactQueryDevtools initialIsOpen={false} />
                                 {!shouldHideHeader && <Header />}
-                                {isClient && <AuthPrompt />}
+                                {isClient && <NewAuthPrompt />}
                                 <GlobalDialog />
                                 {isClient && ceramicDown && (
                                   <Dialog
