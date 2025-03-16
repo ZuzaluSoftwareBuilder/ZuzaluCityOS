@@ -77,27 +77,43 @@ export default function RoleDetail({ roleData, isLoading }: RoleDetailProps) {
           </Button>
 
           <div className="flex flex-col gap-2.5">
-            {roleData.map((item) => (
-              <div
-                key={item.id}
-                className={cn(
-                  'flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg cursor-pointer',
-                  item.role.name === currentRole
-                    ? 'bg-[rgba(255,255,255,0.1)]'
-                    : '',
-                )}
-                onClick={() => handleRoleSelect(item.role.name)}
-              >
-                <IdentificationBadge
-                  size={20}
-                  weight="fill"
-                  className="text-white opacity-40"
-                />
-                <span className="text-white text-[13px] font-medium">
-                  {item.role.name}
-                </span>
-              </div>
-            ))}
+            {isLoading
+              ? Array(3)
+                  .fill(0)
+                  .map((_, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg"
+                    >
+                      <IdentificationBadge
+                        size={20}
+                        weight="fill"
+                        className="text-white opacity-40"
+                      />
+                      <Skeleton className="w-24 h-5 rounded" />
+                    </div>
+                  ))
+              : roleData.map((item) => (
+                  <div
+                    key={item.id}
+                    className={cn(
+                      'flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg cursor-pointer',
+                      item.role.name === currentRole
+                        ? 'bg-[rgba(255,255,255,0.1)]'
+                        : '',
+                    )}
+                    onClick={() => handleRoleSelect(item.role.name)}
+                  >
+                    <IdentificationBadge
+                      size={20}
+                      weight="fill"
+                      className="text-white opacity-40"
+                    />
+                    <span className="text-white text-[13px] font-medium">
+                      {item.role.name}
+                    </span>
+                  </div>
+                ))}
           </div>
         </div>
 
