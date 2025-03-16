@@ -65,120 +65,118 @@ export default function RoleDetail({ roleData, isLoading }: RoleDetailProps) {
   }, [currentRoleData, router, pathname, roleData]);
 
   return (
-    <div className="w-full h-full flex flex-col gap-10">
-      <div className="flex gap-10 relative">
-        <div className="hidden flex-col gap-5 w-[180px] p-[10px] absolute top-0 left-0 pc:flex">
-          <Button
-            className="bg-[#2C2C2C] text-white py-2 px-3.5 flex items-center gap-[5px] rounded-lg text-[13px] font-medium w-[82px] h-[30px]"
-            startContent={<CaretLeft size={18} weight="light" />}
-            onPress={handleBack}
-          >
-            Back
-          </Button>
+    <div className="flex gap-10 relative">
+      <div className="hidden flex-col gap-5 w-[180px] p-[10px] absolute top-0 left-0 pc:flex">
+        <Button
+          className="bg-[#2C2C2C] text-white py-2 px-3.5 flex items-center gap-[5px] rounded-lg text-[13px] font-medium w-[82px] h-[30px]"
+          startContent={<CaretLeft size={18} weight="light" />}
+          onPress={handleBack}
+        >
+          Back
+        </Button>
 
-          <div className="flex flex-col gap-2.5">
-            {isLoading
-              ? Array(3)
-                  .fill(0)
-                  .map((_, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg"
-                    >
-                      <IdentificationBadge
-                        size={20}
-                        weight="fill"
-                        className="text-white opacity-40"
-                      />
-                      <Skeleton className="w-24 h-5 rounded" />
-                    </div>
-                  ))
-              : roleData.map((item) => (
+        <div className="flex flex-col gap-2.5">
+          {isLoading
+            ? Array(3)
+                .fill(0)
+                .map((_, index) => (
                   <div
-                    key={item.id}
-                    className={cn(
-                      'flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg cursor-pointer',
-                      item.role.name === currentRole
-                        ? 'bg-[rgba(255,255,255,0.1)]'
-                        : '',
-                    )}
-                    onClick={() => handleRoleSelect(item.role.name)}
+                    key={index}
+                    className="flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg"
                   >
                     <IdentificationBadge
                       size={20}
                       weight="fill"
                       className="text-white opacity-40"
                     />
-                    <span className="text-white text-[13px] font-medium">
-                      {item.role.name}
-                    </span>
+                    <Skeleton className="w-24 h-5 rounded" />
                   </div>
-                ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-[30px] w-[600px] p-5 ml-[220px] xl:mx-auto">
-          <div className="w-full flex flex-col gap-5">
-            <div className="flex flex-col gap-5">
-              <div className="flex justify-between items-center w-full">
-                <div className="flex items-center gap-5">
-                  <h2 className="text-white text-[18px] font-semibold">
-                    Edit Fixed Role:
-                  </h2>
-                  <div className="flex items-center gap-[5px] rounded">
-                    <IdentificationBadge
-                      size={24}
-                      weight="fill"
-                      className="text-white opacity-40"
-                    />
-                    <span className="text-white text-[16px] font-semibold">
-                      {currentRole}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="border-b border-[rgba(255,255,255,0.1)]">
-                <Tabs
-                  variant="underlined"
-                  selectedKey={currentTab}
-                  onSelectionChange={handleTabChange}
-                  classNames={{
-                    tabList: 'gap-0 w-full p-0',
-                    tab: 'p-[10px] text-[16px] font-semibold text-white',
-                    cursor: 'w-full',
-                  }}
+                ))
+            : roleData.map((item) => (
+                <div
+                  key={item.id}
+                  className={cn(
+                    'flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg cursor-pointer',
+                    item.role.name === currentRole
+                      ? 'bg-[rgba(255,255,255,0.1)]'
+                      : '',
+                  )}
+                  onClick={() => handleRoleSelect(item.role.name)}
                 >
-                  <Tab key="display" title="Display" />
-                  <Tab key="permissions" title="Permissions" />
-                  <Tab key="members" title="Members" />
-                </Tabs>
-              </div>
-              {currentTab !== 'members' && (
-                <div className="flex items-center gap-2.5 bg-[rgba(255,156,102,0.1)] border border-[rgba(255,156,102,0.1)] rounded-lg p-2.5">
-                  <Info
+                  <IdentificationBadge
                     size={20}
-                    className="text-[#FF9C66]"
-                    weight="light"
-                    format="stroke"
+                    weight="fill"
+                    className="text-white opacity-40"
                   />
-                  <span className="text-[#FF9C66] text-[14px]">
-                    Fixed roles cannot be configured as they are hard-coded into
-                    the structure
+                  <span className="text-white text-[13px] font-medium">
+                    {item.role.name}
                   </span>
                 </div>
-              )}
+              ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-[30px] w-full pc:w-[600px] p-5 ml-[220px] xl:mx-auto mobile:p-0 mobile:ml-0 tablet:ml-0">
+        <div className="w-full flex flex-col gap-5">
+          <div className="flex flex-col gap-5">
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center gap-5">
+                <h2 className="text-white text-[18px] font-semibold">
+                  Edit Fixed Role:
+                </h2>
+                <div className="flex items-center gap-[5px] rounded">
+                  <IdentificationBadge
+                    size={24}
+                    weight="fill"
+                    className="text-white opacity-40"
+                  />
+                  <span className="text-white text-[16px] font-semibold">
+                    {currentRole}
+                  </span>
+                </div>
+              </div>
             </div>
-            {currentTab === 'display' && <Display roleName={currentRole} />}
-            {currentTab === 'permissions' && (
-              <PermissionList
-                roleData={roleData}
-                roleDataLoading={isLoading}
-                roleName={currentRole}
-              />
+
+            <div className="border-b border-[rgba(255,255,255,0.1)]">
+              <Tabs
+                variant="underlined"
+                selectedKey={currentTab}
+                onSelectionChange={handleTabChange}
+                classNames={{
+                  tabList: 'gap-0 w-full p-0',
+                  tab: 'p-[10px] text-[16px] font-semibold text-white',
+                  cursor: 'w-full',
+                }}
+              >
+                <Tab key="display" title="Display" />
+                <Tab key="permissions" title="Permissions" />
+                <Tab key="members" title="Members" />
+              </Tabs>
+            </div>
+            {currentTab !== 'members' && (
+              <div className="flex items-center gap-2.5 bg-[rgba(255,156,102,0.1)] border border-[rgba(255,156,102,0.1)] rounded-lg p-2.5">
+                <Info
+                  size={20}
+                  className="text-[#FF9C66]"
+                  weight="light"
+                  format="stroke"
+                />
+                <span className="text-[#FF9C66] text-[14px]">
+                  Fixed roles cannot be configured as they are hard-coded into
+                  the structure
+                </span>
+              </div>
             )}
-            {currentTab === 'members' && <MemberManagement />}
           </div>
+          {currentTab === 'display' && <Display roleName={currentRole} />}
+          {currentTab === 'permissions' && (
+            <PermissionList
+              roleData={roleData}
+              roleDataLoading={isLoading}
+              roleName={currentRole}
+            />
+          )}
+          {currentTab === 'members' && <MemberManagement />}
         </div>
       </div>
     </div>
