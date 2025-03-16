@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Tabs, Tab, Input, cn } from '@heroui/react';
+import { Button, Tabs, Tab, Input, cn, Skeleton } from '@heroui/react';
 import {
   CaretLeft,
   DotsThree,
@@ -10,27 +10,31 @@ import {
 } from '@phosphor-icons/react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import Display from './display';
-import Permission from './permission';
+import Permission, { PermissionList } from './permission';
 import MemberManagement from './members';
+import { RolePermission } from '@/types';
 
 interface RoleType {
   id: number;
   name: string;
 }
 
-export default function RoleDetail() {
+interface RoleDetailProps {
+  roleData: RolePermission[];
+  isLoading: boolean;
+}
+
+export default function RoleDetail({ roleData, isLoading }: RoleDetailProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const currentRole = searchParams.get('role') || 'Owner';
   const currentTab = searchParams.get('tab') || 'display';
-  const [roleName, setRoleName] = useState('RoleOne');
 
-  const fixedRoles: RoleType[] = [
-    { id: 1, name: 'Owner' },
-    { id: 2, name: 'Admin' },
-    { id: 3, name: 'Member' },
-  ];
+  const currentRoleData = React.useMemo(
+    () => roleData.find((item) => item.role.name === currentRole),
+    [roleData, currentRole],
+  );
 
   const handleBack = useCallback(() => {
     router.push(pathname);
@@ -55,8 +59,10 @@ export default function RoleDetail() {
   );
 
   useEffect(() => {
-    setRoleName(currentRole);
-  }, [currentRole]);
+    if (!currentRoleData && roleData.length > 0) {
+      router.push(pathname);
+    }
+  }, [currentRoleData, router, pathname, roleData]);
 
   return (
     <div className="w-full h-full flex flex-col gap-10">
@@ -71,14 +77,16 @@ export default function RoleDetail() {
           </Button>
 
           <div className="flex flex-col gap-2.5">
-            {fixedRoles.map((role) => (
+            {roleData.map((item) => (
               <div
-                key={role.id}
+                key={item.id}
                 className={cn(
                   'flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg cursor-pointer',
-                  role.name === currentRole ? 'bg-[rgba(255,255,255,0.1)]' : '',
+                  item.role.name === currentRole
+                    ? 'bg-[rgba(255,255,255,0.1)]'
+                    : '',
                 )}
-                onClick={() => handleRoleSelect(role.name)}
+                onClick={() => handleRoleSelect(item.role.name)}
               >
                 <IdentificationBadge
                   size={20}
@@ -86,7 +94,7 @@ export default function RoleDetail() {
                   className="text-white opacity-40"
                 />
                 <span className="text-white text-[13px] font-medium">
-                  {role.name}
+                  {item.role.name}
                 </span>
               </div>
             ))}
@@ -145,8 +153,14 @@ export default function RoleDetail() {
                 </div>
               )}
             </div>
-            {currentTab === 'display' && <Display roleName={roleName} />}
-            {currentTab === 'permissions' && <Permission />}
+            {currentTab === 'display' && <Display roleName={currentRole} />}
+            {currentTab === 'permissions' && (
+              <PermissionList
+                roleData={roleData}
+                roleDataLoading={isLoading}
+                roleName={currentRole}
+              />
+            )}
             {currentTab === 'members' && <MemberManagement />}
           </div>
         </div>

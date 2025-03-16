@@ -1,16 +1,13 @@
-import { useParams } from 'next/navigation';
-import { getRoles } from '@/services/role';
-import { useQuery } from '@tanstack/react-query';
 import { RoleItem, RoleItemSkeleton } from './roleItem';
+import { RolePermission } from '@/types';
 
-export default function ViewRole() {
-  const spaceId = useParams().spaceid;
-
-  const { data, isLoading } = useQuery({
-    queryKey: ['getRolesAndMembers'],
-    queryFn: () => getRoles('space', spaceId as string),
-  });
-
+export default function ViewRole({
+  roleData,
+  isLoading,
+}: {
+  roleData: RolePermission[];
+  isLoading: boolean;
+}) {
   return (
     <div className="w-full pc:w-[560px] pc:box-content p-[20px] mx-auto flex flex-col gap-[40px] mobile:p-0">
       <h2 className="text-white text-lg font-semibold leading-[1.2]">
@@ -32,7 +29,7 @@ export default function ViewRole() {
             ? Array.from({ length: 3 }).map((_, index) => (
                 <RoleItemSkeleton key={index} />
               ))
-            : data?.data.map((item) => <RoleItem key={item.id} item={item} />)}
+            : roleData.map((item) => <RoleItem key={item.id} item={item} />)}
         </div>
       </div>
     </div>
