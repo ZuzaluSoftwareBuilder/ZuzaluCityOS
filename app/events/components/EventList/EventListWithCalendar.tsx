@@ -178,7 +178,7 @@ const EventListWithCalendar = () => {
         selectedLocation === 'anywhere' ||
         (event.location &&
           event.location.toLowerCase().replace(/\s+/g, '-') ===
-            selectedLocation);
+          selectedLocation);
 
       return dateMatches && locationMatches;
     });
@@ -202,23 +202,21 @@ const EventListWithCalendar = () => {
       </div>
 
       {/* mobile navigation */}
-      <div className="hidden mobile:block mb-[10px]">
-        <MobileNav
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-          selectedLocation={selectedLocation}
-          setSelectedLocation={setSelectedLocation}
-          locations={locations}
-          upcomingEvents={upcomingEvents || []}
-          pastEvents={pastEvents || []}
-          ongoingEvents={ongoingEvents || []}
-          timeFilter={timeFilter}
-          setTimeFilter={(key) => {
-            setTimeFilter(key as ITimeEnum);
-            setSelectedDate(null);
-          }}
-        />
-      </div>
+      <MobileNav
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+        selectedLocation={selectedLocation}
+        setSelectedLocation={setSelectedLocation}
+        locations={locations}
+        upcomingEvents={upcomingEvents || []}
+        pastEvents={pastEvents || []}
+        ongoingEvents={ongoingEvents || []}
+        timeFilter={timeFilter}
+        setTimeFilter={(key) => {
+          setTimeFilter(key as ITimeEnum);
+          setSelectedDate(null);
+        }}
+      />
 
       <div className="flex justify-start items-start gap-[20px] mt-[10px]">
         <EventList events={filteredEvents} isLoading={isLoading} />

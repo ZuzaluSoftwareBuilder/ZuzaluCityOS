@@ -80,7 +80,7 @@ function EventList({ events, isLoading }: EventListProps) {
               ([month, eventsList]) => {
                 return (
                   <div key={month} className="flex flex-col gap-[10px]">
-                    <div className="py-[8px] px-[14px] text-[18px] leading-[1.2] font-[500] text-center rounded-[40px] border border-b-w-10 backdrop-blur-[10px] bg-[rgba(34,34,34,0.8)] sticky top-[60px] z-[1000]">
+                    <div className="py-[8px] px-[14px] text-[18px] leading-[1.2] font-[500] text-center rounded-[40px] border border-b-w-10 backdrop-blur-[10px] bg-[rgba(34,34,34,0.8)]">
                       {month}
                     </div>
                     {(eventsList as Event[]).map((event: Event) => (

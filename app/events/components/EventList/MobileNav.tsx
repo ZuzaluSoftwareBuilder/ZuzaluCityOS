@@ -136,7 +136,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
     'flex items-center min-w-[auto] h-[32px] gap-[5px] px-[10px] rounded-[5px] bg-[#363636] active:bg-[#4A4A4A] hover:bg-[#4A4A4A]';
 
   return (
-    <>
+    <div className="hidden mobile:block sticky top-[95px] z-[1000] bg-[rgba(34,34,34,0.90)] backdrop-blur-[10px] pb-[10px]">
       <div className="flex items-center gap-[10px] bg-[rgba(34,34,34,0.90)] backdrop-blur-[10px] py-[10px]">
         <Ticket size={20} weight="fill" format="Outline" />
         <p className="text-[20px] font-bold text-white leading-[24px] shadow-[0px_5px_10px_rgba(0,0,0,0.15)]">
@@ -298,7 +298,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
           </Dropdown>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

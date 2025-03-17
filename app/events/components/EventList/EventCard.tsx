@@ -90,12 +90,11 @@ export function EventCardSkeleton() {
       'w-full flex items-start p-[10px] gap-[10px] rounded-[10px] border-1 border-b-w-10',
       'mobile:gap-[10px]',
     )}>
-      <Skeleton className="rounded-[10px]">
-        <div className={cn(
-          'w-[140px] h-[140px] rounded-[10px] border border-[rgba(255,255,255,0.10)]',
-          'mobile:w-[80px] mobile:h-[80px]',
-        )}></div>
-      </Skeleton>
+      <Skeleton className={cn(
+        'rounded-[10px] w-[140px] h-[140px]',
+        'mobile:w-[80px] mobile:h-[80px]',
+        'shrink-0',
+      )} />
 
       <div className="flex flex-col gap-[10px] w-full">
         {/* space and date skeleton */}
