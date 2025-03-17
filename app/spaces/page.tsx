@@ -57,6 +57,9 @@ const SpacePage = () => {
           />
         }
         bgImage={'/space/header.png'}
+        bgImageWidth={287}
+        bgImageHeight={278}
+        bgImageTop={20}
         title={'Communities'}
         subTitle={'Zuzalu tools for communities, events and more'}
         versionLabel={'Communities v0.5.0'}

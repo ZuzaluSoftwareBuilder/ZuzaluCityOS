@@ -72,6 +72,9 @@ export interface IExploreHeaderProps {
   addButtonText: string;
   addButtonIcon?: React.ReactNode;
   titlePrefixIcon?: React.ReactNode;
+  bgImageWidth?: number;
+  bgImageHeight?: number;
+  bgImageTop?: number;
 }
 
 export default function ExploreHeader({
@@ -84,6 +87,9 @@ export default function ExploreHeader({
   addButtonText,
   addButtonIcon,
   titlePrefixIcon,
+                                        bgImageWidth,
+  bgImageHeight,
+  bgImageTop,
 }: IExploreHeaderProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -135,10 +141,10 @@ export default function ExploreHeader({
         width={220}
         height={200}
         style={{
-          width: '220px',
-          height: '200px',
+          width: `${bgImageWidth || 220}px`,
+          height: `${bgImageHeight || 200}px`,
           position: 'absolute',
-          top: isMobile ? '10px' : '20px',
+          top: bgImageTop || bgImageTop === 0 ? `${bgImageTop}px`: isMobile ? '10px' : '20px',
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 1,

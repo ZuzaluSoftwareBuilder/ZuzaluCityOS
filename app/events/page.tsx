@@ -53,7 +53,10 @@ const EventPage = () => {
         icon={
           <Ticket size={isMobile ? 60 : 80} weight="duotone" format="Stroke" />
         }
-        bgImage={'/space/header.png'}
+        bgImage={'/events/header.png'}
+        bgImageWidth={220}
+        bgImageHeight={220}
+        bgImageTop={20}
         title={'Events'}
         subTitle={'Subtitle'}
         versionLabel={'AppName v0.0.5'}
