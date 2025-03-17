@@ -1,0 +1,100 @@
+---
+description: 规范项目中 Hero UI 组件的使用和最佳实践
+globs: "**/*.{ts,tsx}"
+alwaysApply: false
+---
+name: hero-ui-components
+description: Hero UI 组件使用规范
+version: 2.0
+author: CursorAI
+globs: ["**/*.tsx", "**/*.jsx"]
+priority: high
+category: ui-components
+tags: [hero-ui, react, typescript]
+
+validation_rules:
+  component_imports:
+    allowed_sources: 
+      - "@/components/base"
+      - "@heroicons/react"
+      - "@phosphor-icons/react"
+    banned_libraries:
+      - "@material-ui"
+      - "antd"
+      - "other-ui-library"
+
+  component_naming:
+    pattern: PascalCase
+    file_matching: exact
+    semantic_required: true
+
+  prop_validations:
+    - component: Button
+      allowed_props: [variant, size, isIconOnly, onPress, className]
+      banned_props: [style]
+      required_props: []
+
+  icon_rules:
+    clickable_wrapper: Button
+    icon_sources:
+      priority_order:
+        - "@phosphor-icons/react"
+        - "@heroicons/react"
+      fallback_path: "/components/icons"
+
+component_mapping:
+  - html_element: button
+    hero_component: Button
+  - html_element: input[type="text"]
+    hero_component: Input
+  - html_element: textarea
+    hero_component: Textarea
+  - html_element: select
+    hero_component: Select
+
+styling_rules:
+  classname_usage:
+    primary_attribute: className
+    slot_attribute: classNames
+  banned_properties: [style]
+  layout_preference: [flex, grid]
+
+form_handling:
+  required_libraries:
+    - react-hook-form
+    - yup
+  control_mapping:
+    checkbox: Checkbox
+    radio: RadioGroup
+    switch: Switch
+
+accessibility:
+  required_attributes: [aria-*]
+  wrapper_components:
+    - ErrorBoundary
+    - Dialog
+
+best_practices:
+  - use_isDisabled: true
+  - loading_state: isLoading
+  - keyboard_navigation: required
+
+validation_checks:
+  - pattern: 'import\s+{\s*Button\s*}\s+from\s+[\'"](mdc:?!@/components/base|@heroicons/react)'
+    message: 按钮组件必须从指定源导入
+  - pattern: '<(img|Image)(?!\s+src="/components/icons)'
+    message: 图片必须使用HeroUI的Image或Avatar组件
+  - pattern: '<div\s+role="tooltip"'
+    message: 悬浮提示应使用Tooltip组件
+
+examples:
+  valid:
+    - |
+      import { Button } from '@/components/base'
+      <Button variant="primary" size="md" onPress={handleClick}>
+        Submit
+      </Button>
+  invalid:
+    - |
+      import { Button } from 'antd'
+      <button style={{ color: 'red' }}>Click</button>

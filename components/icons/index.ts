@@ -59,7 +59,7 @@ import { ManageEventsIcon } from './ManageEvents';
 import { UserPlusIcon } from './UserPlus';
 import { ShieldIcon } from './Shield';
 import { NotificationIcon } from './Notification';
-import { XCricleIcon } from './XCircle';
+import { XCircleIcon } from './XCircle';
 import { Cog6Icon } from './Cog6';
 import { NewspaperIcon } from './Newspaper';
 import { MinusIcon } from './Minus';
@@ -121,6 +121,14 @@ import { ArrowCircleRightFillIcon } from './ArrowCircleRight';
 import { CaretDoubleRightIcon } from './CaretDoubleRight';
 import { StorefrontIcon } from './Storefront';
 import { VideoIcon } from './Video';
+import { CaretLeftIcon } from './CaretLeft';
+import { UsersThreeIcon } from './UsersThree';
+import { NewspaperClippingIcon } from './NewspaperClipping';
+import { BuildingOfficeIcon } from './BuildingOffice';
+import { CodeIcon } from './Code';
+import { AirTrafficControlIcon } from './AirTrafficControl';
+import { CareRightIcon } from './CareRight';
+
 export {
   HomeIcon,
   SearchIcon,
@@ -183,7 +191,7 @@ export {
   UserPlusIcon,
   ShieldIcon,
   NotificationIcon,
-  XCricleIcon,
+  XCircleIcon,
   Cog6Icon,
   NewspaperIcon,
   MinusIcon,
@@ -245,4 +253,11 @@ export {
   CaretDoubleRightIcon,
   StorefrontIcon,
   VideoIcon,
+  CaretLeftIcon,
+  UsersThreeIcon,
+  NewspaperClippingIcon,
+  BuildingOfficeIcon,
+  CodeIcon,
+  AirTrafficControlIcon,
+  CareRightIcon,
 };

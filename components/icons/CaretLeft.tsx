@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconProps } from 'types';
 
-export const PlusIcon: React.FC<IconProps> = ({
+export const CaretLeftIcon: React.FC<IconProps> = ({
   size = 6,
   color = 'white',
 }) => {
@@ -10,23 +10,15 @@ export const PlusIcon: React.FC<IconProps> = ({
       width={`${size * 4}px`}
       height={`${size * 4}px`}
       viewBox="0 0 21 20"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M3.625 10H17.375"
+        d="M13 16.25L6.75 10L13 3.75"
         stroke={color}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M10.5 3.125V16.875"
-        stroke={color}
-        strokeWidth="1.5"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
     </svg>
   );
-};
+}; 

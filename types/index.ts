@@ -216,7 +216,7 @@ export interface Space {
     id: string;
   }[];
   customLinks?: Link[];
-  events: {
+  events?: {
     edges: {
       node: {
         startTime: string;
@@ -224,7 +224,7 @@ export interface Space {
       };
     }[];
   };
-  customAttributes: TBD[];
+  customAttributes?: TBD[];
 }
 
 export interface CalendarConfig {
