@@ -632,6 +632,7 @@ export interface Role {
   id: string;
   name: string;
   level: string;
+  is_vanity: boolean;
 }
 
 export interface RolePermission {
