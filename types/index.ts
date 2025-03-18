@@ -225,6 +225,7 @@ export interface Space {
     }[];
   };
   customAttributes?: TBD[];
+  spaceType?: string;
 }
 
 export interface CalendarConfig {

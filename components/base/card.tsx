@@ -2,14 +2,14 @@ import {extendVariants, Card as HCard, CardBody as HCardBody, CardFooter as HCar
 import commonStyle from "@/style/common";
 const Card = extendVariants(HCard, {
     variants: {
-        cardStyle: {
+        card: {
             default: {
                 base: cn(commonStyle.border, "bg-white/[0.02]")
             }
         }   
     },
     defaultVariants: {
-        cardStyle: "default",
+        card: "default",
     },
 }) 
 const CardHeader = extendVariants(HCardHeader, {})

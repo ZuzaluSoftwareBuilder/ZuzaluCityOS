@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconProps } from 'types';
 
-export const BuildingOfficeIcon: React.FC<IconProps> = ({ size = 6, color = '#B1FF68' }) => {
+export const BuildingOfficeIcon: React.FC<IconProps> = ({ size = 6, color = 'white' }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

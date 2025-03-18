@@ -24,7 +24,7 @@ const Chip = extendVariants(HChip, {
       },
     },
     // 这样覆盖的优先度是最高的
-    chilpStyle: {
+    chilp: {
         default: {
             base:  "bg-white/[0.05]",
         },
@@ -36,7 +36,7 @@ const Chip = extendVariants(HChip, {
   defaultVariants: {
     size: "md",
     radius: "sm",
-    chilpStyle: "default",
+    chilp: "default",
   },
   // 复合变体
 });

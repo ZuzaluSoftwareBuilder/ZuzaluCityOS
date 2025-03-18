@@ -52,7 +52,6 @@ const Button = extendVariants(HButton, {
     color: "primary",
     size: "md",
     state: "active",
-    buttonStyle: "default",
   },
 });
 

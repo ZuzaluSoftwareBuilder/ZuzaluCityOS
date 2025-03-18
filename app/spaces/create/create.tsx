@@ -5,15 +5,60 @@ import LinksContent from './components/LinksContent';
 import CategoriesContent from './components/CategoriesContent';
 import CreateSpaceTabs, { TabStatus, TabContentEnum } from './components/CreateSpaceTabs';
 import HSpaceCard from '@/components/cards/HSpaceCard';
+import { cn } from '@heroui/react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { ProfileFormData, ProfilValidationSchema } from './components/ProfileContent';
+import { CategoriesFormData, CategoriesValidationSchema } from './components/CategoriesContent';
+import { LinksFormData, LinksValidationSchema } from './components/LinksContent';
 
 const Create = () => {
-  const [selectedTab, setSelectedTab] = useState(TabContentEnum.Links);
+  const [selectedTab, setSelectedTab] = useState(TabContentEnum.Profile);
   const [tabStatuses, setTabStatuses] = useState<Record<string, TabStatus>>({
     [TabContentEnum.Profile]: TabStatus.Active,
     [TabContentEnum.Categories]: TabStatus.Inactive,
     [TabContentEnum.Links]: TabStatus.Inactive,
   });
 
+  const profileForm = useForm<ProfileFormData>({
+    resolver: yupResolver(ProfilValidationSchema),
+    mode: 'onBlur',
+    defaultValues: {
+      communityName: '',
+      communityTagline: '',
+      communityDescription: {
+        blocks: [],
+        time: Date.now(),
+        version: '1.0.0'
+      },
+      spaceAvatar: '',
+      spaceBanner: ''
+    }
+  });
+
+  const categoriesForm = useForm<CategoriesFormData>({
+    resolver: yupResolver(CategoriesValidationSchema),
+    mode: 'onBlur',
+    defaultValues: {
+      selectedCategory: 1,
+      communityTags: [],
+    }
+  });
+
+  const linksForm = useForm<LinksFormData>({
+    resolver: yupResolver(LinksValidationSchema),
+    mode: 'onBlur',
+    defaultValues: {
+      socialLinks: [{ platform: '', url: '' }],
+      customLinks: [{ title: '', url: '' }],
+    }
+  });
+  const spaceName = profileForm.watch('communityName');
+  const spaceTagline = profileForm.watch('communityTagline');
+  const spaceTags = categoriesForm.watch('communityTags');
+  const spaceType = categoriesForm.watch('selectedCategory');
+  const spaceAvatar = profileForm.watch('spaceAvatar');
+  const spaceBanner = profileForm.watch('spaceBanner');
   const handleTabChange = (key: TabContentEnum) => {
     // 如果当前标签是 Inactive 状态，不允许切换
     // if (tabStatuses[key] === TabStatus.Inactive) {
@@ -21,7 +66,7 @@ const Create = () => {
     // }
 
     setSelectedTab(key);
-    
+
     // 更新标签状态，代码不能删除
     // setTabStatuses(prev => {
     //   const newStatuses = { ...prev };
@@ -42,23 +87,27 @@ const Create = () => {
   };
 
   const renderTabContent = () => {
-    switch (selectedTab) {
-      case TabContentEnum.Profile:
-        return <ProfileContent />;
-      case TabContentEnum.Categories:
-        return <CategoriesContent />;
-      case TabContentEnum.Links:
-        return <LinksContent />;
-      default:
-        return <ProfileContent />;
-    }
+    return (<>
+      <div className={cn({"hidden": selectedTab !== TabContentEnum.Profile})}><ProfileContent form={profileForm} /></div>
+      <div className={cn({"hidden": selectedTab !== TabContentEnum.Categories})}><CategoriesContent form={categoriesForm} /></div>
+      <div className={cn({"hidden": selectedTab !== TabContentEnum.Links})}><LinksContent form={linksForm} /></div>
+    </>)
   };
 
   return (
     <div className="flex flex-col w-full min-h-screen">
-      <div className="flex justify-center gap-[40px] py-[20px] px-[40px] mx-auto w-full">
+      <div className={
+        cn(
+          "flex justify-center gap-[40px] py-[20px] px-[40px] mx-auto w-full",
+          "mobile:flex-col"
+        )
+      }>
         {/* 左侧 Tabs 列表 */}
-        <div className="w-[130px] flex justify-end">
+        <div className={
+          cn(
+            "w-[130px] flex justify-end",
+          )
+        }>
           <CreateSpaceTabs
             selectedTab={selectedTab}
             onTabChange={handleTabChange}
@@ -71,15 +120,18 @@ const Create = () => {
           {renderTabContent()}
         </div>
         {/* 右侧预览卡片 */}
-        <div className="w-[320px]">
+        <div className="w-[320px] mobile:hidden">
           <HSpaceCard
             data={{
               id: 'preview',
-              name: "Space Name Space NameSpace NameSpace NameSpace Name Space Name",
-              tagline: "Community tagline. Kept short, another line for good measure.Community tagline. Kept short, another line for good measure.Community tagline. Kept short, another line for good measure.",
-              category: "标签1,标签2,标签3",
+              name: spaceName || 'Community Name',
+              tagline: spaceTagline || 'Community tagline',
+              category: spaceTags.join(','),
               members: Array(123).fill({ id: 'dummy' }),
               description: '',
+              spaceType: spaceType.toString(),
+              banner: spaceBanner,
+              avatar: spaceAvatar,
             }}
             size="lg"
           />

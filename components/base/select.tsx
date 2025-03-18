@@ -2,7 +2,7 @@ import { extendVariants, Select as HSelect, SelectItem as HSelectItem } from "@h
 
 const Select = extendVariants(HSelect, {
     variants: {
-        selectStyle: {
+        select: {
             default: {
                 trigger: "bg-white/[0.05] border border-white/[0.1] rounded-[8px]",
                 value: 'text-white/[0.5] text-[14px]',
@@ -12,7 +12,7 @@ const Select = extendVariants(HSelect, {
 
     },
     defaultVariants: {
-        selectStyle: "default",
+        select: "default",
     },
 });
 

@@ -6,6 +6,9 @@ export const Avatar = extendVariants(HAvatar, {
             md: {
                 base: "w-[60px] h-[60px]",
             },
+            xlg: {
+                base: "w-[140px] h-[140px]"
+            }
         },
         avatarStyle: {
             base: "rounded-full border-shadow-[0px_0px_0px_1px_rgba(34,34,34,0.10)]",
@@ -16,4 +19,5 @@ export const Avatar = extendVariants(HAvatar, {
     }
 })
 
+export type AvatarProps = Parameters<typeof Avatar>[0]
 export default Avatar

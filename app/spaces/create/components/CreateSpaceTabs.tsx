@@ -30,8 +30,8 @@ const TabItem: React.FC<TabItemProps> = ({ label, onClick, status }) => {
     [TabStatus.Error]: "text-red-500",
   }[status];
 
-  const isClickable = status !== TabStatus.Inactive;
-
+  // const isClickable = status !== TabStatus.Inactive;
+  const isClickable = true;
   return (
     <div 
       className={cn(
@@ -87,11 +87,15 @@ const CreateSpaceTabs: React.FC<CreateSpaceTabsProps> = ({
 
   return (
     <div 
-      className="w-[130px] py-[20px] px-[10px]"
+      className="py-[20px] px-[10px]"
       role="tablist"
       aria-label="Create Space Tabs"
     >
-      <div className="flex flex-col gap-[20px] w-full">
+      <div className={cn(
+        "flex flex-col gap-[20px] w-full",
+        "mobile:flex-row mobile:gap-[10px]"
+      )}
+      >
         {tabs.map((tab) => (
           <TabItem
             key={tab.key}

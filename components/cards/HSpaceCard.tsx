@@ -9,6 +9,7 @@ import { Space } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { isUserAssociated } from '@/utils/permissions';
+import { SpaceTypes } from '@/app/spaces/create/components/constant';
 
 // 格式化成员数的工具函数
 const formatMemberCount = (count: number): string => {
@@ -84,6 +85,7 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md' })
         superAdmin,
         category,
         id,
+        spaceType,
     } = data;
     const { profile } = useCeramicContext();
     const router = useRouter();
@@ -103,6 +105,23 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md' })
         return formatMemberCount(totalMembers);
     }, [members?.length, admins?.length, superAdmin?.length]);
 
+    const SpaceChip = () => {
+        const spaceInfo = React.useMemo(() => 
+            SpaceTypes.find((c) => c.id === Number(spaceType)), 
+            [spaceType]
+        );
+
+        if (spaceInfo) {
+            const Icon = React.cloneElement(spaceInfo.icon, { size: 4 });
+            return <Chip startContent={Icon} size="sm">{spaceInfo.name}</Chip>;
+        }
+        return (
+            <Chip startContent={<BuildingsIcon size={4} />} size="sm">
+                SPACETYPE
+            </Chip>
+        );
+    };
+
     return (
         <Card
             className={cn(
@@ -115,7 +134,8 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md' })
                 {/* Banner */}
                 <div className={cn(
                     "w-full rounded-t-[10px] overflow-hidden",
-                    size === 'lg' ? "h-[126px]" : "h-[110px]"
+                    `h-[${bannerSize.height}]`,
+                    `w-[${bannerSize.width}]`
                 )}>
                     <div className={cn(
                         "w-full h-full bg-[#404040]",
@@ -134,7 +154,7 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md' })
                 </div>
 
                 {/* Avatar */}
-                <div className="absolute left-[11px] bottom-[-21px]">
+                <div className="absolute left-[11px] bottom-[-21px] z-10">
                     <Avatar
                         src={avatar}
                         alt={name}
@@ -162,9 +182,7 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md' })
 
             <CardBody className="pt-[30px] px-[10px] pb-0">
                 <div className="mb-[6px]">
-                    <Chip startContent={<BuildingsIcon size={4} />} size="sm">
-                        SPACETYPE
-                    </Chip>
+                    <SpaceChip />
                 </div>
                 {/* Space Name */}
                 <h3 className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] text-[18px] font-bold leading-[1.2] line-clamp-2 mb-[6px]">

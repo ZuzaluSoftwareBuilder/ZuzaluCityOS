@@ -4,7 +4,7 @@ import commonStyle from  "@/style/common";
 const Input = extendVariants(HInput, {
   variants: {
     variant: {
-      dark: {
+      default: {
         inputWrapper: [
           commonStyle.border,
           "bg-white/[0.05]",
@@ -12,14 +12,14 @@ const Input = extendVariants(HInput, {
           "rounded-[8px]",
         ],
         input: [
-          "text-white",
+          "!text-white",
           "placeholder:text-white/50",
         ],
       },
     },
   },
   defaultVariants: {
-    variant: "dark",
+    variant: "default",
     size: "md",
   },
 });

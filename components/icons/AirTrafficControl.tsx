@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconProps } from 'types';
 
-export const AirTrafficControlIcon: React.FC<IconProps> = ({ size = 6, color = '#D364FF' }) => {
+export const AirTrafficControlIcon: React.FC<IconProps> = ({ size = 6, color = 'white' }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
