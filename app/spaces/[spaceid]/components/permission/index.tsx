@@ -44,7 +44,7 @@ export const SpacePermissionProvider: React.FC<{
 
     if (!userMember) return null;
 
-    let roleId = null;
+    let roleId: string | null = null;
     userMember.customAttributes.some((attr) => {
       if (!attr || !('tbd' in attr)) return false;
 
