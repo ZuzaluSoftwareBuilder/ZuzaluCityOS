@@ -23,6 +23,7 @@ export const SpacePermissionProvider: React.FC<{
 }> = ({ children }) => {
   const spaceId = useParams().spaceid;
   const { profile } = useCeramicContext();
+  const userId = profile?.author?.id;
 
   const { owner, roles, members } = useGetSpaceMember(spaceId as string);
 
@@ -32,14 +33,14 @@ export const SpacePermissionProvider: React.FC<{
   });
 
   const isOwner = useMemo(() => {
-    if (!owner || !profile?.author?.id) return false;
-    return owner?.id === profile?.author?.id;
-  }, [owner, profile]);
+    if (!owner || !userId) return false;
+    return owner?.id === userId;
+  }, [owner, userId]);
 
   const userRole = useMemo(() => {
-    if (!members || !profile?.author?.id) return null;
+    if (!members || !userId) return null;
     const userMember = members.find(
-      (member) => member.userId.zucityProfile.id === profile?.author?.id,
+      (member) => member.userId.zucityProfile.id === userId,
     );
 
     if (!userMember) return null;
@@ -61,10 +62,10 @@ export const SpacePermissionProvider: React.FC<{
     });
 
     return roleId;
-  }, [members, profile]);
+  }, [members, userId]);
 
   const isAdmin = useMemo(() => {
-    if (!members || !profile?.author?.id || !roles?.data) return false;
+    if (!members || !userId || !roles?.data) return false;
 
     const adminRoleData = roles.data.find(
       (role) => role.role.level === 'admin',
@@ -73,10 +74,10 @@ export const SpacePermissionProvider: React.FC<{
     if (!adminRoleData) return false;
 
     return userRole === adminRoleData.role.id;
-  }, [members, profile?.author?.id, roles?.data, userRole]);
+  }, [members, userId, roles?.data, userRole]);
 
   const isMember = useMemo(() => {
-    if (!members || !profile?.author?.id || !roles?.data) return false;
+    if (!members || !userId || !roles?.data) return false;
 
     const memberRoleData = roles.data.find(
       (role) => role.role.level === 'member',
@@ -85,7 +86,7 @@ export const SpacePermissionProvider: React.FC<{
     if (!memberRoleData) return false;
 
     return userRole === memberRoleData.role.id;
-  }, [members, profile?.author?.id, roles?.data, userRole]);
+  }, [members, userId, roles?.data, userRole]);
 
   const checkPermission = useCallback(
     (name: PermissionName): boolean => {
