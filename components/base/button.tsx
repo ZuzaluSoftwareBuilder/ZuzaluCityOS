@@ -41,17 +41,17 @@ const Button = extendVariants(HButton, {
       lg: "px-[14px] py-[8px] text-[16px] rounded-[10px] gap-[10px]",
     },
     // 根据设计稿定义状态变体
-    state: {
-      active: "opacity-100",
-      inactive: "opacity-60",
-      disabled: "opacity-30",
-    },
+    // state: {
+    //   active: "opacity-100",
+    //   inactive: "opacity-60",
+    //   disabled: "opacity-30",
+    // },
   },
 
   defaultVariants: {
     color: "primary",
     size: "md",
-    state: "active",
+    // state: "active",
   },
 });
 

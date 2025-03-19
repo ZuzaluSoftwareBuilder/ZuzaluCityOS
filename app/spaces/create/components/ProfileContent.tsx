@@ -1,4 +1,5 @@
-import React from 'react';
+'use client'
+import React, { useEffect, useState } from 'react';
 import { useForm, Controller, UseFormReturn } from 'react-hook-form';
 import { Image } from '@heroui/react';
 import * as Yup from 'yup';
@@ -6,69 +7,73 @@ import { Button, Input, Card, CardBody, Avatar } from '@/components/base';
 import SuperEditor from '@/components/editor/SuperEditor';
 import { MarkdownIcon } from '@/components/icons/Markdown';
 import { CareRightIcon } from '@/components/icons/CareRight';
-import { XIcon } from '@/components/icons/X';
+import { XMarkIcon } from '@heroicons/react/20/solid'
 import PhotoUpload from '@/components/form/PhotoUpload';
 import { PhotoIcon } from '@heroicons/react/24/outline'
+import { ChevronRightIcon} from '@heroicons/react/20/solid'
+import { useEditorStore } from '@/components/editor/useEditorStore';
+
 // 定义表单数据类型
 export interface ProfileFormData {
-    communityName: string;
-    communityTagline: string;
-    communityDescription: {
-        blocks: any[];
-        time: number;
-        version: string;
-    };
-    spaceAvatar: string;
-    spaceBanner: string;
+    name: string;
+    tagline: string;
+    description: string;
+    avatar: string;
+    banner: string;
 }
 
 // 定义验证模式
 export const ProfilValidationSchema = Yup.object().shape({
-    communityName: Yup
+    name: Yup
         .string()
         .min(3, 'Name must be at least 3 characters.')
         .required('Name is required.'),
-    communityTagline: Yup.string()
+    tagline: Yup.string()
         .min(3, 'Tagline must be at least 3 characters.')
         .required('Tagline is required.'),
-    communityDescription: Yup.object().shape({
-        blocks: Yup.array().required(),
-        time: Yup.number().required(),
-        version: Yup.string().required(),
-    }).required('社区描述是必填项'),
-    spaceAvatar: Yup.string()
+    description: Yup.string()
+        .test(
+            'is-valid-blocks', 
+            'community description is required',
+            function(value) {
+                if (!value) return true; // 如果为空字符串，其他验证会处理
+                try {
+                    const parsed = JSON.parse(value);
+                    // 验证blocks数组长度不为0
+                    if (!parsed.blocks || !Array.isArray(parsed.blocks) || parsed.blocks.length === 0) {
+                        return false;
+                    }
+                    return true;
+                } catch (e) {
+                    return false; // JSON解析错误
+                }
+            }
+        ).required(),
+    avatar: Yup.string()
         .required('please upload space avatar'),
-    spaceBanner: Yup.string()
+    banner: Yup.string()
         .required('please upload space banner'),
 });
 
 interface ProfileContentProps {
     form: UseFormReturn<ProfileFormData>;
+    onSubmit: (data: ProfileFormData) => void;
+    onBack: () => void;
 }
 
-const ProfileContent: React.FC<ProfileContentProps> = ({ form }) => {
+const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack }) => {
     const {
         control,
         handleSubmit,
-        formState: { errors, isSubmitting },
+        formState: { errors, isValid },
         watch,
     } = form;
-
-    const onSubmit = async (data: ProfileFormData) => {
-        try {
-            console.log('Form data:', data);
-            // TODO: 实现表单提交逻辑
-        } catch (error) {
-            console.error('Error submitting form:', error);
-        }
+    const onSubmitHandler = (data: ProfileFormData) => {
+        onSubmit(data);
     };
-
-    const handleDiscard = () => {
-        // TODO: 实现放弃编辑逻辑
-    };
-
+    const descriptionEditorStore = useEditorStore();
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 mobile:space-y-4">
             <div className="space-y-2">
                 <h2 className="text-xl font-bold">Community Profile</h2>
                 <p className="text-base text-white/80">Let's begin with the basics for your community</p>
@@ -78,14 +83,14 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form }) => {
                 <div className="space-y-4">
                     <label className="block text-base font-medium">Community Name*</label>
                     <Controller
-                        name="communityName"
+                        name="name"
                         control={control}
                         render={({ field }) => (
                             <Input
                                 {...field}
                                 placeholder="Give your space an awesome name"
-                                isInvalid={!!errors.communityName}
-                                errorMessage={errors.communityName?.message}
+                                isInvalid={!!errors.name}
+                                errorMessage={errors.name?.message}
                             />
                         )}
                     />
@@ -95,20 +100,20 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form }) => {
                 <div className="space-y-4">
                     <label className="block text-base font-medium">Community Tagline*</label>
                     <Controller
-                        name="communityTagline"
+                        name="tagline"
                         control={control}
                         render={({ field }) => (
                             <Input
                                 {...field}
                                 placeholder="Write a short, one-sentence tagline"
-                                isInvalid={!!errors.communityTagline}
-                                errorMessage={errors.communityTagline?.message}
+                                isInvalid={!!errors.tagline}
+                                errorMessage={errors.tagline?.message}
                                 maxLength={100}
                             />
                         )}
                     />
                     <div className="text-right text-[10px] text-white/70">
-                        {watch('communityTagline')?.length || 0}/100 Characters
+                        {watch('tagline')?.length || 0}/100 Characters
                     </div>
                 </div>
 
@@ -120,12 +125,19 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form }) => {
                     </div>
                     <div className="space-y-2">
                         <Controller
-                            name="communityDescription"
+                            name="description"
                             control={control}
                             render={({ field: { onChange, value } }) => (
                                 <SuperEditor
-                                    value={value}
-                                    onChange={onChange}
+                                    value={descriptionEditorStore.value}
+                                    onChange={(value) => {
+                                        descriptionEditorStore.setValue(value);
+                                        // 这里需要研究一下
+                                        console.log('value', value);
+                                        console.log('value string', JSON.stringify(value));
+                                        onChange(JSON.stringify(value));
+                                    }}
+                                    minHeight={190}
                                     placeholder="This is a description greeting for new members. You can also update descriptions."
                                 />
                             )}
@@ -134,8 +146,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form }) => {
                             <MarkdownIcon />
                             <div className='text-sm text-white/60'>Markdown Available</div>
                         </div>
-                        {errors.communityDescription && (
-                            <p className="text-red-500 text-sm">{errors.communityDescription.message}</p>
+                        {errors.description && (
+                            <p className="text-red-500 text-sm">{errors.description.message}</p>
                         )}
                     </div>
                 </div>
@@ -148,7 +160,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form }) => {
                     </div>
                     <div className="flex items-center gap-5">
                         <Controller
-                            name="spaceAvatar"
+                            name="avatar"
                             control={control}
                             render={({ field }) => (
                                 <PhotoUpload
@@ -167,8 +179,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form }) => {
                                 </PhotoUpload>
                             )}
                         />
-                        {errors.spaceAvatar && (
-                            <p className="text-red-500 text-sm">{errors.spaceAvatar.message}</p>
+                        {errors.avatar && (
+                            <p className="text-red-500 text-sm">{errors.avatar.message}</p>
                         )}
                     </div>
                 </div>
@@ -177,7 +189,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form }) => {
                 <div className="space-y-4">
                     <label className="block text-base font-medium">Space Banner*</label>
                     <Controller
-                        name="spaceBanner"
+                        name="banner"
                         control={control}
                         render={({ field: { value, onChange } }) => (
                             <PhotoUpload
@@ -209,8 +221,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form }) => {
                             </PhotoUpload>
                         )}
                     />
-                    {errors.spaceBanner && (
-                        <p className="text-red-500 text-sm">{errors.spaceBanner.message}</p>
+                    {errors.banner && (
+                        <p className="text-red-500 text-sm">{errors.banner.message}</p>
                     )}
                 </div>
             </Card>
@@ -219,11 +231,10 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form }) => {
             <div className="flex justify-end gap-2.5">
                 <Button
                     type="button"
-                    color="secondary"
                     size="md"
-                    className="w-[120px]"
-                    startContent={<XIcon />}
-                    onClick={handleDiscard}
+                    className="w-[120px] bg-white/[0.05]"
+                    startContent={<XMarkIcon className='w-4 h-4' />}
+                    onClick={onBack}
                 >
                     Discard
                 </Button>
@@ -232,11 +243,11 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form }) => {
                     color="primary"
                     size="md"
                     className="w-[120px] bg-[rgba(103,219,255,0.1)] border border-[rgba(103,219,255,0.2)] text-[#67DBFF]"
-                    endContent={<CareRightIcon />}
-                    disabled={isSubmitting}
-                    onClick={handleSubmit(onSubmit)}
+                    endContent={<ChevronRightIcon className='w-[20px] h-[20px]' />}
+                    isDisabled={!isValid}
+                    onClick={handleSubmit(onSubmitHandler)}
                 >
-                    {isSubmitting ? 'Submitting...' : 'Next'}
+                    Next
                 </Button>
             </div>
         </div>

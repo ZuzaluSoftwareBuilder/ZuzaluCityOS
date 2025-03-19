@@ -55,6 +55,7 @@ interface HSpaceCardProps {
     data?: Space;
     className?: string;
     size?: 'sm' | 'md' | 'lg';
+    showFooter?: boolean;
 }
 const sizeInfo = {
     sm: {
@@ -70,7 +71,7 @@ const sizeInfo = {
         height: '126px',
     },
 }
-const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md' }) => {
+const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md', showFooter = true }) => {
     if (!data) {
         return <HSpaceCardSkeleton />;
     }
@@ -106,8 +107,8 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md' })
     }, [members?.length, admins?.length, superAdmin?.length]);
 
     const SpaceChip = () => {
-        const spaceInfo = React.useMemo(() => 
-            SpaceTypes.find((c) => c.id === Number(spaceType)), 
+        const spaceInfo = React.useMemo(() =>
+            SpaceTypes.find((c) => c.id === Number(spaceType)),
             [spaceType]
         );
 
@@ -125,7 +126,7 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md' })
     return (
         <Card
             className={cn(
-                size === 'lg' ? "w-[318px]" : "w-[276px]",
+                `w-[${bannerSize.width}]`,
                 "bg-[#262626]",
                 className
             )}
@@ -133,20 +134,22 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md' })
             <CardHeader className="relative p-0">
                 {/* Banner */}
                 <div className={cn(
-                    "w-full rounded-t-[10px] overflow-hidden",
+                    "w-full rounded-t-[10px] overflow-hidden bg-[#404040]",
                     `h-[${bannerSize.height}]`,
-                    `w-[${bannerSize.width}]`
+                    'h-max-[126px]'
                 )}>
                     <div className={cn(
-                        "w-full h-full bg-[#404040]",
-                        !banner && "bg-gradient-to-r from-[#7DFFD1] to-[#FFCA7A]"
+                        "w-full",
+                        `h-[${bannerSize.height}]`,
                     )}>
                         {banner && (
                             <Image
                                 src={banner}
                                 alt={`${name} banner`}
+                                width={bannerSize.width}
+                                height={bannerSize.height}
                                 classNames={{
-                                    img: "w-full h-full object-cover"
+                                    img: cn("w-full object-cover")
                                 }}
                             />
                         )}
@@ -158,10 +161,9 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md' })
                     <Avatar
                         src={avatar}
                         alt={name}
-                        className={cn(
-                            "w-[60px] h-[60px] shadow-[0px_0px_0px_1px_rgba(34,34,34,0.10)]",
-                            !avatar && "bg-gradient-to-br from-[#7DFFD1] to-[#FFCA7A]"
-                        )}
+                        classNames={{
+                            base: "w-[60px] h-[60px] shadow-[0px_0px_0px_1px_rgba(34,34,34,0.10)] bg-[#4A4A4A]",
+                        }}
                     />
                 </div>
 
@@ -190,13 +192,14 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md' })
                 </h3>
 
                 {/* Description */}
-                <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] text-[13px] leading-[1.6] opacity-60 line-clamp-2 h-[42px] mb-[20px]">
+                <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] text-[13px] leading-[1.6] opacity-60 line-clamp-2 mb-[20px]">
                     {tagline}
                 </p>
 
                 {/* Categories */}
                 <div className="mb-[10px] flex items-center gap-[10px] opacity-40">
-                    {category
+                    {!category && <span className="text-[10px] leading-[1.2]">TAG</span>}
+                    {category && category
                         ?.split(',')
                         .slice(0, 2)
                         .map((item) => (
@@ -214,13 +217,20 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md' })
 
             <CardFooter className="px-[10px] pb-[10px]">
                 {/* Action Button */}
-                <Button
-                    startContent={<ArrowSquareRightIcon />}
-                    className="w-full"
+                {showFooter && (
+                    <Button
+                        startContent={<ArrowSquareRightIcon />}
+                        className="w-full"
                     onPress={() => router.push(`/spaces/${id}`)}
                 >
                     查看空间
                 </Button>
+                )}
+                {
+                    !showFooter && (
+                        <div className="flex items-center gap-[10px] bg-[#363636] w-full h-[34px] rounded-[8px]"> </div>
+                    )
+                }
             </CardFooter>
         </Card >
     );

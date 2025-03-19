@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React  from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import { SPACE_CATEGORIES } from '@/constant';
@@ -12,18 +12,29 @@ interface IProps {
   options?: FilmOptionType[];
   onChange: (value: string[]) => void;
   initialValues?: FilmOptionType[];
+  value?: string[];
 }
 
 export default function SelectCategories({
   onChange,
+  value: outerValue,
   initialValues = [],
   options = SPACE_CATEGORIES,
 }: IProps) {
   const [value, setValue] = React.useState<FilmOptionType[]>(initialValues);
+  // 添加受控能力
+  React.useEffect(() => {
+    if (outerValue) {
+      setValue(SPACE_CATEGORIES.filter((item) => outerValue.includes(item.value)));
+    }
+  }, [JSON.stringify(outerValue)]);
 
   const handleChange = useCallback(
     (value: FilmOptionType[]) => {
-      setValue(value);
+      // 保留自控组件能力
+      if (!outerValue) {
+        setValue(value);
+      }
       onChange(value.map((item) => item.value) || []);
     },
     [onChange],
