@@ -8,10 +8,11 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Skeleton,
 } from '@heroui/react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { X } from '@phosphor-icons/react';
-import Member from './member';
+import { Member, MemberEmpty, MemberSkeleton } from './member';
 import { PermissionName, RolePermission, UserRole } from '@/types';
 import { Profile } from '@/types';
 import { useSpacePermissions } from '../../../components/permission';
@@ -69,6 +70,7 @@ interface MemberListProps {
   onRemoveMember: (memberId: string) => void;
   currentRole?: RolePermission;
   canManageAdminRole: boolean;
+  isLoading: boolean;
 }
 
 export const MemberList: React.FC<MemberListProps> = ({
@@ -76,6 +78,7 @@ export const MemberList: React.FC<MemberListProps> = ({
   onRemoveMember,
   currentRole,
   canManageAdminRole,
+  isLoading,
 }) => {
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const [memberToRemove, setMemberToRemove] = useState<MemberItem | null>(null);
@@ -110,28 +113,36 @@ export const MemberList: React.FC<MemberListProps> = ({
       </div>
 
       <div className="flex flex-col w-full">
-        {members.map((member) => (
-          <div
-            key={member.id}
-            className="flex items-center justify-between w-full px-2 py-1"
-          >
-            <Member
-              avatarUrl={member.avatar || '/user/avatar_p.png'}
-              name={member.name}
-              address={member.address}
-            />
-            {canManageAdminRole && (
-              <Button
-                isIconOnly
-                variant="light"
-                className="bg-[rgba(255,255,255,0.05)] w-10 h-10 min-w-0 rounded-full"
-                onPress={() => handleRemoveClick(member)}
-              >
-                <X size={16} className="text-white" />
-              </Button>
-            )}
-          </div>
-        ))}
+        {isLoading ? (
+          Array.from({ length: 3 }).map((_, index) => (
+            <MemberSkeleton key={`skeleton-${index}`} />
+          ))
+        ) : members.length > 0 ? (
+          members.map((member) => (
+            <div
+              key={member.id}
+              className="flex items-center justify-between w-full px-2 py-1"
+            >
+              <Member
+                avatarUrl={member.avatar || '/user/avatar_p.png'}
+                name={member.name}
+                address={member.address}
+              />
+              {canManageAdminRole && (
+                <Button
+                  isIconOnly
+                  variant="light"
+                  className="bg-[rgba(255,255,255,0.05)] w-10 h-10 min-w-0 rounded-full"
+                  onPress={() => handleRemoveClick(member)}
+                >
+                  <X size={16} className="text-white" />
+                </Button>
+              )}
+            </div>
+          ))
+        ) : (
+          <MemberEmpty />
+        )}
       </div>
 
       <Modal
@@ -209,6 +220,7 @@ interface MemberManagementProps {
   owner?: Profile;
   roleData: RolePermission[];
   roleName: string;
+  isLoading: boolean;
 }
 
 const MemberManagement: React.FC<MemberManagementProps> = ({
@@ -216,6 +228,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
   owner,
   roleData,
   roleName,
+  isLoading,
 }) => {
   const { checkPermission } = useSpacePermissions();
   const [searchQuery, setSearchQuery] = useState('');
@@ -301,6 +314,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
         members={filteredMembers}
         onRemoveMember={handleRemoveMember}
         currentRole={currentRole}
+        isLoading={isLoading}
       />
     </div>
   );

@@ -189,6 +189,7 @@ export default function RoleDetail({
               members={members}
               roleData={roleData}
               roleName={currentRole}
+              isLoading={isLoading}
             />
           )}
         </div>
