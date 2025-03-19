@@ -1,4 +1,5 @@
 import { useCeramicContext } from '@/context/CeramicContext';
+import { getMembers } from '@/services/member';
 import { getRoles } from '@/services/role';
 import { getSpaceEventsQuery } from '@/services/space';
 import { Space, SpaceData, UserRole, UserRoleData } from '@/types';
@@ -26,47 +27,9 @@ export default function useGetSpaceMember(spaceId: string) {
 
   const { data: members, isLoading: isLoadingMembers } = useQuery({
     queryKey: ['getSpaceMembers', spaceId],
-    queryFn: () => {
-      return composeClient.executeQuery<UserRoleData>(
-        `
-        query MyQuery {
-          zucityUserRolesIndex(
-            first: 1000,
-            filters: {
-              where: {
-                resourceId: { equalTo: "${spaceId}" }
-                source: { equalTo: "space" }
-              }
-            }
-          ) {
-            edges {
-              node {
-                roleId
-                customAttributes {
-                  tbd
-                }
-                userId {
-                  zucityProfile {
-                    avatar
-                    username
-                    author {
-                      id
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        `,
-      );
-    },
+    queryFn: () => getMembers(spaceId, 'space'),
     select: (data) => {
-      if ('zucityUserRolesIndex' in data.data!) {
-        const userRoleData: UserRoleData = data.data as UserRoleData;
-        return userRoleData.zucityUserRolesIndex.edges.map((edge) => edge.node);
-      }
-      return [];
+      return data.data;
     },
   });
 
