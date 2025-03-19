@@ -651,3 +651,9 @@ export interface UserRole {
   };
   customAttributes: TBD[];
 }
+
+export interface UserRoleData {
+  zucityUserRolesIndex: {
+    edges: { node: UserRole }[];
+  };
+}

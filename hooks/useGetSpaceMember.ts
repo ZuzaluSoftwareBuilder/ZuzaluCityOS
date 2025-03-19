@@ -1,7 +1,7 @@
 import { useCeramicContext } from '@/context/CeramicContext';
 import { getRoles } from '@/services/role';
 import { getSpaceEventsQuery } from '@/services/space';
-import { Space, UserRole } from '@/types';
+import { Space, SpaceData, UserRole, UserRoleData } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
@@ -27,10 +27,11 @@ export default function useGetSpaceMember(spaceId: string) {
   const { data: members, isLoading: isLoadingMembers } = useQuery({
     queryKey: ['getSpaceMembers', spaceId],
     queryFn: () => {
-      return composeClient.executeQuery(
+      return composeClient.executeQuery<UserRoleData>(
         `
         query MyQuery {
           zucityUserRolesIndex(
+            first: 1000,
             filters: {
               where: {
                 resourceId: { equalTo: "${spaceId}" }
@@ -41,9 +42,13 @@ export default function useGetSpaceMember(spaceId: string) {
             edges {
               node {
                 roleId
+                customAttributes {
+                  tbd
+                }
                 userId {
                   zucityProfile {
                     avatar
+                    username
                     author {
                       id
                     }
@@ -57,9 +62,15 @@ export default function useGetSpaceMember(spaceId: string) {
       );
     },
     select: (data) => {
-      return (data?.data?.node || []) as UserRole[];
+      if ('zucityUserRolesIndex' in data.data!) {
+        const userRoleData: UserRoleData = data.data as UserRoleData;
+        return userRoleData.zucityUserRolesIndex.edges.map((edge) => edge.node);
+      }
+      return [];
     },
   });
+
+  console.log(members);
 
   const owner = useMemo(() => {
     return spaceData?.superAdmin?.[0].zucityProfile;
