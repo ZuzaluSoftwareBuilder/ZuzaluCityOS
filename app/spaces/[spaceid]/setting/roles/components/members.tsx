@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   Input,
   Button,
@@ -11,6 +11,10 @@ import {
 } from '@heroui/react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { X } from '@phosphor-icons/react';
+import Member from './member';
+import { PermissionName, RolePermission, UserRole } from '@/types';
+import { Profile } from '@/types';
+import { useSpacePermissions } from '../../../components/permission';
 
 interface MembersProps {
   onSearch: (query: string) => void;
@@ -47,27 +51,34 @@ export const Members: React.FC<MembersProps> = ({ onSearch, onAddMember }) => {
   );
 };
 
-interface Member {
+interface MemberItem {
   id: string;
   name: string;
-  avatarUrl?: string;
+  avatar: string;
+  roleId: string | null;
 }
 
 interface MemberListProps {
-  members: Member[];
+  members: MemberItem[];
   onRemoveMember: (memberId: string) => void;
-  roleName: string;
+  currentRole?: RolePermission;
 }
 
 export const MemberList: React.FC<MemberListProps> = ({
   members,
   onRemoveMember,
-  roleName,
+  currentRole,
 }) => {
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
-  const [memberToRemove, setMemberToRemove] = useState<Member | null>(null);
+  const [memberToRemove, setMemberToRemove] = useState<MemberItem | null>(null);
+  const { checkPermission } = useSpacePermissions();
 
-  const handleRemoveClick = useCallback((member: Member) => {
+  const removeIsDisabled = useMemo(() => {
+    if (!currentRole || currentRole.role.level !== 'admin') return true;
+    return checkPermission(PermissionName.MANAGE_ADMIN_ROLE);
+  }, [currentRole, checkPermission]);
+
+  const handleRemoveClick = useCallback((member: MemberItem) => {
     setMemberToRemove(member);
     setIsRemoveModalOpen(true);
   }, []);
@@ -91,7 +102,9 @@ export const MemberList: React.FC<MemberListProps> = ({
         <span className="flex-1 text-sm font-semibold text-white/60">
           Members with This Role
         </span>
-        <span className="text-sm font-semibold text-white/60">Actions</span>
+        {!removeIsDisabled && (
+          <span className="text-sm font-semibold text-white/60">Actions</span>
+        )}
       </div>
 
       <div className="flex flex-col w-full">
@@ -100,24 +113,21 @@ export const MemberList: React.FC<MemberListProps> = ({
             key={member.id}
             className="flex items-center justify-between w-full px-2 py-1"
           >
-            <div className="flex items-center gap-2.5">
-              <Avatar
-                src={member.avatarUrl || '/user/avatar_p.png'}
-                alt={member.name}
-                className="w-8 h-8"
-              />
-              <span className="text-sm font-semibold text-[#BFFF66]">
-                {member.name}
-              </span>
-            </div>
-            <Button
-              isIconOnly
-              variant="light"
-              className="bg-[rgba(255,255,255,0.05)] w-10 h-10 min-w-0 rounded-full"
-              onPress={() => handleRemoveClick(member)}
-            >
-              <X size={16} className="text-white" />
-            </Button>
+            <Member
+              avatarUrl={member.avatar || '/user/avatar_p.png'}
+              name={member.name}
+              address={member.id}
+            />
+            {!removeIsDisabled && (
+              <Button
+                isIconOnly
+                variant="light"
+                className="bg-[rgba(255,255,255,0.05)] w-10 h-10 min-w-0 rounded-full"
+                onPress={() => handleRemoveClick(member)}
+              >
+                <X size={16} className="text-white" />
+              </Button>
+            )}
           </div>
         ))}
       </div>
@@ -153,12 +163,12 @@ export const MemberList: React.FC<MemberListProps> = ({
           </ModalHeader>
           <ModalBody className="p-[0_20px] gap-5">
             <p className="text-white/70 text-sm">
-              Remove following member from {roleName}
+              Remove following member from {currentRole?.role.name}
             </p>
             {memberToRemove && (
               <div className="flex items-center justify-center w-full gap-2.5 py-2.5 border border-[rgba(255,255,255,0.1)] rounded-lg">
                 <Avatar
-                  src={memberToRemove.avatarUrl || '/user/avatar_p.png'}
+                  src={memberToRemove.avatar || '/user/avatar_p.png'}
                   alt={memberToRemove.name}
                   className="w-8 h-8"
                 />
@@ -192,30 +202,21 @@ export const MemberList: React.FC<MemberListProps> = ({
   );
 };
 
-// 示例成员数据
-const initialMembers = [
-  {
-    id: '1',
-    name: 'Minnie_Zboncak',
-    avatarUrl: '/user/avatar_p.png',
-  },
-  {
-    id: '2',
-    name: 'Alex_Johnson',
-    avatarUrl: '/user/avatar_p.png',
-  },
-  {
-    id: '3',
-    name: 'Lisa_Moore',
-    avatarUrl: '/user/avatar_p.png',
-  },
-];
+interface MemberManagementProps {
+  members: UserRole[];
+  owner?: Profile;
+  roleData: RolePermission[];
+  roleName: string;
+}
 
-const MemberManagement: React.FC = () => {
-  const [members, setMembers] = useState(initialMembers);
+const MemberManagement: React.FC<MemberManagementProps> = ({
+  members,
+  owner,
+  roleData,
+  roleName,
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 处理搜索
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
   }, []);
@@ -228,15 +229,63 @@ const MemberManagement: React.FC = () => {
 
   // 移除成员
   const handleRemoveMember = useCallback((memberId: string) => {
-    setMembers((prev) => prev.filter((member) => member.id !== memberId));
+    // setMembers((prev) => prev.filter((member) => member.id !== memberId));
   }, []);
 
-  // 过滤成员列表
-  const filteredMembers = searchQuery
-    ? members.filter((member) =>
-        member.name.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    : members;
+  const currentRole = useMemo(() => {
+    return roleData.find((role) => role.role.name === roleName);
+  }, [roleData, roleName]);
+
+  console.log(currentRole);
+
+  const filteredMembers = useMemo(() => {
+    const formatedMembers = members.map((member) => {
+      let roleId: string | null = null;
+      member.customAttributes.some((attr) => {
+        if (!attr || !('tbd' in attr)) return false;
+
+        try {
+          const parsedAttr = JSON.parse(attr.tbd);
+          if (parsedAttr.key === 'roleId' && parsedAttr.value) {
+            roleId = parsedAttr.value;
+            return true;
+          }
+          return false;
+        } catch {
+          return false;
+        }
+      });
+      return {
+        id: member.userId.zucityProfile.id,
+        name: member.userId.zucityProfile.username,
+        avatar: member.userId.zucityProfile.avatar,
+        roleId,
+      } as MemberItem;
+    });
+    const memberList =
+      roleName === 'Owner'
+        ? [
+            {
+              id: owner?.id,
+              name: owner?.username,
+              avatar: owner?.avatar,
+              roleId: null,
+            } as MemberItem,
+          ]
+        : formatedMembers;
+    if (!searchQuery) return memberList || [];
+
+    return memberList.filter((member) =>
+      member.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [
+    members,
+    owner?.avatar,
+    owner?.id,
+    owner?.username,
+    roleName,
+    searchQuery,
+  ]);
 
   return (
     <div className="flex flex-col w-full gap-10">
@@ -245,7 +294,7 @@ const MemberManagement: React.FC = () => {
       <MemberList
         members={filteredMembers}
         onRemoveMember={handleRemoveMember}
-        roleName="Admin"
+        currentRole={currentRole}
       />
     </div>
   );

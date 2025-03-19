@@ -24,12 +24,15 @@ export default function RolesPage() {
     members,
   } = useGetSpaceMember(spaceId as string);
 
-  console.log(members);
-
   return (
     <div className="w-full pc:p-[20px_40px_0] flex flex-col gap-10 p-[20px]">
       {roleParam ? (
-        <RoleDetail roleData={data?.data || []} isLoading={isLoading} />
+        <RoleDetail
+          roleData={data?.data || []}
+          isLoading={isLoading}
+          members={members || []}
+          owner={owner}
+        />
       ) : (
         <ViewRole
           roleData={roles?.data || []}
