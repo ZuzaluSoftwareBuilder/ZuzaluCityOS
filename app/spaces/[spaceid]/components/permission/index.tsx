@@ -34,7 +34,7 @@ export const SpacePermissionProvider: React.FC<{
 
   const isOwner = useMemo(() => {
     if (!owner || !userId) return false;
-    return owner?.id === userId;
+    return owner?.author?.id === userId;
   }, [owner, userId]);
 
   const userRole = useMemo(() => {

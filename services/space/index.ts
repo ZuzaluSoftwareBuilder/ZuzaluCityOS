@@ -26,6 +26,7 @@ export const getSpaceEventsQuery = (eventCount: number = 10) => `
             superAdmin{
               id
               zucityProfile {
+                id
                 avatar
                 author {
                   id
