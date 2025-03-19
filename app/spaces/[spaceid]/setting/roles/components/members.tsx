@@ -262,11 +262,12 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
           return false;
         }
       });
+      const did = member.userId.zucityProfile.author?.id;
       return {
-        id: member.userId.zucityProfile.id,
+        id: did,
         name: member.userId.zucityProfile.username,
         avatar: member.userId.zucityProfile.avatar,
-        address: member.userId.zucityProfile.author?.id.split(':')[4],
+        address: did?.split(':')[4],
         roleId,
       } as MemberItem;
     }).filter((member) => member.roleId === currentRole?.role.id);
