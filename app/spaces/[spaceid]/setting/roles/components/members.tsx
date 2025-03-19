@@ -60,6 +60,7 @@ interface MemberItem {
   id: string;
   name: string;
   avatar: string;
+  address: string;
   roleId: string | null;
 }
 
@@ -117,7 +118,7 @@ export const MemberList: React.FC<MemberListProps> = ({
             <Member
               avatarUrl={member.avatar || '/user/avatar_p.png'}
               name={member.name}
-              address={member.id}
+              address={member.address}
             />
             {canManageAdminRole && (
               <Button
@@ -259,6 +260,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
         id: member.userId.zucityProfile.id,
         name: member.userId.zucityProfile.username,
         avatar: member.userId.zucityProfile.avatar,
+        address: member.userId.zucityProfile.author?.id.split(':')[4],
         roleId,
       } as MemberItem;
     });
@@ -269,6 +271,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
               id: owner?.id,
               name: owner?.username,
               avatar: owner?.avatar,
+              address: owner?.author?.id.split(':')[4],
               roleId: null,
             } as MemberItem,
           ]
@@ -278,14 +281,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
     return memberList.filter((member) =>
       member.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
-  }, [
-    members,
-    owner?.avatar,
-    owner?.id,
-    owner?.username,
-    roleName,
-    searchQuery,
-  ]);
+  }, [members, owner, roleName, searchQuery]);
 
   const canManageAdminRole = useMemo(() => {
     if (!currentRole || currentRole.role.level !== 'admin') return false;
