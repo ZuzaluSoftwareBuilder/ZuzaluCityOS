@@ -25,7 +25,7 @@ export const Member: React.FC<MemberProps> = ({ avatarUrl, name, address }) => {
 
 export const MemberSkeleton = () => {
   return (
-    <div className="flex items-center gap-2.5 p-[4px_8px]">
+    <div className="flex items-center gap-2.5 p-[4px_8px] h-[48px]">
       <Skeleton className="rounded-full w-8 h-8" />
       <Skeleton className="h-[22px] w-24 rounded-md" />
       <Skeleton className="h-[22px] w-20 rounded-md" />

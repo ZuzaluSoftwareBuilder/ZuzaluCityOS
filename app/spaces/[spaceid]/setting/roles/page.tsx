@@ -45,7 +45,8 @@ export default function RolesPage() {
     const result = await composeClient.executeQuery(Create_QUERY, {
       input: {
         content: {
-          userId: ceramic?.did?.parent,
+          userId:
+            'did:pkh:eip155:534351:0x16e082c5aeda46b8a4e8bdb85b67df60087997ba',
           resourceId: spaceId,
           source: 'space',
           customAttributes: [

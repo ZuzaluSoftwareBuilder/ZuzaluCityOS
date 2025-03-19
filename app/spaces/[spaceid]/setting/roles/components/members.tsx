@@ -121,7 +121,7 @@ export const MemberList: React.FC<MemberListProps> = ({
           members.map((member) => (
             <div
               key={member.id}
-              className="flex items-center justify-between w-full px-2 py-1"
+              className="flex items-center justify-between w-full px-2 py-1 h-[48px]"
             >
               <Member
                 avatarUrl={member.avatar || '/user/avatar_p.png'}
@@ -269,7 +269,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
         address: member.userId.zucityProfile.author?.id.split(':')[4],
         roleId,
       } as MemberItem;
-    });
+    }).filter((member) => member.roleId === currentRole?.role.id);
     const memberList =
       roleName === 'Owner'
         ? [
