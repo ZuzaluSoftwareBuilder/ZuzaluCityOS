@@ -287,7 +287,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
     return memberList.filter((member) =>
       member.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
-  }, [members, owner, roleName, searchQuery]);
+  }, [currentRole?.role.id, members, owner, roleName, searchQuery]);
 
   const canManageAdminRole = useMemo(() => {
     if (!currentRole || currentRole.role.level !== 'admin') return false;
