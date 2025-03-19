@@ -19,9 +19,14 @@ import { useSpacePermissions } from '../../../components/permission';
 interface MembersProps {
   onSearch: (query: string) => void;
   onAddMember: () => void;
+  canManageAdminRole: boolean;
 }
 
-export const Members: React.FC<MembersProps> = ({ onSearch, onAddMember }) => {
+export const Members: React.FC<MembersProps> = ({
+  onSearch,
+  onAddMember,
+  canManageAdminRole,
+}) => {
   return (
     <div className="flex items-center w-full gap-2.5">
       <Input
@@ -42,7 +47,7 @@ export const Members: React.FC<MembersProps> = ({ onSearch, onAddMember }) => {
       <Button
         className="bg-[rgba(103,219,255,0.2)] p-[8px_14px] text-[#67DBFF] border border-[rgba(103,219,255,0.1)] text-[16px] shrink-0"
         radius="sm"
-        isDisabled
+        isDisabled={!canManageAdminRole}
         onPress={onAddMember}
       >
         Add Members
@@ -62,21 +67,17 @@ interface MemberListProps {
   members: MemberItem[];
   onRemoveMember: (memberId: string) => void;
   currentRole?: RolePermission;
+  canManageAdminRole: boolean;
 }
 
 export const MemberList: React.FC<MemberListProps> = ({
   members,
   onRemoveMember,
   currentRole,
+  canManageAdminRole,
 }) => {
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const [memberToRemove, setMemberToRemove] = useState<MemberItem | null>(null);
-  const { checkPermission } = useSpacePermissions();
-
-  const removeIsDisabled = useMemo(() => {
-    if (!currentRole || currentRole.role.level !== 'admin') return true;
-    return checkPermission(PermissionName.MANAGE_ADMIN_ROLE);
-  }, [currentRole, checkPermission]);
 
   const handleRemoveClick = useCallback((member: MemberItem) => {
     setMemberToRemove(member);
@@ -102,7 +103,7 @@ export const MemberList: React.FC<MemberListProps> = ({
         <span className="flex-1 text-sm font-semibold text-white/60">
           Members with This Role
         </span>
-        {!removeIsDisabled && (
+        {canManageAdminRole && (
           <span className="text-sm font-semibold text-white/60">Actions</span>
         )}
       </div>
@@ -118,7 +119,7 @@ export const MemberList: React.FC<MemberListProps> = ({
               name={member.name}
               address={member.id}
             />
-            {!removeIsDisabled && (
+            {canManageAdminRole && (
               <Button
                 isIconOnly
                 variant="light"
@@ -215,6 +216,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
   roleData,
   roleName,
 }) => {
+  const { checkPermission } = useSpacePermissions();
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = useCallback((query: string) => {
@@ -235,8 +237,6 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
   const currentRole = useMemo(() => {
     return roleData.find((role) => role.role.name === roleName);
   }, [roleData, roleName]);
-
-  console.log(currentRole);
 
   const filteredMembers = useMemo(() => {
     const formatedMembers = members.map((member) => {
@@ -287,11 +287,21 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
     searchQuery,
   ]);
 
+  const canManageAdminRole = useMemo(() => {
+    if (!currentRole || currentRole.role.level !== 'admin') return false;
+    return checkPermission(PermissionName.MANAGE_ADMIN_ROLE);
+  }, [currentRole, checkPermission]);
+
   return (
     <div className="flex flex-col w-full gap-10">
-      <Members onSearch={handleSearch} onAddMember={handleAddMember} />
+      <Members
+        canManageAdminRole={canManageAdminRole}
+        onSearch={handleSearch}
+        onAddMember={handleAddMember}
+      />
 
       <MemberList
+        canManageAdminRole={canManageAdminRole}
         members={filteredMembers}
         onRemoveMember={handleRemoveMember}
         currentRole={currentRole}
