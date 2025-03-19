@@ -5,6 +5,7 @@ import ViewRole from './components/viewRole';
 import RoleDetail from './components/roleDetail';
 import { getRoles } from '@/services/role';
 import { useQuery } from '@tanstack/react-query';
+import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 
 export default function RolesPage() {
   const searchParams = useSearchParams();
@@ -16,12 +17,25 @@ export default function RolesPage() {
     queryFn: () => getRoles('space', spaceId as string),
   });
 
+  const {
+    isLoading: isLoadingMembers,
+    owner,
+    roles,
+    members,
+  } = useGetSpaceMember(spaceId as string);
+
+  console.log(members);
+
   return (
     <div className="w-full pc:p-[20px_40px_0] flex flex-col gap-10 p-[20px]">
       {roleParam ? (
         <RoleDetail roleData={data?.data || []} isLoading={isLoading} />
       ) : (
-        <ViewRole roleData={data?.data || []} isLoading={isLoading} />
+        <ViewRole
+          roleData={roles?.data || []}
+          isLoading={isLoadingMembers}
+          members={members || []}
+        />
       )}
     </div>
   );

@@ -37,7 +37,8 @@ export const Members: React.FC<MembersProps> = ({ onSearch, onAddMember }) => {
       />
       <Button
         className="bg-[rgba(103,219,255,0.2)] p-[8px_14px] text-[#67DBFF] border border-[rgba(103,219,255,0.1)] text-[16px] shrink-0"
-        radius="md"
+        radius="sm"
+        isDisabled
         onPress={onAddMember}
       >
         Add Members

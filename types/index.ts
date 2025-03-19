@@ -214,6 +214,7 @@ export interface Space {
   }[];
   superAdmin?: {
     id: string;
+    zucityProfile: Profile;
   }[];
   customLinks?: Link[];
   events: {
@@ -633,10 +634,20 @@ export interface Role {
   name: string;
   level: string;
   is_vanity: boolean;
+  resource_id: string;
 }
 
 export interface RolePermission {
   id: string;
   role: Role;
   permission_ids: string[];
+}
+
+export interface UserRole {
+  id: string;
+  roleId: string;
+  userId: {
+    zucityProfile: Profile;
+  };
+  customAttributes: TBD[];
 }
