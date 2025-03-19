@@ -1,7 +1,7 @@
-import { Key } from 'react';
+import { Key, useMemo } from 'react';
 
 import { usePathname } from 'next/navigation';
-import { Role, RolePermission } from '@/types';
+import { Role, RolePermission, UserRole } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import {
@@ -20,6 +20,7 @@ import {
 
 interface RoleItemProps {
   item: RolePermission;
+  members: UserRole[];
 }
 
 export const RoleItemSkeleton = () => {
@@ -44,9 +45,9 @@ export const RoleItemSkeleton = () => {
       </div>
     </div>
   );
-}
+};
 
-export const RoleItem = ({ item }: RoleItemProps) => {
+export const RoleItem = ({ item, members }: RoleItemProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const handleRoleClick = useCallback(
@@ -62,6 +63,27 @@ export const RoleItem = ({ item }: RoleItemProps) => {
     },
     [pathname, router],
   );
+
+  const roleCount = useMemo(() => {
+    if (item.role.level === 'owner') return 1;
+    return members.filter((member) => {
+      return member.customAttributes.some((attr) => {
+        if (!attr || !('tbd' in attr)) return false;
+
+        try {
+          const parsedAttr = JSON.parse(attr.tbd);
+          return (
+            parsedAttr.key === 'roleId' &&
+            parsedAttr.value &&
+            parsedAttr.value === item.role.id
+          );
+        } catch {
+          return false;
+        }
+      });
+    }).length;
+  }, [item.role.level, item.role.id, members]);
+
   return (
     <div
       className="flex items-center w-full border-b border-[rgba(255,255,255,0.1)] pb-[10px] h-[40px] box-content gap-[5px] cursor-pointer"
@@ -80,7 +102,7 @@ export const RoleItem = ({ item }: RoleItemProps) => {
 
       <div className="flex justify-between flex-1 mobile:w-[100px] mobile:flex-none mobile:shrink-0">
         <div className="flex items-center gap-1.5 w-24">
-          <span className="text-white text-[13px]">1</span>
+          <span className="text-white text-[13px]">{roleCount}</span>
           <User size={24} weight="fill" className="text-white opacity-40" />
         </div>
 
@@ -103,4 +125,4 @@ export const RoleItem = ({ item }: RoleItemProps) => {
       </div>
     </div>
   );
-}
+};

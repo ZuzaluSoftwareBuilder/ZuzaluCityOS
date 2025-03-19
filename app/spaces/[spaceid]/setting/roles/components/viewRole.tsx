@@ -1,12 +1,14 @@
 import { RoleItem, RoleItemSkeleton } from './roleItem';
-import { RolePermission } from '@/types';
+import { RolePermission, UserRole } from '@/types';
 
 export default function ViewRole({
   roleData,
   isLoading,
+  members,
 }: {
   roleData: RolePermission[];
   isLoading: boolean;
+  members: UserRole[];
 }) {
   return (
     <div className="w-full pc:w-[560px] pc:box-content p-[20px] mx-auto flex flex-col gap-[40px] mobile:p-0">
@@ -29,7 +31,9 @@ export default function ViewRole({
             ? Array.from({ length: 3 }).map((_, index) => (
                 <RoleItemSkeleton key={index} />
               ))
-            : roleData.map((item) => <RoleItem key={item.id} item={item} />)}
+            : roleData.map((item) => (
+                <RoleItem key={item.id} item={item} members={members} />
+              ))}
         </div>
       </div>
     </div>
