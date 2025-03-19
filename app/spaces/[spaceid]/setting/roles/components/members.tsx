@@ -237,16 +237,9 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
     setSearchQuery(query);
   }, []);
 
-  // 添加成员
-  const handleAddMember = useCallback(() => {
-    // 在实际应用中，这里应该打开一个添加成员的模态框
-    alert('Add member functionality would open a modal in the real app');
-  }, []);
+  const handleAddMember = useCallback(() => {}, []);
 
-  // 移除成员
-  const handleRemoveMember = useCallback((memberId: string) => {
-    // setMembers((prev) => prev.filter((member) => member.id !== memberId));
-  }, []);
+  const handleRemoveMember = useCallback((memberId: string) => {}, []);
 
   const currentRole = useMemo(() => {
     return roleData.find((role) => role.role.name === roleName);
@@ -304,13 +297,13 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
   return (
     <div className="flex flex-col w-full gap-10">
       <Members
-        canManageAdminRole={canManageAdminRole}
+        canManageAdminRole={false}
         onSearch={handleSearch}
         onAddMember={handleAddMember}
       />
 
       <MemberList
-        canManageAdminRole={canManageAdminRole}
+        canManageAdminRole={false}
         members={filteredMembers}
         onRemoveMember={handleRemoveMember}
         currentRole={currentRole}
