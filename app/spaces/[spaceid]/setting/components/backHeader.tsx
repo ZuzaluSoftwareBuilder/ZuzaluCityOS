@@ -1,7 +1,8 @@
 import { CaretLeft } from '@phosphor-icons/react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@heroui/react';
 import { useCallback } from 'react';
+import { useMediaQuery } from '@mui/material';
 
 export interface IBackHeaderProps {
   spaceId: string;
@@ -9,10 +10,20 @@ export interface IBackHeaderProps {
 
 const BackHeader = ({ spaceId }: IBackHeaderProps) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isTablet = useMediaQuery('(max-width:1200px)');
 
   const handleBack = useCallback(() => {
+    if (pathname.includes('/roles') && isTablet) {
+      const roleParam = searchParams.get('role');
+      if (roleParam) {
+        return router.push(pathname);
+      }
+    }
+
     router.push(`/spaces/${spaceId}`);
-  }, [router, spaceId]);
+  }, [isTablet, pathname, router, searchParams, spaceId]);
 
   return (
     <div className="flex items-center gap-[10px] w-full ">
