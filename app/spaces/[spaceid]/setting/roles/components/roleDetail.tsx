@@ -12,7 +12,7 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import Display from './display';
 import Permission, { PermissionList } from './permission';
 import MemberManagement from './members';
-import { RolePermission } from '@/types';
+import { Profile, RolePermission, UserRole } from '@/types';
 
 interface RoleType {
   id: number;
@@ -22,9 +22,16 @@ interface RoleType {
 interface RoleDetailProps {
   roleData: RolePermission[];
   isLoading: boolean;
+  members: UserRole[];
+  owner?: Profile;
 }
 
-export default function RoleDetail({ roleData, isLoading }: RoleDetailProps) {
+export default function RoleDetail({
+  roleData,
+  isLoading,
+  members,
+  owner,
+}: RoleDetailProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -176,7 +183,14 @@ export default function RoleDetail({ roleData, isLoading }: RoleDetailProps) {
               roleName={currentRole}
             />
           )}
-          {currentTab === 'members' && <MemberManagement />}
+          {currentTab === 'members' && (
+            <MemberManagement
+              owner={owner}
+              members={members}
+              roleData={roleData}
+              roleName={currentRole}
+            />
+          )}
         </div>
       </div>
     </div>
