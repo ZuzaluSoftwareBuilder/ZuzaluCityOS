@@ -275,7 +275,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
       roleName === 'Owner'
         ? [
             {
-              id: owner?.id,
+              id: owner?.author?.id,
               name: owner?.username,
               avatar: owner?.avatar,
               address: owner?.author?.id.split(':')[4],
