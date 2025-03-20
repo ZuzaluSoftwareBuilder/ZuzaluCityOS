@@ -23,9 +23,8 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       );
     }
 
-    const { isOwner, permission, role, userRole } = sessionData;
+    const { isOwner, permission, role, operatorRole } = sessionData;
 
-    const userCurrentRole = role?.find((r) => r.role.id === userRole?.roleId);
     const addedRole = role?.find((r) => r.role.id === roleId);
     if (!addedRole) {
       return NextResponse.json({ error: 'Role not found' }, { status: 404 });
@@ -45,7 +44,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
 
     const hasPermission =
       isOwner ||
-      addedRole.permission_ids.includes(
+      operatorRole?.permission_ids.includes(
         permission?.find((p) => p.name === needPermission)?.id || '',
       );
 
