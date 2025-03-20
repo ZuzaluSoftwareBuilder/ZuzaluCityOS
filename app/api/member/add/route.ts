@@ -49,7 +49,6 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return NextResponse.json({ error: 'Permission denied' }, { status: 403 });
     }
 
-    // 检查用户是否已有相同角色
     const CHECK_EXISTING_ROLE_QUERY = `
       query GetUserRole($userId: ID, $resourceId: ID) {
         zucityUserRolesIndex(
@@ -62,10 +61,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
         ) {
           edges {
             node {
-              id
-              customAttributes {
-                tbd
-              }
+              roleId
             }
           }
         }
@@ -80,46 +76,38 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       },
     );
 
-    if (existingRoleResult.errors) {
-      return NextResponse.json(
-        {
-          error: 'Error checking existing roles',
-          details: existingRoleResult.errors,
-        },
-        { status: 500 },
-      );
-    }
-
-    // 使用更保守的类型处理
-    type RoleEdge = {
-      node: {
-        id: string;
-        customAttributes: Array<{ tbd: string }>;
-      };
-    };
+    // if (existingRoleResult.errors) {
+    //   return NextResponse.json(
+    //     {
+    //       error: 'Error checking existing roles',
+    //       details: existingRoleResult.errors,
+    //     },
+    //     { status: 500 },
+    //   );
+    // }
 
     // 使用类型断言处理查询结果
-    const data = existingRoleResult.data as any;
-    const existingRoles =
-      (data?.zucityUserRolesIndex?.edges as RoleEdge[]) || [];
-    const hasExistingRole = existingRoles.some((edge: RoleEdge) => {
-      const attributes = edge.node.customAttributes || [];
-      return attributes.some((attr: { tbd: string }) => {
-        try {
-          const parsed = JSON.parse(attr.tbd);
-          return parsed.key === 'roleId' && parsed.value === roleId;
-        } catch (e) {
-          return false;
-        }
-      });
-    });
+    // const data = existingRoleResult.data as any;
+    // const existingRoles =
+    //   (data?.zucityUserRolesIndex?.edges as RoleEdge[]) || [];
+    // const hasExistingRole = existingRoles.some((edge: RoleEdge) => {
+    //   const attributes = edge.node.customAttributes || [];
+    //   return attributes.some((attr: { tbd: string }) => {
+    //     try {
+    //       const parsed = JSON.parse(attr.tbd);
+    //       return parsed.key === 'roleId' && parsed.value === roleId;
+    //     } catch (e) {
+    //       return false;
+    //     }
+    //   });
+    // });
 
-    if (hasExistingRole) {
-      return NextResponse.json(
-        { error: 'User already has this role for this resource' },
-        { status: 409 },
-      );
-    }
+    // if (hasExistingRole) {
+    //   return NextResponse.json(
+    //     { error: 'User already has this role for this resource' },
+    //     { status: 409 },
+    //   );
+    // }
 
     const Create_QUERY = `
       mutation CreateZucityUserRoles($input: CreateZucityUserRolesInput!) {
@@ -134,9 +122,6 @@ export const POST = withSessionValidation(async (request, sessionData) => {
             updated_at
             resourceId
             source
-            customAttributes {
-              tbd
-            }
             roleId
           }
         }
@@ -149,17 +134,9 @@ export const POST = withSessionValidation(async (request, sessionData) => {
           userId,
           resourceId: id,
           source: resource,
-          customAttributes: [
-            {
-              tbd: JSON.stringify({
-                key: 'roleId',
-                value: roleId,
-              }),
-            },
-          ],
           created_at: dayjs().utc().toISOString(),
           updated_at: dayjs().utc().toISOString(),
-          roleId: roleId, // 使用传入的roleId，而非硬编码值
+          roleId,
         },
       },
     });

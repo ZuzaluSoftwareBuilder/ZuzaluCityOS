@@ -15,9 +15,7 @@ export type SessionCheckResult = {
   error?: string;
 };
 
-async function validateSession(
-  request: NextRequest,
-): Promise<SessionCheckResult> {
+async function validateSession(request: Request): Promise<SessionCheckResult> {
   const sessionStr = request.headers
     .get('Authorization')
     ?.replace('Bearer ', '');
@@ -35,9 +33,8 @@ async function validateSession(
     return { isValid: false, error: 'Unauthorized: DID session expired' };
   }
 
-  const { searchParams } = new URL(request.url);
-  const id = searchParams.get('id');
-  const resource = searchParams.get('resource');
+  const body = await request.json();
+  const { id, resource } = body;
 
   if (!id || !resource) {
     return {
@@ -47,6 +44,21 @@ async function validateSession(
   }
 
   const userId = didSession.did._parentId;
+  const { data: rolePermissionResult } = await supabase
+    .from('role_permission')
+    .select(
+      `
+          *,
+          role(
+            id,
+            name,
+            level
+          )
+        `,
+    )
+    .or(
+      `and(resource.eq.${resource},resource_id.eq.${id}),and(resource.is.null,resource_id.is.null)`,
+    );
   if (resource === 'space') {
     const spaceResult = await composeClient.executeQuery(
       getSpaceEventsQuery(),
@@ -59,30 +71,19 @@ async function validateSession(
       (admin) => admin.zucityProfile.author?.id === userId,
     );
     if (isOwner) {
-      return { isValid: true, userId, isOwner: true };
+      return {
+        isValid: true,
+        userId,
+        isOwner: true,
+        role: rolePermissionResult as RolePermission[],
+      };
     }
   }
 
-  const [permissionResult, rolePermissionResult, userRolesResult] =
-    await Promise.all([
-      supabase.from('permission').select('*'),
-      supabase
-        .from('role_permission')
-        .select(
-          `
-          *,
-          role(
-            id,
-            name,
-            level
-          )
-        `,
-        )
-        .or(
-          `and(resource.eq.${resource},resource_id.eq.${id}),and(resource.is.null,resource_id.is.null)`,
-        ),
-      composeClient.executeQuery(
-        `
+  const [permissionResult, userRolesResult] = await Promise.all([
+    supabase.from('permission').select('*'),
+    composeClient.executeQuery(
+      `
         query MyQuery {
           zucityUserRolesIndex(
             first: 1,
@@ -109,8 +110,8 @@ async function validateSession(
           }
         }
         `,
-      ),
-    ]);
+    ),
+  ]);
 
   const userRolesData = (
     userRolesResult as any
@@ -129,7 +130,7 @@ async function validateSession(
     userId: didSession?.did._parentId,
     isOwner: false,
     permission: permissionResult.data as Permission[],
-    role: rolePermissionResult.data as RolePermission[],
+    role: rolePermissionResult as RolePermission[],
     userRole,
   };
 }
@@ -141,7 +142,8 @@ export function withSessionValidation(
   ) => Promise<NextResponse>,
 ) {
   return async (request: NextRequest) => {
-    const sessionCheck = await validateSession(request);
+    const clonedRequest = request.clone();
+    const sessionCheck = await validateSession(clonedRequest);
     const { isValid, error, ...rest } = sessionCheck;
 
     if (!isValid) {
