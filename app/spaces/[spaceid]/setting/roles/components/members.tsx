@@ -247,21 +247,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
 
   const filteredMembers = useMemo(() => {
     const formatedMembers = members.map((member) => {
-      let roleId: string | null = null;
-      member.customAttributes.some((attr) => {
-        if (!attr || !('tbd' in attr)) return false;
-
-        try {
-          const parsedAttr = JSON.parse(attr.tbd);
-          if (parsedAttr.key === 'roleId' && parsedAttr.value) {
-            roleId = parsedAttr.value;
-            return true;
-          }
-          return false;
-        } catch {
-          return false;
-        }
-      });
+      let roleId = member.roleId;
       const did = member.userId.zucityProfile.author?.id;
       return {
         id: did,

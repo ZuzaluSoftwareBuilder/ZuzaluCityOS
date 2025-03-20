@@ -2,8 +2,12 @@ import { NextResponse } from 'next/server';
 import { withSessionValidation } from '@/utils/authMiddleware';
 import { PermissionName } from '@/types';
 import { dayjs } from '@/utils/dayjs';
-import { composeClient } from '@/constant';
+import { ceramic, composeClient } from '@/constant';
 import utc from 'dayjs/plugin/utc';
+import { Ed25519Provider } from 'key-did-provider-ed25519';
+import { getResolver } from 'key-did-resolver';
+import { DID } from 'dids';
+import { base64ToUint8Array } from '@/utils';
 
 dayjs.extend(utc);
 
@@ -128,6 +132,14 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       }
       `;
 
+    const seed = base64ToUint8Array(
+      'MGJCLIVC+lnpzRwEDhee4qIA1dH+BxVOMn1WhIwl9kU=',
+    );
+    const provider = new Ed25519Provider(seed);
+    const did = new DID({ provider, resolver: getResolver() });
+    await did.authenticate();
+    ceramic.did = did;
+    composeClient.setDID(did);
     const result = await composeClient.executeQuery(Create_QUERY, {
       input: {
         content: {

@@ -29,11 +29,9 @@ export default function useGetSpaceMember(spaceId: string) {
     queryKey: ['getSpaceMembers', spaceId],
     queryFn: () => getMembers(spaceId, 'space'),
     select: (data) => {
-      return data.data;
+      return data.data as UserRole[];
     },
   });
-
-  console.log(members);
 
   const owner = useMemo(() => {
     return spaceData?.superAdmin?.[0].zucityProfile;

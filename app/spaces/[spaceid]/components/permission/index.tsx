@@ -45,23 +45,7 @@ export const SpacePermissionProvider: React.FC<{
 
     if (!userMember) return null;
 
-    let roleId: string | null = null;
-    userMember.customAttributes.some((attr) => {
-      if (!attr || !('tbd' in attr)) return false;
-
-      try {
-        const parsedAttr = JSON.parse(attr.tbd);
-        if (parsedAttr.key === 'roleId' && parsedAttr.value) {
-          roleId = parsedAttr.value;
-          return true;
-        }
-        return false;
-      } catch {
-        return false;
-      }
-    });
-
-    return roleId;
+    return userMember.roleId;
   }, [members, userId]);
 
   const isAdmin = useMemo(() => {

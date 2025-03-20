@@ -67,20 +67,7 @@ export const RoleItem = ({ item, members }: RoleItemProps) => {
   const roleCount = useMemo(() => {
     if (item.role.level === 'owner') return 1;
     return members.filter((member) => {
-      return member.customAttributes.some((attr) => {
-        if (!attr || !('tbd' in attr)) return false;
-
-        try {
-          const parsedAttr = JSON.parse(attr.tbd);
-          return (
-            parsedAttr.key === 'roleId' &&
-            parsedAttr.value &&
-            parsedAttr.value === item.role.id
-          );
-        } catch {
-          return false;
-        }
-      });
+      return member.roleId === item.role.id;
     }).length;
   }, [item.role.level, item.role.id, members]);
 
