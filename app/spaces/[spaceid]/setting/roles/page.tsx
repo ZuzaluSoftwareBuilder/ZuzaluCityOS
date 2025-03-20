@@ -7,8 +7,8 @@ import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 
 export default function RolesPage() {
   const searchParams = useSearchParams();
-  const roleParam = searchParams.get('role');
-  const spaceId = useParams().spaceid;
+  const roleParam = searchParams?.get('role');
+  const spaceId = useParams()?.spaceid;
   const { isLoading, owner, roles, members } = useGetSpaceMember(
     spaceId as string,
   );

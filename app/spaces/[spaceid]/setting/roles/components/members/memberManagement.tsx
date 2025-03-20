@@ -39,11 +39,11 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
 
   const handleAddMember = useCallback(() => {
     openAddMemberDrawer()
-  }, []);
+  }, [openAddMemberDrawer]);
 
   const handleCloseAddMemberDrawer = useCallback(() => {
     closeAddMemberDrawer();
-  }, []);
+  }, [closeAddMemberDrawer]);
 
   const handleRemoveMember = useCallback((memberId: string) => {
     console.log('Remove member:', memberId);
@@ -58,68 +58,41 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
   }, [roleData, roleName]);
 
   const filteredMembers = useMemo(() => {
+    console.log(members);
     const formatedMembers = members
       .map((member) => {
-        let roleId: string | null = null;
-        member.customAttributes.some((attr) => {
-          if (!attr || !('tbd' in attr)) return false;
-
-          try {
-            const parsedAttr = JSON.parse(attr.tbd);
-            if (parsedAttr.key === 'roleId' && parsedAttr.value) {
-              roleId = parsedAttr.value;
-              return true;
-            }
-            return false;
-          } catch {
-            return false;
-          }
-        });
-        const did = member.userId.zucityProfile.author?.id;
+        let roleId = member.roleId;
+        const profile = member.userId.zucityProfile;
+        if (!profile) return null;
+        const did = profile.author?.id;
         return {
           id: did,
-          name: member.userId.zucityProfile.username,
-          avatar: member.userId.zucityProfile.avatar,
+          name: profile.username,
+          avatar: profile.avatar,
           address: did?.split(':')[4],
           roleId,
         } as IMemberItem;
       })
-      .filter((member) => member.roleId === currentRole?.role.id);
+      .filter((v) => !!v)
+      .filter((member) => member!.roleId === currentRole?.role.id);
     const memberList =
       roleName === 'Owner'
         ? [
-            {
-              id: owner?.author?.id,
-              name: owner?.username,
-              avatar: owner?.avatar,
-              address: owner?.author?.id.split(':')[4],
-              roleId: null,
-            } as IMemberItem,
-          ]
+          {
+            id: owner?.author?.id,
+            name: owner?.username,
+            avatar: owner?.avatar,
+            address: owner?.author?.id.split(':')[4],
+            roleId: null,
+          } as IMemberItem,
+        ]
         : formatedMembers;
     if (!searchQuery) return memberList || [];
 
     return memberList.filter((member) =>
-      member.name.toLowerCase().includes(searchQuery.toLowerCase()),
+      member?.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [currentRole?.role.id, members, owner, roleName, searchQuery]);
-
-  const availableMembers = useMemo(() => {
-    const allMembers = members.map((member) => {
-      const did = member.userId.zucityProfile.author?.id;
-      return {
-        id: did,
-        name: member.userId.zucityProfile.username,
-        avatar: member.userId.zucityProfile.avatar,
-        address: did?.split(':')[4],
-        roleId: null,
-      } as IMemberItem;
-    });
-
-    return allMembers.filter(
-      (member) => !filteredMembers.some((m) => m.id === member.id),
-    );
-  }, [members, filteredMembers]);
 
   const canManageAdminRole = useMemo(() => {
     if (!currentRole || currentRole.role.level !== 'admin') return false;
@@ -136,7 +109,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
 
       <MemberList
         canManageAdminRole={canManageAdminRole}
-        members={filteredMembers}
+        members={filteredMembers as IMemberItem[]}
         onRemoveMember={handleRemoveMember}
         currentRole={currentRole}
         isLoading={isLoading}
