@@ -6,6 +6,7 @@ type ZucitySpace @loadModel(id: "$Space_ID") {
   id: ID!
 }
 
+
 type ZucityApplicationForm @loadModel(id: "$ApplicationForm_ID") {
   id: ID!
 }

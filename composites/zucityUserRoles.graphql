@@ -4,9 +4,11 @@ type ZucityUserRoles
     description: "User Roles for Zuzalu.city beta version"
   )
   @createIndex(fields: [{ path: "resourceId" }])
+  @createIndex(fields: [{ path: "roleId" }])
+  @createIndex(fields: [{ path: "userId" }])
   @createIndex(fields: [{ path: "source" }]){
   author: DID! @documentAccount
-  roleId: StreamID! 
+  roleId: String! @string(minLength: 1, maxLength: 10000)
   userId: DID!
   resourceId: String @string(minLength: 1, maxLength: 10000)
   source: String @string(minLength: 1, maxLength: 10000)
