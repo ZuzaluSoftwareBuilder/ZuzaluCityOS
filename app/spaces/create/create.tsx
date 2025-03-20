@@ -214,7 +214,8 @@ const Create = () => {
         result.data?.createZucitySpace?.document?.id,
         'spaces',
       );
-
+      // todo: 跳转至空间详情页
+      router.push(`/spaces`);
     }
     catch (err: any) {
       console.log(err);
