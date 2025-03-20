@@ -23,7 +23,9 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       );
     }
 
-    const { isOwner, permission, role, userRole } = sessionData;
+    const { isOwner, permission, role, operatorRole } = sessionData;
+
+    console.log(operatorRole);
 
     const CHECK_EXISTING_ROLE_QUERY = `
       query GetUserRole($userId: String, $resourceId: String, $resource: String) {
@@ -70,7 +72,6 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     const roleId = userExistingRole.node.roleId;
     const userRoleId = userExistingRole.node.id;
 
-    const userCurrentRole = role?.find((r) => r.role.id === userRole?.roleId);
     const removedRole = role?.find((r) => r.role.id === roleId);
 
     if (!removedRole) {
@@ -91,7 +92,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
 
     const hasPermission =
       isOwner ||
-      userCurrentRole?.permission_ids.includes(
+      operatorRole?.permission_ids.includes(
         permission?.find((p) => p.name === needPermission)?.id || '',
       );
 

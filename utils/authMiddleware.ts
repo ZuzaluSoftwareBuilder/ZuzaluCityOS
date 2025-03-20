@@ -11,43 +11,44 @@ export type SessionCheckResult = {
   isOwner?: boolean;
   permission?: Permission[];
   role?: RolePermission[];
-  userRole?: UserRole;
+  operatorRole?: RolePermission;
   error?: string;
 };
 
 async function validateSession(request: Request): Promise<SessionCheckResult> {
-  const sessionStr = request.headers
-    .get('Authorization')
-    ?.replace('Bearer ', '');
+  try {
+    const sessionStr = request.headers
+      .get('Authorization')
+      ?.replace('Bearer ', '');
 
-  let didSession;
-  if (sessionStr) {
-    try {
-      didSession = (await DIDSession.fromSession(sessionStr)) as any;
-    } catch (error) {
-      return { isValid: false, error: 'Invalid DID session format' };
+    let didSession;
+    if (sessionStr) {
+      try {
+        didSession = (await DIDSession.fromSession(sessionStr)) as any;
+      } catch (error) {
+        return { isValid: false, error: 'Invalid DID session format' };
+      }
     }
-  }
 
-  if (didSession && didSession.isExpired) {
-    return { isValid: false, error: 'Unauthorized: DID session expired' };
-  }
+    if (didSession && didSession.isExpired) {
+      return { isValid: false, error: 'Unauthorized: DID session expired' };
+    }
 
-  const body = await request.json();
-  const { id, resource } = body;
+    const body = await request.json();
+    const { id, resource } = body;
 
-  if (!id || !resource) {
-    return {
-      isValid: false,
-      error: 'Missing required parameters: id and resource are required',
-    };
-  }
+    if (!id || !resource) {
+      return {
+        isValid: false,
+        error: 'Missing required parameters: id and resource are required',
+      };
+    }
 
-  const userId = didSession.did._parentId;
-  const { data: rolePermissionResult } = await supabase
-    .from('role_permission')
-    .select(
-      `
+    const operator = didSession.did._parentId;
+    const { data: rolePermissionResult } = await supabase
+      .from('role_permission')
+      .select(
+        `
           *,
           role(
             id,
@@ -55,35 +56,35 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
             level
           )
         `,
-    )
-    .or(
-      `and(resource.eq.${resource},resource_id.eq.${id}),and(resource.is.null,resource_id.is.null)`,
-    );
-  if (resource === 'space') {
-    const spaceResult = await composeClient.executeQuery(
-      getSpaceEventsQuery(),
-      {
-        id: id,
-      },
-    );
-    const space = spaceResult.data?.node as Space;
-    const isOwner = space.superAdmin?.some(
-      (admin) => admin.zucityProfile.author?.id === userId,
-    );
-    if (isOwner) {
-      return {
-        isValid: true,
-        userId,
-        isOwner: true,
-        role: rolePermissionResult as RolePermission[],
-      };
+      )
+      .or(
+        `and(resource.eq.${resource},resource_id.eq.${id}),and(resource.is.null,resource_id.is.null)`,
+      );
+    if (resource === 'space') {
+      const spaceResult = await composeClient.executeQuery(
+        getSpaceEventsQuery(),
+        {
+          id: id,
+        },
+      );
+      const space = spaceResult.data?.node as Space;
+      const isOwner = space.superAdmin?.some(
+        (admin) => admin.zucityProfile.author?.id === operator,
+      );
+      if (isOwner) {
+        return {
+          isValid: true,
+          userId: operator,
+          isOwner: true,
+          role: rolePermissionResult as RolePermission[],
+        };
+      }
     }
-  }
 
-  const [permissionResult, userRolesResult] = await Promise.all([
-    supabase.from('permission').select('*'),
-    composeClient.executeQuery(
-      `
+    const [permissionResult, userRolesResult] = await Promise.all([
+      supabase.from('permission').select('*'),
+      composeClient.executeQuery(
+        `
         query MyQuery {
           zucityUserRolesIndex(
             first: 1,
@@ -91,7 +92,8 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
               where: {
                 resourceId: { equalTo: "${id}" }
                 source: { equalTo: "${resource}" }
-                userId: { equalTo: "${userId}" }
+                userId: { equalTo: "${operator}" }
+              }
             }
           ) {
             edges {
@@ -110,29 +112,39 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
           }
         }
         `,
-    ),
-  ]);
+      ),
+    ]);
 
-  const userRolesData = (
-    userRolesResult as any
-  ).data?.zucityUserRolesIndex?.edges?.map((edge: any) => edge.node);
+    const userRolesData = (
+      userRolesResult as any
+    ).data?.zucityUserRolesIndex?.edges?.map(
+      (edge: any) => edge.node,
+    ) as UserRole[];
 
-  const userRole = userRolesData.find(
-    (item: any) => item.userId.zucityProfile.author?.id === userId,
-  );
+    console.log(operator);
 
-  if (!userRole) {
-    return { isValid: false, error: 'User not found' };
+    const operatorRole = userRolesData.find(
+      (item: any) => item.userId.zucityProfile.author?.id === operator,
+    );
+
+    if (!operatorRole) {
+      return { isValid: false, error: 'Operator not found' };
+    }
+
+    return {
+      isValid: true,
+      userId: didSession?.did._parentId,
+      isOwner: false,
+      permission: permissionResult.data as Permission[],
+      role: rolePermissionResult as RolePermission[],
+      operatorRole: rolePermissionResult?.find(
+        (role) => role.role.id === operatorRole.roleId,
+      ),
+    };
+  } catch (error) {
+    console.error('Error validating session:', error);
+    return { isValid: false, error: 'Session validation failed' };
   }
-
-  return {
-    isValid: true,
-    userId: didSession?.did._parentId,
-    isOwner: false,
-    permission: permissionResult.data as Permission[],
-    role: rolePermissionResult as RolePermission[],
-    userRole,
-  };
 }
 
 export function withSessionValidation(
