@@ -1,10 +1,12 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { PermissionName, Profile, RolePermission, UserRole } from '@/types';
 import { useSpacePermissions } from '../../../../components/permission';
 import { AddMemberDrawer } from './addMemberDrawer';
 import { AddMemberSubHeader } from './addMemberSubHeader';
 import { MemberList } from './memberList';
 import useOpenDraw from '@/hooks/useOpenDraw';
+import { addToast } from '@heroui/react';
+import { useParams, usePathname } from 'next/navigation';
 
 export interface IMemberItem {
   id: string;
@@ -20,6 +22,7 @@ interface MemberManagementProps {
   roleData: RolePermission[];
   roleName: string;
   isLoading: boolean;
+  onMembersChange: (members: IMemberItem[]) => void;
 }
 
 const MemberManagement: React.FC<MemberManagementProps> = ({
@@ -28,10 +31,19 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
   roleData,
   roleName,
   isLoading,
+  onMembersChange,
 }) => {
   const { checkPermission } = useSpacePermissions();
   const [searchQuery, setSearchQuery] = useState('');
-  const { open: isAddMemberDrawerOpen, handleOpen: openAddMemberDrawer, handleClose: closeAddMemberDrawer } = useOpenDraw();
+  const { open: openDrawer, handleOpen: openAddMemberDrawer, handleClose: closeAddMemberDrawer } = useOpenDraw();
+  const params = useParams<{ spaceid: string }>();
+  const pathname = usePathname();
+  const [isAddingMembers, setIsAddingMembers] = useState(false);
+  const [removingMemberId, setRemovingMemberId] = useState<string | null>(null);
+
+  // TODO set space for now
+  const resource = pathname?.includes('/spaces/') ? 'space' : 'city';
+  const resourceId = params?.spaceid;
 
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
@@ -41,17 +53,114 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
     openAddMemberDrawer()
   }, [openAddMemberDrawer]);
 
-  const handleCloseAddMemberDrawer = useCallback(() => {
-    closeAddMemberDrawer();
-  }, [closeAddMemberDrawer]);
 
-  const handleRemoveMember = useCallback((memberId: string) => {
-    console.log('Remove member:', memberId);
-  }, []);
+  const handleAddMembers = useCallback(
+    async (memberIds: string[]) => {
+      if (!memberIds.length) return;
+      console.log(memberIds);
+      
+      setIsAddingMembers(true);
+      
+      try {
+        console.log('resourceId', resourceId);
+        console.log('resource', resource);
+        console.log('roleData', roleData);
+        console.log('memberIds', memberIds);
+        const addPromises = memberIds.map(async (userId) => {
+          const response = await fetch('/api/member/add', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: resourceId,
+              resource,
+              roleId: roleData.find(role => role.role.name === roleName)?.role.id,
+              userId,
+            }),
+          });
 
-  const handleAddMembers = useCallback((memberIds: string[]) => {
-    console.log('Add members:', memberIds);
-  }, []);
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || '添加成员失败');
+          }
+
+          return response.json();
+        });
+
+        await Promise.all(addPromises);
+
+        // TODO need refresh list
+        addToast({
+          title: '成功添加成员',
+          description: `已成功将选定用户添加到 ${roleName} 角色`,
+          color: 'success',
+        });
+      } catch (error) {
+        console.error('添加成员错误:', error);
+        addToast({
+          title: '添加成员失败',
+          description: error instanceof Error ? error.message : '发生未知错误',
+          color: 'danger',
+        });
+      } finally {
+        setIsAddingMembers(false);
+      }
+    },
+    [resourceId, resource, roleData, roleName, addToast]
+  );
+
+  const handleRemoveMember = useCallback(
+    async (memberId: string) => {
+      if (!memberId) return;
+      
+      setRemovingMemberId(memberId);
+      
+      try {
+        const response = await fetch('/api/member/remove', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: resourceId,
+            resource,
+            userId: memberId,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || '移除成员失败');
+        }
+
+        const updatedMembers = members.filter(member => member.userId.zucityProfile?.id !== memberId);
+        onMembersChange(updatedMembers.map((member) => ({
+          id: member.userId.zucityProfile?.id,
+          name: member.userId.zucityProfile?.username,
+          avatar: member.userId.zucityProfile?.avatar,
+          address: member.userId.zucityProfile?.id.split(':')[4],
+          roleId: member.roleId,
+        } as IMemberItem)));
+
+        addToast({
+          title: '成功移除成员',
+          description: `已从 ${roleName} 角色中移除成员`,
+          color: 'success',
+        });
+      } catch (error) {
+        console.error('移除成员错误:', error);
+        addToast({
+          title: '移除成员失败',
+          description: error instanceof Error ? error.message : '发生未知错误',
+          color: 'danger',
+        });
+      } finally {
+        setRemovingMemberId(null);
+      }
+    },
+    [resourceId, resource, members, roleName, onMembersChange, addToast]
+  );
 
   const currentRole = useMemo(() => {
     return roleData.find((role) => role.role.name === roleName);
@@ -116,11 +225,11 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
       />
 
       <AddMemberDrawer
-        isOpen={isAddMemberDrawerOpen}
-        onClose={handleCloseAddMemberDrawer}
+        isOpen={openDrawer}
+        onClose={closeAddMemberDrawer}
         roleName={roleName}
         onAddMembers={handleAddMembers}
-        isLoading={isLoading}
+        isLoading={isAddingMembers}
       />
     </div>
   );

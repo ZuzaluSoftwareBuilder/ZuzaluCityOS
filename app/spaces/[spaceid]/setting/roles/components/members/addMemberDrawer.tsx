@@ -46,6 +46,7 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
   } = useSearchUsers();
 
   const searchedMembersItems = useMemo(() => {
+    console.log('searchedUsers', searchedUsers);
     return searchedUsers.map(
       (user: SearchUser) =>
         ({

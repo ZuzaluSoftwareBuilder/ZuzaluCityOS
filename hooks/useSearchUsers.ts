@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import useDebounce from './useDebounce';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { useAccount } from 'wagmi';
 
 export interface SearchUser {
   id: string;
@@ -8,40 +10,129 @@ export interface SearchUser {
   address: string;
 }
 
-const MockData = [
-  {
-    id: 'user_id_1',
-    username: 'Alice_Dev',
-    avatar: '/user/avatar_p.png',
-    address: '0x1234567890abcdef1234567890abcdef12345678',
-  },
-  {
-    id: 'user_id_2',
-    username: 'Bob_Builder',
-    avatar: '/user/avatar_p.png',
-    address: '0x2345678901abcdef2345678901abcdef23456789',
-  },
-  {
-    id: 'user_id_3',
-    username: 'Charlie_Coder',
-    avatar: '/user/avatar_p.png',
-    address: '0x3456789012abcdef3456789012abcdef34567890',
-  },
-  {
-    id: 'user_id_4',
-    username: 'Dana_Designer',
-    avatar: '/user/avatar_p.png',
-    address: '0x4567890123abcdef4567890123abcdef45678901',
-  },
-];
-
 export function useSearchUsers(initialQuery = '') {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [searchedUsers, setSearchedUsers] = useState<SearchUser[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { composeClient } = useCeramicContext();
+  const { chainId, chain } = useAccount();
 
   const debouncedQuery = useDebounce(searchQuery, 300);
+
+  const isWalletAddress = (query: string): boolean => {
+    return /^(0x)?[0-9a-fA-F]{1,40}$/.test(query);
+  };
+
+  const searchByWalletAddress = async (address: string): Promise<SearchUser[]> => {
+    const normalizedAddress = address.startsWith('0x') ? address.toLowerCase() : `0x${address}`.toLowerCase();
+    const currentChainId = chainId || 1;
+    console.log('chain', chain);
+    const did = `did:pkh:eip155:${currentChainId}:${normalizedAddress}`;
+    console.log('did', did);
+
+    const query = `
+      query GetProfilesForDIDSearch {
+        zucityProfileIndex(
+          first: 1,
+          filters: {
+            where: {
+              author: { id: { equalTo: "${did}" } }
+            }
+          }
+        ) {
+          edges {
+            node {
+              id
+              username
+              avatar
+              author {
+                id
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const response: any = await composeClient.executeQuery(query);
+
+    if (response.errors) {
+      throw new Error(response.errors[0].message || '查询用户失败');
+    }
+
+    if (response.data?.zucityProfileIndex?.edges?.length > 0) {
+      const filteredProfiles = response.data.zucityProfileIndex.edges
+        .filter((edge: any) => edge.node.author?.id === did)
+        .map((edge: any) => {
+          const authorId = edge.node.author?.id || '';
+          const extractedAddress = authorId.includes(':') ?
+            authorId.split(':')[4] || normalizedAddress : normalizedAddress;
+
+          return {
+            id: edge.node.id,
+            username: edge.node.username || '',
+            avatar: edge.node.avatar || '/user/avatar_p.png',
+            address: extractedAddress
+          };
+        });
+
+      return filteredProfiles;
+    }
+
+    return [];
+  };
+
+  const searchByUsername = async (username: string): Promise<SearchUser[]> => {
+
+    const query = `
+      query SearchByExactUsername {
+        zucityProfileIndex(
+          first: 20,
+          filters: { 
+            where: { 
+              username: { equalTo: "${username}" }
+            } 
+          }
+        ) {
+          edges {
+            node {
+              id
+              username
+              avatar
+              author {
+                id
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const response: any = await composeClient.executeQuery(query);
+
+    if (response.errors) {
+      throw new Error(response.errors[0].message || '搜索用户失败');
+    }
+
+    if (response.data?.zucityProfileIndex?.edges?.length > 0) {
+      return response.data.zucityProfileIndex.edges.map((edge: any) => {
+        console.log('edge', edge);
+        const authorId = edge.node.author?.id || '';
+        const address = authorId.includes(':') ?
+          authorId.split(':')[4] || authorId : authorId;
+
+        return {
+          id: edge.node.id,
+          username: edge.node.username || '',
+          avatar: edge.node.avatar || '/user/avatar_p.png',
+          address
+        };
+      });
+    }
+
+    return [];
+  };
 
   const searchUsers = useCallback(async (query: string) => {
     if (!query || query.trim().length === 0) {
@@ -54,31 +145,23 @@ export function useSearchUsers(initialQuery = '') {
     setError(null);
 
     try {
-      // TODO: use real API
-      // const response = await fetch(`/api/user/search?query=${encodeURIComponent(query)}`);
-      // if (!response.ok) {
-      //   const errorData = await response.json();
-      //   throw new Error(errorData.error || '搜索用户失败');
-      // }
-      // const data = await response.json();
-      // setSearchedUsers(data.users || []);
+      let results: SearchUser[] = [];
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setSearchedUsers(
-        MockData.filter(
-          (user) =>
-            user.username.toLowerCase().includes(query.toLowerCase()) ||
-            user.address.toLowerCase().includes(query.toLowerCase()),
-        ),
-      );
+      if (isWalletAddress(query)) {
+        results = await searchByWalletAddress(query);
+      } else {
+        results = await searchByUsername(query);
+      }
+
+      setSearchedUsers(results);
     } catch (error) {
       console.error('search user error:', error);
-      setError(error instanceof Error ? error.message : 'something went wrong');
+      setError(error instanceof Error ? error.message : '搜索过程中出现错误');
       setSearchedUsers([]);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [composeClient, chainId]);
 
   useEffect(() => {
     if (debouncedQuery) {
