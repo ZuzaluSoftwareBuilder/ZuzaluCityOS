@@ -246,17 +246,23 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
   }, [roleData, roleName]);
 
   const filteredMembers = useMemo(() => {
-    const formatedMembers = members.map((member) => {
-      let roleId = member.roleId;
-      const did = member.userId.zucityProfile.author?.id;
-      return {
-        id: did,
-        name: member.userId.zucityProfile.username,
-        avatar: member.userId.zucityProfile.avatar,
-        address: did?.split(':')[4],
-        roleId,
-      } as MemberItem;
-    }).filter((member) => member.roleId === currentRole?.role.id);
+    console.log(members);
+    const formatedMembers = members
+      .map((member) => {
+        let roleId = member.roleId;
+        const profile = member.userId.zucityProfile;
+        if (!profile) return null;
+        const did = profile.author?.id;
+        return {
+          id: did,
+          name: profile.username,
+          avatar: profile.avatar,
+          address: did?.split(':')[4],
+          roleId,
+        } as MemberItem;
+      })
+      .filter((v) => !!v)
+      .filter((member) => member.roleId === currentRole?.role.id);
     const memberList =
       roleName === 'Owner'
         ? [
