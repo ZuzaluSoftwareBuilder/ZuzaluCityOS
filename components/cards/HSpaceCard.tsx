@@ -142,17 +142,17 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md', s
                         "w-full",
                         `h-[${bannerSize.height}]`,
                     )}>
-                        {banner && (
-                            <Image
-                                src={banner}
-                                alt={`${name} banner`}
-                                width={bannerSize.width}
-                                height={bannerSize.height}
-                                classNames={{
-                                    img: cn("w-full object-cover")
-                                }}
-                            />
-                        )}
+
+                        <Image
+                            src={banner}
+                            alt={`${name} banner`}
+                            width={bannerSize.width}
+                            height={bannerSize.height}
+                            classNames={{
+                                img: cn("w-full object-cover")
+                            }}
+                        />
+
                     </div>
                 </div>
 
@@ -221,10 +221,10 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md', s
                     <Button
                         startContent={<ArrowSquareRightIcon />}
                         className="w-full"
-                    onPress={() => router.push(`/spaces/${id}`)}
-                >
-                    查看空间
-                </Button>
+                        onPress={() => router.push(`/spaces/${id}`)}
+                    >
+                        查看空间
+                    </Button>
                 )}
                 {
                     !showFooter && (

@@ -4,7 +4,7 @@ const Card = extendVariants(HCard, {
     variants: {
         card: {
             default: {
-                base: cn(commonStyle.border, "bg-white/[0.02]")
+                base: cn("border-1 border-white/[0.1]", "bg-white/[0.02] shadow-none")
             }
         }   
     },
