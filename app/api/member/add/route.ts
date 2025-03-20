@@ -54,12 +54,14 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     }
 
     const CHECK_EXISTING_ROLE_QUERY = `
-      query GetUserRole($userId: ID, $resourceId: ID) {
+      query GetUserRole($userId: String, $resourceId: String, $resource: String) {
         zucityUserRolesIndex(
+          first: 1,        
           filters: { 
             where: { 
               userId: { equalTo: $userId },
-              resourceId: { equalTo: $resourceId }
+              resourceId: { equalTo: $resourceId },
+              source: { equalTo: $resource }
             }
           }
         ) {
@@ -77,41 +79,19 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       {
         userId,
         resourceId: id,
+        resource,
       },
     );
 
-    // if (existingRoleResult.errors) {
-    //   return NextResponse.json(
-    //     {
-    //       error: 'Error checking existing roles',
-    //       details: existingRoleResult.errors,
-    //     },
-    //     { status: 500 },
-    //   );
-    // }
+    const data = existingRoleResult.data as any;
+    const existingRoles = (data?.zucityUserRolesIndex?.edges as []) || [];
 
-    // 使用类型断言处理查询结果
-    // const data = existingRoleResult.data as any;
-    // const existingRoles =
-    //   (data?.zucityUserRolesIndex?.edges as RoleEdge[]) || [];
-    // const hasExistingRole = existingRoles.some((edge: RoleEdge) => {
-    //   const attributes = edge.node.customAttributes || [];
-    //   return attributes.some((attr: { tbd: string }) => {
-    //     try {
-    //       const parsed = JSON.parse(attr.tbd);
-    //       return parsed.key === 'roleId' && parsed.value === roleId;
-    //     } catch (e) {
-    //       return false;
-    //     }
-    //   });
-    // });
-
-    // if (hasExistingRole) {
-    //   return NextResponse.json(
-    //     { error: 'User already has this role for this resource' },
-    //     { status: 409 },
-    //   );
-    // }
+    if (existingRoles.length > 0) {
+      return NextResponse.json(
+        { error: 'User already has role for this resource' },
+        { status: 409 },
+      );
+    }
 
     const Create_QUERY = `
       mutation CreateZucityUserRoles($input: CreateZucityUserRolesInput!) {
