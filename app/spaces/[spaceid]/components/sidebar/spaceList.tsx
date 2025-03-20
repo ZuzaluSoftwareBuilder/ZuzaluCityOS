@@ -89,7 +89,7 @@ export default SpaceList;
 
 const SpaceItem = ({ space }: { space: Space }) => {
   const pathname = usePathname();
-  const isActive = pathname.includes(`/spaces/${space.id}`);
+  const isActive = pathname?.includes(`/spaces/${space.id}`);
 
   return (
     <Tooltip

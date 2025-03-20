@@ -7,7 +7,7 @@ interface MemberProps {
   address: string;
 }
 
-export const Member: React.FC<MemberProps> = ({ avatarUrl, name, address }) => {
+export const MemberItem: React.FC<MemberProps> = ({ avatarUrl, name, address }) => {
   return (
     <div className="flex items-center gap-2.5">
       <Avatar
@@ -15,7 +15,7 @@ export const Member: React.FC<MemberProps> = ({ avatarUrl, name, address }) => {
         alt={name}
         className="w-8 h-8"
       />
-      <span className="text-sm font-semibold text-white">{name}</span>
+      <span className="text-[14px] font-semibold text-[#BFFF66]">{name}</span>
       <span className="text-[12px] text-white/60">
         {formatAddressString(address)}
       </span>

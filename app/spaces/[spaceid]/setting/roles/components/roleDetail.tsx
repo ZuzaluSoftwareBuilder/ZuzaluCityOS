@@ -11,7 +11,7 @@ import {
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import Display from './display';
 import Permission, { PermissionList } from './permission';
-import MemberManagement from './members';
+import MemberManagement from './members/memberManagement';
 import { Profile, RolePermission, UserRole } from '@/types';
 
 interface RoleType {
@@ -34,9 +34,9 @@ export default function RoleDetail({
 }: RoleDetailProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const currentRole = searchParams.get('role') || 'Owner';
-  const currentTab = searchParams.get('tab') || 'display';
+  const pathname = usePathname()!;
+  const currentRole = searchParams?.get('role') || 'Owner';
+  const currentTab = searchParams?.get('tab') || 'display';
 
   const currentRoleData = React.useMemo(
     () => roleData.find((item) => item.role.name === currentRole),
@@ -49,7 +49,7 @@ export default function RoleDetail({
 
   const handleTabChange = useCallback(
     (key: React.Key) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(searchParams?.toString());
       params.set('tab', key.toString());
       router.push(`${pathname}?${params.toString()}`);
     },
@@ -58,7 +58,7 @@ export default function RoleDetail({
 
   const handleRoleSelect = useCallback(
     (roleName: string) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(searchParams?.toString());
       params.set('role', roleName);
       router.push(`${pathname}?${params.toString()}`);
     },
