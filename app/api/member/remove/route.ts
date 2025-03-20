@@ -8,6 +8,7 @@ import { Ed25519Provider } from 'key-did-provider-ed25519';
 import { getResolver } from 'key-did-resolver';
 import { DID } from 'dids';
 import { base64ToUint8Array } from '@/utils';
+import { supabase } from '@/utils/supabase/client';
 
 dayjs.extend(utc);
 
@@ -110,9 +111,16 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       }
     `;
 
-    const seed = base64ToUint8Array(
-      'MGJCLIVC+lnpzRwEDhee4qIA1dH+BxVOMn1WhIwl9kU=',
-    );
+    const { data: spaceAgentData, error: spaceAgentError } = await supabase
+      .from('spaceAgent')
+      .select('agentKey')
+      .eq('spaceId', id)
+      .single();
+    if (spaceAgentError) {
+      console.error('Error getting private key:', spaceAgentError);
+      return new NextResponse('Error getting private key', { status: 500 });
+    }
+    const seed = base64ToUint8Array(spaceAgentData.agentKey);
     const provider = new Ed25519Provider(seed);
     const did = new DID({ provider, resolver: getResolver() });
     await did.authenticate();
