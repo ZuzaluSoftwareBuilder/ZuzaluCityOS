@@ -14,7 +14,7 @@ export const AddMemberSubHeader: React.FC<IAddMembersSubHeaderProps> = ({
   canManageAdminRole,
 }) => {
   return (
-    <div className="flex items-center w-full gap-2.5">
+    <div className="flex items-center w-full gap-2.5 mobile:flex-col">
       <Input
         variant="bordered"
         classNames={{
@@ -32,7 +32,7 @@ export const AddMemberSubHeader: React.FC<IAddMembersSubHeaderProps> = ({
       />
       {/*TODO isDisabled={!canManageAdminRole} */}
       <Button
-        className="bg-[rgba(103,219,255,0.2)] p-[8px_14px] text-[#67DBFF] border border-[rgba(103,219,255,0.1)] text-[16px] shrink-0"
+        className="bg-[rgba(103,219,255,0.2)] p-[8px_14px] text-[#67DBFF] border border-[rgba(103,219,255,0.1)] text-[16px] shrink-0 mobile:w-full"
         radius="sm"
         onPress={onAddMember}
       >
