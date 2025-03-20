@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { DIDSession } from 'did-session';
 import { composeClient } from '@/constant';
 import { supabase } from './supabase/client';
-import { Role, Permission, UserRole, Space } from '@/types';
+import { Permission, UserRole, Space, RolePermission } from '@/types';
 import { getSpaceEventsQuery } from '@/services/space';
 
 export type SessionCheckResult = {
@@ -10,7 +10,7 @@ export type SessionCheckResult = {
   userId?: string;
   isOwner?: boolean;
   permission?: Permission[];
-  role?: Role[];
+  role?: RolePermission[];
   userRole?: UserRole;
   error?: string;
 };
@@ -63,12 +63,13 @@ async function validateSession(
     }
   }
 
-  const [permissionResult, roleResult, userRolesResult] = await Promise.all([
-    supabase.from('permission').select('*'),
-    supabase
-      .from('role_permission')
-      .select(
-        `
+  const [permissionResult, rolePermissionResult, userRolesResult] =
+    await Promise.all([
+      supabase.from('permission').select('*'),
+      supabase
+        .from('role_permission')
+        .select(
+          `
           *,
           role(
             id,
@@ -76,20 +77,20 @@ async function validateSession(
             level
           )
         `,
-      )
-      .or(
-        `and(resource.eq.${resource},resource_id.eq.${id}),and(resource.is.null,resource_id.is.null)`,
-      ),
-    composeClient.executeQuery(
-      `
+        )
+        .or(
+          `and(resource.eq.${resource},resource_id.eq.${id}),and(resource.is.null,resource_id.is.null)`,
+        ),
+      composeClient.executeQuery(
+        `
         query MyQuery {
           zucityUserRolesIndex(
-            first: 1000,
+            first: 1,
             filters: {
               where: {
                 resourceId: { equalTo: "${id}" }
                 source: { equalTo: "${resource}" }
-              }
+                userId: { equalTo: "${userId}" }
             }
           ) {
             edges {
@@ -108,8 +109,8 @@ async function validateSession(
           }
         }
         `,
-    ),
-  ]);
+      ),
+    ]);
 
   const userRolesData = (
     userRolesResult as any
@@ -128,7 +129,7 @@ async function validateSession(
     userId: didSession?.did._parentId,
     isOwner: false,
     permission: permissionResult.data as Permission[],
-    role: roleResult.data as Role[],
+    role: rolePermissionResult.data as RolePermission[],
     userRole,
   };
 }
