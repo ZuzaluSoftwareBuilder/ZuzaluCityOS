@@ -5,7 +5,7 @@ import { dayjs } from '@/utils/dayjs';
 import { composeClient } from '@/constant';
 import utc from 'dayjs/plugin/utc';
 import { authenticateWithSpaceId } from '@/utils/ceramic';
-import { CHECK_EXISTING_ROLE_QUERY, UPDATE_ROLE_QUERY } from '@/services/role';
+import { CHECK_EXISTING_ROLE_QUERY, UPDATE_ROLE_QUERY } from '@/services/graphql/role';
 
 dayjs.extend(utc);
 
