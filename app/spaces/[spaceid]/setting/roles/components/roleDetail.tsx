@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Tabs, Tab, Input, cn, Skeleton } from '@heroui/react';
+import React, { useEffect, useCallback } from 'react';
+import { Button, Tabs, Tab, cn, Skeleton } from '@heroui/react';
 import {
   CaretLeft,
-  DotsThree,
   Info,
   IdentificationBadge,
 } from '@phosphor-icons/react';

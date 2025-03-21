@@ -9,10 +9,11 @@ import {
   DrawerHeader,
   Input,
   cn,
+  Skeleton,
 } from '@heroui/react';
 import { X } from '@phosphor-icons/react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { MemberItem, MemberSkeleton } from './memberItem';
+import { MemberItem } from './memberItem';
 import { IMemberItem } from './memberManagement';
 import { useSearchUsers } from '@/hooks/useSearchUsers';
 import type { SearchUser } from '@/hooks/useSearchUsers';
@@ -22,20 +23,18 @@ interface IAddMemberDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   roleName: string;
-  onAddMembers: (memberIds: string[]) => void;
-  isLoading: boolean;
+  onAddMembers: (memberIds: string[]) => Promise<void>;
 }
 
 export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
   isOpen,
   onClose,
-  roleName,
   onAddMembers,
-  isLoading: propIsLoading,
 }) => {
   const isMobile = useMediaQuery('(max-width: 809px)');
-  
+
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [isAddingMember, setIsAddingMember] = useState(false);
   const {
     searchQuery,
     setSearchQuery,
@@ -46,7 +45,6 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
   } = useSearchUsers();
 
   const searchedMembersItems = useMemo(() => {
-    console.log('searchedUsers', searchedUsers);
     return searchedUsers.map(
       (user: SearchUser) =>
         ({
@@ -80,17 +78,14 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
     });
   }, []);
 
-  useEffect(() => {
-    // TODO delete
-    console.log('selectedMembers', selectedMembers);
-  }, [selectedMembers]);
-
-  const handleAddMembers = useCallback(() => {
-    onAddMembers(selectedMembers);
-    setSelectedMembers([]);
-    clearSearch();
-    onClose();
-  }, [onAddMembers, selectedMembers, clearSearch, onClose]);
+  const handleAddMembers = useCallback(async () => {
+    try {
+      setIsAddingMember(true);
+      await onAddMembers(selectedMembers);
+    } finally {
+      setIsAddingMember(false);
+    }
+  }, [onAddMembers, selectedMembers]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -99,29 +94,30 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
     }
   }, [isOpen, clearSearch]);
 
-  const isPageLoading = propIsLoading || searchIsLoading;
-
   return (
     <Drawer
       isOpen={isOpen}
-      onClose={onClose}
-      placement={isMobile ? "bottom" : "right"}
+      onClose={isAddingMember ? undefined : onClose}
+      placement={isMobile ? 'bottom' : 'right'}
       hideCloseButton={true}
+      isDismissable={false}
       classNames={{
         wrapper: ['z-[1100]'],
         base: cn(
           'bg-[rgba(34,34,34,0.8)] border-[rgba(255,255,255,0.06)] backdrop-blur-[20px] rounded-none',
-          isMobile ? 
-            'w-full border-t rounded-t-[16px]' : 
-            'min-w-[600px] border-l'
+          isMobile
+            ? 'w-full border-t rounded-t-[16px]'
+            : 'min-w-[600px] border-l',
         ),
       }}
     >
       <DrawerContent>
-        <DrawerHeader className={cn(
-          "flex items-center justify-between border-b border-[rgba(255,255,255,0.1)] p-[10px]",
-          isMobile && "pb-[14px]"
-        )}>
+        <DrawerHeader
+          className={cn(
+            'flex items-center justify-between border-b border-[rgba(255,255,255,0.1)] p-[10px]',
+            isMobile && 'pb-[14px]',
+          )}
+        >
           {isMobile && (
             <div className="w-full flex flex-col items-center">
               <div className="w-[36px] h-[4px] bg-[rgba(255,255,255,0.2)] rounded-full mb-[10px]" />
@@ -130,13 +126,14 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
               </h3>
             </div>
           )}
-          
+
           {!isMobile && (
             <div className="flex items-center gap-[14px]">
               <Button
                 variant="light"
                 className="rounded-[8px] px-[10px] min-w-[auto] h-[34px] flex gap-[10px]"
                 onPress={onClose}
+                isDisabled={isAddingMember}
               >
                 <X size={20} className="text-white opacity-50" />
                 <span className="text-[14px] font-semibold text-white leading-[1.6]">
@@ -149,10 +146,12 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
             </div>
           )}
         </DrawerHeader>
-        <DrawerBody className={cn(
-          "flex flex-col gap-[20px]",
-          isMobile ? "p-[16px] pb-[24px]" : "p-[20px]"
-        )}>
+        <DrawerBody
+          className={cn(
+            'flex flex-col gap-[20px]',
+            isMobile ? 'p-[16px] pb-[24px]' : 'p-[20px]',
+          )}
+        >
           <div className="w-full relative">
             <Input
               variant="bordered"
@@ -167,26 +166,29 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
                 <MagnifyingGlassIcon className="w-[20px] h-[20px] text-white opacity-50" />
               }
               onChange={handleSearch}
+              isDisabled={isAddingMember}
             />
             {searchError && (
               <div className="text-red-500 text-xs mt-1">{searchError}</div>
             )}
           </div>
 
-          <div className={cn(
-            "flex flex-col w-full gap-[4px]", 
-            isMobile && "max-h-[40vh] overflow-y-auto"
-          )}>
+          <div
+            className={cn(
+              'flex flex-col w-full gap-[4px]',
+              isMobile && 'max-h-[40vh] overflow-y-auto',
+            )}
+          >
             {searchIsLoading ? (
-              Array.from({ length: 3 }).map((_, index) => (
-                <MemberSkeleton key={`skeleton-${index}`} />
+              Array.from({ length: 1 }).map((_, index) => (
+                <MemberSkeletonWithCheckbox key={`skeleton-${index}`} />
               ))
             ) : filteredMembers.length > 0 ? (
               filteredMembers.map((member: IMemberItem) => (
                 <div
                   key={member.id}
                   className={`flex items-center w-full px-[8px] py-[4px] rounded-[8px] ${
-                    selectedMembers.includes(member.id)
+                    selectedMembers.includes(member.did)
                       ? 'bg-[rgba(255,255,255,0.05)]'
                       : ''
                   }`}
@@ -195,12 +197,13 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
                     color="default"
                     isSelected={selectedMembers.includes(member.did)}
                     onValueChange={() => handleSelectMember(member.did)}
+                    isDisabled={isAddingMember}
                     classNames={{
                       base: cn(
-                        "inline-flex w-full gap-[10px]",
-                        "items-center justify-start",
+                        'inline-flex w-full gap-[10px]',
+                        'items-center justify-start',
                       ),
-                      label: "w-full",
+                      label: 'w-full',
                     }}
                   >
                     <MemberItem
@@ -212,32 +215,36 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
                 </div>
               ))
             ) : (
-              <div className="flex flex-col items-center justify-center w-full py-10">
+              <div className="flex flex-col items-center justify-center w-full h-[40px]">
                 <p className="text-white/60 text-base">No members found</p>
               </div>
             )}
           </div>
 
-          <div className={cn(
-            'flex justify-end gap-[10px]',
-            isMobile && 'mt-[4px]'
-          )}>
+          <div
+            className={cn(
+              'flex justify-end gap-[10px]',
+              isMobile && 'mt-[4px]',
+            )}
+          >
             <Button
               className={cn(
-                "h-[38px] bg-[rgba(255,255,255,0.05)] border-none rounded-[10px] text-white text-[14px] font-bold leading-[1.6]",
-                isMobile ? "flex-1" : "w-[120px]"
+                'h-[38px] bg-[rgba(255,255,255,0.05)] border-none rounded-[10px] text-white text-[14px] font-bold leading-[1.6]',
+                isMobile ? 'flex-1' : 'w-[120px]',
               )}
               onPress={onClose}
+              isDisabled={isAddingMember}
             >
               Cancel
             </Button>
             <Button
               className={cn(
-                "h-[38px] rgba(103,219,255,0.10) text-[#67DBFF] border border-[rgba(103,219,255,0.2)] rounded-[10px] text-[14px] font-bold leading-[1.6]",
-                isMobile ? "flex-1" : "w-[120px]"
+                'h-[38px] rgba(103,219,255,0.10) text-[#67DBFF] border border-[rgba(103,219,255,0.2)] rounded-[10px] text-[14px] font-bold leading-[1.6]',
+                isMobile ? 'flex-1' : 'w-[120px]',
               )}
-              isDisabled={selectedMembers.length === 0}
+              isDisabled={selectedMembers.length === 0 || isAddingMember}
               onPress={handleAddMembers}
+              isLoading={isAddingMember}
             >
               Add
             </Button>
@@ -245,5 +252,16 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
         </DrawerBody>
       </DrawerContent>
     </Drawer>
+  );
+};
+
+export const MemberSkeletonWithCheckbox = () => {
+  return (
+    <div className="flex items-center gap-[10px] p-[4px_8px] h-[40px]">
+      <Skeleton className="w-[20px] h-[20px] rounded-[4px] mr-[10px]" />
+      <Skeleton className="rounded-full w-8 h-8" />
+      <Skeleton className="h-[22px] w-24 rounded-md" />
+      <Skeleton className="h-[22px] w-20 rounded-md" />
+    </div>
   );
 };

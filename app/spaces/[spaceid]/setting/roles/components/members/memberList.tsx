@@ -16,10 +16,11 @@ import {
 import { X } from '@phosphor-icons/react';
 import { RolePermission } from '@/types';
 import { IMemberItem } from './memberManagement';
+import useOpenDraw from '@/hooks/useOpenDraw';
 
 export interface MemberListProps {
   members: IMemberItem[];
-  onRemoveMember: (memberId: string) => void;
+  onRemoveMember: (memberId: string) => Promise<void>;
   currentRole?: RolePermission;
   canManageAdminRole: boolean;
   isLoading: boolean;
@@ -32,26 +33,35 @@ export const MemberList: React.FC<MemberListProps> = ({
   canManageAdminRole,
   isLoading,
 }) => {
-  const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
-  const [memberToRemove, setMemberToRemove] = useState<IMemberItem | null>(null);
+  const { open, handleOpen, handleClose } = useOpenDraw();
+  const [isRemovingMember, setIsRemovingMember] = useState(false);
+  const [memberToRemove, setMemberToRemove] = useState<IMemberItem | null>(
+    null,
+  );
 
   const handleRemoveClick = useCallback((member: IMemberItem) => {
     setMemberToRemove(member);
-    setIsRemoveModalOpen(true);
-  }, []);
+    handleOpen();
+  }, [handleOpen]);
 
-  const handleConfirmRemove = useCallback(() => {
+  const handleConfirmRemove = useCallback(async () => {
     if (memberToRemove) {
-      onRemoveMember(memberToRemove.id);
-      setIsRemoveModalOpen(false);
-      setMemberToRemove(null);
+      try {
+        setIsRemovingMember(true);
+        await onRemoveMember(memberToRemove.id);
+        handleClose();
+        setMemberToRemove(null);
+      } finally {
+        setIsRemovingMember(false);
+      }
     }
-  }, [memberToRemove, onRemoveMember]);
+  }, [handleClose, memberToRemove, onRemoveMember]);
 
   const handleCancelRemove = useCallback(() => {
-    setIsRemoveModalOpen(false);
+    if (isRemovingMember) return;
+    handleClose();
     setMemberToRemove(null);
-  }, []);
+  }, [handleClose, isRemovingMember]);
 
   return (
     <div className="flex flex-col w-full gap-5">
@@ -99,12 +109,14 @@ export const MemberList: React.FC<MemberListProps> = ({
 
       <Modal
         placement="center"
-        isOpen={isRemoveModalOpen}
-        onClose={handleCancelRemove}
+        isOpen={open}
+        onClose={isRemovingMember ? undefined : handleCancelRemove}
         classNames={{
           base: 'bg-[rgba(52,52,52,0.6)] border-[rgba(255,255,255,0.1)] border-[2px] backdrop-blur-[20px] transition-all duration-200',
           wrapper: 'bg-black/40 transition-opacity duration-300',
         }}
+        hideCloseButton={true}
+        isDismissable={false}
         motionProps={{
           variants: {
             enter: {
@@ -121,10 +133,19 @@ export const MemberList: React.FC<MemberListProps> = ({
         }}
       >
         <ModalContent>
-          <ModalHeader className="flex justify-between items-center p-[20px]">
+          <ModalHeader className="flex justify-between items-center h-[60px] pl-[20px] pr-[10px]">
             <h3 className="text-white font-bold text-base">
               Remove Member From Role?
             </h3>
+            <Button
+              isIconOnly
+              variant="light"
+              className="min-w-0 px-0"
+              onPress={handleCancelRemove}
+              disabled={isRemovingMember}
+            >
+              <X size={20} className="text-white opacity-50" />
+            </Button>
           </ModalHeader>
           <ModalBody className="p-[0_20px] gap-5">
             <p className="text-white/70 text-sm">
@@ -132,14 +153,11 @@ export const MemberList: React.FC<MemberListProps> = ({
             </p>
             {memberToRemove && (
               <div className="flex items-center justify-center w-full gap-2.5 py-2.5 border border-[rgba(255,255,255,0.1)] rounded-lg">
-                <Avatar
-                  src={memberToRemove.avatar || '/user/avatar_p.png'}
-                  alt={memberToRemove.name}
-                  className="w-8 h-8"
+                <MemberItem
+                  avatarUrl={memberToRemove.avatar || '/user/avatar_p.png'}
+                  name={memberToRemove.name}
+                  address={memberToRemove.address}
                 />
-                <span className="text-sm font-semibold text-[#BFFF66]">
-                  {memberToRemove.name}
-                </span>
               </div>
             )}
           </ModalBody>
@@ -149,6 +167,7 @@ export const MemberList: React.FC<MemberListProps> = ({
                 className="flex-1 h-[38px] bg-transparent border border-[rgba(255,255,255,0.1)] text-white font-bold"
                 radius="md"
                 onPress={handleCancelRemove}
+                disabled={isRemovingMember}
               >
                 Cancel
               </Button>
@@ -156,6 +175,7 @@ export const MemberList: React.FC<MemberListProps> = ({
                 className="flex-1 h-[38px] bg-[rgba(255,94,94,0.1)] border border-[rgba(255,94,94,0.2)] text-[#FF5E5E] font-bold"
                 radius="md"
                 onPress={handleConfirmRemove}
+                isLoading={isRemovingMember}
               >
                 Remove
               </Button>

@@ -73,7 +73,7 @@ function RootLayout({
                             <ZupassProvider>
                               <AppContextProvider>
                                 <ReactQueryDevtools initialIsOpen={false} />
-                                <HeroToastProvider />
+                                <HeroToastProvider placement={'bottom-center'} />
                                 {!shouldHideHeader && <Header />}
                                 {isClient && <AuthPrompt />}
                                 <GlobalDialog />
