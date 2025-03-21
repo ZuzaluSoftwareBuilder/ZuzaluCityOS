@@ -657,3 +657,9 @@ export interface UserRoleData {
     edges: { node: UserRole }[];
   };
 }
+
+export interface IProfile {
+  zucityProfileIndex: {
+    edges: { node: Profile }[];
+  }
+}

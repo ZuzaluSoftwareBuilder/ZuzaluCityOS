@@ -3,6 +3,8 @@ import useDebounce from './useDebounce';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useAccount } from 'wagmi';
 import { isAddress } from 'viem';
+import { GET_PROFILE_BY_NAME_QUERY } from '@/services/graphql/profile';
+import { IProfile } from '@/types';
 
 export interface SearchUser {
   id: string;
@@ -84,44 +86,25 @@ export function useSearchUsers(initialQuery = '') {
 
       return [];
     },
-    [chainId, composeClient]
+    [chainId, composeClient],
   );
 
   const searchByUsername = useCallback(
     async (username: string): Promise<SearchUser[]> => {
-      const query = `
-        query SearchByExactUsername {
-          zucityProfileIndex(
-            first: 20,
-            filters: { 
-              where: { 
-                username: { equalTo: "${username}" }
-              } 
-            }
-          ) {
-            edges {
-              node {
-                id
-                username
-                avatar
-                author {
-                  id
-                }
-              }
-            }
-          }
-        }
-      `;
-
-      const response: any = await composeClient.executeQuery(query);
+      const response = await composeClient.executeQuery<IProfile>(
+        GET_PROFILE_BY_NAME_QUERY,
+        {
+          username,
+        },
+      );
 
       if (response.errors) {
         throw new Error(response.errors[0].message || '搜索用户失败');
       }
 
-      if (response.data?.zucityProfileIndex?.edges?.length > 0) {
-        return response.data.zucityProfileIndex.edges.map((edge: any) => {
-          console.log('edge', edge);
+      if ('zucityProfileIndex' in response.data!) {
+        const profileData: IProfile = response.data as IProfile;
+        return profileData.zucityProfileIndex.edges.map((edge: any) => {
           const authorId = edge.node.author?.id || '';
           const address = authorId.includes(':')
             ? authorId.split(':')[4] || authorId
@@ -139,7 +122,7 @@ export function useSearchUsers(initialQuery = '') {
 
       return [];
     },
-    [composeClient]
+    [composeClient],
   );
 
   const searchUsers = useCallback(
@@ -165,7 +148,9 @@ export function useSearchUsers(initialQuery = '') {
         setSearchedUsers(results);
       } catch (error) {
         console.error('search user error:', error);
-        setError(error instanceof Error ? error.message : 'error in search process');
+        setError(
+          error instanceof Error ? error.message : 'error in search process',
+        );
         setSearchedUsers([]);
       } finally {
         setIsLoading(false);

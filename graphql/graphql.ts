@@ -2829,6 +2829,13 @@ export type ZucityUserRolesSortingInput = {
   userId?: InputMaybe<SortOrder>;
 };
 
+export type SearchByExactUsernameQueryVariables = Exact<{
+  username: Scalars['String']['input'];
+}>;
+
+
+export type SearchByExactUsernameQuery = { __typename?: 'Query', zucityProfileIndex?: { __typename?: 'ZucityProfileConnection', edges?: Array<{ __typename?: 'ZucityProfileEdge', node?: { __typename?: 'ZucityProfile', id: string, username: string, avatar?: string | null, author: { __typename?: 'CeramicAccount', id: string } } | null } | null> | null } | null };
+
 export type GetMembersQueryVariables = Exact<{
   source?: InputMaybe<Scalars['String']['input']>;
   resourceId?: InputMaybe<Scalars['String']['input']>;
@@ -2900,6 +2907,22 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const SearchByExactUsernameDocument = new TypedDocumentString(`
+    query SearchByExactUsername($username: String!) {
+  zucityProfileIndex(first: 1, filters: {where: {username: {equalTo: $username}}}) {
+    edges {
+      node {
+        id
+        username
+        avatar
+        author {
+          id
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<SearchByExactUsernameQuery, SearchByExactUsernameQueryVariables>;
 export const GetMembersDocument = new TypedDocumentString(`
     query GetMembers($source: String, $resourceId: String) {
   zucityUserRolesIndex(
