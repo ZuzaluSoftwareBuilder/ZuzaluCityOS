@@ -2829,6 +2829,13 @@ export type ZucityUserRolesSortingInput = {
   userId?: InputMaybe<SortOrder>;
 };
 
+export type GetSpaceMembersQueryVariables = Exact<{
+  resourceId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetSpaceMembersQuery = { __typename?: 'Query', zucityUserRolesIndex?: { __typename?: 'ZucityUserRolesConnection', edges?: Array<{ __typename?: 'ZucityUserRolesEdge', node?: { __typename?: 'ZucityUserRoles', roleId: string, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, userId: { __typename?: 'CeramicAccount', zucityProfile?: { __typename?: 'ZucityProfile', avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } } | null } | null> | null } | null };
+
 export type GetUserRoleQueryVariables = Exact<{
   userId?: InputMaybe<Scalars['String']['input']>;
   resourceId?: InputMaybe<Scalars['String']['input']>;
@@ -2878,6 +2885,32 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const GetSpaceMembersDocument = new TypedDocumentString(`
+    query GetSpaceMembers($resourceId: String) {
+  zucityUserRolesIndex(
+    first: 1000
+    filters: {where: {source: {equalTo: "space"}, resourceId: {equalTo: $resourceId}}}
+  ) {
+    edges {
+      node {
+        roleId
+        customAttributes {
+          tbd
+        }
+        userId {
+          zucityProfile {
+            avatar
+            username
+            author {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetSpaceMembersQuery, GetSpaceMembersQueryVariables>;
 export const GetUserRoleDocument = new TypedDocumentString(`
     query GetUserRole($userId: String, $resourceId: String, $resource: String) {
   zucityUserRolesIndex(

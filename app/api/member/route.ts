@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UserRoleData } from '@/types';
 import { composeClient } from '@/constant';
+import { GET_SPACE_MEMBERS_QUERY } from '@/services/graphql/role';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -16,37 +17,10 @@ export async function GET(request: NextRequest) {
 
   try {
     const data = await composeClient.executeQuery<UserRoleData>(
-      `
-        query MyQuery {
-          zucityUserRolesIndex(
-            first: 1000,
-            filters: {
-              where: {
-                resourceId: { equalTo: "${id}" }
-                source: { equalTo: "space" }
-              }
-            }
-          ) {
-            edges {
-              node {
-                roleId
-                customAttributes {
-                  tbd
-                }
-                userId {
-                  zucityProfile {
-                    avatar
-                    username
-                    author {
-                      id
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        `,
+      GET_SPACE_MEMBERS_QUERY,
+      {
+        resourceId: id,
+      },
     );
 
     if (data.errors) {
