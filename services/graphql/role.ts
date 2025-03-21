@@ -1,5 +1,37 @@
 import { graphql } from '@/graphql/gql';
 
+export const GET_SPACE_MEMBERS_QUERY = graphql(`
+  query GetSpaceMembers($resourceId: String) {
+    zucityUserRolesIndex(
+      first: 1000
+      filters: {
+        where: {
+          source: { equalTo: "space" }
+          resourceId: { equalTo: $resourceId }
+        }
+      }
+    ) {
+      edges {
+        node {
+          roleId
+          customAttributes {
+            tbd
+          }
+          userId {
+            zucityProfile {
+              avatar
+              username
+              author {
+                id
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`);
+
 export const CHECK_EXISTING_ROLE_QUERY = graphql(`
   query GetUserRole($userId: String, $resourceId: String, $resource: String) {
     zucityUserRolesIndex(

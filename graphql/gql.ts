@@ -15,18 +15,24 @@ import * as types from './graphql';
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+    "\n  query GetSpaceMembers($resourceId: String) {\n    zucityUserRolesIndex(\n      first: 1000\n      filters: {\n        where: {\n          source: { equalTo: \"space\" }\n          resourceId: { equalTo: $resourceId }\n        }\n      }\n    ) {\n      edges {\n        node {\n          roleId\n          customAttributes {\n            tbd\n          }\n          userId {\n            zucityProfile {\n              avatar\n              username\n              author {\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetSpaceMembersDocument,
     "\n  query GetUserRole($userId: String, $resourceId: String, $resource: String) {\n    zucityUserRolesIndex(\n      first: 1\n      filters: {\n        where: {\n          userId: { equalTo: $userId }\n          resourceId: { equalTo: $resourceId }\n          source: { equalTo: $resource }\n        }\n      }\n    ) {\n      edges {\n        node {\n          roleId\n        }\n      }\n    }\n  }\n": typeof types.GetUserRoleDocument,
     "\n  mutation CreateZucityUserRoles($input: CreateZucityUserRolesInput!) {\n    createZucityUserRoles(input: $input) {\n      document {\n        userId {\n          id\n        }\n        created_at\n        updated_at\n        resourceId\n        source\n        roleId\n      }\n    }\n  }\n": typeof types.CreateZucityUserRolesDocument,
     "\n  mutation enableIndexingZucityUserRoles(\n    $input: EnableIndexingZucityUserRolesInput!\n  ) {\n    enableIndexingZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n": typeof types.EnableIndexingZucityUserRolesDocument,
     "\n  mutation UpdateZucityUserRoles($input: UpdateZucityUserRolesInput!) {\n    updateZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n": typeof types.UpdateZucityUserRolesDocument,
 };
 const documents: Documents = {
+    "\n  query GetSpaceMembers($resourceId: String) {\n    zucityUserRolesIndex(\n      first: 1000\n      filters: {\n        where: {\n          source: { equalTo: \"space\" }\n          resourceId: { equalTo: $resourceId }\n        }\n      }\n    ) {\n      edges {\n        node {\n          roleId\n          customAttributes {\n            tbd\n          }\n          userId {\n            zucityProfile {\n              avatar\n              username\n              author {\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n": types.GetSpaceMembersDocument,
     "\n  query GetUserRole($userId: String, $resourceId: String, $resource: String) {\n    zucityUserRolesIndex(\n      first: 1\n      filters: {\n        where: {\n          userId: { equalTo: $userId }\n          resourceId: { equalTo: $resourceId }\n          source: { equalTo: $resource }\n        }\n      }\n    ) {\n      edges {\n        node {\n          roleId\n        }\n      }\n    }\n  }\n": types.GetUserRoleDocument,
     "\n  mutation CreateZucityUserRoles($input: CreateZucityUserRolesInput!) {\n    createZucityUserRoles(input: $input) {\n      document {\n        userId {\n          id\n        }\n        created_at\n        updated_at\n        resourceId\n        source\n        roleId\n      }\n    }\n  }\n": types.CreateZucityUserRolesDocument,
     "\n  mutation enableIndexingZucityUserRoles(\n    $input: EnableIndexingZucityUserRolesInput!\n  ) {\n    enableIndexingZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n": types.EnableIndexingZucityUserRolesDocument,
     "\n  mutation UpdateZucityUserRoles($input: UpdateZucityUserRolesInput!) {\n    updateZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n": types.UpdateZucityUserRolesDocument,
 };
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetSpaceMembers($resourceId: String) {\n    zucityUserRolesIndex(\n      first: 1000\n      filters: {\n        where: {\n          source: { equalTo: \"space\" }\n          resourceId: { equalTo: $resourceId }\n        }\n      }\n    ) {\n      edges {\n        node {\n          roleId\n          customAttributes {\n            tbd\n          }\n          userId {\n            zucityProfile {\n              avatar\n              username\n              author {\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n"): typeof import('./graphql').GetSpaceMembersDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
