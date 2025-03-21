@@ -30,7 +30,7 @@ export const GET_MEMBERS_QUERY = graphql(`
       }
     }
   }
-`);
+`).toString();
 
 export const CHECK_EXISTING_ROLE_QUERY = graphql(`
   query GetUserRole($userId: String, $resourceId: String, $resource: String) {
@@ -51,7 +51,7 @@ export const CHECK_EXISTING_ROLE_QUERY = graphql(`
       }
     }
   }
-`);
+`).toString();
 
 export const CREATE_ROLE_QUERY = graphql(`
   mutation CreateZucityUserRoles($input: CreateZucityUserRolesInput!) {
@@ -68,7 +68,7 @@ export const CREATE_ROLE_QUERY = graphql(`
       }
     }
   }
-`);
+`).toString();
 
 export const DELETE_ROLE_QUERY = graphql(`
   mutation enableIndexingZucityUserRoles(
@@ -80,7 +80,7 @@ export const DELETE_ROLE_QUERY = graphql(`
       }
     }
   }
-`);
+`).toString();
 
 export const UPDATE_ROLE_QUERY = graphql(`
   mutation UpdateZucityUserRoles($input: UpdateZucityUserRolesInput!) {
@@ -90,4 +90,4 @@ export const UPDATE_ROLE_QUERY = graphql(`
       }
     }
   }
-`);
+`).toString();
