@@ -27,7 +27,6 @@ export function useSearchUsers(initialQuery = '') {
   const searchByWalletAddress = async (address: string): Promise<SearchUser[]> => {
     const normalizedAddress = address.startsWith('0x') ? address.toLowerCase() : `0x${address}`.toLowerCase();
     const currentChainId = chainId || 1;
-    console.log('chain', chain);
     const did = `did:pkh:eip155:${currentChainId}:${normalizedAddress}`;
     console.log('did', did);
 

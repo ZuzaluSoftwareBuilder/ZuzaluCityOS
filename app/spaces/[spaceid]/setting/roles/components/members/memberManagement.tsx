@@ -7,6 +7,7 @@ import { MemberList } from './memberList';
 import useOpenDraw from '@/hooks/useOpenDraw';
 import { addToast } from '@heroui/react';
 import { useParams, usePathname } from 'next/navigation';
+import { addMembersToRole, removeMembersFromRole } from '@/services/role';
 
 export interface IMemberItem {
   id: string;
@@ -57,38 +58,17 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
   const handleAddMembers = useCallback(
     async (memberIds: string[]) => {
       if (!memberIds.length) return;
-      console.log(memberIds);
       
       setIsAddingMembers(true);
       
       try {
-        console.log('resourceId', resourceId);
-        console.log('resource', resource);
-        console.log('roleData', roleData);
-        console.log('memberIds', memberIds);
-        const addPromises = memberIds.map(async (userId) => {
-          const response = await fetch('/api/member/add', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              id: resourceId,
-              resource,
-              roleId: roleData.find(role => role.role.name === roleName)?.role.id,
-              userId,
-            }),
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || '添加成员失败');
-          }
-
-          return response.json();
-        });
-
-        await Promise.all(addPromises);
+        const roleId = roleData.find(role => role.role.name === roleName)?.role.id;
+        
+        if (!roleId) {
+          throw new Error('未找到角色ID');
+        }
+        
+        await addMembersToRole(resource, resourceId as string, roleId, memberIds);
 
         // TODO need refresh list
         addToast({
@@ -96,6 +76,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
           description: `已成功将选定用户添加到 ${roleName} 角色`,
           color: 'success',
         });
+        setIsAddingMembers(false);
       } catch (error) {
         console.error('添加成员错误:', error);
         addToast({
@@ -104,7 +85,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
           color: 'danger',
         });
       } finally {
-        setIsAddingMembers(false);
+        // setIsAddingMembers(false);
       }
     },
     [resourceId, resource, roleData, roleName, addToast]
@@ -117,22 +98,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
       setRemovingMemberId(memberId);
       
       try {
-        const response = await fetch('/api/member/remove', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            id: resourceId,
-            resource,
-            userId: memberId,
-          }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || '移除成员失败');
-        }
+        await removeMembersFromRole(resource, resourceId as string, [memberId]);
 
         const updatedMembers = members.filter(member => member.userId.zucityProfile?.id !== memberId);
         onMembersChange(updatedMembers.map((member) => ({

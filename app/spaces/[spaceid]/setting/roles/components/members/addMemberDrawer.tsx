@@ -154,7 +154,7 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
                 base: 'bg-[rgba(34,34,34,0.05)] border-[rgba(255,255,255,0.1)]',
                 input: 'text-white',
               }}
-              placeholder="Search Members"
+              placeholder="Search Members By Fullname Or Wallet Address"
               radius="md"
               value={searchQuery}
               startContent={
