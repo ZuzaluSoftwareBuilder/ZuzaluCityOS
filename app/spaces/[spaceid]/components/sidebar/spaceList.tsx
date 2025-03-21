@@ -26,7 +26,7 @@ const SpaceItemSkeleton = () => {
 
 const SpaceList = () => {
   const [selected, setSelected] = useState('Spaces');
-  const { isAuthenticated, composeClient, ceramic } = useCeramicContext();
+  const { isAuthenticated, profile, composeClient, ceramic } = useCeramicContext();
   const [isClientReady, setIsClientReady] = useState(false);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const SpaceList = () => {
         throw error;
       }
     },
-    enabled: isAuthenticated,
+    enabled: !!profile && isAuthenticated,
   });
 
   const userSpaces = useMemo(() => {
@@ -67,7 +67,7 @@ const SpaceList = () => {
   }, [spacesData, userDID]);
 
   const shouldShowSkeleton =
-    isClientReady && (isSpacesLoading || !isFetched || !isAuthenticated);
+    isClientReady && (isSpacesLoading || !isFetched || !isAuthenticated) && !!profile;
 
   return (
     <div className="pt-2.5 w-full h-full overflow-y-auto flex flex-col items-center gap-2.5">
