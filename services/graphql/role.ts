@@ -1,12 +1,12 @@
 import { graphql } from '@/graphql/gql';
 
-export const GET_SPACE_MEMBERS_QUERY = graphql(`
-  query GetSpaceMembers($resourceId: String) {
+export const GET_MEMBERS_QUERY = graphql(`
+  query GetMembers($source: String, $resourceId: String) {
     zucityUserRolesIndex(
       first: 1000
       filters: {
         where: {
-          source: { equalTo: "space" }
+          source: { equalTo: $source }
           resourceId: { equalTo: $resourceId }
         }
       }
