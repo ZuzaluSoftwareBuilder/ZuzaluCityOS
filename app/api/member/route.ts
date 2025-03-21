@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UserRoleData } from '@/types';
 import { composeClient } from '@/constant';
-import { GET_SPACE_MEMBERS_QUERY } from '@/services/graphql/role';
+import { GET_MEMBERS_QUERY } from '@/services/graphql/role';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -17,8 +17,9 @@ export async function GET(request: NextRequest) {
 
   try {
     const data = await composeClient.executeQuery<UserRoleData>(
-      GET_SPACE_MEMBERS_QUERY,
+      GET_MEMBERS_QUERY,
       {
+        source: 'space',
         resourceId: id,
       },
     );
