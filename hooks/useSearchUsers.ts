@@ -3,8 +3,11 @@ import useDebounce from './useDebounce';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useAccount } from 'wagmi';
 import { isAddress } from 'viem';
-import { GET_PROFILE_BY_NAME_QUERY } from '@/services/graphql/profile';
-import { IProfile } from '@/types';
+import {
+  GET_PROFILE_BY_NAME_QUERY,
+  GET_PROFILE_BY_DID_QUERY,
+} from '@/services/graphql/profile';
+import { IProfile, Profile } from '@/types';
 
 export interface SearchUser {
   id: string;
@@ -31,60 +34,32 @@ export function useSearchUsers(initialQuery = '') {
         : `0x${address}`.toLowerCase();
       const currentChainId = chainId || 1;
       const did = `did:pkh:eip155:${currentChainId}:${normalizedAddress}`;
-      console.log('did', did);
 
-      // TODO did search not done
-      const query = `
-        query GetProfilesForDIDSearch {
-          zucityProfileIndex(
-            first: 1,
-            filters: {
-              where: {
-                author: { id: { equalTo: "${did}" } }
-              }
-            }
-          ) {
-            edges {
-              node {
-                id
-                username
-                avatar
-                author {
-                  id
-                }
-              }
-            }
-          }
-        }
-      `;
-
-      const response: any = await composeClient.executeQuery(query);
+      const response = await composeClient.executeQuery(
+        GET_PROFILE_BY_DID_QUERY,
+        {
+          did,
+        },
+      );
 
       if (response.errors) {
-        throw new Error(response.errors[0].message || '查询用户失败');
+        throw new Error(response.errors[0].message || 'search user error');
       }
 
-      if (response.data?.zucityProfileIndex?.edges?.length > 0) {
-        const filteredProfiles = response.data.zucityProfileIndex.edges
-          .filter((edge: any) => edge.node.author?.id === did)
-          .map((edge: any) => {
-            const authorId = edge.node.author?.id || '';
-            const extractedAddress = authorId.includes(':')
-              ? authorId.split(':')[4] || normalizedAddress
-              : normalizedAddress;
-
-            return {
-              id: edge.node.id,
-              username: edge.node.username || '',
-              avatar: edge.node.avatar || '/user/avatar_p.png',
-              address: extractedAddress,
-            };
-          });
-
-        return filteredProfiles;
+      const profileData: Profile = response.data?.node?.zucityProfile;
+      if (!profileData) {
+        return [];
       }
-
-      return [];
+      const { id, username, avatar, author } = profileData;
+      const authorId = author?.id || '';
+      const user: SearchUser = {
+        id,
+        username,
+        avatar: avatar || '/user/avatar_p.png',
+        address: authorId.includes(':') ? authorId.split(':')[4] : authorId,
+        did: authorId,
+      };
+      return [user];
     },
     [chainId, composeClient],
   );
