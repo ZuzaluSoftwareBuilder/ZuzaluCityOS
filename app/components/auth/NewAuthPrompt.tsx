@@ -16,6 +16,7 @@ import {
   ModalFooter,
   Button,
   Input,
+  Spinner,
 } from '@heroui/react';
 import { X } from '@phosphor-icons/react';
 import AuthButton from './AuthButton';
@@ -44,6 +45,9 @@ const NewAuthPrompt: React.FC = () => {
   const [authState, setAuthState] = useState<IAuthState | undefined>(undefined);
   const authenticateCalled = useRef(false);
   const maxUsernameLength = 20;
+  const [isContinueLoading, setIsContinueLoading] = useState(false);
+  const [isSkipLoading, setIsSkipLoading] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   useEffect(() => {
     const existingUsername = localStorage.getItem('username');
@@ -63,10 +67,13 @@ const NewAuthPrompt: React.FC = () => {
     const authenticateUser = async (needSetState = true) => {
       try {
         authenticateCalled.current = true;
+        setIsAuthenticating(true);
         await authenticate();
+        setIsAuthenticating(false);
       } catch (error) {
         console.error('Authentication failed:', error);
         disconnect();
+        setIsAuthenticating(false);
         needSetState && setAuthState(IAuthState.ConnectWallet);
       }
     };
@@ -97,21 +104,47 @@ const NewAuthPrompt: React.FC = () => {
     }
   }, [isAuthPromptVisible, isConnected]);
 
-
-  const onInputChange = useCallback((value: string) => {
-    setInputUsername(value.length <= maxUsernameLength ? value : value.slice(0, maxUsernameLength));
-  }, [maxUsernameLength]);
-
-  const handleSkip = useCallback(() => {
-    if (address) {
-      createProfile((ensName || address.slice(0, 10)) as string);
+  useEffect(() => {
+    if (!isConnected) {
+      setIsAuthenticating(false);
     }
-    setAuthState(IAuthState.LoggedIn);
+  }, [isConnected]);
+
+  const onInputChange = useCallback(
+    (value: string) => {
+      setInputUsername(
+        value.length <= maxUsernameLength
+          ? value
+          : value.slice(0, maxUsernameLength),
+      );
+    },
+    [maxUsernameLength],
+  );
+
+  const handleSkip = useCallback(async () => {
+    if (address) {
+      setIsSkipLoading(true);
+      try {
+        await createProfile((ensName || address.slice(0, 10)) as string);
+        setAuthState(IAuthState.LoggedIn);
+      } catch (e) {
+        console.error('createProfile error:', e);
+      } finally {
+        setIsSkipLoading(false);
+      }
+    }
   }, [address, ensName, createProfile]);
 
-  const handleContinue = useCallback(() => {
-    createProfile(inputUsername);
-    setAuthState(IAuthState.LoggedIn);
+  const handleContinue = useCallback(async () => {
+    setIsContinueLoading(true);
+    try {
+      await createProfile(inputUsername);
+      setAuthState(IAuthState.LoggedIn);
+    } catch (e) {
+      console.error('createProfile error:', e);
+    } finally {
+      setIsContinueLoading(false);
+    }
   }, [inputUsername, createProfile]);
 
   const handleFinish = useCallback(() => {
@@ -164,7 +197,7 @@ const NewAuthPrompt: React.FC = () => {
           <p className="text-[14px] leading-[1.4] text-white/70">
             {description}
           </p>
-          <ConnectWalletButton />
+          <ConnectWalletButton isLoading={isAuthenticating} />
         </ModalBody>
         <div className="w-full bg-[#363636] py-[10px] px-[20px] rounded-b-[10px]">
           <p className="text-[12px] leading-[1.4] text-white/70">
@@ -173,7 +206,7 @@ const NewAuthPrompt: React.FC = () => {
         </div>
       </>
     );
-  }, [connectWalletContent, renderCloseButton]);
+  }, [connectWalletContent, renderCloseButton, isAuthenticating]);
 
   const renderNewUserContent = useCallback(() => {
     return (
@@ -204,6 +237,7 @@ const NewAuthPrompt: React.FC = () => {
                   'bg-[rgba(255,255,255,0.05)]',
                 ],
               }}
+              isDisabled={isSkipLoading || isContinueLoading}
             />
             <div className="flex justify-end w-full mt-[10px]">
               <p className="text-xs text-white/50">{`${maxUsernameLength - inputUsername.length} characters left`}</p>
@@ -214,20 +248,34 @@ const NewAuthPrompt: React.FC = () => {
           <AuthButton
             onPress={handleSkip}
             className="flex-1 bg-transparent hover:bg-white/5"
+            isDisabled={isSkipLoading}
           >
-            Skip
+            {isSkipLoading ? <Spinner size="sm" color="current" /> : 'Skip'}
           </AuthButton>
           <AuthButton
             onPress={handleContinue}
             className="flex-1"
             color="primary"
+            isDisabled={isContinueLoading}
           >
-            Continue
+            {isContinueLoading ? (
+              <Spinner size="sm" color="current" />
+            ) : (
+              'Continue'
+            )}
           </AuthButton>
         </ModalFooter>
       </>
     );
-  }, [inputUsername, onInputChange, maxUsernameLength, handleSkip, handleContinue, renderCloseButton]);
+  }, [
+    renderCloseButton,
+    inputUsername,
+    onInputChange,
+    isSkipLoading,
+    isContinueLoading,
+    handleSkip,
+    handleContinue,
+  ]);
 
   const renderLoggedInContent = useCallback(() => {
     const isAddressUsername =
@@ -275,7 +323,12 @@ const NewAuthPrompt: React.FC = () => {
       default:
         return null;
     }
-  }, [authState, renderConnectWalletContent, renderNewUserContent, renderLoggedInContent]);
+  }, [
+    authState,
+    renderConnectWalletContent,
+    renderNewUserContent,
+    renderLoggedInContent,
+  ]);
 
   return (
     <Modal
