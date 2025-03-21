@@ -1,5 +1,4 @@
 import axios, { AxiosInstance } from 'axios';
-import Router from 'next/router';
 
 const getBaseUrl = () => {
   if (typeof window !== 'undefined') {
@@ -37,10 +36,10 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          Router.push('/');
+          // Router.push('/');
           break;
         case 403:
-          Router.push('/');
+          // Router.push('/');
           break;
         // case 500:
 

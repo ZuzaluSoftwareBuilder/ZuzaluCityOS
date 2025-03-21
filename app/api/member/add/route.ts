@@ -11,6 +11,7 @@ dayjs.extend(utc);
 
 export const POST = withSessionValidation(async (request, sessionData) => {
   try {
+    console.log(CHECK_EXISTING_ROLE_QUERY, '=====');
     const body = await request.json();
     const { id, resource, roleId, userId } = body;
 
