@@ -9,6 +9,7 @@ import { getResolver } from 'key-did-resolver';
 import { DID } from 'dids';
 import { base64ToUint8Array } from '@/utils';
 import { supabase } from '@/utils/supabase/client';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 
 dayjs.extend(utc);
 
@@ -111,21 +112,13 @@ export const POST = withSessionValidation(async (request, sessionData) => {
         }
       }
       `;
-    const { data: spaceAgentData, error: spaceAgentError } = await supabase
-      .from('spaceAgent')
-      .select('agentKey')
-      .eq('spaceId', id)
-      .single();
-    if (spaceAgentError) {
-      console.error('Error getting private key:', spaceAgentError);
-      return new NextResponse('Error getting private key', { status: 500 });
+    const error = await authenticateWithSpaceId(id);
+    if (error) {
+      return NextResponse.json(
+        { error: 'Error getting private key' },
+        { status: 500 },
+      );
     }
-    const seed = base64ToUint8Array(spaceAgentData.agentKey);
-    const provider = new Ed25519Provider(seed);
-    const did = new DID({ provider, resolver: getResolver() });
-    await did.authenticate();
-    ceramic.did = did;
-    composeClient.setDID(did);
     const result = await composeClient.executeQuery(Create_QUERY, {
       input: {
         content: {
