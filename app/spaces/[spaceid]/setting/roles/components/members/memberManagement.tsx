@@ -15,6 +15,7 @@ export interface IMemberItem {
   avatar: string;
   address: string;
   roleId: string | null;
+  did: string;
 }
 
 interface MemberManagementProps {
@@ -23,7 +24,7 @@ interface MemberManagementProps {
   roleData: RolePermission[];
   roleName: string;
   isLoading: boolean;
-  onMembersChange: (members: IMemberItem[]) => void;
+  onMembersChange?: (members: IMemberItem[]) => void;
 }
 
 const MemberManagement: React.FC<MemberManagementProps> = ({
@@ -53,7 +54,6 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
   const handleAddMember = useCallback(() => {
     openAddMemberDrawer()
   }, [openAddMemberDrawer]);
-
 
   const handleAddMembers = useCallback(
     async (memberIds: string[]) => {
@@ -101,12 +101,13 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
         await removeMembersFromRole(resource, resourceId as string, [memberId]);
 
         const updatedMembers = members.filter(member => member.userId.zucityProfile?.id !== memberId);
-        onMembersChange(updatedMembers.map((member) => ({
+        onMembersChange?.(updatedMembers.map((member) => ({
           id: member.userId.zucityProfile?.id,
           name: member.userId.zucityProfile?.username,
           avatar: member.userId.zucityProfile?.avatar,
           address: member.userId.zucityProfile?.id.split(':')[4],
           roleId: member.roleId,
+          did: member.userId.zucityProfile?.author?.id,
         } as IMemberItem)));
 
         addToast({

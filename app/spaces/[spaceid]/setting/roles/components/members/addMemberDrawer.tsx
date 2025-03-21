@@ -55,6 +55,7 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
           avatar: user.avatar,
           address: user.address,
           roleId: null,
+          did: user.did,
         }) as IMemberItem,
     );
   }, [searchedUsers]);
@@ -78,6 +79,11 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
       return [...prev, memberId];
     });
   }, []);
+
+  useEffect(() => {
+    // TODO delete
+    console.log('selectedMembers', selectedMembers);
+  }, [selectedMembers]);
 
   const handleAddMembers = useCallback(() => {
     onAddMembers(selectedMembers);
@@ -187,8 +193,8 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
                 >
                   <Checkbox
                     color="default"
-                    isSelected={selectedMembers.includes(member.id)}
-                    onValueChange={() => handleSelectMember(member.id)}
+                    isSelected={selectedMembers.includes(member.did)}
+                    onValueChange={() => handleSelectMember(member.did)}
                     classNames={{
                       base: cn(
                         "inline-flex w-full gap-[10px]",

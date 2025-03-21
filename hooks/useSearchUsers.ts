@@ -8,6 +8,7 @@ export interface SearchUser {
   username: string;
   avatar: string;
   address: string;
+  did: string;
 }
 
 export function useSearchUsers(initialQuery = '') {
@@ -125,7 +126,8 @@ export function useSearchUsers(initialQuery = '') {
           id: edge.node.id,
           username: edge.node.username || '',
           avatar: edge.node.avatar || '/user/avatar_p.png',
-          address
+          address,
+          did: authorId
         };
       });
     }
