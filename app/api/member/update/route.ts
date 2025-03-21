@@ -5,6 +5,7 @@ import { dayjs } from '@/utils/dayjs';
 import { composeClient } from '@/constant';
 import utc from 'dayjs/plugin/utc';
 import { authenticateWithSpaceId } from '@/utils/ceramic';
+import { CHECK_EXISTING_ROLE_QUERY, UPDATE_ROLE_QUERY } from '@/services/role';
 
 dayjs.extend(utc);
 
@@ -49,28 +50,6 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return NextResponse.json({ error: 'Permission denied' }, { status: 403 });
     }
 
-    const CHECK_EXISTING_ROLE_QUERY = `
-      query GetUserRole($userId: String, $resourceId: String, $resource: String) {
-        zucityUserRolesIndex(
-          first: 1,        
-          filters: { 
-            where: { 
-              userId: { equalTo: $userId },
-              resourceId: { equalTo: $resourceId },
-              source: { equalTo: $resource }
-            }
-          }
-        ) {
-          edges {
-            node {
-              id
-              roleId
-            }
-          }
-        }
-      }
-    `;
-
     const existingRoleResult = await composeClient.executeQuery(
       CHECK_EXISTING_ROLE_QUERY,
       {
@@ -101,18 +80,6 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       );
     }
 
-    const UPDATE_QUERY = `
-      mutation UpdateZucityUserRoles($input: UpdateZucityUserRolesInput!) {
-        updateZucityUserRoles(
-          input: $input
-        ) {
-          document {
-            id
-          }
-        }
-      }
-    `;
-
     const error = await authenticateWithSpaceId(id);
     if (error) {
       return NextResponse.json(
@@ -121,7 +88,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       );
     }
 
-    const result = await composeClient.executeQuery(UPDATE_QUERY, {
+    const result = await composeClient.executeQuery(UPDATE_ROLE_QUERY, {
       input: {
         id: userRoleDocId,
         content: {

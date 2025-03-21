@@ -2,14 +2,10 @@ import { NextResponse } from 'next/server';
 import { withSessionValidation } from '@/utils/authMiddleware';
 import { PermissionName } from '@/types';
 import { dayjs } from '@/utils/dayjs';
-import { ceramic, composeClient } from '@/constant';
+import { composeClient } from '@/constant';
 import utc from 'dayjs/plugin/utc';
-import { Ed25519Provider } from 'key-did-provider-ed25519';
-import { getResolver } from 'key-did-resolver';
-import { DID } from 'dids';
-import { base64ToUint8Array } from '@/utils';
-import { supabase } from '@/utils/supabase/client';
 import { authenticateWithSpaceId } from '@/utils/ceramic';
+import { CHECK_EXISTING_ROLE_QUERY, DELETE_ROLE_QUERY } from '@/services/role';
 
 dayjs.extend(utc);
 
@@ -26,28 +22,6 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     }
 
     const { isOwner, permission, role, operatorRole } = sessionData;
-
-    const CHECK_EXISTING_ROLE_QUERY = `
-      query GetUserRole($userId: String, $resourceId: String, $resource: String) {
-        zucityUserRolesIndex(
-          first: 1,        
-          filters: { 
-            where: { 
-              userId: { equalTo: $userId },
-              resourceId: { equalTo: $resourceId },
-              source: { equalTo: $resource }
-            }
-          }
-        ) {
-          edges {
-            node {
-              id
-              roleId
-            }
-          }
-        }
-      }
-    `;
 
     const existingRoleResult = await composeClient.executeQuery(
       CHECK_EXISTING_ROLE_QUERY,
@@ -100,16 +74,6 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return NextResponse.json({ error: 'Permission denied' }, { status: 403 });
     }
 
-    const DELETE_QUERY = `
-      mutation enableIndexingZucityUserRoles($input: EnableIndexingZucityUserRolesInput!) {
-        enableIndexingZucityUserRoles(input: $input) {
-          document {
-            id
-          }
-        }
-      }
-    `;
-
     const error = await authenticateWithSpaceId(id);
     if (error) {
       return NextResponse.json(
@@ -118,7 +82,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       );
     }
 
-    const result = await composeClient.executeQuery(DELETE_QUERY, {
+    const result = await composeClient.executeQuery(DELETE_ROLE_QUERY, {
       input: {
         id: userRoleId,
         shouldIndex: false,
