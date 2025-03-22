@@ -2829,6 +2829,11 @@ export type ZucityUserRolesSortingInput = {
   userId?: InputMaybe<SortOrder>;
 };
 
+export type GetDappListQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetDappListQuery = { __typename?: 'Query', zucityDappInfoIndex?: { __typename?: 'ZucityDappInfoConnection', edges?: Array<{ __typename?: 'ZucityDappInfoEdge', node?: { __typename?: 'ZucityDappInfo', id: string, appName: string, tagline: string, developerName: string, description: string, bannerUrl: string, categories: string, devStatus: string, openSource: string, repositoryUrl?: string | null, appUrl?: string | null, websiteUrl?: string | null, docsUrl?: string | null, profile?: { __typename?: 'ZucityProfile', author: { __typename?: 'CeramicAccount', id: string } } | null } | null } | null> | null } | null };
+
 export type GetMembersQueryVariables = Exact<{
   source?: InputMaybe<Scalars['String']['input']>;
   resourceId?: InputMaybe<Scalars['String']['input']>;
@@ -2900,6 +2905,34 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const GetDappListDocument = new TypedDocumentString(`
+    query GetDappList {
+  zucityDappInfoIndex(first: 100) {
+    edges {
+      node {
+        id
+        appName
+        tagline
+        developerName
+        description
+        bannerUrl
+        categories
+        devStatus
+        openSource
+        repositoryUrl
+        appUrl
+        websiteUrl
+        docsUrl
+        profile {
+          author {
+            id
+          }
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetDappListQuery, GetDappListQueryVariables>;
 export const GetMembersDocument = new TypedDocumentString(`
     query GetMembers($source: String, $resourceId: String) {
   zucityUserRolesIndex(

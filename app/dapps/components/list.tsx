@@ -16,6 +16,7 @@ import Filter from './filter';
 import { useQuery } from '@tanstack/react-query';
 import { Dapp } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
 
 interface ListProps {
   onDetailClick: (data: Dapp) => void;
@@ -33,34 +34,7 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
   const { data, isLoading } = useQuery<Dapp[]>({
     queryKey: ['getDappInfoList'],
     queryFn: async () => {
-      const response: any = await composeClient.executeQuery(`
-      query {
-        zucityDappInfoIndex(first: 100) {
-          edges {
-            node {
-              id
-              appName
-              tagline
-              developerName
-              description
-              bannerUrl
-              categories
-              devStatus
-              openSource
-              repositoryUrl
-              appUrl
-              websiteUrl
-              docsUrl
-              profile {
-                author {
-                  id
-                }
-              }
-            }
-          }
-        }
-      }
-    `);
+      const response = await composeClient.executeQuery(GET_DAPP_LIST_QUERY);
 
       if (response && response.data && 'zucityDappInfoIndex' in response.data) {
         return response.data.zucityDappInfoIndex.edges.map(
