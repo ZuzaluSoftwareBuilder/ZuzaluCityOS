@@ -39,4 +39,4 @@ export const GET_SPACE_QUERY = graphql(`
       }
     }
   }
-`);
+`).toString();
