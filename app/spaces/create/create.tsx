@@ -8,7 +8,7 @@ import CategoriesContent from './components/CategoriesContent';
 import CreateSpaceTabs, { TabStatus, TabContentEnum } from './components/CreateSpaceTabs';
 import HSpaceCard from '@/components/cards/HSpaceCard';
 import Header from './components/Header';
-import { avatar, cn } from '@heroui/react';
+import { cn } from '@heroui/react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ProfileFormData, ProfilValidationSchema } from './components/ProfileContent';
@@ -17,11 +17,48 @@ import { LinksFormData, LinksValidationSchema } from './components/LinksContent'
 import { useRouter } from 'next/navigation';
 import { covertNameToUrlName } from '@/utils/format';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { createUrl } from '@/services/url';
+import { useMediaQuery } from '@/hooks';
 
 dayjs.extend(utc);
 
+// 添加类型定义
+interface CreateSpaceDocument {
+  id: string;
+  name: string;
+  description: string;
+  profileId: string;
+  avatar: string;
+  banner: string;
+  category: string;
+}
+
+interface CreateSpaceResponse {
+  createZucitySpace: {
+    document: CreateSpaceDocument;
+  };
+}
+
+interface CreateSpaceInput {
+  content: {
+    customLinks: Array<{ title: string; links: string }>;
+    name: string;
+    description: string;
+    tagline: string;
+    superAdmin: string;
+    profileId: string;
+    avatar: string;
+    banner: string;
+    category: string;
+    customAttributes: Array<{ tbd: string }>;
+  };
+}
+
+const DEFAULT_AVATAR = 'https://nftstorage.link/ipfs/bafybeifcplhgttja4hoj5vx4u3x7ucft34acdpiaf62fsqrobesg5bdsqe';
+const DEFAULT_BANNER = 'https://nftstorage.link/ipfs/bafybeifqan4j2n7gygwkmekcty3dsp7v4rxbjimpo7nrktclwxgxreiyay';
+
 const Create = () => {
-  const [selectedTab, setSelectedTab] = useState(TabContentEnum.Profile);
+  const [selectedTab, setSelectedTab] = useState(TabContentEnum.Categories);
   const [tabStatuses, setTabStatuses] = useState<Record<string, TabStatus>>({
     [TabContentEnum.Profile]: TabStatus.Active,
     [TabContentEnum.Categories]: TabStatus.Inactive,
@@ -29,9 +66,9 @@ const Create = () => {
   });
   const [isSubmit, setIsSubmit] = useState(false);
   const router = useRouter();
+  const { isMobile } = useMediaQuery();
   const { ceramic, composeClient, isAuthenticated, profile } =
     useCeramicContext();
-  console.log('profile', profile);
   const profileForm = useForm<ProfileFormData>({
     resolver: yupResolver(ProfilValidationSchema),
     mode: 'all',
@@ -39,10 +76,10 @@ const Create = () => {
       name: '',
       tagline: '',
       description: '',
-      // avatar: 'https://pub-d00cee3ff1154a18bdf38c29db9a51c5.r2.dev/uploads/45d350a6-7616-48af-8289-8fd6a79bae29.jpg',
-      // banner: 'https://pub-d00cee3ff1154a18bdf38c29db9a51c5.r2.dev/uploads/c117c81e-3070-41b3-859a-3b369ca43e5e.jpg'
-      avatar: '',
-      banner: ''
+      avatar: 'https://pub-d00cee3ff1154a18bdf38c29db9a51c5.r2.dev/uploads/45d350a6-7616-48af-8289-8fd6a79bae29.jpg',
+      banner: 'https://pub-d00cee3ff1154a18bdf38c29db9a51c5.r2.dev/uploads/c117c81e-3070-41b3-859a-3b369ca43e5e.jpg',
+      // avatar: '',
+      // banner: ''
     }
   });
 
@@ -112,29 +149,47 @@ const Create = () => {
     })
     setSelectedTab(TabContentEnum.Links);
   }
-  // 校验表单
-  async function validateForm(schema: any, form: any, tab: TabContentEnum) {
-    const isValid = await schema.isValid(form.getValues());
-    if (!isValid) {
-      setTabStatuses(prev => ({
-        ...prev,
-        [tab]: TabStatus.Active,
-      }));
-      setSelectedTab(tab);
+  // 优化表单验证函数
+  const validateFormStep = async (
+    schema: any,
+    form: any,
+    tab: TabContentEnum
+  ): Promise<boolean> => {
+    try {
+      const isValid = await schema.isValid(form.getValues());
+      if (!isValid) {
+        setTabStatuses(prev => ({
+          ...prev,
+          [tab]: TabStatus.Active,
+        }));
+        setSelectedTab(tab);
+      }
+      return isValid;
+    } catch (error) {
+      console.error(`Validation error for ${tab}:`, error);
+      return false;
     }
-    return isValid;
-  }
-  const getAllFormValues = () => {
+  };
+
+  // 优化数据转换函数
+  const transformFormData = (): CreateSpaceInput => {
     const { name, tagline, description, avatar, banner } = profileForm.getValues();
     const { categories, selectedCategory } = categoriesForm.getValues();
     const { socialLinks, customLinks } = linksForm.getValues();
     const adminId = ceramic?.did?.parent || '';
     const profileId = profile?.id || '';
-    const socialLinksMap = socialLinks.reduce<Record<string, string>>((acc, curr) => {
-      acc[curr.platform] = curr.url;
-      return acc;
-    }, {});
-    const input = {
+
+    const socialLinksMap = socialLinks.reduce<Record<string, string>>(
+      (acc, { platform, url }) => {
+        if (platform && url) {
+          acc[platform] = url;
+        }
+        return acc;
+      },
+      {}
+    );
+
+    return {
       content: {
         customLinks,
         ...socialLinksMap,
@@ -142,13 +197,9 @@ const Create = () => {
         description,
         tagline,
         superAdmin: adminId,
-        profileId: profileId,
-        avatar:
-          avatar ||
-          'https://nftstorage.link/ipfs/bafybeifcplhgttja4hoj5vx4u3x7ucft34acdpiaf62fsqrobesg5bdsqe',
-        banner:
-          banner ||
-          'https://nftstorage.link/ipfs/bafybeifqan4j2n7gygwkmekcty3dsp7v4rxbjimpo7nrktclwxgxreiyay',
+        profileId,
+        avatar: avatar || DEFAULT_AVATAR,
+        banner: banner || DEFAULT_BANNER,
         category: categories.join(', '),
         customAttributes: [
           {
@@ -159,82 +210,87 @@ const Create = () => {
           },
         ],
       },
+    };
+  };
+
+  // 优化创建空间函数
+  const createSpace = async (input: CreateSpaceInput): Promise<CreateSpaceDocument | null> => {
+    if (!isAuthenticated) {
+      throw new Error('User not authenticated');
     }
-    return input;
-  }
-  // 最终提交数据库
+
+    const result = await composeClient.executeQuery<CreateSpaceResponse>(
+      `
+      mutation createZucitySpaceMutation($input: CreateZucitySpaceInput!) {
+        createZucitySpace(input: $input) {
+          document {
+            id
+            name
+            description
+            profileId
+            avatar
+            banner
+            category
+          }
+        }
+      }
+      `,
+      { input }
+    );
+
+    if (result.errors?.length) {
+      throw new Error(`Error creating space: ${JSON.stringify(result.errors)}`);
+    }
+
+    return result.data?.createZucitySpace?.document || null;
+  };
+
+  // 优化提交处理函数
   const handleLinksSubmit = async () => {
     try {
-      // 进行二次校验
       setIsSubmit(true);
-      const profileValid = await validateForm(ProfilValidationSchema, profileForm, TabContentEnum.Profile);
-      if (!profileValid) return console.error('profileValid error');
 
-      const categoriesValid = await validateForm(CategoriesValidationSchema, categoriesForm, TabContentEnum.Categories);
-      if (!categoriesValid) return console.error('categoriesValid error');
+      // 验证所有表单
+      const validations = await Promise.all([
+        validateFormStep(ProfilValidationSchema, profileForm, TabContentEnum.Profile),
+        validateFormStep(CategoriesValidationSchema, categoriesForm, TabContentEnum.Categories),
+        validateFormStep(LinksValidationSchema, linksForm, TabContentEnum.Links),
+      ]);
 
-      const linksValid = await validateForm(LinksValidationSchema, linksForm, TabContentEnum.Links);
-      if (!linksValid) return console.error('linksValid error');
-      const input = getAllFormValues();
-      console.log('input', input);
-      if (!isAuthenticated) return console.error('isAuthenticated error');
-      const result = await composeClient.executeQuery(
-        `
-    mutation createZucitySpaceMutation($input: CreateZucitySpaceInput!) {
-      createZucitySpace(
-        input: $input
-      ) {
-        document {
-          id
-          name
-          description
-          profileId
-          avatar
-          banner
-          category
-        }
+      if (!validations.every(Boolean)) {
+        throw new Error('Form validation failed');
       }
-    }
-    `,
-        {
-          input
-        }
-      );
-      if (result.errors?.length) {
-        console.error('Detailed error info:', result.errors);
-        throw new Error(
-          `Error creating space: ${JSON.stringify(result.errors)}`,
-        );
+
+      const input = transformFormData();
+      const space = await createSpace(input);
+
+      if (space?.id) {
+        const urlName = covertNameToUrlName(input.content.name);
+        await createUrl(urlName, space.id, 'spaces');
+        router.push('/spaces');
       }
-      const urlName = covertNameToUrlName(input.content.name);
-      // @ts-ignore
-      await createUrl(
-        urlName,
-        // @ts-ignore
-        result.data?.createZucitySpace?.document?.id,
-        'spaces',
-      );
-      // todo: 跳转至空间详情页
-      router.push(`/spaces`);
-    }
-    catch (err: any) {
-      console.log(err);
-      if (err.message) {
-        console.error(err.message);
-      }
+    } catch (error) {
+      console.error('Error creating space:', error);
+      // TODO: 添加用户友好的错误提示
     } finally {
       setIsSubmit(false);
     }
+  };
 
-  }
   const handleProfileBack = () => {
     router.push('/spaces');
   }
   const handleCategoriesBack = () => {
     setSelectedTab(TabContentEnum.Profile);
+    if (isMobile) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
   }
   const handleLinksBack = () => {
     setSelectedTab(TabContentEnum.Categories);
+    if (isMobile) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
   }
 
   const renderTabContent = () => {
@@ -248,11 +304,11 @@ const Create = () => {
 
   return (
     <div className="flex flex-col w-full min-h-screen">
-      <Header />
+      <Header/>
       <div className={
         cn(
           "flex justify-center gap-[40px] py-[20px] px-[40px] mx-auto w-full",
-          "mobile:flex-col mobile:p-[10px] mobile:gap-[10px]  mobile:mb-[40px]"
+          "mobile:flex-col mobile:p-[10px] mobile:gap-[0px] mobile:mb-[40px]"
         )
       }>
         {/* 左侧 Tabs 列表 */}
@@ -269,11 +325,11 @@ const Create = () => {
         </div>
 
         {/* 中间内容区域 */}
-        <div className="w-full max-w-[700px]">
+        <div className="w-full max-w-[700px] p-4 mobile:p-2">
           {renderTabContent()}
         </div>
         {/* 右侧预览卡片 */}
-        <div className="w-[320px] mobile:hidden">
+        <div className="w-[320px] pt-4 mobile:hidden">
           <HSpaceCard
             data={{
               id: 'preview',

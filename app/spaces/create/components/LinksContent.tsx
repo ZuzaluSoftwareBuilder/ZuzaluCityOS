@@ -73,22 +73,22 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
 
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-[30px] mobile:space-y-[20px]">
             <div className="space-y-2">
                 <h2 className="text-xl text-white font-bold">Community Links</h2>
                 <p className="text-white/80 text-base">
                     Include your social and other custom links
                 </p>
             </div>
-            <Card className="p-5 mobile:p-3">
-                <div className="pb-4 border-b border-white/10 mb-8">
+            <Card className="p-[20px] space-y-[40px]  mobile:p-[15px] space-y-[20px]">
+                <div className="pb-[20px] border-b border-white/10">
                     <h3 className="text-sm text-white/50 font-bold mb-4">Social Links</h3>
                     <div className="space-y-4">
                         {socialFields.map((field, index) => (
                             <div key={field.id} className="flex gap-2.5">
                                 <div className="flex-1 space-y-4">
-                                    <label className="block text-base text-white font-medium">Select Platform</label>
-                                    <div className='flex gap-[10px] items-start mobile:flex-col mobile:items-end'>
+                                    <label className="block text-base text-white font-medium">Select Social</label>
+                                    <div className='flex gap-[10px] items-center mobile:flex-col mobile:items-end'>
                                         <Controller
                                             name={`socialLinks.${index}.platform`}
                                             control={control}
@@ -127,7 +127,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                                         <button
                                             type="button"
                                             onClick={() => removeSocial(index)}
-                                            className='mt-[10px] flex items-center gap-[10px]'
+                                            className='flex items-center gap-[10px] mobile:h-[40px]'
                                             disabled={socialFields.length === 1}
                                         >
                                             <span className='hidden text-white/50 text-[14px] mobile:block'>Remove Link</span>
@@ -143,21 +143,21 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                     <button
                         type="button"
                         onClick={() => appendSocial({ platform: '', url: '' })}
-                        className="mb-2 w-full bg-transparent opacity-80 py-2 px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
+                        className="h-[40px] mt-[10px] w-full bg-transparent opacity-80 py-2 px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
                     >
-                        <PlusIcon className="h-5 w-5 mr-2" />
+                        <PlusIcon className="h-5 w-5" />
                         <div>Add Social Link</div>
                     </button>
                 </div>
 
                 <div className="">
-                    <h3 className="text-sm text-white/50 font-bold mb-4">Custom Links</h3>
+                    <h3 className="text-sm text-white/50 font-bold  mb-4">Custom Links</h3>
                     <div className="space-y-4">
                         {customFields.map((field, index) => (
                             <div key={field.id} className="flex gap-2.5">
                                 <div className="flex-1 space-y-4">
                                     <label className="block text-base text-white font-medium ">Link Title</label>
-                                    <div className='flex gap-[10px] items-start mobile:flex-col mobile:items-end'>
+                                    <div className='flex gap-[10px] items-center mobile:flex-col mobile:items-end'>
                                         <Controller
                                             name={`customLinks.${index}.title`}
                                             control={control}
@@ -190,10 +190,10 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                                             type="button"
                                             onClick={() => removeCustom(index)}
                                             disabled={customFields.length === 1}
-                                            className='mt-[10px] flex items-center gap-[10px]'
+                                            className='flex items-center gap-[10px]  mobile:h-[40px]'
                                         >
                                             <span className='hidden text-white/50 text-[14px] mobile:block'>Remove Link</span>
-                                            <XCircleIcon className="h-6 w-6 opacity-50" />
+                                            <XCircleIcon className="h-[30px] w-[30px] opacity-50" />
                                         </button>
                                     </div>
 
@@ -206,9 +206,9 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                     <button
                         type="button"
                         onClick={() => appendCustom({ title: '', links: '' })}
-                        className="mt-2 w-full bg-transparent opacity-80 py-2 px-3.5 font-semibold text-sm justify-start flex items-center gap-2"
+                        className="h-[40px] mt-[10px] w-full bg-transparent opacity-80 py-[8px] px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
                     >
-                        <PlusIcon className="h-5 w-5 mr-2" />
+                        <PlusIcon className="h-5 w-5" />
                         <div>Add Custom Link</div>
                     </button>
                 </div>

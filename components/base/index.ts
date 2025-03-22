@@ -5,3 +5,4 @@ export { default as Avatar } from './avatar';
 export { default as Input } from './input';
 export * from './card';
 export * from './select';
+export * from './autocomplete';

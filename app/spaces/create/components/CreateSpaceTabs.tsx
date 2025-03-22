@@ -90,7 +90,7 @@ const CreateSpaceTabs: React.FC<CreateSpaceTabsProps> = ({
     >
       <div className={cn(
         "flex flex-col gap-5 w-full",
-        "mobile:flex-row mobile:gap-2.5"
+        "mobile:flex-row mobile:gap-[20px]"
       )}>
         {tabs.map((tab) => (
           <TabItem

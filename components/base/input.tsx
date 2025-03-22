@@ -3,7 +3,7 @@ import commonStyle from  "@/style/common";
 
 const Input = extendVariants(HInput, {
   variants: {
-    variant: {
+    input: {
       default: {
         inputWrapper: [
           commonStyle.border,
@@ -15,11 +15,14 @@ const Input = extendVariants(HInput, {
           "!text-white",
           "placeholder:text-white/50",
         ],
+        errorMessage: [
+          "text-error",
+        ],
       },
     },
   },
   defaultVariants: {
-    variant: "default",
+    input: "default",
     size: "md",
   },
 });
