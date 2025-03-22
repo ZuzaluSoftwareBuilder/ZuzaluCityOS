@@ -31,8 +31,8 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       resource,
     });
 
-    const data = existingRoleResult.data as any;
-    const existingRoles = (data?.zucityUserRolesIndex?.edges || []) as any[];
+    const data = existingRoleResult.data;
+    const existingRoles = data?.zucityUserRolesIndex?.edges || [];
 
     if (existingRoles.length === 0) {
       return NextResponse.json(
@@ -42,8 +42,8 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     }
 
     const userExistingRole = existingRoles[0];
-    const roleId = userExistingRole.node.roleId;
-    const userRoleId = userExistingRole.node.id;
+    const roleId = userExistingRole?.node?.roleId;
+    const userRoleId = userExistingRole?.node?.id;
 
     const removedRole = role?.find((r) => r.role.id === roleId);
 
@@ -83,7 +83,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
 
     const result = await executeQuery(DELETE_ROLE_QUERY, {
       input: {
-        id: userRoleId,
+        id: userRoleId!,
         shouldIndex: false,
       },
     });

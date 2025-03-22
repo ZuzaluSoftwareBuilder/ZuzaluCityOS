@@ -58,8 +58,8 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       resource,
     });
 
-    const data = existingRoleResult.data as any;
-    const existingRoles = (data?.zucityUserRolesIndex?.edges || []) as any[];
+    const data = existingRoleResult.data;
+    const existingRoles = data?.zucityUserRolesIndex?.edges || [];
 
     if (existingRoles.length === 0) {
       return NextResponse.json(
@@ -69,8 +69,8 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     }
 
     const userExistingRole = existingRoles[0];
-    const currentRoleId = userExistingRole.node.roleId;
-    const userRoleDocId = userExistingRole.node.id;
+    const currentRoleId = userExistingRole?.node?.roleId;
+    const userRoleDocId = userExistingRole?.node?.id;
 
     if (currentRoleId === roleId) {
       return NextResponse.json(
@@ -89,7 +89,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
 
     const result = await executeQuery(UPDATE_ROLE_QUERY, {
       input: {
-        id: userRoleDocId,
+        id: userRoleDocId!,
         content: {
           roleId,
           updated_at: dayjs().utc().toISOString(),
