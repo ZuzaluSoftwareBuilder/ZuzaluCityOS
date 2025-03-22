@@ -2,10 +2,12 @@ import { NextResponse } from 'next/server';
 import { withSessionValidation } from '@/utils/authMiddleware';
 import { PermissionName } from '@/types';
 import { dayjs } from '@/utils/dayjs';
-import { composeClient } from '@/constant';
 import utc from 'dayjs/plugin/utc';
-import { authenticateWithSpaceId } from '@/utils/ceramic';
-import { CHECK_EXISTING_ROLE_QUERY, DELETE_ROLE_QUERY } from '@/services/graphql/role';
+import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import {
+  CHECK_EXISTING_ROLE_QUERY,
+  DELETE_ROLE_QUERY,
+} from '@/services/graphql/role';
 
 dayjs.extend(utc);
 
@@ -23,14 +25,11 @@ export const POST = withSessionValidation(async (request, sessionData) => {
 
     const { isOwner, permission, role, operatorRole } = sessionData;
 
-    const existingRoleResult = await composeClient.executeQuery(
-      CHECK_EXISTING_ROLE_QUERY,
-      {
-        userId,
-        resourceId: id,
-        resource,
-      },
-    );
+    const existingRoleResult = await executeQuery(CHECK_EXISTING_ROLE_QUERY, {
+      userId,
+      resourceId: id,
+      resource,
+    });
 
     const data = existingRoleResult.data as any;
     const existingRoles = (data?.zucityUserRolesIndex?.edges || []) as any[];
@@ -82,7 +81,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       );
     }
 
-    const result = await composeClient.executeQuery(DELETE_ROLE_QUERY, {
+    const result = await executeQuery(DELETE_ROLE_QUERY, {
       input: {
         id: userRoleId,
         shouldIndex: false,
