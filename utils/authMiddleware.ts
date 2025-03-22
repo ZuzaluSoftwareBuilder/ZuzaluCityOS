@@ -4,6 +4,7 @@ import { composeClient } from '@/constant';
 import { supabase } from './supabase/client';
 import { Permission, UserRole, Space, RolePermission } from '@/types';
 import { getSpaceEventsQuery } from '@/services/space';
+import { CHECK_EXISTING_ROLE_QUERY } from '@/services/graphql/role';
 
 export type SessionCheckResult = {
   isValid: boolean;
@@ -84,34 +85,12 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
     const [permissionResult, userRolesResult] = await Promise.all([
       supabase.from('permission').select('*'),
       composeClient.executeQuery(
-        `
-        query MyQuery {
-          zucityUserRolesIndex(
-            first: 1,
-            filters: {
-              where: {
-                resourceId: { equalTo: "${id}" }
-                source: { equalTo: "${resource}" }
-                userId: { equalTo: "${operatorId}" }
-              }
-            }
-          ) {
-            edges {
-              node {
-                roleId
-                userId {
-                  zucityProfile {
-                    avatar
-                    author {
-                      id
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        `,
+        CHECK_EXISTING_ROLE_QUERY,
+        {
+          userId: operatorId,
+          resourceId: id,
+          resource: resource,
+        },
       ),
     ]);
 
