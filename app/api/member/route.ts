@@ -1,8 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { UserRoleData } from '@/types';
-import { composeClient } from '@/constant';
 import { GET_MEMBERS_QUERY } from '@/services/graphql/role';
 import { executeQuery } from '@/utils/ceramic';
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/utils/service/response';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -10,9 +13,9 @@ export async function GET(request: NextRequest) {
   const resource = searchParams.get('resource');
 
   if (!id || !resource) {
-    return NextResponse.json(
-      { error: 'Missing required parameters: id and resource are required' },
-      { status: 400 },
+    return createErrorResponse(
+      'Missing required parameters: id and resource are required',
+      400,
     );
   }
 
@@ -23,33 +26,19 @@ export async function GET(request: NextRequest) {
     });
 
     if (data.errors) {
-      return NextResponse.json(
-        { error: 'Failed to fetch members' },
-        { status: 500 },
-      );
+      return createErrorResponse('Failed to fetch members', 500);
     }
 
     if ('zucityUserRolesIndex' in data.data!) {
       const userRoleData: UserRoleData = data.data as UserRoleData;
-      return NextResponse.json(
-        {
-          data: userRoleData.zucityUserRolesIndex.edges.map(
-            (edge) => edge.node,
-          ),
-        },
-        { status: 200 },
+      return createSuccessResponse(
+        userRoleData.zucityUserRolesIndex.edges.map((edge) => edge.node),
       );
     }
 
-    return NextResponse.json(
-      { error: 'Failed to fetch members' },
-      { status: 500 },
-    );
+    return createErrorResponse('Failed to fetch members', 500);
   } catch (e) {
     console.error('Unexpected error:', e);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return createErrorResponse('Internal Server Error', 500);
   }
 }

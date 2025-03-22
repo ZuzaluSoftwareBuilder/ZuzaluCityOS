@@ -1,6 +1,4 @@
-import { NextResponse } from 'next/server';
 import { withSessionValidation } from '@/utils/authMiddleware';
-import { PermissionName } from '@/types';
 import { dayjs } from '@/utils/dayjs';
 import utc from 'dayjs/plugin/utc';
 import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
@@ -8,48 +6,48 @@ import {
   CHECK_EXISTING_ROLE_QUERY,
   CREATE_ROLE_QUERY,
 } from '@/services/graphql/role';
+import { z } from 'zod';
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/utils/service/response';
+import { hasRequiredPermission } from '@/utils/service/role';
 
 dayjs.extend(utc);
+
+const addRoleSchema = z.object({
+  id: z.string().min(1, 'Resource ID is required'),
+  resource: z.string().min(1, 'Resource type is required'),
+  roleId: z.string().min(1, 'Role ID is required'),
+  userId: z.string().min(1, 'User ID is required'),
+});
 
 export const POST = withSessionValidation(async (request, sessionData) => {
   try {
     const body = await request.json();
-    const { id, resource, roleId, userId } = body;
-
-    if (!id || !resource || !roleId || !userId) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 },
+    const validationResult = addRoleSchema.safeParse(body);
+    if (!validationResult.success) {
+      return createErrorResponse(
+        'Invalid request parameters',
+        400,
+        validationResult.error.format(),
       );
     }
+    const { id, resource, roleId, userId } = validationResult.data;
 
-    const { isOwner, permission, role, operatorRole } = sessionData;
+    const { role } = sessionData;
 
     const addedRole = role?.find((r) => r.role.id === roleId);
     if (!addedRole) {
-      return NextResponse.json({ error: 'Role not found' }, { status: 404 });
+      return createErrorResponse('Role not found', 404);
     }
 
     if (addedRole.role.level === 'owner') {
-      return NextResponse.json(
-        { error: 'Owner role cannot be added' },
-        { status: 400 },
-      );
+      return createErrorResponse('Owner role cannot be added', 400);
     }
 
-    const needPermission =
-      addedRole.role.level === 'admin'
-        ? PermissionName.MANAGE_ADMIN_ROLE
-        : PermissionName.MANAGE_MEMBER_ROLE;
-
-    const hasPermission =
-      isOwner ||
-      operatorRole?.permission_ids.includes(
-        permission?.find((p) => p.name === needPermission)?.id || '',
-      );
-
-    if (!hasPermission) {
-      return NextResponse.json({ error: 'Permission denied' }, { status: 403 });
+    if (!hasRequiredPermission(sessionData, addedRole.role.level)) {
+      return createErrorResponse('Permission denied', 403);
     }
 
     const existingRoleResult = await executeQuery(CHECK_EXISTING_ROLE_QUERY, {
@@ -62,18 +60,15 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     const existingRoles = (data?.zucityUserRolesIndex?.edges as []) || [];
 
     if (existingRoles.length > 0) {
-      return NextResponse.json(
-        { error: 'User already has role for this resource' },
-        { status: 409 },
+      return createErrorResponse(
+        'User already has role for this resource',
+        409,
       );
     }
 
     const error = await authenticateWithSpaceId(id);
     if (error) {
-      return NextResponse.json(
-        { error: 'Error getting private key' },
-        { status: 500 },
-      );
+      return createErrorResponse('Error getting private key', 500);
     }
     const result = await executeQuery(CREATE_ROLE_QUERY, {
       input: {
@@ -89,21 +84,12 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     });
 
     if (result.errors) {
-      return NextResponse.json(
-        { error: 'Failed to add member', details: result.errors },
-        { status: 500 },
-      );
+      return createErrorResponse('Failed to add member', 500);
     }
 
-    return NextResponse.json({ message: 'Member added' }, { status: 200 });
+    return createSuccessResponse('Member added');
   } catch (error: unknown) {
     console.error('Error adding member:', error);
-    return NextResponse.json(
-      {
-        error: 'Internal server error',
-        details: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 },
-    );
+    return createErrorResponse('Internal server error', 500);
   }
 });
