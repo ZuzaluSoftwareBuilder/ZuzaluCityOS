@@ -127,7 +127,8 @@
     "viem": "^2.9.31",
     "wagmi": "^2.8.0",
     "web3-utils": "^4.3.0",
-    "yup": "^1.4.0"
+    "yup": "^1.4.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.12.16",

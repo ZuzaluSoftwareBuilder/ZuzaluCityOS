@@ -8,20 +8,32 @@ import {
   CHECK_EXISTING_ROLE_QUERY,
   DELETE_ROLE_QUERY,
 } from '@/services/graphql/role';
+import { z } from 'zod';
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/utils/service/response';
 
 dayjs.extend(utc);
+
+const removeRoleSchema = z.object({
+  id: z.string().min(1, 'Resource ID is required'),
+  resource: z.string().min(1, 'Resource type is required'),
+  userId: z.string().min(1, 'User ID is required'),
+});
 
 export const POST = withSessionValidation(async (request, sessionData) => {
   try {
     const body = await request.json();
-    const { id, resource, userId } = body;
-
-    if (!id || !resource || !userId) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 },
+    const validationResult = removeRoleSchema.safeParse(body);
+    if (!validationResult.success) {
+      return createErrorResponse(
+        'Invalid request parameters',
+        400,
+        validationResult.error.format(),
       );
     }
+    const { id, resource, userId } = validationResult.data;
 
     const { isOwner, permission, role, operatorRole } = sessionData;
 
@@ -48,14 +60,11 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     const removedRole = role?.find((r) => r.role.id === roleId);
 
     if (!removedRole) {
-      return NextResponse.json({ error: 'Role not found' }, { status: 404 });
+      return createErrorResponse('Role not found', 404);
     }
 
     if (removedRole.role.level === 'owner') {
-      return NextResponse.json(
-        { error: 'Owner role cannot be removed' },
-        { status: 400 },
-      );
+      return createErrorResponse('Owner role cannot be removed', 400);
     }
 
     const needPermission =
@@ -70,15 +79,12 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       );
 
     if (!hasPermission) {
-      return NextResponse.json({ error: 'Permission denied' }, { status: 403 });
+      return createErrorResponse('Permission denied', 403);
     }
 
     const error = await authenticateWithSpaceId(id);
     if (error) {
-      return NextResponse.json(
-        { error: 'Error getting private key' },
-        { status: 500 },
-      );
+      return createErrorResponse('Error getting private key', 500);
     }
 
     const result = await executeQuery(DELETE_ROLE_QUERY, {
@@ -89,21 +95,12 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     });
 
     if (result.errors) {
-      return NextResponse.json(
-        { error: 'Failed to remove member', details: result.errors },
-        { status: 500 },
-      );
+      return createErrorResponse('Failed to remove member', 500);
     }
 
-    return NextResponse.json({ message: 'Member removed' }, { status: 200 });
+    return createSuccessResponse('Member removed');
   } catch (error: unknown) {
     console.error('Error removing member:', error);
-    return NextResponse.json(
-      {
-        error: 'Internal server error',
-        details: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 },
-    );
+    return createErrorResponse('Internal server error', 500);
   }
 });
