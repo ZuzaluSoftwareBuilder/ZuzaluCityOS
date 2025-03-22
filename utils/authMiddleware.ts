@@ -5,6 +5,7 @@ import { supabase } from './supabase/client';
 import { Permission, UserRole, Space, RolePermission } from '@/types';
 import { getSpaceEventsQuery } from '@/services/space';
 import { CHECK_EXISTING_ROLE_QUERY } from '@/services/graphql/role';
+import { GET_SPACE_QUERY } from '@/services/graphql/space';
 
 export type SessionCheckResult = {
   isValid: boolean;
@@ -62,12 +63,9 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
         `and(resource.eq.${resource},resource_id.eq.${id}),and(resource.is.null,resource_id.is.null)`,
       );
     if (resource === 'space') {
-      const spaceResult = await composeClient.executeQuery(
-        getSpaceEventsQuery(),
-        {
-          id: id,
-        },
-      );
+      const spaceResult = await composeClient.executeQuery(GET_SPACE_QUERY, {
+        id: id,
+      });
       const space = spaceResult.data?.node as Space;
       const isOwner = space.superAdmin?.some(
         (admin) => admin.zucityProfile.author?.id === operatorId,
@@ -84,14 +82,11 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
 
     const [permissionResult, userRolesResult] = await Promise.all([
       supabase.from('permission').select('*'),
-      composeClient.executeQuery(
-        CHECK_EXISTING_ROLE_QUERY,
-        {
-          userId: operatorId,
-          resourceId: id,
-          resource: resource,
-        },
-      ),
+      composeClient.executeQuery(CHECK_EXISTING_ROLE_QUERY, {
+        userId: operatorId,
+        resourceId: id,
+        resource: resource,
+      }),
     ]);
 
     const userRolesData = (

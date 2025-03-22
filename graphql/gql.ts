@@ -20,6 +20,7 @@ type Documents = {
     "\n  mutation CreateZucityUserRoles($input: CreateZucityUserRolesInput!) {\n    createZucityUserRoles(input: $input) {\n      document {\n        userId {\n          id\n        }\n        created_at\n        updated_at\n        resourceId\n        source\n        roleId\n      }\n    }\n  }\n": typeof types.CreateZucityUserRolesDocument,
     "\n  mutation enableIndexingZucityUserRoles(\n    $input: EnableIndexingZucityUserRolesInput!\n  ) {\n    enableIndexingZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n": typeof types.EnableIndexingZucityUserRolesDocument,
     "\n  mutation UpdateZucityUserRoles($input: UpdateZucityUserRolesInput!) {\n    updateZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n": typeof types.UpdateZucityUserRolesDocument,
+    "\n  query GetSpace($id: ID!) {\n    node(id: $id) {\n      ... on ZucitySpace {\n        id\n        avatar\n        banner\n        description\n        name\n        profileId\n        tagline\n        website\n        twitter\n        telegram\n        nostr\n        lens\n        github\n        discord\n        ens\n        customAttributes {\n          tbd\n        }\n        admins {\n          id\n        }\n        superAdmin {\n          id\n          zucityProfile {\n            id\n            avatar\n            author {\n              id\n            }\n            username\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetSpaceDocument,
 };
 const documents: Documents = {
     "\n  query GetMembers($source: String, $resourceId: String) {\n    zucityUserRolesIndex(\n      first: 1000\n      filters: {\n        where: {\n          source: { equalTo: $source }\n          resourceId: { equalTo: $resourceId }\n        }\n      }\n    ) {\n      edges {\n        node {\n          roleId\n          customAttributes {\n            tbd\n          }\n          userId {\n            zucityProfile {\n              avatar\n              username\n              author {\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n": types.GetMembersDocument,
@@ -27,6 +28,7 @@ const documents: Documents = {
     "\n  mutation CreateZucityUserRoles($input: CreateZucityUserRolesInput!) {\n    createZucityUserRoles(input: $input) {\n      document {\n        userId {\n          id\n        }\n        created_at\n        updated_at\n        resourceId\n        source\n        roleId\n      }\n    }\n  }\n": types.CreateZucityUserRolesDocument,
     "\n  mutation enableIndexingZucityUserRoles(\n    $input: EnableIndexingZucityUserRolesInput!\n  ) {\n    enableIndexingZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n": types.EnableIndexingZucityUserRolesDocument,
     "\n  mutation UpdateZucityUserRoles($input: UpdateZucityUserRolesInput!) {\n    updateZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n": types.UpdateZucityUserRolesDocument,
+    "\n  query GetSpace($id: ID!) {\n    node(id: $id) {\n      ... on ZucitySpace {\n        id\n        avatar\n        banner\n        description\n        name\n        profileId\n        tagline\n        website\n        twitter\n        telegram\n        nostr\n        lens\n        github\n        discord\n        ens\n        customAttributes {\n          tbd\n        }\n        admins {\n          id\n        }\n        superAdmin {\n          id\n          zucityProfile {\n            id\n            avatar\n            author {\n              id\n            }\n            username\n          }\n        }\n      }\n    }\n  }\n": types.GetSpaceDocument,
 };
 
 /**
@@ -49,6 +51,10 @@ export function graphql(source: "\n  mutation enableIndexingZucityUserRoles(\n  
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation UpdateZucityUserRoles($input: UpdateZucityUserRolesInput!) {\n    updateZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n"): typeof import('./graphql').UpdateZucityUserRolesDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetSpace($id: ID!) {\n    node(id: $id) {\n      ... on ZucitySpace {\n        id\n        avatar\n        banner\n        description\n        name\n        profileId\n        tagline\n        website\n        twitter\n        telegram\n        nostr\n        lens\n        github\n        discord\n        ens\n        customAttributes {\n          tbd\n        }\n        admins {\n          id\n        }\n        superAdmin {\n          id\n          zucityProfile {\n            id\n            avatar\n            author {\n              id\n            }\n            username\n          }\n        }\n      }\n    }\n  }\n"): typeof import('./graphql').GetSpaceDocument;
 
 
 export function graphql(source: string) {

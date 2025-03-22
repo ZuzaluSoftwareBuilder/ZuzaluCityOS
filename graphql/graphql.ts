@@ -2867,6 +2867,13 @@ export type UpdateZucityUserRolesMutationVariables = Exact<{
 
 export type UpdateZucityUserRolesMutation = { __typename?: 'Mutation', updateZucityUserRoles?: { __typename?: 'UpdateZucityUserRolesPayload', document: { __typename?: 'ZucityUserRoles', id: string } } | null };
 
+export type GetSpaceQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetSpaceQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace', id: string, avatar?: string | null, banner?: string | null, description: string, name: string, profileId: any, tagline?: string | null, website?: string | null, twitter?: string | null, telegram?: string | null, nostr?: string | null, lens?: string | null, github?: string | null, discord?: string | null, ens?: string | null, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, admins?: Array<{ __typename?: 'CeramicAccount', id: string } | null> | null, superAdmin: Array<{ __typename?: 'CeramicAccount', id: string, zucityProfile?: { __typename?: 'ZucityProfile', id: string, avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null }> } | { __typename?: 'ZucityUserRoles' } | null };
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -2968,3 +2975,43 @@ export const UpdateZucityUserRolesDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpdateZucityUserRolesMutation, UpdateZucityUserRolesMutationVariables>;
+export const GetSpaceDocument = new TypedDocumentString(`
+    query GetSpace($id: ID!) {
+  node(id: $id) {
+    ... on ZucitySpace {
+      id
+      avatar
+      banner
+      description
+      name
+      profileId
+      tagline
+      website
+      twitter
+      telegram
+      nostr
+      lens
+      github
+      discord
+      ens
+      customAttributes {
+        tbd
+      }
+      admins {
+        id
+      }
+      superAdmin {
+        id
+        zucityProfile {
+          id
+          avatar
+          author {
+            id
+          }
+          username
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetSpaceQuery, GetSpaceQueryVariables>;
