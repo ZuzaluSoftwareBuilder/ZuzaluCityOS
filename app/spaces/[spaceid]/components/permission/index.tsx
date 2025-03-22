@@ -37,10 +37,10 @@ export const SpacePermissionProvider: React.FC<{
     return owner?.author?.id === userId;
   }, [owner, userId]);
 
-  const userRole = useMemo(() => {
+  const userRoleId = useMemo(() => {
     if (!members || !userId) return null;
     const userMember = members.find(
-      (member) => member.userId.zucityProfile?.id === userId,
+      (member) => member.userId.zucityProfile?.author?.id === userId,
     );
 
     if (!userMember) return null;
@@ -57,8 +57,8 @@ export const SpacePermissionProvider: React.FC<{
 
     if (!adminRoleData) return false;
 
-    return userRole === adminRoleData.role.id;
-  }, [members, userId, roles?.data, userRole]);
+    return userRoleId === adminRoleData.role.id;
+  }, [members, userId, roles?.data, userRoleId]);
 
   const isMember = useMemo(() => {
     if (!members || !userId || !roles?.data) return false;
@@ -69,13 +69,13 @@ export const SpacePermissionProvider: React.FC<{
 
     if (!memberRoleData) return false;
 
-    return userRole === memberRoleData.role.id;
-  }, [members, userId, roles?.data, userRole]);
+    return userRoleId === memberRoleData.role.id;
+  }, [members, userId, roles?.data, userRoleId]);
 
   const checkPermission = useCallback(
     (name: PermissionName): boolean => {
       if (isOwner) return true;
-      if (!permissionsData?.data || !userRole) return false;
+      if (!permissionsData?.data || !userRoleId) return false;
 
       const permissionData = permissionsData.data.find(
         (permission) => permission.name === name,
@@ -84,14 +84,14 @@ export const SpacePermissionProvider: React.FC<{
       if (!permissionData) return false;
 
       const rolePermissions = roles?.data.find(
-        (role) => role.role.id === userRole,
+        (role) => role.role.id === userRoleId,
       );
 
       return (
         rolePermissions?.permission_ids.includes(permissionData.id) || false
       );
     },
-    [isOwner, permissionsData, userRole, roles?.data],
+    [isOwner, permissionsData, userRoleId, roles?.data],
   );
 
   const value = {
