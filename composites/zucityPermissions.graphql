@@ -3,7 +3,7 @@ type ZucityPermission
     accountRelation: LIST
     description: "Permissions for Zuzalu.city beta version"
   )
-  @createIndex(fields: [{ path: "source" }]){
+  @createIndex(fields: [{ path: "source" }]) {
   author: DID! @documentAccount
   name: String! @string(minLength: 1, maxLength: 10000)
   action: String! @string(minLength: 1, maxLength: 10000)
@@ -12,7 +12,6 @@ type ZucityPermission
   updated_at: DateTime!
   customAttributes: [TBD] @list(maxLength: 10000)
 }
-
 
 type TBD {
   tbd: String @string(minLength: 1, maxLength: 10000)
