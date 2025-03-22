@@ -7,7 +7,7 @@ import { getSpaceEventsQuery } from '@/services/space';
 
 export type SessionCheckResult = {
   isValid: boolean;
-  userId?: string;
+  operatorId?: string;
   isOwner?: boolean;
   permission?: Permission[];
   role?: RolePermission[];
@@ -44,7 +44,7 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
       };
     }
 
-    const operator = didSession.did._parentId;
+    const operatorId = didSession.did._parentId;
     const { data: rolePermissionResult } = await supabase
       .from('role_permission')
       .select(
@@ -69,12 +69,12 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
       );
       const space = spaceResult.data?.node as Space;
       const isOwner = space.superAdmin?.some(
-        (admin) => admin.zucityProfile.author?.id === operator,
+        (admin) => admin.zucityProfile.author?.id === operatorId,
       );
       if (isOwner) {
         return {
           isValid: true,
-          userId: operator,
+          operatorId,
           isOwner: true,
           role: rolePermissionResult as RolePermission[],
         };
@@ -92,7 +92,7 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
               where: {
                 resourceId: { equalTo: "${id}" }
                 source: { equalTo: "${resource}" }
-                userId: { equalTo: "${operator}" }
+                userId: { equalTo: "${operatorId}" }
               }
             }
           ) {
@@ -121,10 +121,8 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
       (edge: any) => edge.node,
     ) as UserRole[];
 
-    console.log(operator);
-
     const operatorRole = userRolesData.find(
-      (item: any) => item.userId.zucityProfile.author?.id === operator,
+      (item: any) => item.userId.zucityProfile.author?.id === operatorId,
     );
 
     if (!operatorRole) {
@@ -133,7 +131,7 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
 
     return {
       isValid: true,
-      userId: didSession?.did._parentId,
+      operatorId,
       isOwner: false,
       permission: permissionResult.data as Permission[],
       role: rolePermissionResult as RolePermission[],
