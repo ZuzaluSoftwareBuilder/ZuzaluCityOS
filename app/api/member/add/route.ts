@@ -5,13 +5,15 @@ import { dayjs } from '@/utils/dayjs';
 import { composeClient } from '@/constant';
 import utc from 'dayjs/plugin/utc';
 import { authenticateWithSpaceId } from '@/utils/ceramic';
-import { CHECK_EXISTING_ROLE_QUERY, CREATE_ROLE_QUERY } from '@/services/graphql/role';
+import {
+  CHECK_EXISTING_ROLE_QUERY,
+  CREATE_ROLE_QUERY,
+} from '@/services/graphql/role';
 
 dayjs.extend(utc);
 
 export const POST = withSessionValidation(async (request, sessionData) => {
   try {
-    console.log(CHECK_EXISTING_ROLE_QUERY, '=====');
     const body = await request.json();
     const { id, resource, roleId, userId } = body;
 
