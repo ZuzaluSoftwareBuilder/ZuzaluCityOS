@@ -607,6 +607,8 @@ export interface Dapp {
     author: {
       id: string;
     };
+    username: string;
+    avatar: string;
   };
 }
 

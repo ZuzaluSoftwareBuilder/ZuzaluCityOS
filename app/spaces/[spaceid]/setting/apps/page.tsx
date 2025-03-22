@@ -1,27 +1,83 @@
 'use client';
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useCallback,
+  Suspense,
+  use,
+  memo,
+} from 'react';
 import clsx from 'clsx';
 import Link from 'next/link';
-import { useScrollSection } from '@/hooks/useScrollSection';
+import { useQuery } from '@tanstack/react-query';
 
-const APP_CATEGORY = {
+import { Dapp } from '@/types';
+import { composeClient } from '@/constant';
+import { useScrollSection } from '@/hooks/useScrollSection';
+import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
+
+import AppItem from './components/AppItem';
+
+export interface AppPreviewInfo {
+  id: string;
+  appName: string;
+  categories: string[];
+  bannerUrl: string;
+  developer: {
+    username: string;
+    avatarUrl: string;
+  };
+}
+
+const APP_CATEGORY: Record<
+  string,
+  {
+    hash: string;
+    title: string;
+    subTitle: string;
+    getApps: () => Promise<AppPreviewInfo[]>;
+  }
+> = {
   NativeApps: {
     hash: 'native-apps',
     title: 'Native Apps',
     subTitle: 'Install apps integrated directly in Zuzalu City',
+    getApps: async () => [], // TODO: static data
   },
   CommunityApps: {
     hash: 'community-apps',
     title: 'Community Apps',
     subTitle: 'Install apps built by the community',
+    getApps: async () => {
+      const response = await composeClient.executeQuery(GET_DAPP_LIST_QUERY);
+
+      if (response && response.data && 'zucityDappInfoIndex' in response.data) {
+        return response.data.zucityDappInfoIndex.edges.map((edge: any) => {
+          const current: Dapp = edge.node;
+          return {
+            id: current.id,
+            appName: current.appName,
+            categories: current.categories.split(','),
+            bannerUrl: current.bannerUrl,
+            developer: {
+              username: current.profile.username,
+              avatarUrl: current.profile.avatar,
+            },
+          };
+        });
+      }
+      return [];
+    },
   },
 };
+
+const CATEGORIES = Object.values(APP_CATEGORY);
 
 export default function ExploreAppsPage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { activeSection, setActiveSection, scrollToSection } = useScrollSection(
     {
-      sections: Object.values(APP_CATEGORY).map((item) => ({
+      sections: CATEGORIES.map((item) => ({
         hash: item.hash,
         threshold: 100,
       })),
@@ -37,10 +93,7 @@ export default function ExploreAppsPage() {
   // Scroll to section when hash is present
   useEffect(() => {
     const hash = window.location.hash.slice(1);
-    if (
-      hash &&
-      Object.values(APP_CATEGORY).some((item) => item.hash === hash)
-    ) {
+    if (hash && CATEGORIES.some((item) => item.hash === hash)) {
       setActiveSection(hash);
       scrollToSection(hash);
     }
@@ -76,7 +129,7 @@ export default function ExploreAppsPage() {
             'h-full w-[150px] p-[20px] flex-col gap-5',
           )}
         >
-          {Object.values(APP_CATEGORY).map((item) => (
+          {CATEGORIES.map((item) => (
             <Link
               key={item.hash}
               href={`#${item.hash}`}
@@ -97,7 +150,12 @@ export default function ExploreAppsPage() {
             'mobile:p-0', // mobile
           )}
         >
-          {Object.values(APP_CATEGORY).map((item, idx, arr) => {
+          {CATEGORIES.map((item, idx, arr) => {
+            const { promise: appsPromise } = useQuery({
+              queryKey: ['apps', item.hash],
+              queryFn: item.getApps,
+              experimental_prefetchInRender: true,
+            });
             return (
               <React.Fragment key={item.hash}>
                 <div id={item.hash} className="w-full flex flex-col gap-3 ">
@@ -108,7 +166,9 @@ export default function ExploreAppsPage() {
                     {item.subTitle}
                   </div>
                   <div className="flex flex-col">
-                    {/* TODO: app list */}
+                    <Suspense fallback={<AppList.Skeleton />}>
+                      <AppList appsPromise={appsPromise} />
+                    </Suspense>
                   </div>
                 </div>
                 {/* line of division */}
@@ -123,3 +183,18 @@ export default function ExploreAppsPage() {
     </div>
   );
 }
+
+function AppList({ appsPromise }: { appsPromise: Promise<AppPreviewInfo[]> }) {
+  const apps = use(appsPromise);
+  return (
+    <>
+      {apps.map((app) => (
+        <AppItem key={app.id} data={app} />
+      ))}
+    </>
+  );
+}
+
+AppList.Skeleton = memo(() =>
+  Array.from({ length: 3 }).map((_, index) => <AppItem.Skeleton key={index} />),
+);
