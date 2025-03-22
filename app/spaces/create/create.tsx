@@ -58,7 +58,7 @@ const DEFAULT_AVATAR = 'https://nftstorage.link/ipfs/bafybeifcplhgttja4hoj5vx4u3
 const DEFAULT_BANNER = 'https://nftstorage.link/ipfs/bafybeifqan4j2n7gygwkmekcty3dsp7v4rxbjimpo7nrktclwxgxreiyay';
 
 const Create = () => {
-  const [selectedTab, setSelectedTab] = useState(TabContentEnum.Categories);
+  const [selectedTab, setSelectedTab] = useState(TabContentEnum.Profile);
   const [tabStatuses, setTabStatuses] = useState<Record<string, TabStatus>>({
     [TabContentEnum.Profile]: TabStatus.Active,
     [TabContentEnum.Categories]: TabStatus.Inactive,
@@ -76,10 +76,10 @@ const Create = () => {
       name: '',
       tagline: '',
       description: '',
-      avatar: 'https://pub-d00cee3ff1154a18bdf38c29db9a51c5.r2.dev/uploads/45d350a6-7616-48af-8289-8fd6a79bae29.jpg',
-      banner: 'https://pub-d00cee3ff1154a18bdf38c29db9a51c5.r2.dev/uploads/c117c81e-3070-41b3-859a-3b369ca43e5e.jpg',
-      // avatar: '',
-      // banner: ''
+      // avatar: DEFAULT_AVATAR,
+      // banner: DEFAULT_BANNER,
+      avatar: '',
+      banner: ''
     }
   });
 
