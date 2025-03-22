@@ -7,9 +7,11 @@ import { Button } from '@/components/base';
 import { InstallIcon } from '@/components/icons';
 
 import { AppPreviewInfo } from '../page';
+import { useDAppDetailDrawer } from './DAppDetailDrawer';
 
 interface Props {
   data: AppPreviewInfo;
+  onDetailClick?: (data: AppPreviewInfo) => void;
 }
 
 const AppItem = (props: Props) => {
@@ -27,6 +29,9 @@ const AppItem = (props: Props) => {
     [categories],
   );
 
+  // view detail logic
+  const { open } = useDAppDetailDrawer();
+
   // install button logic
   const handleInstall = useCallback(() => {}, [id]);
 
@@ -39,7 +44,14 @@ const AppItem = (props: Props) => {
       ])}
     >
       {/* information */}
-      <div className={clsx(['flex flex-1', 'gap-5', 'mobile:gap-[10px]'])}>
+      <div
+        className={clsx([
+          'flex flex-1 cursor-pointer',
+          'gap-5',
+          'mobile:gap-[10px]',
+        ])}
+        onClick={() => open()}
+      >
         {/* banner */}
         <div
           className={clsx([

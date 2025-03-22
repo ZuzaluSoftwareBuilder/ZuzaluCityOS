@@ -17,6 +17,7 @@ import { useScrollSection } from '@/hooks/useScrollSection';
 import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
 
 import AppItem from './components/AppItem';
+import DAppDetailDrawer from './components/DAppDetailDrawer';
 
 export interface AppPreviewInfo {
   id: string;
@@ -117,80 +118,83 @@ export default function ExploreAppsPage() {
   );
 
   return (
-    <div
-      className={clsx(
-        'w-full h-full overflow-hidden',
-        'p-[20px] pc:p-[20px_40px_0]',
-        'relative',
-      )}
-    >
+    <DAppDetailDrawer>
       <div
-        ref={scrollContainerRef}
-        className={clsx('w-full h-full overflow-auto flex gap-10')}
+        className={clsx(
+          'w-full h-full overflow-hidden',
+          'p-[20px] pc:p-[20px_40px_0]',
+          'relative',
+        )}
       >
         <div
-          className={clsx(
-            'hidden pc:flex', // show on pc
-            'absolute top-[20px] left-[40px]',
-            'h-full w-[150px] p-[20px] flex-col gap-5',
-          )}
+          ref={scrollContainerRef}
+          className={clsx('w-full h-full overflow-auto flex gap-10')}
         >
-          {CATEGORIES.map((item) => (
-            <Link
-              key={item.hash}
-              href={`#${item.hash}`}
-              onClick={(e) => handleNavClick(item.hash, e)}
-              className={clsx(
-                'text-[13px] font-medium leading-[140%]',
-                activeSection !== item.hash && 'opacity-50',
-              )}
-            >
-              {item.title}
-            </Link>
-          ))}
-        </div>
-        <div
-          className={clsx(
-            'h-full w-full p-5  flex flex-col gap-5',
-            'pc:w-[600px] xl:mx-auto', // pc
-            'mobile:p-0', // mobile
-          )}
-        >
-          {CATEGORIES.map((item, idx, arr) => {
-            const { promise: appsPromise } = useQuery({
-              queryKey: ['apps', item.hash],
-              queryFn: item.getApps,
-              experimental_prefetchInRender: true,
-            });
-            return (
-              <React.Fragment key={item.hash}>
-                <div id={item.hash} className="w-full flex flex-col gap-3 ">
-                  <div className="leading-[140%] font-semibold text-[18px]">
-                    {item.title}
-                  </div>
-                  <div className="leading-[140%] font-medium text-[13px] opacity-50">
-                    {item.subTitle}
-                  </div>
-                  <div className="flex flex-col">
-                    <Suspense fallback={<AppList.Skeleton />}>
-                      <AppList appsPromise={appsPromise} />
-                    </Suspense>
-                  </div>
-                </div>
-                {/* line of division */}
-                {idx < arr.length - 1 && (
-                  <hr className="w-full border-[rgba(255,255,255,0.1)]" />
+          <div
+            className={clsx(
+              'hidden pc:flex', // show on pc
+              'absolute top-[20px] left-[40px]',
+              'h-full w-[150px] p-[20px] flex-col gap-5',
+            )}
+          >
+            {CATEGORIES.map((item) => (
+              <Link
+                key={item.hash}
+                href={`#${item.hash}`}
+                onClick={(e) => handleNavClick(item.hash, e)}
+                className={clsx(
+                  'text-[13px] font-medium leading-[140%]',
+                  activeSection !== item.hash && 'opacity-50',
                 )}
-              </React.Fragment>
-            );
-          })}
+              >
+                {item.title}
+              </Link>
+            ))}
+          </div>
+          <div
+            className={clsx(
+              'h-full w-full p-5  flex flex-col gap-5',
+              'pc:w-[600px] xl:mx-auto', // pc
+              'mobile:p-0', // mobile
+            )}
+          >
+            {CATEGORIES.map((item, idx, arr) => {
+              const { promise: appsPromise } = useQuery({
+                queryKey: ['apps', item.hash],
+                queryFn: item.getApps,
+                experimental_prefetchInRender: true,
+              });
+              return (
+                <React.Fragment key={item.hash}>
+                  <div id={item.hash} className="w-full flex flex-col gap-3 ">
+                    <div className="leading-[140%] font-semibold text-[18px]">
+                      {item.title}
+                    </div>
+                    <div className="leading-[140%] font-medium text-[13px] opacity-50">
+                      {item.subTitle}
+                    </div>
+                    <div className="flex flex-col">
+                      <Suspense fallback={<AppList.Skeleton />}>
+                        <AppList appsPromise={appsPromise} />
+                      </Suspense>
+                    </div>
+                  </div>
+                  {/* line of division */}
+                  {idx < arr.length - 1 && (
+                    <hr className="w-full border-[rgba(255,255,255,0.1)]" />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
         </div>
       </div>
-    </div>
+    </DAppDetailDrawer>
   );
 }
 
-function AppList({ appsPromise }: { appsPromise: Promise<AppPreviewInfo[]> }) {
+function AppList(props: { appsPromise: Promise<AppPreviewInfo[]> }) {
+  const { appsPromise } = props;
   const apps = use(appsPromise);
   return (
     <>
