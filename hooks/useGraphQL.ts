@@ -3,26 +3,26 @@ import {
   useQuery,
   type UseQueryResult,
   type UseQueryOptions,
+  type QueryKey,
 } from '@tanstack/react-query';
 import { useCeramicContext } from '@/context/CeramicContext';
 
 export function useGraphQL<TResult, TVariables>(
+  queryKey: QueryKey,
   document: TypedDocumentNode<TResult, TVariables>,
   ...[variables, options]: TVariables extends Record<string, never>
     ? [Omit<UseQueryOptions<TResult>, 'queryKey' | 'queryFn'>?]
     : [TVariables, Omit<UseQueryOptions<TResult>, 'queryKey' | 'queryFn'>?]
-): UseQueryResult<TResult> {
+): UseQueryResult<{ data: TResult; errors: any }> {
   const { composeClient } = useCeramicContext();
-
-  const queryKey = [(document as any).definitions?.[0]?.name?.value, variables];
 
   return useQuery({
     queryKey,
-    queryFn: async ({ queryKey }) =>
+    queryFn: () =>
       composeClient.executeQuery(
-        document,
-        queryKey[1] ? (queryKey[1] as Record<string, unknown>) : undefined,
+        document.toString(),
+        variables ? variables : undefined,
       ),
     ...options,
-  });
+  }) as UseQueryResult<{ data: TResult; errors: any }>;
 }
