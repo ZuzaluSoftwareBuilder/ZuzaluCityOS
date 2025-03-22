@@ -5,13 +5,13 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 export interface IAddMembersSubHeaderProps {
   onSearch: (query: string) => void;
   onAddMember: () => void;
-  canManageAdminRole: boolean;
+  canManageRole: boolean;
 }
 
 export const AddMemberSubHeader: React.FC<IAddMembersSubHeaderProps> = ({
   onSearch,
   onAddMember,
-  canManageAdminRole,
+  canManageRole,
 }) => {
   return (
     <div className="flex items-center w-full gap-2.5 mobile:flex-col">
@@ -30,11 +30,11 @@ export const AddMemberSubHeader: React.FC<IAddMembersSubHeaderProps> = ({
           onSearch(e.target.value)
         }
       />
-      {/*TODO isDisabled={!canManageAdminRole} */}
       <Button
         className="bg-[rgba(103,219,255,0.2)] p-[8px_14px] text-[#67DBFF] border border-[rgba(103,219,255,0.1)] text-[16px] shrink-0 mobile:w-full"
         radius="sm"
         onPress={onAddMember}
+        isDisabled={!canManageRole}
       >
         Add Members
       </Button>

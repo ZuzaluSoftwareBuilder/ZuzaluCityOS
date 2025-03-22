@@ -22,7 +22,7 @@ export interface MemberListProps {
   members: IMemberItem[];
   onRemoveMember: (memberId: string) => Promise<void>;
   currentRole?: RolePermission;
-  canManageAdminRole: boolean;
+  canManageRole: boolean;
   isLoading: boolean;
 }
 
@@ -30,7 +30,7 @@ export const MemberList: React.FC<MemberListProps> = ({
   members,
   onRemoveMember,
   currentRole,
-  canManageAdminRole,
+  canManageRole,
   isLoading,
 }) => {
   const { open, handleOpen, handleClose } = useOpenDraw();
@@ -69,7 +69,7 @@ export const MemberList: React.FC<MemberListProps> = ({
         <span className="flex-1 text-sm font-semibold text-white/60">
           Members with This Role
         </span>
-        {canManageAdminRole && (
+        {canManageRole && (
           <span className="text-sm font-semibold text-white/60">Actions</span>
         )}
       </div>
@@ -90,7 +90,7 @@ export const MemberList: React.FC<MemberListProps> = ({
                 name={member.name}
                 address={member.address}
               />
-              {canManageAdminRole && (
+              {canManageRole && (
                 <Button
                   isIconOnly
                   variant="light"

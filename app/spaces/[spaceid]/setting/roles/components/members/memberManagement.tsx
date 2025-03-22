@@ -39,7 +39,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
   isLoading,
 }) => {
   const spaceId = useParams()?.spaceid;
-  const { checkPermission } = useSpacePermissions();
+  const { checkPermission, isOwner, isAdmin, isMember } = useSpacePermissions();
   const { refetchMembers } = useGetSpaceMember(spaceId as string);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,7 +50,6 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
   } = useOpenDraw();
   const params = useParams<{ spaceid: string }>();
 
-  // hardcode space for now
   const resource = 'space';
   const resourceId = params?.spaceid;
 
@@ -96,8 +95,6 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
         const { membersWithRoles, membersWithoutRoles } =
           getSortedMembers(memberIds);
 
-        console.log('getSortedMembers', memberIds, membersWithRoles, membersWithoutRoles);
-
         const promises = [];
 
         if (membersWithoutRoles.length > 0) {
@@ -112,10 +109,6 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
         }
 
         if (membersWithRoles.length > 0) {
-          console.log('resource', resource)
-          console.log('resourceId', resourceId)
-          console.log('roleId', roleId)
-          console.log('membersWithRoles', membersWithRoles)
           promises.push(
             updateMembersRole(
               resource,
@@ -183,43 +176,6 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
     [resourceId, resource, roleName, refetchMembers],
   );
 
-  /**
-   * 当用户已经是当前 space 的某个角色，选择添加到其他角色时, 需要调用 /api/member/update 接口，而不是 /api/member/add 接口
-   * 比如，用户 A 已经是 admin，添加到 member，需要调用 /api/member/update 接口，而不是 /api/member/add 接口
-   * 用户 B 已经是 member，添加到 admin,也需要调用 /api/member/update 接口
-   * 其他情况同理
-   */
-  const handleUpdateMember = useCallback(
-    async (memberIds: string[], newRoleId: string) => {
-      if (!memberIds.length) return;
-
-      try {
-        await updateMembersRole(
-          resource,
-          resourceId as string,
-          newRoleId,
-          memberIds,
-        );
-        await refetchMembers();
-        addToast({
-          title: 'Update Member Role Success',
-          description: `Member role updated successfully`,
-          color: 'success',
-          classNames: { base: 'z-[1500]' },
-        });
-      } catch (error) {
-        console.error('update member role error:', error);
-        addToast({
-          title: 'Update Member Role Failed',
-          description: error instanceof Error ? error.message : 'unknown error',
-          color: 'danger',
-          classNames: { base: 'z-[1500]' },
-        });
-      }
-    },
-    [resourceId, resource, refetchMembers],
-  );
-
   const currentRole = useMemo(() => {
     return roleData.find((role) => role.role.name === roleName);
   }, [roleData, roleName]);
@@ -262,21 +218,29 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
     );
   }, [currentRole?.role.id, members, owner, roleName, searchQuery]);
 
-  const canManageAdminRole = useMemo(() => {
-    if (!currentRole || currentRole.role.level !== 'admin') return false;
-    return checkPermission(PermissionName.MANAGE_ADMIN_ROLE);
-  }, [currentRole, checkPermission]);
+  const canManageRole = useMemo(() => {
+    if (!currentRole) return false;
+    if (currentRole.role.level === 'owner') return false;
+    if (currentRole.role.level === 'admin') {
+      return checkPermission(PermissionName.MANAGE_ADMIN_ROLE);
+    }
+    if (currentRole.role.level === 'member') {
+      return checkPermission(PermissionName.MANAGE_MEMBER_ROLE);
+    }
+    // TODO other roles not defined, e.g. Follower
+    return isOwner || isMember;
+  }, [currentRole, isOwner, isMember, checkPermission]);
 
   return (
     <div className="flex flex-col w-full gap-10">
       <AddMemberSubHeader
-        canManageAdminRole={canManageAdminRole}
+        canManageRole={canManageRole}
         onSearch={handleSearch}
         onAddMember={handleAddMember}
       />
 
       <MemberList
-        canManageAdminRole={canManageAdminRole}
+        canManageRole={canManageRole}
         members={filteredMembers as IMemberItem[]}
         onRemoveMember={handleRemoveMember}
         currentRole={currentRole}

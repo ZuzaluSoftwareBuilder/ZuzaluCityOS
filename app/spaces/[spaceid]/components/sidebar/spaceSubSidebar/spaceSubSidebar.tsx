@@ -33,7 +33,11 @@ const SpaceSubSidebar = ({
   const spaceId = params.spaceid.toString();
   const { composeClient } = useCeramicContext();
 
-  const { isOwner, isAdmin } = useSpacePermissions();
+  const { isOwner, isAdmin, isMember } = useSpacePermissions();
+
+  useEffect(() => {
+      console.log('isOwner isAdmin isMember', isOwner, isAdmin, isMember);
+  }, [isOwner, isAdmin, isMember]);
 
   const { data: spaceData, isLoading } = useQuery({
     queryKey: ['getSpaceByID', spaceId],
