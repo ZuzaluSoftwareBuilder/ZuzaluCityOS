@@ -29,4 +29,4 @@ export const GET_DAPP_LIST_QUERY = graphql(`
       }
     }
   }
-`).toString();
+`);

@@ -97,7 +97,7 @@ const AppItem = (props: Props) => {
         </div>
       </div>
       {/* install button */}
-      <div></div>
+      {/* <div></div> */}
     </div>
   );
 };

@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 
 import { Dapp } from '@/types';
-import { composeClient } from '@/constant';
+import { executeQuery } from '@/utils/ceramic';
 import { useScrollSection } from '@/hooks/useScrollSection';
 import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
 
@@ -49,9 +49,14 @@ const APP_CATEGORY: Record<
     title: 'Community Apps',
     subTitle: 'Install apps built by the community',
     getApps: async () => {
-      const response = await composeClient.executeQuery(GET_DAPP_LIST_QUERY);
+      const response = await executeQuery(GET_DAPP_LIST_QUERY);
 
-      if (response && response.data && 'zucityDappInfoIndex' in response.data) {
+      if (
+        response &&
+        response.data &&
+        'zucityDappInfoIndex' in response.data &&
+        response.data.zucityDappInfoIndex?.edges
+      ) {
         return response.data.zucityDappInfoIndex.edges.map((edge: any) => {
           const current: Dapp = edge.node;
           return {
