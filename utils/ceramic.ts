@@ -1,5 +1,5 @@
 import { getResolver } from 'key-did-resolver';
-
+import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { Ed25519Provider } from 'key-did-provider-ed25519';
 
 import { composeClient } from '@/constant';
@@ -26,4 +26,11 @@ const authenticateWithSpaceId = async (spaceId: string) => {
   composeClient.setDID(did);
 };
 
-export { authenticateWithSpaceId };
+function executeQuery<TResult, TVariables extends Record<string, any>>(
+  document: TypedDocumentNode<TResult, TVariables>,
+  variables?: TVariables,
+): Promise<{ data: TResult; errors: any }> {
+  return composeClient.executeQuery(document.toString(), variables);
+}
+
+export { authenticateWithSpaceId, executeQuery };

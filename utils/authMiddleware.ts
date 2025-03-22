@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DIDSession } from 'did-session';
-import { composeClient } from '@/constant';
 import { supabase } from './supabase/client';
 import { Permission, UserRole, Space, RolePermission } from '@/types';
-import { getSpaceEventsQuery } from '@/services/space';
 import { CHECK_EXISTING_ROLE_QUERY } from '@/services/graphql/role';
 import { GET_SPACE_QUERY } from '@/services/graphql/space';
+import { executeQuery } from './ceramic';
 
 export type SessionCheckResult = {
   isValid: boolean;
@@ -63,9 +62,10 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
         `and(resource.eq.${resource},resource_id.eq.${id}),and(resource.is.null,resource_id.is.null)`,
       );
     if (resource === 'space') {
-      const spaceResult = await composeClient.executeQuery(GET_SPACE_QUERY, {
-        id: id,
+      const spaceResult = await executeQuery(GET_SPACE_QUERY, {
+        id,
       });
+
       const space = spaceResult.data?.node as Space;
       const isOwner = space.superAdmin?.some(
         (admin) => admin.zucityProfile.author?.id === operatorId,
@@ -82,21 +82,20 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
 
     const [permissionResult, userRolesResult] = await Promise.all([
       supabase.from('permission').select('*'),
-      composeClient.executeQuery(CHECK_EXISTING_ROLE_QUERY, {
+      executeQuery(CHECK_EXISTING_ROLE_QUERY, {
         userId: operatorId,
         resourceId: id,
         resource: resource,
       }),
     ]);
 
-    const userRolesData = (
-      userRolesResult as any
-    ).data?.zucityUserRolesIndex?.edges?.map(
-      (edge: any) => edge.node,
-    ) as UserRole[];
+    const userRolesData =
+      userRolesResult.data?.zucityUserRolesIndex?.edges?.map(
+        (edge) => edge?.node,
+      ) as UserRole[];
 
     const operatorRole = userRolesData.find(
-      (item: any) => item.userId.zucityProfile.author?.id === operatorId,
+      (item) => item.userId.zucityProfile.author?.id === operatorId,
     );
 
     if (!operatorRole) {
