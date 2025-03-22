@@ -1,17 +1,20 @@
 'use client';
 
 import React, { useEffect, useCallback } from 'react';
-import { Button, Tabs, Tab, cn, Skeleton } from '@heroui/react';
+import { Button, Tabs, Tab, cn, Skeleton, Drawer, DrawerContent, DrawerHeader, DrawerBody } from '@heroui/react';
 import {
   CaretLeft,
   Info,
   IdentificationBadge,
+  DotsThree,
 } from '@phosphor-icons/react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import Display from './display';
 import Permission, { PermissionList } from './permission';
 import MemberManagement from './members/memberManagement';
 import { Profile, RolePermission, UserRole } from '@/types';
+import useOpenDraw from '@/hooks/useOpenDraw';
+import { isMobile } from '@/utils';
 
 interface RoleType {
   id: number;
@@ -33,6 +36,7 @@ export default function RoleDetail({
 }: RoleDetailProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { open, handleOpen, handleClose } = useOpenDraw()
   const pathname = usePathname()!;
   const currentRole = searchParams?.get('role') || 'Owner';
   const currentTab = searchParams?.get('tab') || 'display';
@@ -84,42 +88,118 @@ export default function RoleDetail({
         <div className="flex flex-col gap-2.5">
           {isLoading
             ? Array(3)
-                .fill(0)
-                .map((_, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg"
-                  >
-                    <IdentificationBadge
-                      size={20}
-                      weight="fill"
-                      className="text-white opacity-40"
-                    />
-                    <Skeleton className="w-24 h-5 rounded" />
-                  </div>
-                ))
-            : roleData.map((item) => (
+              .fill(0)
+              .map((_, index) => (
                 <div
-                  key={item.id}
-                  className={cn(
-                    'flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg cursor-pointer',
-                    item.role.name === currentRole
-                      ? 'bg-[rgba(255,255,255,0.1)]'
-                      : '',
-                  )}
-                  onClick={() => handleRoleSelect(item.role.name)}
+                  key={index}
+                  className="flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg"
                 >
                   <IdentificationBadge
                     size={20}
                     weight="fill"
                     className="text-white opacity-40"
                   />
-                  <span className="text-white text-[13px] font-medium">
-                    {item.role.name}
-                  </span>
+                  <Skeleton className="w-24 h-5 rounded" />
                 </div>
-              ))}
+              ))
+            : roleData.map((item) => (
+              <div
+                key={item.id}
+                className={cn(
+                  'flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg cursor-pointer',
+                  item.role.name === currentRole
+                    ? 'bg-[rgba(255,255,255,0.1)]'
+                    : '',
+                )}
+                onClick={() => handleRoleSelect(item.role.name)}
+              >
+                <IdentificationBadge
+                  size={20}
+                  weight="fill"
+                  className="text-white opacity-40"
+                />
+                <span className="text-white text-[13px] font-medium">
+                  {item.role.name}
+                </span>
+              </div>
+            ))}
         </div>
+
+        <Drawer
+          isOpen={open}
+          onClose={handleClose}
+          placement={'bottom'}
+          isDismissable={false}
+          className='xl:hidden pc:hidden'
+          classNames={{
+            wrapper: ['z-[1100]'],
+            base: cn(
+              'bg-[rgba(34,34,34,0.8)] border-[rgba(255,255,255,0.06)] backdrop-blur-[20px] rounded-none',
+              'w-full border-t rounded-t-[16px]'
+            ),
+          }}
+        >
+          <DrawerContent>
+            <DrawerHeader className={cn(
+              'flex items-center justify-between border-b border-[rgba(255,255,255,0.1)] p-[10px] pb-[14px]',
+            )}>
+              {/* TODO mobile style nneed update by PM */}
+              <div className="w-full flex flex-col items-center">
+                <h3 className="text-[18px] font-bold text-white leading-[1.4] text-left">
+                  Roles
+                </h3>
+              </div>
+            </DrawerHeader>
+            <DrawerBody
+              className={cn(
+                'flex flex-col gap-[20px]',
+                'p-[16px] pb-[24px]',
+              )}
+            >
+              <div className="flex flex-col gap-2.5">
+                {isLoading
+                  ? Array(3)
+                    .fill(0)
+                    .map((_, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg"
+                      >
+                        <IdentificationBadge
+                          size={20}
+                          weight="fill"
+                          className="text-white opacity-40"
+                        />
+                        <Skeleton className="w-24 h-5 rounded" />
+                      </div>
+                    ))
+                  : roleData.map((item) => (
+                    <div
+                      key={item.id}
+                      className={cn(
+                        'flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg cursor-pointer',
+                        item.role.name === currentRole
+                          ? 'bg-[rgba(255,255,255,0.1)]'
+                          : '',
+                      )}
+                      onClick={() => handleRoleSelect(item.role.name)}
+                    >
+                      <IdentificationBadge
+                        size={20}
+                        weight="fill"
+                        className="text-white opacity-40"
+                      />
+                      <span className="text-white text-[13px] font-medium">
+                        {item.role.name}
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            </DrawerBody>
+          </DrawerContent>
+
+        </Drawer>
+
       </div>
 
       <div className="flex flex-col gap-[30px] w-full pc:w-[600px] p-5 ml-[220px] xl:mx-auto mobile:p-0 mobile:ml-0 tablet:ml-0">
@@ -141,6 +221,9 @@ export default function RoleDetail({
                   </span>
                 </div>
               </div>
+              <Button isIconOnly variant="light" className="xl:hidden pc:hidden min-w-0 px-0" onPress={handleOpen}>
+                <DotsThree size={24} weight='bold' format='Stroke' />
+              </Button>
             </div>
 
             <div className="border-b border-[rgba(255,255,255,0.1)]">
