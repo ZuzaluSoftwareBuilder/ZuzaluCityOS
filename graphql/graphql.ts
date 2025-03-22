@@ -2844,7 +2844,7 @@ export type GetUserRoleQueryVariables = Exact<{
 }>;
 
 
-export type GetUserRoleQuery = { __typename?: 'Query', zucityUserRolesIndex?: { __typename?: 'ZucityUserRolesConnection', edges?: Array<{ __typename?: 'ZucityUserRolesEdge', node?: { __typename?: 'ZucityUserRoles', roleId: string } | null } | null> | null } | null };
+export type GetUserRoleQuery = { __typename?: 'Query', zucityUserRolesIndex?: { __typename?: 'ZucityUserRolesConnection', edges?: Array<{ __typename?: 'ZucityUserRolesEdge', node?: { __typename?: 'ZucityUserRoles', roleId: string, userId: { __typename?: 'CeramicAccount', zucityProfile?: { __typename?: 'ZucityProfile', avatar?: string | null, author: { __typename?: 'CeramicAccount', id: string } } | null } } | null } | null> | null } | null };
 
 export type CreateZucityUserRolesMutationVariables = Exact<{
   input: CreateZucityUserRolesInput;
@@ -2921,6 +2921,14 @@ export const GetUserRoleDocument = new TypedDocumentString(`
     edges {
       node {
         roleId
+        userId {
+          zucityProfile {
+            avatar
+            author {
+              id
+            }
+          }
+        }
       }
     }
   }
