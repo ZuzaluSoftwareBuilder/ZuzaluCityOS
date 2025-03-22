@@ -1,7 +1,10 @@
 'use client';
-import React, { memo, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { Image, Skeleton } from '@heroui/react';
 import clsx from 'clsx';
+
+import { Button } from '@/components/base';
+import { InstallIcon } from '@/components/icons';
 
 import { AppPreviewInfo } from '../page';
 
@@ -11,8 +14,9 @@ interface Props {
 
 const AppItem = (props: Props) => {
   const { data } = props;
-  const { appName, categories, developer, bannerUrl } = data;
+  const { id, appName, categories, developer, bannerUrl } = data;
 
+  // categories pre processing
   const firstThreeCategories = useMemo(
     () =>
       categories.slice(0, 3).map((category) => category.toLocaleUpperCase()),
@@ -23,16 +27,19 @@ const AppItem = (props: Props) => {
     [categories],
   );
 
+  // install button logic
+  const handleInstall = useCallback(() => {}, [id]);
+
   return (
     <div
       className={clsx([
-        'flex p-[10px]',
+        'flex p-[10px] w-full',
         'flex-row gap-5',
         'mobile:flex-col mobile:gap-[10px]',
       ])}
     >
       {/* information */}
-      <div className={clsx(['flex', 'gap-5', 'mobile:gap-[10px]'])}>
+      <div className={clsx(['flex flex-1', 'gap-5', 'mobile:gap-[10px]'])}>
         {/* banner */}
         <div
           className={clsx([
@@ -97,7 +104,16 @@ const AppItem = (props: Props) => {
         </div>
       </div>
       {/* install button */}
-      {/* <div></div> */}
+      {/* TODO: install logic */}
+      <Button
+        size="sm"
+        variant="faded"
+        className="font-inter mobile:w-full bg-[#FFFFFF33]"
+        startContent={<InstallIcon />}
+        onClick={handleInstall}
+      >
+        Install
+      </Button>
     </div>
   );
 };
@@ -113,7 +129,7 @@ AppItem.Skeleton = memo(() => (
     <div className={clsx(['flex flex-col', 'gap-[10px]', 'mobile:gap-[6px]'])}>
       <Skeleton className="rounded-md w-10 h-5" />
       <Skeleton className="rounded-md w-16 h-4" />
-      <Skeleton className="rounded-md w-12 h-[18px]" />
+      <Skeleton className="rounded-md w-32 h-[18px]" />
     </div>
   </div>
 ));

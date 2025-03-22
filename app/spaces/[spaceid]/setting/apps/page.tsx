@@ -49,6 +49,7 @@ const APP_CATEGORY: Record<
     title: 'Community Apps',
     subTitle: 'Install apps built by the community',
     getApps: async () => {
+      // TODO: It needs to include information about whether it is already installed.
       const response = await executeQuery(GET_DAPP_LIST_QUERY);
 
       if (
