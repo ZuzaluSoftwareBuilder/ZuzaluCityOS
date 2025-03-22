@@ -88,7 +88,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                             <div key={field.id} className="flex gap-2.5">
                                 <div className="flex-1 space-y-4">
                                     <label className="block text-base text-white font-medium">Select Social</label>
-                                    <div className='flex gap-[10px] items-center mobile:flex-col mobile:items-end'>
+                                    <div className='flex gap-[10px] items-start mobile:flex-col mobile:items-end'>
                                         <Controller
                                             name={`socialLinks.${index}.platform`}
                                             control={control}
@@ -127,7 +127,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                                         <button
                                             type="button"
                                             onClick={() => removeSocial(index)}
-                                            className='flex items-center gap-[10px] mobile:h-[40px]'
+                                            className='flex items-center gap-[10px] mt-[5px] mobile:mt-[0px] mobile:h-[40px]'
                                             disabled={socialFields.length === 1}
                                         >
                                             <span className='hidden text-white/50 text-[14px] mobile:block'>Remove Link</span>
@@ -157,7 +157,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                             <div key={field.id} className="flex gap-2.5">
                                 <div className="flex-1 space-y-4">
                                     <label className="block text-base text-white font-medium ">Link Title</label>
-                                    <div className='flex gap-[10px] items-center mobile:flex-col mobile:items-end'>
+                                    <div className='flex gap-[10px] items-start mobile:flex-col mobile:items-end'>
                                         <Controller
                                             name={`customLinks.${index}.title`}
                                             control={control}
@@ -190,7 +190,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                                             type="button"
                                             onClick={() => removeCustom(index)}
                                             disabled={customFields.length === 1}
-                                            className='flex items-center gap-[10px]  mobile:h-[40px]'
+                                            className='flex items-center gap-[10px] mt-[5px] mobile:mt-[0px] mobile:h-[40px]'
                                         >
                                             <span className='hidden text-white/50 text-[14px] mobile:block'>Remove Link</span>
                                             <XCircleIcon className="h-[30px] w-[30px] opacity-50" />
