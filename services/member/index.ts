@@ -42,3 +42,22 @@ export const removeMembersFromRole = async (
   const responses = await Promise.all(requests);
   return responses.map((response) => response.data);
 };
+
+export const updateMembersRole = async (
+  resource: string,
+  id: string,
+  roleId: string,
+  memberIds: string[],
+) => {
+  const requests = memberIds.map((userId) =>
+    axiosInstance.post('/api/member/update', {
+      id,
+      resource,
+      roleId,
+      userId,
+    }),
+  );
+
+  const responses = await Promise.all(requests);
+  return responses.map((response) => response.data);
+};

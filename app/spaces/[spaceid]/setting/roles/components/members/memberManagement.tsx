@@ -7,7 +7,11 @@ import { MemberList } from './memberList';
 import useOpenDraw from '@/hooks/useOpenDraw';
 import { addToast } from '@heroui/react';
 import { useParams } from 'next/navigation';
-import { addMembersToRole, removeMembersFromRole } from '@/services/member';
+import {
+  addMembersToRole,
+  removeMembersFromRole,
+  updateMembersRole,
+} from '@/services/member';
 import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 
 export interface IMemberItem {
@@ -58,6 +62,26 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
     openAddMemberDrawer();
   }, [openAddMemberDrawer]);
 
+  const getSortedMembers = useCallback(
+    (memberIds: string[]) => {
+      const membersWithRoles: string[] = [];
+      const membersWithoutRoles: string[] = [];
+      memberIds.forEach((memberId) => {
+        const existingMember = members.find(
+          (member) => member.userId.zucityProfile?.author?.id === memberId,
+        );
+
+        if (existingMember && existingMember.roleId) {
+          membersWithRoles.push(memberId);
+        } else {
+          membersWithoutRoles.push(memberId);
+        }
+      });
+      return { membersWithRoles, membersWithoutRoles };
+    },
+    [members],
+  );
+
   const handleAddMembers = useCallback(
     async (memberIds: string[]) => {
       if (!memberIds.length) return;
@@ -68,13 +92,44 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
         if (!roleId) {
           throw new Error('can not find roleId');
         }
-        await addMembersToRole(
-          resource,
-          resourceId as string,
-          roleId,
-          memberIds,
-        );
+
+        const { membersWithRoles, membersWithoutRoles } =
+          getSortedMembers(memberIds);
+
+        console.log('getSortedMembers', memberIds, membersWithRoles, membersWithoutRoles);
+
+        const promises = [];
+
+        if (membersWithoutRoles.length > 0) {
+          promises.push(
+            addMembersToRole(
+              resource,
+              resourceId as string,
+              roleId,
+              membersWithoutRoles,
+            ),
+          );
+        }
+
+        if (membersWithRoles.length > 0) {
+          console.log('resource', resource)
+          console.log('resourceId', resourceId)
+          console.log('roleId', roleId)
+          console.log('membersWithRoles', membersWithRoles)
+          promises.push(
+            updateMembersRole(
+              resource,
+              resourceId as string,
+              roleId,
+              membersWithRoles,
+            ),
+          );
+        }
+
+        await Promise.all(promises);
+
         await refetchMembers();
+
         addToast({
           title: 'Add Member Success',
           description: `Member added to ${roleName} role`,
@@ -99,6 +154,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
       roleName,
       closeAddMemberDrawer,
       refetchMembers,
+      getSortedMembers,
     ],
   );
 
@@ -125,6 +181,43 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
       }
     },
     [resourceId, resource, roleName, refetchMembers],
+  );
+
+  /**
+   * 当用户已经是当前 space 的某个角色，选择添加到其他角色时, 需要调用 /api/member/update 接口，而不是 /api/member/add 接口
+   * 比如，用户 A 已经是 admin，添加到 member，需要调用 /api/member/update 接口，而不是 /api/member/add 接口
+   * 用户 B 已经是 member，添加到 admin,也需要调用 /api/member/update 接口
+   * 其他情况同理
+   */
+  const handleUpdateMember = useCallback(
+    async (memberIds: string[], newRoleId: string) => {
+      if (!memberIds.length) return;
+
+      try {
+        await updateMembersRole(
+          resource,
+          resourceId as string,
+          newRoleId,
+          memberIds,
+        );
+        await refetchMembers();
+        addToast({
+          title: 'Update Member Role Success',
+          description: `Member role updated successfully`,
+          color: 'success',
+          classNames: { base: 'z-[1500]' },
+        });
+      } catch (error) {
+        console.error('update member role error:', error);
+        addToast({
+          title: 'Update Member Role Failed',
+          description: error instanceof Error ? error.message : 'unknown error',
+          color: 'danger',
+          classNames: { base: 'z-[1500]' },
+        });
+      }
+    },
+    [resourceId, resource, refetchMembers],
   );
 
   const currentRole = useMemo(() => {
