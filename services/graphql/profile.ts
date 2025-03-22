@@ -3,7 +3,7 @@ import { graphql } from '@/graphql/gql';
 export const GET_PROFILE_BY_NAME_QUERY = graphql(`
     query SearchProfileByExactUsername($username: String!) {
         zucityProfileIndex(
-            first: 1,
+            first: 20,
             filters: { where: { username: { equalTo: $username } } }
         ) {
             edges {

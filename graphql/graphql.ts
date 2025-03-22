@@ -2916,7 +2916,10 @@ export class TypedDocumentString<TResult, TVariables>
 
 export const SearchProfileByExactUsernameDocument = new TypedDocumentString(`
     query SearchProfileByExactUsername($username: String!) {
-  zucityProfileIndex(first: 1, filters: {where: {username: {equalTo: $username}}}) {
+  zucityProfileIndex(
+    first: 20
+    filters: {where: {username: {equalTo: $username}}}
+  ) {
     edges {
       node {
         id
