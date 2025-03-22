@@ -46,6 +46,7 @@ export const CHECK_EXISTING_ROLE_QUERY = graphql(`
     ) {
       edges {
         node {
+          id
           roleId
           userId {
             zucityProfile {
