@@ -1,21 +1,40 @@
 import { cn, Button } from '@heroui/react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { Wallet } from '@phosphor-icons/react';
-import { useAccount } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 
 export interface IConnectWalletButtonProps {
   isLoading?: boolean;
+  onConnectClick?: () => void;
 }
 
 const ConnectWalletButton: React.FC<IConnectWalletButtonProps> = ({
   isLoading: externalLoading,
+  onConnectClick,
 }) => {
   const { openConnectModal } = useConnectModal();
   const { isConnected, isConnecting } = useAccount();
-  
+
   const isLoading = externalLoading || isConnecting;
   const showSigningMessage = externalLoading && isConnected && !isConnecting;
 
+  const handleConnect = () => {
+    if (onConnectClick) {
+      onConnectClick();
+    }
+
+    if (showSigningMessage) {
+      console.log('Already in signing process, not opening modal');
+      return;
+    }
+
+    if (openConnectModal) {
+      console.log('Opening connect modal');
+      openConnectModal();
+    } else {
+      console.error('openConnectModal is not available');
+    }
+  };
   
   return (
     <Button
@@ -26,7 +45,7 @@ const ConnectWalletButton: React.FC<IConnectWalletButtonProps> = ({
         'text-white text-[14px] leading-[1.2] font-[500]',
       )}
       startContent={isLoading ? null : <Wallet size={20} weight={'fill'} format={'Stroke'} />}
-      onPress={openConnectModal}
+      onPress={handleConnect}
       isLoading={isLoading}
     >
       {showSigningMessage ? 'Sign In Message' : 'Connect Wallet'}

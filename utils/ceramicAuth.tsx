@@ -6,7 +6,7 @@ import { DID } from 'dids';
 import { DIDSession } from 'did-session';
 import { EthereumWebAuth, getAccountId } from '@didtools/pkh-ethereum';
 import { CeramicClient } from '@ceramicnetwork/http-client';
-import { getAccount, getConnectors } from '@wagmi/core';
+import { getAccount } from '@wagmi/core';
 import { config } from '@/context/WalletContext';
 
 const DID_SEED_KEY = 'ceramic:did_seed';
@@ -19,22 +19,16 @@ export const authenticateCeramic = async (
   ceramic: CeramicClient,
   compose: ComposeClient,
 ) => {
-  let logged_in = localStorage.getItem('logged_in');
-  const popup = document.querySelector('.popup');
-  // if (logged_in == "true") {
-  //   if (popup) {
-  //     popup.style.display = "none";
-  //   }
-  // }
-  /*let auth_type = localStorage.getItem('ceramic:auth_type');
-  if (auth_type == 'key') {
-    await authenticateKeyDID(ceramic, compose);
-  }
-  if (auth_type == 'eth') {
+  try {
     await authenticateEthPKH(ceramic, compose);
-  }*/
-  await authenticateEthPKH(ceramic, compose);
-  localStorage.setItem('logged_in', 'true');
+    localStorage.setItem('logged_in', 'true');
+  } catch (error) {
+    console.error('Ceramic authentication failed:', error);
+    localStorage.removeItem('ceramic:eth_did');
+    localStorage.removeItem('display did');
+    localStorage.removeItem('logged_in');
+    throw error;
+  }
 };
 
 const authenticateKeyDID = async (
@@ -72,43 +66,65 @@ const authenticateEthPKH = async (
 ) => {
   return new Promise((resolve, reject) => {
     setTimeout(async () => {
-      const sessionStr = localStorage.getItem('ceramic:eth_did');
-      let session;
-      if (sessionStr) {
-        session = await DIDSession.fromSession(sessionStr);
-      }
-      if (!session || (session.hasSession && session.isExpired)) {
-        const account = getAccount(config);
-        // const ethereum =
-        //   typeof window === 'undefined' ? undefined : window.ethereum;
-
-        // We enable the ethereum provider to get the user's addresses.
-        const ethProvider = await account.connector?.getProvider();
-        if (!ethProvider) {
-          throw new Error('No injected Ethereum provider found.');
+      try {
+        const sessionStr = localStorage.getItem('ceramic:eth_did');
+        let session;
+        if (sessionStr) {
+          try {
+            session = await DIDSession.fromSession(sessionStr);
+          } catch (e) {
+            console.error('Failed to restore DIDSession from localStorage:', e);
+            localStorage.removeItem('ceramic:eth_did');
+          }
         }
-        const accountId = await getAccountId(ethProvider, account.address!);
-        const authMethod = await EthereumWebAuth.getAuthMethod(
-          ethProvider,
-          accountId,
-        );
-        /**
-         * Create DIDSession & provide capabilities for resources that we want to access.
-         * @NOTE: The specific resources (ComposeDB data models) are provided through
-         * "compose.resources" below.
-         */
-        session = await DIDSession.authorize(authMethod, {
-          resources: compose.resources,
-        });
-        // Set the session in localStorage.
-        localStorage.setItem('ceramic:eth_did', session.serialize());
-      }
+        if (!session || (session.hasSession && session.isExpired)) {
+          const account = getAccount(config);
+          if (!account || !account.address) {
+            reject(new Error('No wallet account found'));
+            return;
+          }
 
-      // Set our Ceramic DID to be our session DID.
-      compose.setDID(session.did);
-      ceramic.did = session.did;
-      localStorage.setItem('display did', session.did.toString());
-      resolve(true);
+          const ethProvider = await account.connector?.getProvider();
+          if (!ethProvider) {
+            reject(new Error('No injected Ethereum provider found.'));
+            return;
+          }
+          try {
+            const accountId = await getAccountId(ethProvider, account.address!);
+            const authMethod = await EthereumWebAuth.getAuthMethod(
+              ethProvider,
+              accountId,
+            );
+            
+            try {
+              session = await DIDSession.authorize(authMethod, {
+                resources: compose.resources,
+              });
+              localStorage.setItem('ceramic:eth_did', session.serialize());
+            } catch (error) {
+              console.error('DIDSession.authorize failed:', error);
+              reject(error);
+              return;
+            }
+          } catch (error) {
+            console.error('Failed during authentication setup:', error);
+            reject(error);
+            return;
+          }
+        }
+
+        if (session && session.did) {
+          compose.setDID(session.did);
+          ceramic.did = session.did;
+          localStorage.setItem('display did', session.did.toString());
+          resolve(true);
+        } else {
+          reject(new Error('Failed to create valid DID session'));
+        }
+      } catch (error) {
+        console.error('Authentication error in ceramicAuth:', error);
+        reject(error);
+      }
     }, 2000);
   });
 };

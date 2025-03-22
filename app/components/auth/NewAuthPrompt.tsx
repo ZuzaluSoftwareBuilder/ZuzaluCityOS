@@ -48,6 +48,7 @@ const NewAuthPrompt: React.FC = () => {
   const [isContinueLoading, setIsContinueLoading] = useState(false);
   const [isSkipLoading, setIsSkipLoading] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [needsManualReset, setNeedsManualReset] = useState(false);
 
   useEffect(() => {
     const existingUsername = localStorage.getItem('username');
@@ -63,6 +64,18 @@ const NewAuthPrompt: React.FC = () => {
     authenticateLoggedUser();
   }, [isAuthPromptVisible]);
 
+  const handleConnectButtonClick = useCallback(() => {
+    if (needsManualReset) {
+      console.log('Manual reset triggered on connect button click');
+      disconnect();
+      authenticateCalled.current = false;
+      setIsAuthenticating(false);
+      setTimeout(() => {
+        setNeedsManualReset(false);
+      }, 100);
+    }
+  }, [needsManualReset, disconnect]);
+
   useEffect(() => {
     const authenticateUser = async (needSetState = true) => {
       try {
@@ -72,8 +85,12 @@ const NewAuthPrompt: React.FC = () => {
         setIsAuthenticating(false);
       } catch (error) {
         console.error('Authentication failed:', error);
+        
+        console.log('Disconnecting wallet due to authentication failure');
         disconnect();
         setIsAuthenticating(false);
+        authenticateCalled.current = false;
+        setNeedsManualReset(true);
         needSetState && setAuthState(IAuthState.ConnectWallet);
       }
     };
@@ -92,7 +109,7 @@ const NewAuthPrompt: React.FC = () => {
     ) {
       authenticateUser(false);
     }
-  }, [isConnected]);
+  }, [isConnected, isAuthPromptVisible, authenticate, disconnect]);
 
   useEffect(() => {
     setAuthState(newUser ? IAuthState.NewUser : IAuthState.LoggedIn);
@@ -197,7 +214,10 @@ const NewAuthPrompt: React.FC = () => {
           <p className="text-[14px] leading-[1.4] text-white/70">
             {description}
           </p>
-          <ConnectWalletButton isLoading={isAuthenticating} />
+          <ConnectWalletButton 
+            isLoading={isAuthenticating} 
+            onConnectClick={handleConnectButtonClick}
+          />
         </ModalBody>
         <div className="w-full bg-[#363636] py-[10px] px-[20px] rounded-b-[10px]">
           <p className="text-[12px] leading-[1.4] text-white/70">
@@ -206,7 +226,7 @@ const NewAuthPrompt: React.FC = () => {
         </div>
       </>
     );
-  }, [connectWalletContent, renderCloseButton, isAuthenticating]);
+  }, [connectWalletContent, renderCloseButton, isAuthenticating, handleConnectButtonClick]);
 
   const renderNewUserContent = useCallback(() => {
     return (

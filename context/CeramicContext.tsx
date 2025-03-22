@@ -58,9 +58,15 @@ export const CeramicProvider = ({ children }: any) => {
   const [connectSource, setConnectSource] = useState<ConnectSource>('invalidAction');
   const authenticate = async () => {
     console.log('authenticate');
-    await authenticateCeramic(ceramic, composeClient);
-    await getProfile();
-    setIsAuthenticated(true);
+    try {
+      await authenticateCeramic(ceramic, composeClient);
+      await getProfile();
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('Authentication failed in CeramicContext:', error);
+      setIsAuthenticated(false);
+      throw error;
+    }
   };
   const showAuthPrompt = (source: ConnectSource = 'invalidAction') => {
     setConnectSource(source);
