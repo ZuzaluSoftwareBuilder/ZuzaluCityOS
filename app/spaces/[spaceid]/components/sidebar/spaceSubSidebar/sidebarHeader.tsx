@@ -115,7 +115,7 @@ const SidebarHeader = ({
         </DropdownItem>
       </>
     );
-  }, [onCloseDrawer, router, space?.id]);
+  }, [dropdownItemClass, handleMenuClick, iconClass]);
 
   const dropdownStyles = {
     willChange: 'opacity, transform',
