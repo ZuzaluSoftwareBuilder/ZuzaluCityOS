@@ -48,13 +48,14 @@ export const INSTALL_DAPP_TO_SPACE = graphql(`
         id
         sourceId
         spaceId
+        nativeAppName
         installedAppId
-        createdAt
-        updatedAt
         installedApp {
           id
           appName
         }
+        createdAt
+        updatedAt
       }
     }
   }

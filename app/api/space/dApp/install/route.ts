@@ -16,7 +16,11 @@ const installDAppSchema = z.object({
   id: z.string().min(1, 'Resource ID is required'),
   resource: z.string().min(1, 'Resource type is required'),
   spaceId: z.string().min(1, 'Space ID is required'),
-  appId: z.string().min(1, 'App ID is required'),
+  appId: z.string().optional(),
+  nativeAppName: z.string().optional(),
+}).refine(data => !!data.appId || !!data.nativeAppName, {
+  message: 'Either App Id or Native App Name must be provided',
+  path: ['appId', 'nativeAppName'],
 });
 
 export const POST = withSessionValidation(async (request, sessionData) => {
@@ -30,7 +34,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
         validationResult.error.format(),
       );
     }
-    const { spaceId, appId } = validationResult.data;
+    const { spaceId, appId, nativeAppName } = validationResult.data;
     // sourceId is the same as spaceId
     const sourceId = spaceId;
 
@@ -55,6 +59,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
           spaceId,
           sourceId,
           installedAppId: appId,
+          nativeAppName,
           createdAt: dayjs().utc().toISOString(),
           updatedAt: dayjs().utc().toISOString(),
         },

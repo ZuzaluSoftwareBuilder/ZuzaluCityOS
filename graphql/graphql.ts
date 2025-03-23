@@ -3106,7 +3106,7 @@ export type InstallDappToSpaceMutationVariables = Exact<{
 }>;
 
 
-export type InstallDappToSpaceMutation = { __typename?: 'Mutation', createZucityInstalledApp?: { __typename?: 'CreateZucityInstalledAppPayload', document: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, installedAppId?: any | null, createdAt: any, updatedAt: any, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string } | null } } | null };
+export type InstallDappToSpaceMutation = { __typename?: 'Mutation', createZucityInstalledApp?: { __typename?: 'CreateZucityInstalledAppPayload', document: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, nativeAppName?: string | null, installedAppId?: any | null, createdAt: any, updatedAt: any, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string } | null } } | null };
 
 export type UninstallDappFromSpaceMutationVariables = Exact<{
   input: EnableIndexingZucityInstalledAppInput;
@@ -3322,13 +3322,14 @@ export const InstallDappToSpaceDocument = new TypedDocumentString(`
       id
       sourceId
       spaceId
+      nativeAppName
       installedAppId
-      createdAt
-      updatedAt
       installedApp {
         id
         appName
       }
+      createdAt
+      updatedAt
     }
   }
 }

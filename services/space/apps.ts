@@ -4,6 +4,9 @@ import axios from 'axios';
 export const installDApp = async (installDAppInput: {
   spaceId: string;
   appId: string;
+} | {
+  spaceId: string;
+  nativeAppName: string;
 }) => {
   try {
     const response = await axiosInstance.post('/api/space/dApp/install', {
