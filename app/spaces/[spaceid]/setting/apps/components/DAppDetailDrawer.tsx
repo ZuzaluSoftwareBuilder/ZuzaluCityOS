@@ -142,7 +142,7 @@ DAppDetailDrawer.Categories = memo((props: { categories?: string }) => {
   const { categories = '' } = props;
   const categoriesArray = categories.split(',');
   return (
-    <div className="flex gap-2.5 items-center font-inter text-[13px] leading-[140%] font-normal tracking-[0.01em]">
+    <div className="flex gap-2.5 flex-wrap items-center font-inter text-[13px] leading-[140%] font-normal tracking-[0.01em]">
       <span className="opacity-50">Categories:</span>
       {categoriesArray.map((category) => (
         <div
