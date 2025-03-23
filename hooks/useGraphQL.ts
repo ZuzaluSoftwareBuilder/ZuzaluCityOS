@@ -7,16 +7,36 @@ import {
 } from '@tanstack/react-query';
 import { useCeramicContext } from '@/context/CeramicContext';
 
-export function useGraphQL<TResult, TVariables>(
+type GraphQLResponse<TData> = {
+  data: TData;
+  errors: any;
+};
+
+export function useGraphQL<
+  TResult,
+  TVariables,
+  TReturn = GraphQLResponse<TResult>,
+>(
   queryKey: QueryKey,
   document: TypedDocumentNode<TResult, TVariables>,
   ...[variables, options]: TVariables extends Record<string, never>
-    ? [Omit<UseQueryOptions<TResult>, 'queryKey' | 'queryFn'>?]
-    : [TVariables, Omit<UseQueryOptions<TResult>, 'queryKey' | 'queryFn'>?]
-): UseQueryResult<{ data: TResult; errors: any }> {
+    ? [
+        Omit<
+          UseQueryOptions<GraphQLResponse<TResult>, Error, TReturn>,
+          'queryKey' | 'queryFn'
+        >?,
+      ]
+    : [
+        TVariables,
+        Omit<
+          UseQueryOptions<GraphQLResponse<TResult>, Error, TReturn>,
+          'queryKey' | 'queryFn'
+        >?,
+      ]
+): UseQueryResult<TReturn, Error> {
   const { composeClient } = useCeramicContext();
 
-  return useQuery({
+  return useQuery<GraphQLResponse<TResult>, Error, TReturn>({
     queryKey,
     queryFn: () =>
       composeClient.executeQuery(
@@ -24,5 +44,5 @@ export function useGraphQL<TResult, TVariables>(
         variables ? variables : undefined,
       ),
     ...options,
-  }) as UseQueryResult<{ data: TResult; errors: any }>;
+  });
 }

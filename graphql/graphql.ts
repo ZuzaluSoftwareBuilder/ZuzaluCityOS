@@ -2867,6 +2867,13 @@ export type UpdateZucityUserRolesMutationVariables = Exact<{
 
 export type UpdateZucityUserRolesMutation = { __typename?: 'Mutation', updateZucityUserRoles?: { __typename?: 'UpdateZucityUserRolesPayload', document: { __typename?: 'ZucityUserRoles', id: string } } | null };
 
+export type GetUserRolesQueryVariables = Exact<{
+  userId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetUserRolesQuery = { __typename?: 'Query', zucityUserRolesIndex?: { __typename?: 'ZucityUserRolesConnection', edges?: Array<{ __typename?: 'ZucityUserRolesEdge', node?: { __typename?: 'ZucityUserRoles', roleId: string, resourceId?: string | null, source?: string | null, userId: { __typename?: 'CeramicAccount', id: string } } | null } | null> | null } | null };
+
 export type GetSpaceQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
@@ -2976,6 +2983,25 @@ export const UpdateZucityUserRolesDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpdateZucityUserRolesMutation, UpdateZucityUserRolesMutationVariables>;
+export const GetUserRolesDocument = new TypedDocumentString(`
+    query GetUserRoles($userId: String) {
+  zucityUserRolesIndex(
+    first: 1000
+    filters: {where: {userId: {equalTo: $userId}}}
+  ) {
+    edges {
+      node {
+        roleId
+        resourceId
+        source
+        userId {
+          id
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetUserRolesQuery, GetUserRolesQueryVariables>;
 export const GetSpaceDocument = new TypedDocumentString(`
     query GetSpace($id: ID!) {
   node(id: $id) {
