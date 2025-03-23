@@ -100,3 +100,23 @@ export const UPDATE_ROLE_QUERY = graphql(`
     }
   }
 `);
+
+export const GET_USER_ROLES_QUERY = graphql(`
+  query GetUserRoles($userId: String) {
+    zucityUserRolesIndex(
+      first: 1000
+      filters: { where: { userId: { equalTo: $userId } } }
+    ) {
+      edges {
+        node {
+          roleId
+          resourceId
+          source
+          userId {
+            id
+          }
+        }
+      }
+    }
+  }
+`);
