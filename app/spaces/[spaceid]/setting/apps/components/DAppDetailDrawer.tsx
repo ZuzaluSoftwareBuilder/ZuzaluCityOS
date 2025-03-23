@@ -21,6 +21,8 @@ import { NOOP } from '@/utils/function';
 import ShowMoreEdit from '@/components/editor/ShowMoreEdit';
 import { installDApp } from '@/services/space/apps';
 
+import { useInstalledAppsData } from './InstalledAppsData';
+
 const DAppDetailDrawerContext = createContext<{
   open: (app?: Dapp) => void;
   close: () => void;
@@ -169,36 +171,52 @@ DAppDetailDrawer.Developer = memo((props: { developer?: string }) => {
   );
 });
 
-DAppDetailDrawer.InstallArea = memo(
-  (props: { appId?: string; spaceId: string }) => {
-    const { appId, spaceId } = props;
-    return (
-      <div
-        className={clsx([
-          'bg-[rgba(255,255,255,0.02)] border border-solid border-[rgba(255,255,255,0.1)] rounded-[10px]', // style
-          'flex flex-col gap-5 p-5', // layout
-        ])}
+DAppDetailDrawer.InstallArea = (props: { appId?: string; spaceId: string }) => {
+  const { appId, spaceId } = props;
+  const [loading, setLoading] = useState(false);
+  const {
+    loading: installedDataFetching,
+    isInstalled,
+    addInstalledApp,
+  } = useInstalledAppsData();
+
+  const handleInstall = () => {
+    if (!appId) return;
+    setLoading(true);
+    installDApp({
+      spaceId,
+      appId,
+    })
+      .then((res) => {
+        if (res.data.status === 'success') {
+          addInstalledApp(appId);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return (
+    <div
+      className={clsx([
+        'bg-[rgba(255,255,255,0.02)] border border-solid border-[rgba(255,255,255,0.1)] rounded-[10px]', // style
+        'flex flex-col gap-5 p-5', // layout
+      ])}
+    >
+      <span className="font-bold text-lg leading-[120%]">Install on Space</span>
+      <Button
+        color="functional"
+        isLoading={loading || installedDataFetching}
+        disabled={!appId || !spaceId || isInstalled(appId)}
+        startContent={<InstallIcon />}
+        onClick={handleInstall}
       >
-        <span className="font-bold text-lg leading-[120%]">
-          Install on Space
-        </span>
-        <Button
-          color="functional"
-          disabled={!appId || !spaceId}
-          startContent={<InstallIcon />}
-          onClick={(e) => {
-            installDApp({
-              spaceId,
-              appId: appId!,
-            }).then(console.log);
-          }}
-        >
-          Install to Space
-        </Button>
-      </div>
-    );
-  },
-);
+        {appId && !isInstalled(appId) ? 'Install to Space' : 'Installed'}
+      </Button>
+    </div>
+  );
+};
 
 DAppDetailDrawer.Description = memo((props: { description?: string }) => {
   const { description = '' } = props;

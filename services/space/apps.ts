@@ -20,3 +20,22 @@ export const installDApp = async (installDAppInput: {
     }
   }
 };
+
+export const getInstalledDApps = async (spaceId: string) => {
+  try {
+    const response = await axiosInstance.post('/api/space/dApp', {
+      spaceId: spaceId,
+      id: spaceId,
+      resource: 'space',
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error.response?.data || error.message;
+    } else {
+      throw new Error(
+        'An unknown error occurred while fetching installed dApps',
+      );
+    }
+  }
+};

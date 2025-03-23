@@ -1,19 +1,24 @@
 'use client';
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 import { Image, Skeleton } from '@heroui/react';
+import { useParams } from 'next/navigation';
 import clsx from 'clsx';
 
 import { Dapp } from '@/types';
 import { Button } from '@/components/base';
+import { installDApp } from '@/services/space/apps';
 import { InstallIcon } from '@/components/icons';
 
 import { useDAppDetailDrawer } from './DAppDetailDrawer';
+import { useInstalledAppsData } from './InstalledAppsData';
 
 interface Props {
   data: Dapp;
 }
 
 const AppItem = (props: Props) => {
+  const params = useParams();
+  const spaceId = params.spaceid.toString();
   const { data } = props;
   const {
     id,
@@ -42,7 +47,29 @@ const AppItem = (props: Props) => {
   const { open } = useDAppDetailDrawer();
 
   // install button logic
-  const handleInstall = useCallback(() => {}, [id]);
+  const [loading, setLoading] = useState(false);
+  const {
+    loading: installedDataFetching,
+    isInstalled,
+    addInstalledApp,
+  } = useInstalledAppsData();
+
+  const handleInstall = () => {
+    if (!id) return;
+    setLoading(true);
+    installDApp({
+      spaceId,
+      appId: id,
+    })
+      .then((res) => {
+        if (res.data.status === 'success') {
+          addInstalledApp(id);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <div
@@ -125,14 +152,15 @@ const AppItem = (props: Props) => {
         </div>
       </div>
       {/* install button */}
-      {/* TODO: install logic */}
       <Button
         size="sm"
         color="functional"
         startContent={<InstallIcon />}
         onClick={handleInstall}
+        disabled={isInstalled(id)}
+        isLoading={loading || installedDataFetching}
       >
-        Install
+        {isInstalled(id) ? 'Installed' : 'Install'}
       </Button>
     </div>
   );

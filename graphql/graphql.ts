@@ -3049,13 +3049,6 @@ export type GetDappListQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetDappListQuery = { __typename?: 'Query', zucityDappInfoIndex?: { __typename?: 'ZucityDappInfoConnection', edges?: Array<{ __typename?: 'ZucityDappInfoEdge', node?: { __typename?: 'ZucityDappInfo', id: string, appName: string, tagline: string, developerName: string, description: string, bannerUrl: string, categories: string, devStatus: string, openSource: string, repositoryUrl?: string | null, appUrl?: string | null, websiteUrl?: string | null, docsUrl?: string | null, profile?: { __typename?: 'ZucityProfile', avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } | null } | null> | null } | null };
 
-export type GetDappByIdQueryVariables = Exact<{
-  id: Scalars['ID']['input'];
-}>;
-
-
-export type GetDappByIdQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo', id: string, appName: string, tagline: string, developerName: string, description: string, bannerUrl: string, categories: string, devStatus: string, openSource: string, repositoryUrl?: string | null, appUrl?: string | null, websiteUrl?: string | null, docsUrl?: string | null, profile?: { __typename?: 'ZucityProfile', avatar?: string | null, username: string } | null } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace' } | { __typename?: 'ZucityUserRoles' } | null };
-
 export type GetMembersQueryVariables = Exact<{
   source?: InputMaybe<Scalars['String']['input']>;
   resourceId?: InputMaybe<Scalars['String']['input']>;
@@ -3115,6 +3108,22 @@ export type InstallDappToSpaceMutationVariables = Exact<{
 
 export type InstallDappToSpaceMutation = { __typename?: 'Mutation', createZucityInstalledApp?: { __typename?: 'CreateZucityInstalledAppPayload', document: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, installedAppId?: any | null, createdAt: any, updatedAt: any, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string } | null } } | null };
 
+export type UninstallDappFromSpaceMutationVariables = Exact<{
+  input: EnableIndexingZucityInstalledAppInput;
+}>;
+
+
+export type UninstallDappFromSpaceMutation = { __typename?: 'Mutation', enableIndexingZucityInstalledApp?: { __typename?: 'EnableIndexingZucityInstalledAppPayload', document?: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, installedAppId?: any | null, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string } | null } | null } | null };
+
+export type GetSpaceInstalledAppsQueryVariables = Exact<{
+  filters?: InputMaybe<ZucityInstalledAppFiltersInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetSpaceInstalledAppsQuery = { __typename?: 'Query', zucityInstalledAppIndex?: { __typename?: 'ZucityInstalledAppConnection', edges?: Array<{ __typename?: 'ZucityInstalledAppEdge', node?: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, installedAppId?: any | null, createdAt: any, updatedAt: any, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string, appType: string, description: string, tagline: string, bannerUrl: string, appUrl?: string | null, openSource: string, devStatus: string, developerName: string, categories: string } | null, space?: { __typename?: 'ZucitySpace', id: string, name: string } | null } | null } | null> | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } | null };
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -3164,31 +3173,6 @@ export const GetDappListDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetDappListQuery, GetDappListQueryVariables>;
-export const GetDappByIdDocument = new TypedDocumentString(`
-    query GetDappById($id: ID!) {
-  node(id: $id) {
-    ... on ZucityDappInfo {
-      id
-      appName
-      tagline
-      developerName
-      description
-      bannerUrl
-      categories
-      devStatus
-      openSource
-      repositoryUrl
-      appUrl
-      websiteUrl
-      docsUrl
-      profile {
-        avatar
-        username
-      }
-    }
-  }
-}
-    `) as unknown as TypedDocumentString<GetDappByIdQuery, GetDappByIdQueryVariables>;
 export const GetMembersDocument = new TypedDocumentString(`
     query GetMembers($source: String, $resourceId: String) {
   zucityUserRolesIndex(
@@ -3349,3 +3333,56 @@ export const InstallDappToSpaceDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<InstallDappToSpaceMutation, InstallDappToSpaceMutationVariables>;
+export const UninstallDappFromSpaceDocument = new TypedDocumentString(`
+    mutation UninstallDappFromSpace($input: EnableIndexingZucityInstalledAppInput!) {
+  enableIndexingZucityInstalledApp(input: $input) {
+    document {
+      id
+      sourceId
+      spaceId
+      installedAppId
+      installedApp {
+        id
+        appName
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UninstallDappFromSpaceMutation, UninstallDappFromSpaceMutationVariables>;
+export const GetSpaceInstalledAppsDocument = new TypedDocumentString(`
+    query GetSpaceInstalledApps($filters: ZucityInstalledAppFiltersInput, $first: Int, $after: String) {
+  zucityInstalledAppIndex(filters: $filters, first: $first, after: $after) {
+    edges {
+      node {
+        id
+        sourceId
+        spaceId
+        installedAppId
+        createdAt
+        updatedAt
+        installedApp {
+          id
+          appName
+          appType
+          description
+          tagline
+          bannerUrl
+          appUrl
+          openSource
+          devStatus
+          developerName
+          categories
+        }
+        space {
+          id
+          name
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetSpaceInstalledAppsQuery, GetSpaceInstalledAppsQueryVariables>;

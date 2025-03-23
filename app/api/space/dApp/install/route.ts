@@ -45,7 +45,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     // Authenticate and get private key
     const error = await authenticateWithSpaceId(spaceId);
     if (error) {
-      return createErrorResponse('Error getting private key: ' + error.message, 500);
+      return createErrorResponse('Error getting private key', 500);
     }
 
     // Execute GraphQL query to install dApp
