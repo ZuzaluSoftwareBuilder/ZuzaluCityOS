@@ -214,7 +214,7 @@ DAppDetailDrawer.Status = memo(
     const items = [
       { label: 'Status', value: props.devStatus },
       {
-        label: 'openSource',
+        label: 'Open Source Status',
         value: props.openSource ? 'Open Source' : 'Closed Source',
       },
       {
@@ -223,7 +223,8 @@ DAppDetailDrawer.Status = memo(
           <a
             href={props.repositoryUrl}
             target="_blank"
-            className="text-[13px] leading-[140%] opacity-80 underline"
+            className="text-[13px] leading-[140%] opacity-80 underline block break-all"
+            style={{ textAlign: 'right' }}
           >
             {props.repositoryUrl}
           </a>
@@ -233,14 +234,19 @@ DAppDetailDrawer.Status = memo(
       },
     ];
     return (
-      <div className="flex flex-col  w-full gap-2.5">
+      <div className="flex flex-col w-full gap-2.5">
         {items.map((item) => (
           <div
             key={item.label}
-            className="flex justify-between font-inter text-[13px] leading-[140%] font-normal tracking-[0.01em]"
+            className="flex justify-between gap-4 font-inter text-[13px] leading-[140%] font-normal tracking-[0.01em]"
           >
-            <span className="opacity-50">{item.label}:</span>
-            <span className="opacity-80">{item.value}</span>
+            <span className="opacity-50 whitespace-nowrap">{item.label}:</span>
+            <span
+              className="opacity-80 inline-block flex-1"
+              style={{ textAlign: 'right' }}
+            >
+              {item.value}
+            </span>
           </div>
         ))}
       </div>
