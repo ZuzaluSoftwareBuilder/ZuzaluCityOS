@@ -30,9 +30,9 @@ export async function GET(request: NextRequest) {
     }
 
     if ('zucityUserRolesIndex' in data.data!) {
-      const userRoleData: UserRoleData = data.data as UserRoleData;
       return createSuccessResponse(
-        userRoleData.zucityUserRolesIndex.edges.map((edge) => edge.node),
+        data?.data?.zucityUserRolesIndex?.edges?.map((edge) => edge?.node) ||
+          [],
       );
     }
 

@@ -2,7 +2,7 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import { getMembers } from '@/services/member';
 import { getRoles } from '@/services/role';
 import { getSpaceEventsQuery } from '@/services/space';
-import { Space, SpaceData, UserRole, UserRoleData } from '@/types';
+import { Space, UserRole } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
@@ -34,7 +34,7 @@ export default function useGetSpaceMember(spaceId: string) {
   });
 
   const owner = useMemo(() => {
-    return spaceData?.superAdmin?.[0].zucityProfile;
+    return spaceData?.superAdmin?.[0]?.zucityProfile;
   }, [spaceData]);
 
   return {
