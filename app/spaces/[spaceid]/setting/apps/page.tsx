@@ -19,24 +19,13 @@ import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
 import AppItem from './components/AppItem';
 import DAppDetailDrawer from './components/DAppDetailDrawer';
 
-export interface AppPreviewInfo {
-  id: string;
-  appName: string;
-  categories: string[];
-  bannerUrl: string;
-  developer: {
-    username: string;
-    avatarUrl: string;
-  };
-}
-
 const APP_CATEGORY: Record<
   string,
   {
     hash: string;
     title: string;
     subTitle: string;
-    getApps: () => Promise<AppPreviewInfo[]>;
+    getApps: () => Promise<Dapp[]>;
   }
 > = {
   NativeApps: {
@@ -61,16 +50,7 @@ const APP_CATEGORY: Record<
       ) {
         return response.data.zucityDappInfoIndex.edges.map((edge: any) => {
           const current: Dapp = edge.node;
-          return {
-            id: current.id,
-            appName: current.appName,
-            categories: current.categories.split(','),
-            bannerUrl: current.bannerUrl,
-            developer: {
-              username: current.profile.username,
-              avatarUrl: current.profile.avatar,
-            },
-          };
+          return current
         });
       }
       return [];
@@ -193,7 +173,7 @@ export default function ExploreAppsPage() {
   );
 }
 
-function AppList(props: { appsPromise: Promise<AppPreviewInfo[]> }) {
+function AppList(props: { appsPromise: Promise<Dapp[]> }) {
   const { appsPromise } = props;
   const apps = use(appsPromise);
   return (

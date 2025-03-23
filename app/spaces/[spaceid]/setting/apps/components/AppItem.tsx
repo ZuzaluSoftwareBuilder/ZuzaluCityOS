@@ -3,25 +3,34 @@ import React, { memo, useCallback, useMemo } from 'react';
 import { Image, Skeleton } from '@heroui/react';
 import clsx from 'clsx';
 
+import { Dapp } from '@/types';
 import { Button } from '@/components/base';
 import { InstallIcon } from '@/components/icons';
 
-import { AppPreviewInfo } from '../page';
 import { useDAppDetailDrawer } from './DAppDetailDrawer';
 
 interface Props {
-  data: AppPreviewInfo;
-  onDetailClick?: (data: AppPreviewInfo) => void;
+  data: Dapp;
 }
 
 const AppItem = (props: Props) => {
   const { data } = props;
-  const { id, appName, categories, developer, bannerUrl } = data;
+  const {
+    id,
+    appName,
+    categories: _categories = '',
+    profile,
+    bannerUrl,
+  } = data;
 
   // categories pre processing
+  const categories = useMemo(() => _categories.split(','), [_categories]);
   const firstThreeCategories = useMemo(
     () =>
-      categories.slice(0, 3).map((category) => category.toLocaleUpperCase()),
+      categories
+        .slice(0, 3)
+        .map((category) => category.trim().toLocaleUpperCase())
+        .filter(Boolean),
     [categories],
   );
   const remainingCategoriesCount = useMemo(
@@ -50,7 +59,7 @@ const AppItem = (props: Props) => {
           'gap-5',
           'mobile:gap-[10px]',
         ])}
-        onClick={() => open()}
+        onClick={() => open(data)}
       >
         {/* banner */}
         <div
@@ -88,7 +97,7 @@ const AppItem = (props: Props) => {
               <div
                 key={category}
                 className={clsx([
-                  'rounded px-1.5 py-0.5 bg-[#FFFFFF1A]', // container
+                  'rounded px-1.5 py-0.5 bg-[rgba(255,255,255,0.05)]', // container
                 ])}
               >
                 {category}
@@ -107,11 +116,11 @@ const AppItem = (props: Props) => {
           >
             <span className="opacity-50">DEVELOPER:</span>
             <Image
-              alt={developer.username || 'Developer'}
-              src={developer.avatarUrl}
+              alt={profile.username || 'Developer'}
+              src={profile.avatar}
               className="rounded-full w-[16px] h-[16px]"
             />
-            <span className="opacity-60">{developer.username ?? '-'}</span>
+            <span className="opacity-60">{profile.username ?? '-'}</span>
           </div>
         </div>
       </div>
@@ -119,8 +128,7 @@ const AppItem = (props: Props) => {
       {/* TODO: install logic */}
       <Button
         size="sm"
-        variant="faded"
-        className="font-inter mobile:w-full bg-[#FFFFFF33]"
+        color="functional"
         startContent={<InstallIcon />}
         onClick={handleInstall}
       >
