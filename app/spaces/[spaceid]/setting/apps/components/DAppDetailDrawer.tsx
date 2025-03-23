@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react';
 import clsx from 'clsx';
+import get from 'lodash/get';
 import { Image } from '@heroui/react';
 import { useParams } from 'next/navigation';
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
@@ -15,16 +16,16 @@ import Drawer from '@/components/drawer';
 import FormHeader from '@/components/form/FormHeader';
 import { Button, Divider } from '@/components/base';
 import { ArrowUpRightIcon, InstallIcon } from '@/components/icons';
-
-import { Dapp } from '@/types';
-import { NOOP } from '@/utils/function';
 import ShowMoreEdit from '@/components/editor/ShowMoreEdit';
-import { installDApp } from '@/services/space/apps';
+import { installDApp, InstallDAppParams } from '@/services/space/apps';
+import { NOOP } from '@/utils/function';
+import { Dapp } from '@/types';
 
 import { useInstalledAppsData } from './InstalledAppsData';
+import { NativeDApp } from '../constants';
 
 const DAppDetailDrawerContext = createContext<{
-  open: (app?: Dapp) => void;
+  open: (app?: Dapp | NativeDApp) => void;
   close: () => void;
 }>({
   open: NOOP,
@@ -37,10 +38,10 @@ export const useDAppDetailDrawer = () =>
 export const DAppDetailDrawer = ({ children }: PropsWithChildren) => {
   const params = useParams();
   const spaceId = params.spaceid.toString();
-  const [appData, setAppData] = useState<Dapp>();
+  const [appData, setAppData] = useState<Dapp | NativeDApp>();
   const [drawerOpening, setDrawerOpening] = useState(false);
 
-  const open = useCallback((app?: Dapp) => {
+  const open = useCallback((app?: Dapp | NativeDApp) => {
     setDrawerOpening(true);
     setAppData(app);
   }, []);
@@ -81,7 +82,11 @@ export const DAppDetailDrawer = ({ children }: PropsWithChildren) => {
             <DAppDetailDrawer.Developer developer={appData?.developerName} />
           </div>
           <Divider orientation="horizontal" className="m-0" />
-          <DAppDetailDrawer.InstallArea appId={appData?.id} spaceId={spaceId} />
+          <DAppDetailDrawer.InstallArea
+            appId={get(appData, 'id')}
+            nativeAppName={get(appData, 'appIdentifier')}
+            spaceId={spaceId}
+          />
           <DAppDetailDrawer.Description description={appData?.description} />
           <Divider orientation="horizontal" className="m-0" />
           <DAppDetailDrawer.Status
@@ -171,8 +176,13 @@ DAppDetailDrawer.Developer = memo((props: { developer?: string }) => {
   );
 });
 
-DAppDetailDrawer.InstallArea = (props: { appId?: string; spaceId: string }) => {
-  const { appId, spaceId } = props;
+DAppDetailDrawer.InstallArea = (props: {
+  appId?: string;
+  nativeAppName?: string;
+  spaceId: string;
+}) => {
+  const { appId, nativeAppName, spaceId } = props;
+  const idOrNativeAppName = appId ?? nativeAppName;
   const [loading, setLoading] = useState(false);
   const {
     loading: installedDataFetching,
@@ -181,15 +191,16 @@ DAppDetailDrawer.InstallArea = (props: { appId?: string; spaceId: string }) => {
   } = useInstalledAppsData();
 
   const handleInstall = () => {
-    if (!appId) return;
+    if (!idOrNativeAppName) return;
     setLoading(true);
     installDApp({
       spaceId,
       appId,
-    })
+      nativeAppName,
+    } as InstallDAppParams)
       .then((res) => {
         if (res.data.status === 'success') {
-          addInstalledApp(appId);
+          addInstalledApp(idOrNativeAppName);
         }
       })
       .finally(() => {
@@ -208,11 +219,15 @@ DAppDetailDrawer.InstallArea = (props: { appId?: string; spaceId: string }) => {
       <Button
         color="functional"
         isLoading={loading || installedDataFetching}
-        disabled={!appId || !spaceId || isInstalled(appId)}
+        disabled={
+          !idOrNativeAppName || !spaceId || isInstalled(idOrNativeAppName)
+        }
         startContent={<InstallIcon />}
         onClick={handleInstall}
       >
-        {appId && !isInstalled(appId) ? 'Install to Space' : 'Installed'}
+        {idOrNativeAppName && isInstalled(idOrNativeAppName)
+          ? 'Installed'
+          : 'Install to Space'}
       </Button>
     </div>
   );

@@ -44,7 +44,7 @@ const InstalledAppsData = ({ children }: PropsWithChildren) => {
     if (!installedAppsData?.data?.installedApps) return;
     setInstalledAppIds(
       installedAppsData.data.installedApps.map(
-        (app: any) => app.node.installedAppId,
+        (app: any) => app.node.installedAppId ?? app.node.nativeAppName,
       ),
     );
   }, [installedAppsData]);
@@ -53,7 +53,7 @@ const InstalledAppsData = ({ children }: PropsWithChildren) => {
   const _quicklyInstalledAppIds = useMemo(() => {
     if (!installedAppsData?.data?.installedApps) return [];
     return installedAppsData.data.installedApps.map(
-      (app: any) => app.node.installedAppId,
+      (app: any) => app.node.installedAppId ?? app.node.nativeAppName,
     );
   }, [installedAppsData]);
 

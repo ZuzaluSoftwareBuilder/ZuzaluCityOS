@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 import clsx from 'clsx';
 import Link from 'next/link';
+import get from 'lodash/get';
 import { useQuery } from '@tanstack/react-query';
 
 import { Dapp } from '@/types';
@@ -19,6 +20,7 @@ import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
 import AppItem from './components/AppItem';
 import DAppDetailDrawer from './components/DAppDetailDrawer';
 import InstalledAppsData from './components/InstalledAppsData';
+import { NATIVE_APPS, NativeDApp } from './constants';
 
 const APP_CATEGORY: Record<
   string,
@@ -26,14 +28,14 @@ const APP_CATEGORY: Record<
     hash: string;
     title: string;
     subTitle: string;
-    getApps: () => Promise<Dapp[]>;
+    getApps: () => Promise<Dapp[] | NativeDApp[]>;
   }
 > = {
   NativeApps: {
     hash: 'native-apps',
     title: 'Native Apps',
     subTitle: 'Install apps integrated directly in Zuzalu City',
-    getApps: async () => [], // TODO: static data
+    getApps: async () => NATIVE_APPS,
   },
   CommunityApps: {
     hash: 'community-apps',
@@ -176,13 +178,13 @@ export default function ExploreAppsPage() {
   );
 }
 
-function AppList(props: { appsPromise: Promise<Dapp[]> }) {
+function AppList(props: { appsPromise: Promise<Dapp[] | NativeDApp[]> }) {
   const { appsPromise } = props;
   const apps = use(appsPromise);
   return (
     <>
       {apps.map((app) => (
-        <AppItem key={app.id} data={app} />
+        <AppItem key={get(app, 'id', get(app, 'appIdentifier'))} data={app} />
       ))}
     </>
   );

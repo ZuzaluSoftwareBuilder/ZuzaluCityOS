@@ -92,6 +92,7 @@ export const GET_SPACE_INSTALLED_APPS = graphql(`
           id
           sourceId
           spaceId
+          nativeAppName
           installedAppId
           createdAt
           updatedAt

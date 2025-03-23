@@ -6,27 +6,30 @@ import clsx from 'clsx';
 
 import { Dapp } from '@/types';
 import { Button } from '@/components/base';
-import { installDApp } from '@/services/space/apps';
+import { installDApp, InstallDAppParams } from '@/services/space/apps';
 import { InstallIcon } from '@/components/icons';
 
 import { useDAppDetailDrawer } from './DAppDetailDrawer';
 import { useInstalledAppsData } from './InstalledAppsData';
+import { isNativeDApp, NativeDApp } from '../constants';
 
 interface Props {
-  data: Dapp;
+  data: Dapp | NativeDApp;
 }
 
 const AppItem = (props: Props) => {
   const params = useParams();
   const spaceId = params.spaceid.toString();
   const { data } = props;
-  const {
-    id,
-    appName,
-    categories: _categories = '',
-    profile,
-    bannerUrl,
-  } = data;
+  const idOrNativeAppName = useMemo(
+    () => (isNativeDApp(data) ? data.appIdentifier : data.id),
+    [data],
+  );
+  const isComingSoon = useMemo(
+    () => isNativeDApp(data) && data.isComingSoon,
+    [data],
+  );
+  const { appName, categories: _categories = '', profile, bannerUrl } = data;
 
   // categories pre processing
   const categories = useMemo(() => _categories.split(','), [_categories]);
@@ -55,15 +58,15 @@ const AppItem = (props: Props) => {
   } = useInstalledAppsData();
 
   const handleInstall = () => {
-    if (!id) return;
+    if (!data) return;
     setLoading(true);
-    installDApp({
-      spaceId,
-      appId: id,
-    })
+    const params: InstallDAppParams = isNativeDApp(data)
+      ? { spaceId, nativeAppName: data.appIdentifier }
+      : { spaceId, appId: data.id };
+    installDApp(params)
       .then((res) => {
         if (res.data.status === 'success') {
-          addInstalledApp(id);
+          addInstalledApp(idOrNativeAppName);
         }
       })
       .finally(() => {
@@ -82,11 +85,12 @@ const AppItem = (props: Props) => {
       {/* information */}
       <div
         className={clsx([
-          'flex flex-1 cursor-pointer',
+          'flex flex-1',
+          !isComingSoon && 'cursor-pointer',
           'gap-5',
           'mobile:gap-[10px]',
         ])}
-        onClick={() => open(data)}
+        onClick={() => !isComingSoon && open(data)}
       >
         {/* banner */}
         <div
@@ -152,16 +156,22 @@ const AppItem = (props: Props) => {
         </div>
       </div>
       {/* install button */}
-      <Button
-        size="sm"
-        color="functional"
-        startContent={<InstallIcon />}
-        onClick={handleInstall}
-        disabled={isInstalled(id)}
-        isLoading={loading || installedDataFetching}
-      >
-        {isInstalled(id) ? 'Installed' : 'Install'}
-      </Button>
+      {isComingSoon ? (
+        <Button size="sm" color="functional">
+          Coming Soon
+        </Button>
+      ) : (
+        <Button
+          size="sm"
+          color="functional"
+          startContent={<InstallIcon />}
+          onClick={handleInstall}
+          disabled={isInstalled(idOrNativeAppName)}
+          isLoading={loading || installedDataFetching}
+        >
+          {isInstalled(idOrNativeAppName) ? 'Installed' : 'Install'}
+        </Button>
+      )}
     </div>
   );
 };
