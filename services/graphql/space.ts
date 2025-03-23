@@ -40,3 +40,27 @@ export const GET_SPACE_QUERY = graphql(`
     }
   }
 `);
+
+
+
+export const GET_SPACE_INSTALLED_DAPPS = graphql(`
+  query GetDappDetail($id: ID!) {
+    node(id: $id) {
+      ... on ZucityDappInfo {
+        id
+        installedSpaces
+      }
+    }
+  }
+`);
+
+export const UPDATE_SPACE_INSTALLED_DAPPS = graphql(`
+  mutation UpdateDappSpaces($input: UpdateZucityDappInfoInput!) {
+    updateZucityDappInfo(input: $input) {
+      document {
+        id
+        installedSpaces
+      }
+    }
+  }
+`);

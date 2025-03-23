@@ -23,6 +23,8 @@ type Documents = {
     "\n  mutation UpdateZucityUserRoles($input: UpdateZucityUserRolesInput!) {\n    updateZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n": typeof types.UpdateZucityUserRolesDocument,
     "\n  query GetUserRoles($userId: String) {\n    zucityUserRolesIndex(\n      first: 1000\n      filters: { where: { userId: { equalTo: $userId } } }\n    ) {\n      edges {\n        node {\n          roleId\n          resourceId\n          source\n          userId {\n            id\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetUserRolesDocument,
     "\n  query GetSpace($id: ID!) {\n    node(id: $id) {\n      ... on ZucitySpace {\n        id\n        avatar\n        banner\n        description\n        name\n        profileId\n        tagline\n        website\n        twitter\n        telegram\n        nostr\n        lens\n        github\n        discord\n        ens\n        customAttributes {\n          tbd\n        }\n        admins {\n          id\n        }\n        superAdmin {\n          id\n          zucityProfile {\n            id\n            avatar\n            author {\n              id\n            }\n            username\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetSpaceDocument,
+    "\n  query GetDappDetail($id: ID!) {\n    node(id: $id) {\n      ... on ZucityDappInfo {\n        id\n        installedSpaces\n      }\n    }\n  }\n": typeof types.GetDappDetailDocument,
+    "\n  mutation UpdateDappSpaces($input: UpdateZucityDappInfoInput!) {\n    updateZucityDappInfo(input: $input) {\n      document {\n        id\n        installedSpaces\n      }\n    }\n  }\n": typeof types.UpdateDappSpacesDocument,
 };
 const documents: Documents = {
     "\n  query GetDappList {\n    zucityDappInfoIndex(first: 100) {\n      edges {\n        node {\n          id\n          appName\n          tagline\n          developerName\n          description\n          bannerUrl\n          categories\n          devStatus\n          openSource\n          repositoryUrl\n          appUrl\n          websiteUrl\n          docsUrl\n          profile {\n            author {\n              id\n            }\n            avatar\n            username\n          }\n        }\n      }\n    }\n  }\n": types.GetDappListDocument,
@@ -33,6 +35,8 @@ const documents: Documents = {
     "\n  mutation UpdateZucityUserRoles($input: UpdateZucityUserRolesInput!) {\n    updateZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n": types.UpdateZucityUserRolesDocument,
     "\n  query GetUserRoles($userId: String) {\n    zucityUserRolesIndex(\n      first: 1000\n      filters: { where: { userId: { equalTo: $userId } } }\n    ) {\n      edges {\n        node {\n          roleId\n          resourceId\n          source\n          userId {\n            id\n          }\n        }\n      }\n    }\n  }\n": types.GetUserRolesDocument,
     "\n  query GetSpace($id: ID!) {\n    node(id: $id) {\n      ... on ZucitySpace {\n        id\n        avatar\n        banner\n        description\n        name\n        profileId\n        tagline\n        website\n        twitter\n        telegram\n        nostr\n        lens\n        github\n        discord\n        ens\n        customAttributes {\n          tbd\n        }\n        admins {\n          id\n        }\n        superAdmin {\n          id\n          zucityProfile {\n            id\n            avatar\n            author {\n              id\n            }\n            username\n          }\n        }\n      }\n    }\n  }\n": types.GetSpaceDocument,
+    "\n  query GetDappDetail($id: ID!) {\n    node(id: $id) {\n      ... on ZucityDappInfo {\n        id\n        installedSpaces\n      }\n    }\n  }\n": types.GetDappDetailDocument,
+    "\n  mutation UpdateDappSpaces($input: UpdateZucityDappInfoInput!) {\n    updateZucityDappInfo(input: $input) {\n      document {\n        id\n        installedSpaces\n      }\n    }\n  }\n": types.UpdateDappSpacesDocument,
 };
 
 /**
@@ -67,6 +71,14 @@ export function graphql(source: "\n  query GetUserRoles($userId: String) {\n    
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query GetSpace($id: ID!) {\n    node(id: $id) {\n      ... on ZucitySpace {\n        id\n        avatar\n        banner\n        description\n        name\n        profileId\n        tagline\n        website\n        twitter\n        telegram\n        nostr\n        lens\n        github\n        discord\n        ens\n        customAttributes {\n          tbd\n        }\n        admins {\n          id\n        }\n        superAdmin {\n          id\n          zucityProfile {\n            id\n            avatar\n            author {\n              id\n            }\n            username\n          }\n        }\n      }\n    }\n  }\n"): typeof import('./graphql').GetSpaceDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetDappDetail($id: ID!) {\n    node(id: $id) {\n      ... on ZucityDappInfo {\n        id\n        installedSpaces\n      }\n    }\n  }\n"): typeof import('./graphql').GetDappDetailDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateDappSpaces($input: UpdateZucityDappInfoInput!) {\n    updateZucityDappInfo(input: $input) {\n      document {\n        id\n        installedSpaces\n      }\n    }\n  }\n"): typeof import('./graphql').UpdateDappSpacesDocument;
 
 
 export function graphql(source: string) {
