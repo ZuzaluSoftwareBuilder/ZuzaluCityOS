@@ -1,6 +1,3 @@
-import { executeQuery } from '@/utils/ceramic';
-import { GET_SPACE_INSTALLED_DAPPS } from '../graphql/space';
-
 export const getSpaceEventsQuery = (eventCount: number = 10) => `
       query GetSpaceEvents($id: ID!) {
         node(id: $id) {
@@ -111,16 +108,3 @@ export const getSpacesQuery = `
         }
       }
       `;
-
-export const getSpaceInstalledDapps = async (
-  appId: string,
-): Promise<{
-  id: string;
-  installedSpaces: string[] | null;
-}> => {
-  const dappResponse: any = await executeQuery(GET_SPACE_INSTALLED_DAPPS, {
-    id: appId,
-  });
-
-  return dappResponse.data.node;
-};

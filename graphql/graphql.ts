@@ -3049,6 +3049,13 @@ export type GetDappListQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetDappListQuery = { __typename?: 'Query', zucityDappInfoIndex?: { __typename?: 'ZucityDappInfoConnection', edges?: Array<{ __typename?: 'ZucityDappInfoEdge', node?: { __typename?: 'ZucityDappInfo', id: string, appName: string, tagline: string, developerName: string, description: string, bannerUrl: string, categories: string, devStatus: string, openSource: string, repositoryUrl?: string | null, appUrl?: string | null, websiteUrl?: string | null, docsUrl?: string | null, profile?: { __typename?: 'ZucityProfile', avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } | null } | null> | null } | null };
 
+export type GetDappByIdQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetDappByIdQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo', id: string, appName: string, tagline: string, developerName: string, description: string, bannerUrl: string, categories: string, devStatus: string, openSource: string, repositoryUrl?: string | null, appUrl?: string | null, websiteUrl?: string | null, docsUrl?: string | null, profile?: { __typename?: 'ZucityProfile', avatar?: string | null, username: string } | null } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace' } | { __typename?: 'ZucityUserRoles' } | null };
+
 export type GetMembersQueryVariables = Exact<{
   source?: InputMaybe<Scalars['String']['input']>;
   resourceId?: InputMaybe<Scalars['String']['input']>;
@@ -3101,19 +3108,12 @@ export type GetSpaceQueryVariables = Exact<{
 
 export type GetSpaceQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace', id: string, avatar?: string | null, banner?: string | null, description: string, name: string, profileId: any, tagline?: string | null, website?: string | null, twitter?: string | null, telegram?: string | null, nostr?: string | null, lens?: string | null, github?: string | null, discord?: string | null, ens?: string | null, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, admins?: Array<{ __typename?: 'CeramicAccount', id: string } | null> | null, superAdmin: Array<{ __typename?: 'CeramicAccount', id: string, zucityProfile?: { __typename?: 'ZucityProfile', id: string, avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null }> } | { __typename?: 'ZucityUserRoles' } | null };
 
-export type GetDappDetailQueryVariables = Exact<{
-  id: Scalars['ID']['input'];
+export type InstallDappToSpaceMutationVariables = Exact<{
+  input: CreateZucityInstalledAppInput;
 }>;
 
 
-export type GetDappDetailQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo', id: string, installedSpaces?: Array<any | null> | null } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace' } | { __typename?: 'ZucityUserRoles' } | null };
-
-export type UpdateDappSpacesMutationVariables = Exact<{
-  input: UpdateZucityDappInfoInput;
-}>;
-
-
-export type UpdateDappSpacesMutation = { __typename?: 'Mutation', updateZucityDappInfo?: { __typename?: 'UpdateZucityDappInfoPayload', document: { __typename?: 'ZucityDappInfo', id: string, installedSpaces?: Array<any | null> | null } } | null };
+export type InstallDappToSpaceMutation = { __typename?: 'Mutation', createZucityInstalledApp?: { __typename?: 'CreateZucityInstalledAppPayload', document: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, installedAppId?: any | null, createdAt: any, updatedAt: any, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string } | null } } | null };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -3164,6 +3164,31 @@ export const GetDappListDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetDappListQuery, GetDappListQueryVariables>;
+export const GetDappByIdDocument = new TypedDocumentString(`
+    query GetDappById($id: ID!) {
+  node(id: $id) {
+    ... on ZucityDappInfo {
+      id
+      appName
+      tagline
+      developerName
+      description
+      bannerUrl
+      categories
+      devStatus
+      openSource
+      repositoryUrl
+      appUrl
+      websiteUrl
+      docsUrl
+      profile {
+        avatar
+        username
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetDappByIdQuery, GetDappByIdQueryVariables>;
 export const GetMembersDocument = new TypedDocumentString(`
     query GetMembers($source: String, $resourceId: String) {
   zucityUserRolesIndex(
@@ -3306,23 +3331,21 @@ export const GetSpaceDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetSpaceQuery, GetSpaceQueryVariables>;
-export const GetDappDetailDocument = new TypedDocumentString(`
-    query GetDappDetail($id: ID!) {
-  node(id: $id) {
-    ... on ZucityDappInfo {
-      id
-      installedSpaces
-    }
-  }
-}
-    `) as unknown as TypedDocumentString<GetDappDetailQuery, GetDappDetailQueryVariables>;
-export const UpdateDappSpacesDocument = new TypedDocumentString(`
-    mutation UpdateDappSpaces($input: UpdateZucityDappInfoInput!) {
-  updateZucityDappInfo(input: $input) {
+export const InstallDappToSpaceDocument = new TypedDocumentString(`
+    mutation InstallDappToSpace($input: CreateZucityInstalledAppInput!) {
+  createZucityInstalledApp(input: $input) {
     document {
       id
-      installedSpaces
+      sourceId
+      spaceId
+      installedAppId
+      createdAt
+      updatedAt
+      installedApp {
+        id
+        appName
+      }
     }
   }
 }
-    `) as unknown as TypedDocumentString<UpdateDappSpacesMutation, UpdateDappSpacesMutationVariables>;
+    `) as unknown as TypedDocumentString<InstallDappToSpaceMutation, InstallDappToSpaceMutationVariables>;

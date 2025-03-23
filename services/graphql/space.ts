@@ -41,25 +41,20 @@ export const GET_SPACE_QUERY = graphql(`
   }
 `);
 
-
-
-export const GET_SPACE_INSTALLED_DAPPS = graphql(`
-  query GetDappDetail($id: ID!) {
-    node(id: $id) {
-      ... on ZucityDappInfo {
-        id
-        installedSpaces
-      }
-    }
-  }
-`);
-
-export const UPDATE_SPACE_INSTALLED_DAPPS = graphql(`
-  mutation UpdateDappSpaces($input: UpdateZucityDappInfoInput!) {
-    updateZucityDappInfo(input: $input) {
+export const INSTALL_DAPP_TO_SPACE = graphql(`
+  mutation InstallDappToSpace($input: CreateZucityInstalledAppInput!) {
+    createZucityInstalledApp(input: $input) {
       document {
         id
-        installedSpaces
+        sourceId
+        spaceId
+        installedAppId
+        createdAt
+        updatedAt
+        installedApp {
+          id
+          appName
+        }
       }
     }
   }
