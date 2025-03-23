@@ -12,7 +12,7 @@ type ZucityInstalledApp
   spaceId: StreamID @documentReference(model: "ZucitySpace")
   space: ZucitySpace @relationDocument(property: "spaceId")
   sourceId: String! @string(minLength: 1, maxLength: 10000)
-  installedAppId: StreamID!
+  installedAppId: StreamID
   createdAt: DateTime!
   updatedAt: DateTime!
   customAttributes: [TBD] @list(maxLength: 10000)
