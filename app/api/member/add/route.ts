@@ -12,6 +12,7 @@ import {
   createSuccessResponse,
 } from '@/utils/service/response';
 import { hasRequiredPermission } from '@/utils/service/role';
+import { PermissionName } from '@/types';
 
 dayjs.extend(utc);
 
@@ -46,7 +47,11 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Owner role cannot be added', 400);
     }
 
-    if (!hasRequiredPermission(sessionData, addedRole.role.level)) {
+    const requiredPermission =
+      addedRole.role.level === 'admin'
+        ? PermissionName.MANAGE_ADMIN_ROLE
+        : PermissionName.MANAGE_MEMBER_ROLE;
+    if (!hasRequiredPermission(sessionData, requiredPermission)) {
       return createErrorResponse('Permission denied', 403);
     }
 

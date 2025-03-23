@@ -1,5 +1,4 @@
 import { NextRequest } from 'next/server';
-import { UserRoleData } from '@/types';
 import { GET_MEMBERS_QUERY } from '@/services/graphql/role';
 import { executeQuery } from '@/utils/ceramic';
 import {
