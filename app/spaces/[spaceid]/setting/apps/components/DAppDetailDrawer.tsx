@@ -19,6 +19,7 @@ import { ArrowUpRightIcon, InstallIcon } from '@/components/icons';
 import { Dapp } from '@/types';
 import { NOOP } from '@/utils/function';
 import ShowMoreEdit from '@/components/editor/ShowMoreEdit';
+import { installDApp } from '@/services/space/apps';
 
 const DAppDetailDrawerContext = createContext<{
   open: (app?: Dapp) => void;
@@ -185,6 +186,12 @@ DAppDetailDrawer.InstallArea = memo(
           color="functional"
           disabled={!appId || !spaceId}
           startContent={<InstallIcon />}
+          onClick={(e) => {
+            installDApp({
+              spaceId,
+              appId: appId!,
+            }).then(console.log);
+          }}
         >
           Install to Space
         </Button>

@@ -1,8 +1,5 @@
 import dayjs from 'dayjs';
 import { ComposeClient } from '@composedb/client';
-import { executeQuery } from '@/utils/ceramic';
-import { UPDATE_SPACE_INSTALLED_DAPPS } from '../graphql/space';
-import { getSpaceInstalledDapps } from '../space';
 
 export const createDapp = async (
   composeClient: ComposeClient,
