@@ -12,7 +12,8 @@ type ZucityInstalledApp
   spaceId: StreamID @documentReference(model: "ZucitySpace")
   space: ZucitySpace @relationDocument(property: "spaceId")
   sourceId: String! @string(minLength: 1, maxLength: 10000)
-  installedAppId: StreamID
+  installedAppId: StreamID @documentReference(model: "ZucityDappInfo")
+  installedApp: ZucityDappInfo @relationDocument(property: "installedAppId")
   createdAt: DateTime!
   updatedAt: DateTime!
   customAttributes: [TBD] @list(maxLength: 10000)
@@ -23,6 +24,10 @@ type ZucitySpace @loadModel(id: "$Space_ID") {
 }
 
 type ZucityEvent @loadModel(id: "$Event_ID") {
+  id: ID!
+}
+
+type ZucityDappInfo @loadModel(id: "$DappInfo_ID") {
   id: ID!
 }
 
