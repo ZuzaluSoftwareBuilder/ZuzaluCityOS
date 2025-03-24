@@ -8,19 +8,16 @@ type SessionData = {
   operatorId?: string;
 };
 
-function hasRequiredPermission(sessionData: SessionData, roleLevel: string) {
+function hasRequiredPermission(
+  sessionData: SessionData,
+  permissionName: PermissionName,
+) {
   const { isOwner, permission, operatorRole } = sessionData;
 
   if (isOwner) return true;
 
-  const requiredPermission =
-    roleLevel === 'admin'
-      ? PermissionName.MANAGE_ADMIN_ROLE
-      : PermissionName.MANAGE_MEMBER_ROLE;
-
   const permissionId =
-    permission?.find((p: Permission) => p.name === requiredPermission)?.id ||
-    '';
+    permission?.find((p: Permission) => p.name === permissionName)?.id || '';
 
   return !!operatorRole?.permission_ids.includes(permissionId);
 }

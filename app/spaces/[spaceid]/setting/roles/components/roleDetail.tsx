@@ -1,23 +1,82 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Tabs, Tab, Input, cn, Skeleton } from '@heroui/react';
+import React, { useEffect, useCallback } from 'react';
+import { Button, Tabs, Tab, cn, Skeleton } from '@heroui/react';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerBody,
+  CommonDrawerHeader,
+} from '@/components/base';
 import {
   CaretLeft,
-  DotsThree,
   Info,
   IdentificationBadge,
+  CaretUpDown,
+  X,
 } from '@phosphor-icons/react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import Display from './display';
-import Permission, { PermissionList } from './permission';
-import MemberManagement from './members';
+import { PermissionList } from './permission';
+import MemberManagement from './members/memberManagement';
 import { Profile, RolePermission, UserRole } from '@/types';
+import useOpenDraw from '@/hooks/useOpenDraw';
 
-interface RoleType {
-  id: number;
-  name: string;
+interface RoleListProps {
+  roleData: RolePermission[];
+  isLoading: boolean;
+  currentRole: string;
+  onRoleSelect: (roleName: string) => void;
 }
+
+const RoleList: React.FC<RoleListProps> = ({
+  roleData,
+  isLoading,
+  currentRole,
+  onRoleSelect,
+}) => {
+  return (
+    <div className="flex flex-col gap-2.5">
+      {isLoading
+        ? Array(3)
+            .fill(0)
+            .map((_, index) => (
+              <div
+                key={index}
+                className="flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg"
+              >
+                <IdentificationBadge
+                  size={20}
+                  weight="fill"
+                  className="text-white opacity-40"
+                />
+                <Skeleton className="w-24 h-5 rounded" />
+              </div>
+            ))
+        : roleData.map((item) => (
+            <div
+              key={item.id}
+              className={cn(
+                'flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg cursor-pointer',
+                item.role.name === currentRole
+                  ? 'bg-[rgba(255,255,255,0.1)]'
+                  : '',
+              )}
+              onClick={() => onRoleSelect(item.role.name)}
+            >
+              <IdentificationBadge
+                size={20}
+                weight="fill"
+                className="text-white opacity-40"
+              />
+              <span className="text-white text-[13px] font-medium">
+                {item.role.name}
+              </span>
+            </div>
+          ))}
+    </div>
+  );
+};
 
 interface RoleDetailProps {
   roleData: RolePermission[];
@@ -34,9 +93,10 @@ export default function RoleDetail({
 }: RoleDetailProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const currentRole = searchParams.get('role') || 'Owner';
-  const currentTab = searchParams.get('tab') || 'display';
+  const { open, handleOpen, handleClose } = useOpenDraw();
+  const pathname = usePathname()!;
+  const currentRole = searchParams?.get('role') || 'Owner';
+  const currentTab = searchParams?.get('tab') || 'display';
 
   const currentRoleData = React.useMemo(
     () => roleData.find((item) => item.role.name === currentRole),
@@ -49,7 +109,7 @@ export default function RoleDetail({
 
   const handleTabChange = useCallback(
     (key: React.Key) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(searchParams?.toString());
       params.set('tab', key.toString());
       router.push(`${pathname}?${params.toString()}`);
     },
@@ -58,11 +118,12 @@ export default function RoleDetail({
 
   const handleRoleSelect = useCallback(
     (roleName: string) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(searchParams?.toString());
       params.set('role', roleName);
       router.push(`${pathname}?${params.toString()}`);
+      handleClose();
     },
-    [router, pathname, searchParams],
+    [router, pathname, searchParams, handleClose],
   );
 
   useEffect(() => {
@@ -82,45 +143,36 @@ export default function RoleDetail({
           Back
         </Button>
 
-        <div className="flex flex-col gap-2.5">
-          {isLoading
-            ? Array(3)
-                .fill(0)
-                .map((_, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg"
-                  >
-                    <IdentificationBadge
-                      size={20}
-                      weight="fill"
-                      className="text-white opacity-40"
-                    />
-                    <Skeleton className="w-24 h-5 rounded" />
-                  </div>
-                ))
-            : roleData.map((item) => (
-                <div
-                  key={item.id}
-                  className={cn(
-                    'flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg cursor-pointer',
-                    item.role.name === currentRole
-                      ? 'bg-[rgba(255,255,255,0.1)]'
-                      : '',
-                  )}
-                  onClick={() => handleRoleSelect(item.role.name)}
-                >
-                  <IdentificationBadge
-                    size={20}
-                    weight="fill"
-                    className="text-white opacity-40"
-                  />
-                  <span className="text-white text-[13px] font-medium">
-                    {item.role.name}
-                  </span>
-                </div>
-              ))}
-        </div>
+        <RoleList
+          roleData={roleData}
+          isLoading={isLoading}
+          currentRole={currentRole}
+          onRoleSelect={handleRoleSelect}
+        />
+
+        <Drawer
+          isOpen={open}
+          onClose={handleClose}
+          placement={'bottom'}
+          isDismissable={false}
+          hideCloseButton={true}
+          className="xl:hidden pc:hidden"
+        >
+          <DrawerContent>
+            <CommonDrawerHeader title={'Roles'} onClose={handleClose} />
+
+            <DrawerBody
+              className={cn('flex flex-col gap-[20px]', 'p-[16px] pb-[24px]')}
+            >
+              <RoleList
+                roleData={roleData}
+                isLoading={isLoading}
+                currentRole={currentRole}
+                onRoleSelect={handleRoleSelect}
+              />
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
       </div>
 
       <div className="flex flex-col gap-[30px] w-full pc:w-[600px] p-5 ml-[220px] xl:mx-auto mobile:p-0 mobile:ml-0 tablet:ml-0">
@@ -142,6 +194,14 @@ export default function RoleDetail({
                   </span>
                 </div>
               </div>
+              <Button
+                isIconOnly
+                variant="light"
+                className="xl:hidden pc:hidden min-w-0 px-0"
+                onPress={handleOpen}
+              >
+                <CaretUpDown size={24} weight="light" className="text-white" />
+              </Button>
             </div>
 
             <div className="border-b border-[rgba(255,255,255,0.1)]">

@@ -1,5 +1,4 @@
 import { NextRequest } from 'next/server';
-import { UserRoleData } from '@/types';
 import { GET_MEMBERS_QUERY } from '@/services/graphql/role';
 import { executeQuery } from '@/utils/ceramic';
 import {
@@ -30,9 +29,9 @@ export async function GET(request: NextRequest) {
     }
 
     if ('zucityUserRolesIndex' in data.data!) {
-      const userRoleData: UserRoleData = data.data as UserRoleData;
       return createSuccessResponse(
-        userRoleData.zucityUserRolesIndex.edges.map((edge) => edge.node),
+        data?.data?.zucityUserRolesIndex?.edges?.map((edge) => edge?.node) ||
+          [],
       );
     }
 

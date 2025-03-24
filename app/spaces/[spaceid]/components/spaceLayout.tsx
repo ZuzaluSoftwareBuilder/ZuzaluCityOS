@@ -7,7 +7,7 @@ import SpaceSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/spaceSubS
 
 const SpaceLayout = () => {
   const segments = useSelectedLayoutSegments();
-  const isSettingPage = segments.includes('setting');
+  const isSettingPage = segments?.includes('setting');
 
   return (
     <>

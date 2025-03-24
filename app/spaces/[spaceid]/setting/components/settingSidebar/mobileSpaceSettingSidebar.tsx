@@ -2,7 +2,12 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { Button, Drawer, DrawerContent, DrawerHeader, DrawerBody } from '@heroui/react';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerBody,
+  CommonDrawerHeader,
+} from '@/components/base';
 import { X } from '@phosphor-icons/react';
 import { SettingSection, getSettingSections } from './settingsData';
 import SectionGroup from './sectionGroup';
@@ -22,8 +27,8 @@ const MobileSpaceSettingSidebar: React.FC<MobileSettingSidebarProps> = ({
   const params = useParams();
   const spaceId = params.spaceid.toString();
 
-  const [sections, setSections] = useState<SettingSection[]>(() => 
-    getSettingSections(spaceId)
+  const [sections, setSections] = useState<SettingSection[]>(() =>
+    getSettingSections(spaceId),
   );
 
   useEffect(() => {
@@ -35,50 +40,38 @@ const MobileSpaceSettingSidebar: React.FC<MobileSettingSidebarProps> = ({
             ...item,
             active: item.path === currentPath,
           })),
-        }))
+        })),
       );
     }
   }, [currentPath]);
 
-  const handleItemClick = useCallback((sectionId: string, itemId: string) => {
-    const section = sections.find((s) => s.id === sectionId);
-    const item = section?.items.find((i) => i.id === itemId);
+  const handleItemClick = useCallback(
+    (sectionId: string, itemId: string) => {
+      const section = sections.find((s) => s.id === sectionId);
+      const item = section?.items.find((i) => i.id === itemId);
 
-    if (item && !item.locked && item.path) {
-      router.push(item.path);
-      onClose();
-    }
-  }, [sections, router, onClose]);
+      if (item && !item.locked && item.path) {
+        router.push(item.path);
+        onClose();
+      }
+    },
+    [sections, router, onClose],
+  );
 
   return (
-    <Drawer 
-      isOpen={isOpen} 
+    <Drawer
+      isOpen={isOpen}
       onClose={onClose}
       placement="bottom"
-      classNames={{
-        base: "bg-transparent",
-        backdrop: "bg-[rgba(34,34,34,0.6)]",
-        closeButton: "hidden",
-        body: 'bg-transparent',
-      }}
+      hideCloseButton={true}
     >
-      <DrawerContent className="max-h-[600px] bg-[rgba(44,44,44,0.8)] border-t-2 border-[rgba(255,255,255,0.1)] rounded-t-[20px] backdrop-filter backdrop-blur-[44px] shadow-[0px_-6px_24px_0px_rgba(0,0,0,0.25)]">
-        <DrawerHeader className="flex justify-between items-center h-[56px] px-5 border-b border-[rgba(255,255,255,0.1)]">
-          <div className="flex flex-col justify-center">
-            <h2 className="text-white text-[18px] font-bold">Navigate Settings</h2>
-          </div>
-          <button
-            className="bg-transparent hover:bg-[rgba(255,255,255,0.1)] rounded-lg w-[44px] h-[36px] flex items-center justify-center"
-            onClick={onClose}
-          >
-            <X size={24} weight="light" className="text-white opacity-50" />
-          </button>
-        </DrawerHeader>
-        
+      <DrawerContent className="max-h-[600px] border-t-2  rounded-t-[20px] shadow-[0px_-6px_24px_0px_rgba(0,0,0,0.25)]">
+        <CommonDrawerHeader title={'Navigate Settings'} onClose={onClose} />
+
         <DrawerBody className="p-[20px]">
           <div className="flex flex-col gap-[10px]">
             {sections.map((section) => (
-              <SectionGroup 
+              <SectionGroup
                 key={section.id}
                 section={section}
                 onItemClick={handleItemClick}

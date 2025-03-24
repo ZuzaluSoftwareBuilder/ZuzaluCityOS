@@ -2,7 +2,7 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import { getMembers } from '@/services/member';
 import { getRoles } from '@/services/role';
 import { getSpaceEventsQuery } from '@/services/space';
-import { Space, SpaceData, UserRole, UserRoleData } from '@/types';
+import { Space, UserRole } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
@@ -25,7 +25,11 @@ export default function useGetSpaceMember(spaceId: string) {
     },
   });
 
-  const { data: members, isLoading: isLoadingMembers } = useQuery({
+  const { 
+    data: members, 
+    isLoading: isLoadingMembers, 
+    refetch: refetchMembers 
+  } = useQuery({
     queryKey: ['getSpaceMembers', spaceId],
     queryFn: () => getMembers(spaceId, 'space'),
     select: (data) => {
@@ -34,7 +38,7 @@ export default function useGetSpaceMember(spaceId: string) {
   });
 
   const owner = useMemo(() => {
-    return spaceData?.superAdmin?.[0].zucityProfile;
+    return spaceData?.superAdmin?.[0]?.zucityProfile;
   }, [spaceData]);
 
   return {
@@ -45,5 +49,6 @@ export default function useGetSpaceMember(spaceId: string) {
     isLoadingRoles,
     isLoadingOwner,
     isLoading: isLoadingMembers || isLoadingRoles || isLoadingOwner,
+    refetchMembers,
   };
 }

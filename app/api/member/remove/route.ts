@@ -13,6 +13,7 @@ import {
   createErrorResponse,
   createSuccessResponse,
 } from '@/utils/service/response';
+import { hasRequiredPermission } from '@/utils/service/role';
 
 dayjs.extend(utc);
 
@@ -67,18 +68,11 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Owner role cannot be removed', 400);
     }
 
-    const needPermission =
+    const requiredPermission =
       removedRole.role.level === 'admin'
         ? PermissionName.MANAGE_ADMIN_ROLE
         : PermissionName.MANAGE_MEMBER_ROLE;
-
-    const hasPermission =
-      isOwner ||
-      operatorRole?.permission_ids.includes(
-        permission?.find((p) => p.name === needPermission)?.id || '',
-      );
-
-    if (!hasPermission) {
+    if (!hasRequiredPermission(sessionData, requiredPermission)) {
       return createErrorResponse('Permission denied', 403);
     }
 
