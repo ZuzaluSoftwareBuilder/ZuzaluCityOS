@@ -20,7 +20,7 @@ const SettingLayout = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isOwner, isAdmin, isConnected, allChecksComplete } =
     useCheckWalletConnectAndPermission({
       spaceId,
-      noPermissionCallback: () => router.push('/space'),
+      noPermissionCallback: () => router.push(`/spaces/${spaceId}`),
     });
 
   const getCurrentTitle = useMemo(() => {
