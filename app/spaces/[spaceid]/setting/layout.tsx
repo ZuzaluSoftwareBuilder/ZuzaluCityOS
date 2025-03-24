@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { usePathname, useParams, useRouter } from 'next/navigation';
 import { CaretUpDown } from '@phosphor-icons/react';
 import PcSpaceSettingSidebar from './components/settingSidebar/pcSpaceSettingSidebar';
@@ -8,6 +8,9 @@ import BackHeader from './components/backHeader';
 import { getSettingSections } from './components/settingSidebar/settingsData';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { Backdrop, CircularProgress } from '@mui/material';
+import * as React from 'react';
+import { useAccount } from 'wagmi';
 
 const SettingLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -17,10 +20,19 @@ const SettingLayout = ({ children }: { children: React.ReactNode }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isOwner, isAdmin, isLoading } = useSpacePermissions();
   const { isAuthenticated } = useCeramicContext();
+  const { isConnected, isConnecting, status } = useAccount();
+
+  // TODO: wait for optimization, extract to a hook
+  const [checkStatus, setCheckStatus] = useState({
+    walletChecked: false,
+    permissionChecked: false,
+  });
+
+  const allChecksComplete =
+    checkStatus.walletChecked && checkStatus.permissionChecked;
 
   const getCurrentTitle = useMemo(() => {
     const settingSections = getSettingSections(spaceId);
-
     for (const section of settingSections) {
       for (const item of section.items) {
         if (item.path === pathname) {
@@ -28,32 +40,86 @@ const SettingLayout = ({ children }: { children: React.ReactNode }) => {
         }
       }
     }
-
     return 'Space Settings';
   }, [pathname, spaceId]);
 
   useEffect(() => {
-    if (!isLoading && !isOwner && !isAdmin) {
+    if (typeof status !== 'undefined') {
+      if (
+        (status === 'connected' || status === 'disconnected') &&
+        !checkStatus.walletChecked
+      ) {
+        console.log('wallet status confirmed:', status);
+        setCheckStatus((prev) => ({ ...prev, walletChecked: true }));
+      }
+    } else if (!isConnecting && !checkStatus.walletChecked) {
+      console.log('wallet status confirmed:', isConnected);
+      setCheckStatus((prev) => ({ ...prev, walletChecked: true }));
+    }
+  }, [status, isConnecting, isConnected, checkStatus.walletChecked]);
+
+  useEffect(() => {
+    if (!isLoading && !checkStatus.permissionChecked) {
+      setCheckStatus((prev) => ({ ...prev, permissionChecked: true }));
+    }
+  }, [isLoading, isOwner, isAdmin, checkStatus.permissionChecked]);
+
+  useEffect(() => {
+    if (!allChecksComplete) {
+      return;
+    }
+
+    console.log('all checks complete');
+
+    if (!isConnected) {
+      console.log('user is not connected, redirect to home');
+      router.push(`/spaces`);
+      return;
+    }
+
+    if (isAuthenticated && !isOwner && !isAdmin) {
+      console.log(
+        'user is authenticated but not owner or admin, redirect to home',
+      );
       router.push(`/spaces`);
     }
-  }, [isOwner, isAdmin, router, spaceId, isLoading]);
+  }, [
+    allChecksComplete,
+    isConnected,
+    isAuthenticated,
+    isOwner,
+    isAdmin,
+    router,
+    spaceId,
+  ]);
 
-  if (!isAuthenticated || isLoading || (!isOwner && !isAdmin)) {
+  if (!allChecksComplete) {
     return (
-      <div className="flex h-[calc(100vh-50px)] items-center justify-center">
-        <div className="text-white">Checking permissions...</div>
-      </div>
+      <Backdrop sx={{ color: '#fff', zIndex: 1300 }} open>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    );
+  }
+
+  if (!isConnected || (isAuthenticated && !isOwner && !isAdmin)) {
+    return (
+      <Backdrop sx={{ color: '#fff', zIndex: 1300 }} open>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     );
   }
 
   return (
     <div className="flex h-[calc(100vh-50px)]">
-      <PcSpaceSettingSidebar currentPath={pathname} hasChanges={false} />
+      <PcSpaceSettingSidebar
+        currentPath={pathname as string}
+        hasChanges={false}
+      />
 
       <MobileSpaceSettingSidebar
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
-        currentPath={pathname}
+        currentPath={pathname as string}
       />
 
       <div className="flex-1 flex flex-col">
