@@ -223,9 +223,9 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
     if (currentRole.role.level === 'member') {
       return checkPermission(PermissionName.MANAGE_MEMBER_ROLE);
     }
-    // TODO other roles not defined, e.g. Follower
-    return isOwner || isMember;
-  }, [currentRole, isOwner, isMember, checkPermission]);
+    // no need to manage other roles, except admin、member
+    return false;
+  }, [currentRole, checkPermission]);
 
   return (
     <div className="flex flex-col w-full gap-10">
