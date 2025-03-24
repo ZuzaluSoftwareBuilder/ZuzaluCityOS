@@ -123,7 +123,7 @@ export const MemberList: React.FC<MemberListProps> = ({
           />
           <ModalBody className="p-[0_20px] gap-5">
             <p className="text-white/70 text-sm">
-              Remove following member from {currentRole?.role.name}
+              Remove following member from <strong>{currentRole?.role.name}</strong>
             </p>
             {memberToRemove && (
               <div className="flex items-center justify-center w-full gap-2.5 py-2.5 border border-[rgba(255,255,255,0.1)] rounded-lg">
