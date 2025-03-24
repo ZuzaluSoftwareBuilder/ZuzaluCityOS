@@ -1,21 +1,30 @@
 'use client';
-import { useMemo, useState } from 'react';
-import { usePathname, useParams } from 'next/navigation';
+import { useMemo, useState, useEffect, useRef } from 'react';
+import { usePathname, useParams, useRouter } from 'next/navigation';
 import { CaretUpDown } from '@phosphor-icons/react';
 import PcSpaceSettingSidebar from './components/settingSidebar/pcSpaceSettingSidebar';
 import MobileSpaceSettingSidebar from './components/settingSidebar/mobileSpaceSettingSidebar';
 import BackHeader from './components/backHeader';
 import { getSettingSections } from './components/settingSidebar/settingsData';
+import { Backdrop, CircularProgress } from '@mui/material';
+import * as React from 'react';
+import useCheckWalletConnectAndPermission from '@/hooks/useCheckWalletConnectAndPermission';
 
 const SettingLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const params = useParams();
-  const spaceId = params.spaceid.toString();
+  const router = useRouter();
+  const spaceId = params?.spaceid?.toString() || '';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const { isAuthenticated, isOwner, isAdmin, isConnected, allChecksComplete } =
+    useCheckWalletConnectAndPermission({
+      spaceId,
+      noPermissionCallback: () => router.push('/space'),
+    });
 
   const getCurrentTitle = useMemo(() => {
     const settingSections = getSettingSections(spaceId);
-
     for (const section of settingSections) {
       for (const item of section.items) {
         if (item.path === pathname) {
@@ -23,18 +32,35 @@ const SettingLayout = ({ children }: { children: React.ReactNode }) => {
         }
       }
     }
-
     return 'Space Settings';
   }, [pathname, spaceId]);
 
+  const shouldShowLoading = useMemo(() => {
+    if (!allChecksComplete) return true;
+    if (!isConnected) return true;
+    if (isAuthenticated && !isOwner && !isAdmin) return true;
+    return false;
+  }, [allChecksComplete, isAdmin, isAuthenticated, isConnected, isOwner]);
+
+  if (shouldShowLoading) {
+    return (
+      <Backdrop sx={{ color: '#fff', zIndex: 1300 }} open>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    );
+  }
+
   return (
     <div className="flex h-[calc(100vh-50px)]">
-      <PcSpaceSettingSidebar currentPath={pathname} hasChanges={false} />
+      <PcSpaceSettingSidebar
+        currentPath={pathname as string}
+        hasChanges={false}
+      />
 
       <MobileSpaceSettingSidebar
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
-        currentPath={pathname}
+        currentPath={pathname as string}
       />
 
       <div className="flex-1 flex flex-col">

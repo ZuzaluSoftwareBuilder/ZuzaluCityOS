@@ -56,12 +56,12 @@ export default function SpaceDetailPage() {
 
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
-  const spaceId = params.spaceid.toString();
+  const spaceId = params?.spaceid.toString() ?? '';
   const { shareUrl } = useGetShareLink({ id: spaceId, name: space?.name });
 
   const getSpaceByID = async () => {
     setIsEventsLoading(true);
-    const spaceId = params.spaceid.toString();
+    const spaceId = params?.spaceid.toString();
 
     const response: any = await composeClient.executeQuery(
       getSpaceEventsQuery(),

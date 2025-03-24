@@ -2829,6 +2829,20 @@ export type ZucityUserRolesSortingInput = {
   userId?: InputMaybe<SortOrder>;
 };
 
+export type SearchProfileByExactUsernameQueryVariables = Exact<{
+  username: Scalars['String']['input'];
+}>;
+
+
+export type SearchProfileByExactUsernameQuery = { __typename?: 'Query', zucityProfileIndex?: { __typename?: 'ZucityProfileConnection', edges?: Array<{ __typename?: 'ZucityProfileEdge', node?: { __typename?: 'ZucityProfile', id: string, username: string, avatar?: string | null, author: { __typename?: 'CeramicAccount', id: string } } | null } | null> | null } | null };
+
+export type GetProfileByDidQueryVariables = Exact<{
+  did: Scalars['ID']['input'];
+}>;
+
+
+export type GetProfileByDidQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount', zucityProfile?: { __typename?: 'ZucityProfile', id: string, username: string, avatar?: string | null, author: { __typename?: 'CeramicAccount', id: string } } | null } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace' } | { __typename?: 'ZucityUserRoles' } | null };
+
 export type GetMembersQueryVariables = Exact<{
   source?: InputMaybe<Scalars['String']['input']>;
   resourceId?: InputMaybe<Scalars['String']['input']>;
@@ -2900,6 +2914,41 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const SearchProfileByExactUsernameDocument = new TypedDocumentString(`
+    query SearchProfileByExactUsername($username: String!) {
+  zucityProfileIndex(
+    first: 20
+    filters: {where: {username: {equalTo: $username}}}
+  ) {
+    edges {
+      node {
+        id
+        username
+        avatar
+        author {
+          id
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<SearchProfileByExactUsernameQuery, SearchProfileByExactUsernameQueryVariables>;
+export const GetProfileByDidDocument = new TypedDocumentString(`
+    query GetProfileByDID($did: ID!) {
+  node(id: $did) {
+    ... on CeramicAccount {
+      zucityProfile {
+        id
+        username
+        avatar
+        author {
+          id
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetProfileByDidQuery, GetProfileByDidQueryVariables>;
 export const GetMembersDocument = new TypedDocumentString(`
     query GetMembers($source: String, $resourceId: String) {
   zucityUserRolesIndex(

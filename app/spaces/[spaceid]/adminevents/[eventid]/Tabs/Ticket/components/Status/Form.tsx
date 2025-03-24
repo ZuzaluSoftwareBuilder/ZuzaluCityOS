@@ -34,6 +34,7 @@ import { scrollSepolia, scroll } from 'wagmi/chains';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
 import { formatAddressString } from '@/components/layout/UserProfileSection';
+import { getWalletAddressFromDid } from '@/utils/did';
 
 interface FormProps {
   regAndAccess?: RegistrationAndAccess;
@@ -70,7 +71,7 @@ export default function Form({ regAndAccess, onClose }: FormProps) {
       addresses: [{ address: '' }],
       whitelist:
         regAndAccess?.registrationWhitelist?.map((q) => ({
-          address: q.id.split(':')[4],
+          address: getWalletAddressFromDid(q.id),
         })) || [],
     },
   });

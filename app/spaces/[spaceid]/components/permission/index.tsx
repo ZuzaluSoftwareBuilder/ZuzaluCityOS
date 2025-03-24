@@ -11,6 +11,7 @@ interface SpacePermissionContextType {
   isOwner: boolean;
   isAdmin: boolean;
   isMember: boolean;
+  isLoading: boolean;
   checkPermission: (name: PermissionName) => boolean;
 }
 
@@ -25,7 +26,7 @@ export const SpacePermissionProvider: React.FC<{
   const { profile } = useCeramicContext();
   const userId = profile?.author?.id;
 
-  const { owner, roles, members } = useGetSpaceMember(spaceId as string);
+  const { owner, roles, members, isLoading } = useGetSpaceMember(spaceId as string);
 
   const { data: permissionsData } = useQuery({
     queryKey: ['getAllPermission'],
@@ -98,6 +99,7 @@ export const SpacePermissionProvider: React.FC<{
     isOwner,
     isAdmin,
     isMember,
+    isLoading,
     checkPermission,
   };
 

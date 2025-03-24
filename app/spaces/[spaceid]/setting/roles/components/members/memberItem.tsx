@@ -5,9 +5,15 @@ interface MemberProps {
   avatarUrl: string;
   name: string;
   address: string;
+  showGreenColor?: boolean;
 }
 
-export const Member: React.FC<MemberProps> = ({ avatarUrl, name, address }) => {
+export const MemberItem: React.FC<MemberProps> = ({
+  avatarUrl,
+  name,
+  address,
+  showGreenColor = true,
+}) => {
   return (
     <div className="flex items-center gap-2.5">
       <Avatar
@@ -15,7 +21,11 @@ export const Member: React.FC<MemberProps> = ({ avatarUrl, name, address }) => {
         alt={name}
         className="w-8 h-8"
       />
-      <span className="text-sm font-semibold text-white">{name}</span>
+      <span
+        className={`text-[14px] font-semibold ${showGreenColor ? 'text-[#BFFF66]' : 'text-white'}`}
+      >
+        {name}
+      </span>
       <span className="text-[12px] text-white/60">
         {formatAddressString(address)}
       </span>
@@ -33,7 +43,11 @@ export const MemberSkeleton = () => {
   );
 };
 
-export const MemberEmpty = () => {
+interface IMemberEmptyProps {
+  description?: string;
+}
+
+export const MemberEmpty = (props: IMemberEmptyProps) => {
   return (
     <div className="flex flex-col items-center justify-center w-full py-10 gap-2">
       <div className="w-16 h-16 bg-[rgba(255,255,255,0.05)] rounded-full flex items-center justify-center mb-2">
@@ -79,10 +93,11 @@ export const MemberEmpty = () => {
         </svg>
       </div>
       <p className="text-white/60 text-base font-medium">No members found</p>
-      <p className="text-white/40 text-sm text-center max-w-xs">
-        There are no members with this role yet. Add members to assign this
-        role.
-      </p>
+      {props.description && (
+        <p className="text-white/40 text-sm text-center max-w-xs">
+          {props.description}
+        </p>
+      )}
     </div>
   );
 };
