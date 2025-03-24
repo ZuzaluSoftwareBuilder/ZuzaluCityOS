@@ -2,6 +2,7 @@ import { cn, Button } from '@heroui/react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { Wallet } from '@phosphor-icons/react';
 import { useAccount, useConnect } from 'wagmi';
+import { useCallback } from 'react';
 
 export interface IConnectWalletButtonProps {
   isLoading?: boolean;
@@ -18,7 +19,7 @@ const ConnectWalletButton: React.FC<IConnectWalletButtonProps> = ({
   const isLoading = externalLoading || isConnecting;
   const showSigningMessage = externalLoading && isConnected && !isConnecting;
 
-  const handleConnect = () => {
+  const handleConnect = useCallback(() => {
     if (onConnectClick) {
       onConnectClick();
     }
@@ -34,7 +35,7 @@ const ConnectWalletButton: React.FC<IConnectWalletButtonProps> = ({
     } else {
       console.error('openConnectModal is not available');
     }
-  };
+  }, [onConnectClick, openConnectModal, showSigningMessage]);
   
   return (
     <Button
