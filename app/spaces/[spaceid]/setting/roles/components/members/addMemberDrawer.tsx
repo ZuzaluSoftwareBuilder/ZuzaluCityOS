@@ -20,17 +20,21 @@ interface IAddMemberDrawerProps {
   onClose: () => void;
   roleName: string;
   onAddMembers: (memberIds: string[]) => Promise<void>;
+  existingMembers?: IMemberItem[];
 }
 
 export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
   isOpen,
   onClose,
   onAddMembers,
+  existingMembers = [],
 }) => {
   const isMobile = useMediaQuery('(max-width: 809px)');
 
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [isAddingMember, setIsAddingMember] = useState(false);
+  const [displayedMembers, setDisplayedMembers] = useState<IMemberItem[]>([]);
+  const searchHistoryRef = React.useRef<Map<string, IMemberItem>>(new Map());
   const {
     searchQuery,
     setSearchQuery,
@@ -41,7 +45,7 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
   } = useSearchUsers();
 
   const searchedMembersItems = useMemo(() => {
-    return searchedUsers.map(
+    const items = searchedUsers.map(
       (user: SearchUser) =>
         ({
           id: user.id,
@@ -52,11 +56,62 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
           did: user.did,
         }) as IMemberItem,
     );
+
+    items.forEach((item) => {
+      searchHistoryRef.current.set(item.did, item);
+    });
+
+    return items;
   }, [searchedUsers]);
 
+  const isMemberInRole = useCallback(
+    (memberId: string) => {
+      return existingMembers.some((member) => member.did === memberId);
+    },
+    [existingMembers],
+  );
+
+  useEffect(() => {
+    const searchResultMembers = searchQuery ? searchedMembersItems : [];
+
+    const selectedMembersNotInSearch = selectedMembers
+      .filter(
+        (memberId) =>
+          !searchResultMembers.some((member) => member.did === memberId),
+      )
+      .map((memberId) => {
+        const existingMember = existingMembers.find((m) => m.did === memberId);
+        if (existingMember) return existingMember;
+
+        const historyMember = searchHistoryRef.current.get(memberId);
+        if (historyMember) return historyMember;
+
+        return {
+          id: memberId,
+          name: 'User',
+          avatar: '/user/avatar_p.png',
+          address: '',
+          roleId: null,
+          did: memberId,
+        } as IMemberItem;
+      });
+
+    const newDisplayedMembers = [
+      ...searchResultMembers,
+      ...selectedMembersNotInSearch,
+    ];
+
+    const uniqueMembers = newDisplayedMembers.filter(
+      (member, index, self) =>
+        index === self.findIndex((m) => m.did === member.did),
+    );
+
+    setDisplayedMembers(uniqueMembers);
+  }, [searchQuery, searchedMembersItems, selectedMembers, existingMembers]);
+
   const filteredMembers = useMemo<IMemberItem[]>(() => {
-    return searchQuery ? searchedMembersItems : [];
-  }, [searchQuery, searchedMembersItems]);
+    return displayedMembers;
+  }, [displayedMembers]);
 
   const handleSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,6 +141,7 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
   useEffect(() => {
     if (!isOpen) {
       setSelectedMembers([]);
+      setDisplayedMembers([]);
       clearSearch();
     }
   }, [isOpen, clearSearch]);
@@ -162,37 +218,45 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
                 <MemberSkeletonWithCheckbox key={`skeleton-${index}`} />
               ))
             ) : filteredMembers.length > 0 ? (
-              filteredMembers.map((member: IMemberItem) => (
-                <div
-                  key={member.id}
-                  className={`flex items-center w-full px-[8px] py-[4px] rounded-[8px] ${
-                    selectedMembers.includes(member.did)
-                      ? 'bg-[rgba(255,255,255,0.05)]'
-                      : ''
-                  }`}
-                >
-                  <Checkbox
-                    color="default"
-                    isSelected={selectedMembers.includes(member.did)}
-                    onValueChange={() => handleSelectMember(member.did)}
-                    isDisabled={isAddingMember}
-                    classNames={{
-                      base: cn(
-                        'inline-flex w-full gap-[10px]',
-                        'items-center justify-start',
-                      ),
-                      label: 'w-full',
-                    }}
+              filteredMembers.map((member: IMemberItem) => {
+                const isExistingMember = isMemberInRole(member.did);
+                const isSelected =
+                  selectedMembers.includes(member.did) || isExistingMember;
+
+                return (
+                  <div
+                    key={member.id}
+                    className={`flex items-center w-full px-[8px] py-[4px] rounded-[8px] ${
+                      isSelected ? 'bg-[rgba(255,255,255,0.05)]' : ''
+                    }`}
                   >
-                    <MemberItem
-                      avatarUrl={member.avatar || '/user/avatar_p.png'}
-                      name={member.name}
-                      address={member.address}
-                      showGreenColor={false}
-                    />
-                  </Checkbox>
-                </div>
-              ))
+                    <Checkbox
+                      color="default"
+                      isSelected={isSelected}
+                      onValueChange={() => {
+                        if (!isExistingMember) {
+                          handleSelectMember(member.did);
+                        }
+                      }}
+                      isDisabled={isExistingMember || isAddingMember}
+                      classNames={{
+                        base: cn(
+                          'inline-flex w-full gap-[10px]',
+                          'items-center justify-start',
+                        ),
+                        label: 'w-full',
+                      }}
+                    >
+                      <MemberItem
+                        avatarUrl={member.avatar || '/user/avatar_p.png'}
+                        name={member.name}
+                        address={member.address}
+                        showGreenColor={isExistingMember}
+                      />
+                    </Checkbox>
+                  </div>
+                );
+              })
             ) : (
               <MemberEmpty />
             )}

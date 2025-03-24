@@ -249,6 +249,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
         onClose={closeAddMemberDrawer}
         roleName={roleName}
         onAddMembers={handleAddMembers}
+        existingMembers={filteredMembers as IMemberItem[]}
       />
     </div>
   );
