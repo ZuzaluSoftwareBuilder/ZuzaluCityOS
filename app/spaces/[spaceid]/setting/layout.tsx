@@ -1,17 +1,22 @@
 'use client';
-import { useMemo, useState } from 'react';
-import { usePathname, useParams } from 'next/navigation';
+import { useMemo, useState, useEffect } from 'react';
+import { usePathname, useParams, useRouter } from 'next/navigation';
 import { CaretUpDown } from '@phosphor-icons/react';
 import PcSpaceSettingSidebar from './components/settingSidebar/pcSpaceSettingSidebar';
 import MobileSpaceSettingSidebar from './components/settingSidebar/mobileSpaceSettingSidebar';
 import BackHeader from './components/backHeader';
 import { getSettingSections } from './components/settingSidebar/settingsData';
+import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
+import { useCeramicContext } from '@/context/CeramicContext';
 
 const SettingLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const params = useParams();
-  const spaceId = params.spaceid.toString();
+  const router = useRouter();
+  const spaceId = params?.spaceid?.toString() || '';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { isOwner, isAdmin, isLoading } = useSpacePermissions();
+  const { isAuthenticated } = useCeramicContext();
 
   const getCurrentTitle = useMemo(() => {
     const settingSections = getSettingSections(spaceId);
@@ -26,6 +31,20 @@ const SettingLayout = ({ children }: { children: React.ReactNode }) => {
 
     return 'Space Settings';
   }, [pathname, spaceId]);
+
+  useEffect(() => {
+    if (!isLoading && !isOwner && !isAdmin) {
+      router.push(`/spaces`);
+    }
+  }, [isOwner, isAdmin, router, spaceId, isLoading]);
+
+  if (!isAuthenticated || isLoading || (!isOwner && !isAdmin)) {
+    return (
+      <div className="flex h-[calc(100vh-50px)] items-center justify-center">
+        <div className="text-white">Checking permissions...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-[calc(100vh-50px)]">
