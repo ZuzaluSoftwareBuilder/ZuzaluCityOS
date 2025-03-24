@@ -33,7 +33,11 @@ export const MemberSkeleton = () => {
   );
 };
 
-export const MemberEmpty = () => {
+interface IMemberEmptyProps {
+  description?: string;
+}
+
+export const MemberEmpty = (props: IMemberEmptyProps) => {
   return (
     <div className="flex flex-col items-center justify-center w-full py-10 gap-2">
       <div className="w-16 h-16 bg-[rgba(255,255,255,0.05)] rounded-full flex items-center justify-center mb-2">
@@ -79,10 +83,11 @@ export const MemberEmpty = () => {
         </svg>
       </div>
       <p className="text-white/60 text-base font-medium">No members found</p>
-      <p className="text-white/40 text-sm text-center max-w-xs">
-        There are no members with this role yet. Add members to assign this
-        role.
-      </p>
+      {props.description && (
+        <p className="text-white/40 text-sm text-center max-w-xs">
+          {props.description}
+        </p>
+      )}
     </div>
   );
 };

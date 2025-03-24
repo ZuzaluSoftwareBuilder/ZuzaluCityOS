@@ -9,7 +9,7 @@ import {
 } from '@/components/base/drawer';
 import { X } from '@phosphor-icons/react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { MemberItem } from './memberItem';
+import { MemberItem, MemberEmpty } from './memberItem';
 import { IMemberItem } from './memberManagement';
 import { useSearchUsers } from '@/hooks/useSearchUsers';
 import type { SearchUser } from '@/hooks/useSearchUsers';
@@ -193,9 +193,7 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
                 </div>
               ))
             ) : (
-              <div className="flex flex-col items-center justify-center w-full h-[40px]">
-                <p className="text-white/60 text-base">No members found</p>
-              </div>
+              <MemberEmpty />
             )}
           </div>
 

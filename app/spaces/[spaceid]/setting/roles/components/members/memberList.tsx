@@ -103,7 +103,7 @@ export const MemberList: React.FC<MemberListProps> = ({
             </div>
           ))
         ) : (
-          <MemberEmpty />
+          <MemberEmpty description={'There are no members with this role yet. Add members to assign this role.'} />
         )}
       </div>
 
