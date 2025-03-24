@@ -235,7 +235,7 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
 
           <div
             className={cn(
-              'flex flex-col w-full gap-[4px]',
+              'flex flex-col w-full gap-[4px] h-[200px] overflow-y-auto',
               isMobile && 'max-h-[40vh] overflow-y-auto',
             )}
           >
@@ -277,7 +277,6 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
                         avatarUrl={member.avatar || '/user/avatar_p.png'}
                         name={member.name}
                         address={member.address}
-                        showGreenColor={isExistingMember}
                       />
                     </Checkbox>
                   </div>
