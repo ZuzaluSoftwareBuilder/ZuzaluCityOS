@@ -7,12 +7,14 @@ import {
 import {
   Avatar,
   Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
 } from '@heroui/react';
+import { 
+  Modal, 
+  ModalContent, 
+  ModalBody,
+  ModalFooter,
+  CommonModalHeader 
+} from '@/components/base/modal';
 import { X } from '@phosphor-icons/react';
 import { RolePermission } from '@/types';
 import { IMemberItem } from './memberManagement';
@@ -111,45 +113,17 @@ export const MemberList: React.FC<MemberListProps> = ({
         placement="center"
         isOpen={open}
         onClose={isRemovingMember ? undefined : handleCancelRemove}
-        classNames={{
-          base: 'bg-[rgba(52,52,52,0.6)] border-[rgba(255,255,255,0.1)] border-[2px] backdrop-blur-[20px] transition-all duration-200',
-          wrapper: 'bg-black/40 transition-opacity duration-300',
-        }}
-        hideCloseButton={true}
         isDismissable={false}
-        motionProps={{
-          variants: {
-            enter: {
-              opacity: 1,
-              scale: 1,
-              transition: { duration: 0.3, ease: 'easeOut' },
-            },
-            exit: {
-              opacity: 0,
-              scale: 0.95,
-              transition: { duration: 0.2, ease: 'easeIn' },
-            },
-          },
-        }}
       >
         <ModalContent>
-          <ModalHeader className="flex justify-between items-center h-[60px] pl-[20px] pr-[10px]">
-            <h3 className="text-white font-bold text-base">
-              Remove Member From Role?
-            </h3>
-            <Button
-              isIconOnly
-              variant="light"
-              className="min-w-0 px-0"
-              onPress={handleCancelRemove}
-              disabled={isRemovingMember}
-            >
-              <X size={20} className="text-white opacity-50" />
-            </Button>
-          </ModalHeader>
+          <CommonModalHeader
+            title="Remove Member From Role?"
+            onClose={handleCancelRemove}
+            isDisabled={isRemovingMember}
+          />
           <ModalBody className="p-[0_20px] gap-5">
             <p className="text-white/70 text-sm">
-              Remove following member from {currentRole?.role.name}
+              Remove following member from <strong>{currentRole?.role.name}</strong>
             </p>
             {memberToRemove && (
               <div className="flex items-center justify-center w-full gap-2.5 py-2.5 border border-[rgba(255,255,255,0.1)] rounded-lg">

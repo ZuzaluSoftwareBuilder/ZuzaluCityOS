@@ -27,6 +27,7 @@ import {
 } from '@heroui/react';
 import { usePathname } from 'next/navigation';
 import { useMediaQuery } from '@mui/material';
+import NewAuthPrompt from '@/app/components/auth/NewAuthPrompt';
 
 const queryClient = new QueryClient();
 
@@ -90,7 +91,7 @@ function RootLayout({
                                   }}
                                 />
                                 {!shouldHideHeader && <Header />}
-                                {isClient && <AuthPrompt />}
+                                {isClient && <NewAuthPrompt />}
                                 <GlobalDialog />
                                 {isClient && ceramicDown && (
                                   <Dialog
