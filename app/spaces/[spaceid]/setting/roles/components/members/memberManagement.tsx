@@ -127,7 +127,6 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
           title: 'Add Member Success',
           description: `Member added to ${roleName} role`,
           color: 'success',
-          classNames: { base: 'z-[1500]' },
         });
         closeAddMemberDrawer();
       } catch (error) {
@@ -136,7 +135,6 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
           title: 'Add member failed',
           description: error instanceof Error ? error.message : 'unknown error',
           color: 'danger',
-          classNames: { base: 'z-[1500]' },
         });
       }
     },
@@ -161,7 +159,6 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
           title: 'Remove Member Success',
           description: `Member removed from ${roleName} role`,
           color: 'success',
-          classNames: { base: 'z-[1500]' },
         });
       } catch (error) {
         console.error('remove member error:', error);
@@ -169,7 +166,6 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
           title: 'Remove Member Failed',
           description: error instanceof Error ? error.message : 'unknown error',
           color: 'danger',
-          classNames: { base: 'z-[1500]' },
         });
       }
     },

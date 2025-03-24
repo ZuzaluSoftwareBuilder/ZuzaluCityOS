@@ -21,7 +21,10 @@ import { DialogProvider } from '@/components/dialog/DialogContext';
 import { GlobalDialog } from '@/components/dialog/GlobalDialog';
 import { ToastProvider } from '@/components/toast/ToastContext';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import { HeroUIProvider, ToastProvider as HeroToastProvider } from '@heroui/react';
+import {
+  HeroUIProvider,
+  ToastProvider as HeroToastProvider,
+} from '@heroui/react';
 import { usePathname } from 'next/navigation';
 import { useMediaQuery } from '@mui/material';
 
@@ -38,7 +41,7 @@ function RootLayout({
 
   const pathname = usePathname();
   const isMobileAndTablet = useMediaQuery('(max-width: 1199px)');
-  const isSpacePage = pathname?.startsWith('/spaces/')
+  const isSpacePage = pathname?.startsWith('/spaces/');
   const shouldHideHeader = isMobileAndTablet && isSpacePage;
 
   useEffect(() => {
@@ -73,7 +76,19 @@ function RootLayout({
                             <ZupassProvider>
                               <AppContextProvider>
                                 <ReactQueryDevtools initialIsOpen={false} />
-                                <HeroToastProvider placement={'bottom-center'} />
+                                <HeroToastProvider
+                                  placement={'bottom-left'}
+                                  toastOffset={20}
+                                  toastProps={{
+                                    classNames: {
+                                      base: 'max-w-[350px]',
+                                    },
+                                    variant: "flat"
+                                  }}
+                                  regionProps={{
+                                    classNames: { base: 'z-[1500]' },
+                                  }}
+                                />
                                 {!shouldHideHeader && <Header />}
                                 {isClient && <AuthPrompt />}
                                 <GlobalDialog />
