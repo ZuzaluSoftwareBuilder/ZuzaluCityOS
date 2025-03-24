@@ -101,7 +101,7 @@ export const DAppDetailDrawer = ({ children }: PropsWithChildren) => {
   );
 };
 
-DAppDetailDrawer.Disclaimer = memo(() => {
+DAppDetailDrawer.Disclaimer = memo(function Disclaimer() {
   return (
     <div
       className={clsx([
@@ -121,32 +121,34 @@ DAppDetailDrawer.Disclaimer = memo(() => {
   );
 });
 
-DAppDetailDrawer.BasicInfo = memo(
-  (props: { bannerUrl?: string; appName?: string; tagline?: string } = {}) => {
-    const { bannerUrl, appName, tagline } = props;
-    return (
-      <div className="flex gap-2.5 items-center">
-        <div className={clsx(['rounded-[10px]', 'w-[60px] h-[60px]'])}>
-          <Image
-            alt={appName}
-            src={bannerUrl}
-            className={clsx(['rounded-[10px]', 'w-[60px] h-[60px]'])}
-          />
-        </div>
-        <div className="flex flex-col gap-[5px] font-inter">
-          <span className="text-lg font-bold leading-[140%]">
-            {appName ?? '-'}
-          </span>
-          <span className="text-[13px] font-normal leading-[140%] opacity-80 tracking-[0.01em]">
-            {tagline ?? '-'}
-          </span>
-        </div>
+DAppDetailDrawer.BasicInfo = memo(function BasicInfo(
+  props: { bannerUrl?: string; appName?: string; tagline?: string } = {},
+) {
+  const { bannerUrl, appName, tagline } = props;
+  return (
+    <div className="flex gap-2.5 items-center">
+      <div className={clsx(['rounded-[10px]', 'w-[60px] h-[60px]'])}>
+        <Image
+          alt={appName}
+          src={bannerUrl}
+          className={clsx(['rounded-[10px]', 'w-[60px] h-[60px]'])}
+        />
       </div>
-    );
-  },
-);
+      <div className="flex flex-col gap-[5px] font-inter">
+        <span className="text-lg font-bold leading-[140%]">
+          {appName ?? '-'}
+        </span>
+        <span className="text-[13px] font-normal leading-[140%] opacity-80 tracking-[0.01em]">
+          {tagline ?? '-'}
+        </span>
+      </div>
+    </div>
+  );
+});
 
-DAppDetailDrawer.Categories = memo((props: { categories?: string }) => {
+DAppDetailDrawer.Categories = memo(function Categories(props: {
+  categories?: string;
+}) {
   const { categories = '' } = props;
   const categoriesArray = categories.split(',');
   return (
@@ -166,7 +168,9 @@ DAppDetailDrawer.Categories = memo((props: { categories?: string }) => {
   );
 });
 
-DAppDetailDrawer.Developer = memo((props: { developer?: string }) => {
+DAppDetailDrawer.Developer = memo(function Developer(props: {
+  developer?: string;
+}) {
   const { developer = '' } = props;
   return (
     <div className="flex gap-2.5 items-center font-inter text-[13px] leading-[140%] font-normal tracking-[0.01em]">
@@ -176,11 +180,11 @@ DAppDetailDrawer.Developer = memo((props: { developer?: string }) => {
   );
 });
 
-DAppDetailDrawer.InstallArea = (props: {
+DAppDetailDrawer.InstallArea = function InstallArea(props: {
   appId?: string;
   nativeAppName?: string;
   spaceId: string;
-}) => {
+}) {
   const { appId, nativeAppName, spaceId } = props;
   const idOrNativeAppName = appId ?? nativeAppName;
   const [loading, setLoading] = useState(false);
@@ -222,7 +226,7 @@ DAppDetailDrawer.InstallArea = (props: {
         isDisabled={
           !idOrNativeAppName || !spaceId || isInstalled(idOrNativeAppName)
         }
-        startContent={<InstallIcon />}
+        startContent={!loading && !installedDataFetching && <InstallIcon />}
         onClick={handleInstall}
       >
         {idOrNativeAppName && isInstalled(idOrNativeAppName)
@@ -233,7 +237,9 @@ DAppDetailDrawer.InstallArea = (props: {
   );
 };
 
-DAppDetailDrawer.Description = memo((props: { description?: string }) => {
+DAppDetailDrawer.Description = memo(function Description(props: {
+  description?: string;
+}) {
   const { description = '' } = props;
   return (
     <div className="flex flex-col gap-2.5">
@@ -247,51 +253,49 @@ DAppDetailDrawer.Description = memo((props: { description?: string }) => {
   );
 });
 
-DAppDetailDrawer.Status = memo(
-  (
-    props: Partial<Pick<Dapp, 'devStatus' | 'openSource' | 'repositoryUrl'>>,
-  ) => {
-    const items = [
-      { label: 'Status', value: props.devStatus },
-      {
-        label: 'Open Source Status',
-        value: props.openSource ? 'Open Source' : 'Closed Source',
-      },
-      {
-        label: 'Repository Link',
-        value: props.repositoryUrl ? (
-          <a
-            href={props.repositoryUrl}
-            target="_blank"
-            className="text-[13px] leading-[140%] opacity-80 underline block break-all"
+DAppDetailDrawer.Status = memo(function Statuss(
+  props: Partial<Pick<Dapp, 'devStatus' | 'openSource' | 'repositoryUrl'>>,
+) {
+  const items = [
+    { label: 'Status', value: props.devStatus },
+    {
+      label: 'Open Source Status',
+      value: props.openSource ? 'Open Source' : 'Closed Source',
+    },
+    {
+      label: 'Repository Link',
+      value: props.repositoryUrl ? (
+        <a
+          href={props.repositoryUrl}
+          target="_blank"
+          className="text-[13px] leading-[140%] opacity-80 underline block break-all"
+          style={{ textAlign: 'right' }}
+        >
+          {props.repositoryUrl}
+        </a>
+      ) : (
+        '-'
+      ),
+    },
+  ];
+  return (
+    <div className="flex flex-col w-full gap-2.5">
+      {items.map((item) => (
+        <div
+          key={item.label}
+          className="flex justify-between gap-4 font-inter text-[13px] leading-[140%] font-normal tracking-[0.01em]"
+        >
+          <span className="opacity-50 whitespace-nowrap">{item.label}:</span>
+          <span
+            className="opacity-80 inline-block flex-1"
             style={{ textAlign: 'right' }}
           >
-            {props.repositoryUrl}
-          </a>
-        ) : (
-          '-'
-        ),
-      },
-    ];
-    return (
-      <div className="flex flex-col w-full gap-2.5">
-        {items.map((item) => (
-          <div
-            key={item.label}
-            className="flex justify-between gap-4 font-inter text-[13px] leading-[140%] font-normal tracking-[0.01em]"
-          >
-            <span className="opacity-50 whitespace-nowrap">{item.label}:</span>
-            <span
-              className="opacity-80 inline-block flex-1"
-              style={{ textAlign: 'right' }}
-            >
-              {item.value}
-            </span>
-          </div>
-        ))}
-      </div>
-    );
-  },
-);
+            {item.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+});
 
 export default DAppDetailDrawer;

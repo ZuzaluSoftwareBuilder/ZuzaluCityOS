@@ -164,7 +164,7 @@ const AppItem = (props: Props) => {
         <Button
           size="sm"
           color="functional"
-          startContent={<InstallIcon />}
+          startContent={!loading && !installedDataFetching && <InstallIcon />}
           onClick={handleInstall}
           isDisabled={isInstalled(idOrNativeAppName)}
           isLoading={loading || installedDataFetching}
@@ -176,20 +176,24 @@ const AppItem = (props: Props) => {
   );
 };
 
-AppItem.Skeleton = memo(() => (
-  <div className={clsx(['flex p-[10px]', 'gap-5', 'mobile:gap-[10px]'])}>
-    <Skeleton
-      className={clsx([
-        'rounded-[10px] w-[60px] h-[60px]',
-        'mobile:w-[40px] mobile:h-[40px]',
-      ])}
-    />
-    <div className={clsx(['flex flex-col', 'gap-[10px]', 'mobile:gap-[6px]'])}>
-      <Skeleton className="rounded-md w-10 h-5" />
-      <Skeleton className="rounded-md w-16 h-4" />
-      <Skeleton className="rounded-md w-32 h-[18px]" />
+AppItem.Skeleton = memo(function AppItemSkeleton() {
+  return (
+    <div className={clsx(['flex p-[10px]', 'gap-5', 'mobile:gap-[10px]'])}>
+      <Skeleton
+        className={clsx([
+          'rounded-[10px] w-[60px] h-[60px]',
+          'mobile:w-[40px] mobile:h-[40px]',
+        ])}
+      />
+      <div
+        className={clsx(['flex flex-col', 'gap-[10px]', 'mobile:gap-[6px]'])}
+      >
+        <Skeleton className="rounded-md w-10 h-5" />
+        <Skeleton className="rounded-md w-16 h-4" />
+        <Skeleton className="rounded-md w-32 h-[18px]" />
+      </div>
     </div>
-  </div>
-));
+  );
+});
 
 export default AppItem;

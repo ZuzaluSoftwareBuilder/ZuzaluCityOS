@@ -143,6 +143,7 @@ export default function ExploreAppsPage() {
               )}
             >
               {CATEGORIES.map((item, idx, arr) => {
+                // eslint-disable-next-line react-hooks/rules-of-hooks
                 const { promise: appsPromise } = useQuery({
                   queryKey: ['apps', item.hash],
                   queryFn: item.getApps,
@@ -190,6 +191,8 @@ function AppList(props: { appsPromise: Promise<Dapp[] | NativeDApp[]> }) {
   );
 }
 
-AppList.Skeleton = memo(() =>
-  Array.from({ length: 3 }).map((_, index) => <AppItem.Skeleton key={index} />),
-);
+AppList.Skeleton = memo(function AppListSkeleton() {
+  return Array.from({ length: 3 }).map((_, index) => (
+    <AppItem.Skeleton key={index} />
+  ));
+});
