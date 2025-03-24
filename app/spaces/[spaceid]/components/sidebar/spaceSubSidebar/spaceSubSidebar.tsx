@@ -17,6 +17,7 @@ import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSid
 import { useQuery } from '@tanstack/react-query';
 import { TableIcon } from '@/components/icons';
 import { cn } from '@heroui/react';
+import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 
 interface MainSubSidebarProps {
   needBlur?: boolean;
@@ -30,10 +31,9 @@ const SpaceSubSidebar = ({
   const pathname = usePathname();
   const params = useParams();
   const spaceId = params.spaceid.toString();
-  const router = useRouter();
-  const { composeClient, ceramic } = useCeramicContext();
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isMember, setIsMember] = useState(false);
+  const { composeClient } = useCeramicContext();
+
+  const { isOwner, isAdmin } = useSpacePermissions();
 
   const { data: spaceData, isLoading } = useQuery({
     queryKey: ['getSpaceByID', spaceId],
@@ -46,26 +46,6 @@ const SpaceSubSidebar = ({
       return data?.data?.node as Space;
     },
   });
-
-  useEffect(() => {
-    if (spaceData) {
-      const admins =
-        spaceData?.admins?.map((admin) => admin.id.toLowerCase()) || [];
-      const superAdmins =
-        spaceData?.superAdmin?.map((superAdmin) =>
-          superAdmin.id.toLowerCase(),
-        ) || [];
-      const members =
-        spaceData?.members?.map((member) => member.id.toLowerCase()) || [];
-      const userDID = ceramic?.did?.parent.toString().toLowerCase() || '';
-      if (admins.includes(userDID) || superAdmins.includes(userDID)) {
-        setIsAdmin(true);
-      }
-      if (members.includes(userDID)) {
-        setIsMember(true);
-      }
-    }
-  }, [ceramic?.did?.parent, spaceData]);
 
   const isRouteActive = useCallback(
     (route: string) => {
@@ -94,7 +74,7 @@ const SpaceSubSidebar = ({
       )}
     >
       <SidebarHeader
-        isAdmin={isAdmin}
+        isAdmin={isOwner || isAdmin}
         isLoading={isLoading}
         space={spaceData}
         onCloseDrawer={onCloseDrawer}
@@ -117,7 +97,7 @@ const SpaceSubSidebar = ({
           height={36}
           onClick={onCloseDrawer}
         />
-        {isAdmin && (
+        {isOwner || isAdmin && (
           <TabItem
             label="Manage Events"
             icon={<TableIcon size={20} />}

@@ -8,7 +8,7 @@ import {
 } from '@heroui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Space } from '@/types';
-import { HTMLAttributes, ReactNode, useMemo } from 'react';
+import { HTMLAttributes, ReactNode, useCallback, useMemo } from 'react';
 import {
   UserPlusIcon,
   Cog8ToothIcon,
@@ -54,6 +54,22 @@ const SidebarHeader = ({
   const iconClass = `w-5 h-5 text-white opacity-50 group-hover:opacity-100 group-focus:opacity-100`;
   const router = useRouter();
 
+  const handleMenuClick = useCallback(
+    (
+      menu:
+        | 'InvitePeople'
+        | 'SpaceSettings'
+        | 'PrivacySettings'
+        | 'NotificationSettings',
+    ) => {
+      if (menu === 'SpaceSettings') {
+        router.push(`/spaces/${space?.id}/setting`);
+      }
+      if (onCloseDrawer) onCloseDrawer();
+    },
+    [router, space?.id, onCloseDrawer],
+  );
+
   const menuItems = useMemo(() => {
     return (
       <>
@@ -70,10 +86,7 @@ const SidebarHeader = ({
         <DropdownItem
           key="SpaceSettings"
           className={dropdownItemClass}
-          onPress={() => {
-            router.push(`/spaces/${space?.id}/edit`);
-            if (onCloseDrawer) onCloseDrawer();
-          }}
+          onPress={() => handleMenuClick('SpaceSettings')}
         >
           <Item
             name="Space Settings"
@@ -102,7 +115,7 @@ const SidebarHeader = ({
         </DropdownItem>
       </>
     );
-  }, [onCloseDrawer, router, space?.id]);
+  }, [dropdownItemClass, handleMenuClick, iconClass]);
 
   const dropdownStyles = {
     willChange: 'opacity, transform',

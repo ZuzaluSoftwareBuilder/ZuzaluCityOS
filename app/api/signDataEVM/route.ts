@@ -10,6 +10,7 @@ async function signDataOnServer(signatureData: Buffer): Promise<Buffer> {
   const key = process.env.PRIVATE_KEY_EVM;
   if (!key) throw new Error('Private key is undefined!');
   const signer = new TypedEthereumSigner(key);
+  // @ts-ignore
   return Buffer.from(await signer.sign(signatureData));
 }
 

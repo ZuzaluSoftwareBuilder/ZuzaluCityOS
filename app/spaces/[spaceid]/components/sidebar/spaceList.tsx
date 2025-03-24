@@ -9,6 +9,8 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Image, Tooltip, Skeleton } from '@heroui/react';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import { GET_USER_ROLES_QUERY } from '@/services/graphql/role';
 
 const SpaceItemSkeleton = () => {
   return (
@@ -26,7 +28,8 @@ const SpaceItemSkeleton = () => {
 
 const SpaceList = () => {
   const [selected, setSelected] = useState('Spaces');
-  const { isAuthenticated, composeClient, ceramic } = useCeramicContext();
+  const { isAuthenticated, profile, composeClient, ceramic } =
+    useCeramicContext();
   const [isClientReady, setIsClientReady] = useState(false);
 
   useEffect(() => {
@@ -57,17 +60,40 @@ const SpaceList = () => {
         throw error;
       }
     },
-    enabled: isAuthenticated,
+    enabled: !!profile && isAuthenticated,
   });
+
+  const { data: userRoles } = useGraphQL(
+    ['GET_USER_ROLES_QUERY', userDID],
+    GET_USER_ROLES_QUERY,
+    {
+      userId: userDID,
+    },
+    {
+      select: ({ data }) => {
+        return (
+          data?.zucityUserRolesIndex?.edges?.map(
+            (edge) => edge?.node?.resourceId,
+          ) || []
+        );
+      },
+    },
+  );
 
   const userSpaces = useMemo(() => {
     if (!spacesData || !userDID) return [];
 
-    return spacesData.filter((space) => isUserAssociated(space, userDID));
-  }, [spacesData, userDID]);
+    return spacesData
+      .filter((space) => isUserAssociated(space, userDID))
+      .concat(
+        spacesData.filter((space) => userRoles?.includes(space.id.toString())),
+      );
+  }, [spacesData, userDID, userRoles]);
 
   const shouldShowSkeleton =
-    isClientReady && (isSpacesLoading || !isFetched || !isAuthenticated);
+    isClientReady &&
+    (isSpacesLoading || !isFetched || !isAuthenticated) &&
+    !!profile;
 
   return (
     <div className="pt-2.5 w-full h-full overflow-y-auto flex flex-col items-center gap-2.5">
@@ -89,7 +115,7 @@ export default SpaceList;
 
 const SpaceItem = ({ space }: { space: Space }) => {
   const pathname = usePathname();
-  const isActive = pathname.includes(`/spaces/${space.id}`);
+  const isActive = pathname?.includes(`/spaces/${space.id}`);
 
   return (
     <Tooltip

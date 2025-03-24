@@ -214,6 +214,7 @@ export interface Space {
   }[];
   superAdmin?: {
     id: string;
+    zucityProfile: Profile;
   }[];
   customLinks?: Link[];
   events: {
@@ -607,4 +608,58 @@ export interface Dapp {
       id: string;
     };
   };
+}
+
+export interface Permission {
+  id: string;
+  name: string;
+  resource: string;
+}
+
+export enum PermissionName {
+  MANAGE_ADMIN_ROLE = 'manage_admin_role',
+  MANAGE_MEMBER_ROLE = 'manage_member_role',
+  CREATE_EVENTS = 'create_events',
+  MANAGE_PROFILE = 'manage_profile',
+  VIEW_EVENTS = 'view_events',
+  INVITE_USERS = 'invite_users',
+  VIEW_LOGS = 'view_logs',
+  VIEW_ANALYTICS = 'view_analytics',
+  MANAGE_APPS = 'manage_apps',
+  VIEW_APPS = 'view_apps',
+}
+
+export interface Role {
+  id: string;
+  name: string;
+  level: string;
+  is_vanity: boolean;
+  resource_id: string;
+}
+
+export interface RolePermission {
+  id: string;
+  role: Role;
+  permission_ids: string[];
+}
+
+export interface UserRole {
+  id: string;
+  roleId: string;
+  userId: {
+    zucityProfile: Profile;
+  };
+  customAttributes: TBD[];
+}
+
+export interface UserRoleData {
+  zucityUserRolesIndex: {
+    edges: { node: UserRole }[];
+  };
+}
+
+export interface IProfile {
+  zucityProfileIndex: {
+    edges: { node: Profile }[];
+  }
 }

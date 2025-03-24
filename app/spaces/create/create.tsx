@@ -29,7 +29,12 @@ import { createUrl } from '@/services/url';
 
 import dynamic from 'next/dynamic';
 import FormUploader from '@/components/form/FormUploader';
-import dayjs from 'dayjs';
+import dayjs from '@/utils/dayjs';
+import { supabase } from '@/utils/supabase/client';
+import { uint8ArrayToBase64 } from '@/utils';
+import { getResolver } from 'key-did-resolver';
+import { Ed25519Provider } from 'key-did-provider-ed25519';
+import { DID } from 'dids';
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,
 });
@@ -209,6 +214,23 @@ const Create = () => {
         result.data?.createZucitySpace?.document?.id,
         'spaces',
       );
+      let seed = crypto.getRandomValues(new Uint8Array(32));
+      const provider = new Ed25519Provider(seed);
+      const did = new DID({ provider, resolver: getResolver() });
+      await did.authenticate();
+      //TODO: Encrypt this private key
+      const { data: spaceData, error: spaceError } = await supabase
+        .from('spaceAgent')
+        .insert({
+          agentKey: uint8ArrayToBase64(seed),
+          agentDID: did.id,
+          // @ts-ignore
+          spaceId: result.data?.createZucitySpace?.document?.id,
+        });
+
+      if (spaceError) {
+        console.error('Error creating space agent:', spaceError);
+      }
       setShowModal(true);
     } catch (err: any) {
       console.log(err);

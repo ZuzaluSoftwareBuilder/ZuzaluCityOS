@@ -1,0 +1,80 @@
+/* eslint-disable */
+import * as types from './graphql';
+
+
+
+/**
+ * Map of all GraphQL operations in the project.
+ *
+ * This map has several performance disadvantages:
+ * 1. It is not tree-shakeable, so it will include all operations in the project.
+ * 2. It is not minifiable, so the string of a GraphQL query will be multiple times inside the bundle.
+ * 3. It does not support dead code elimination, so it will add unused operations.
+ *
+ * Therefore it is highly recommended to use the babel or swc plugin for production.
+ * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
+ */
+type Documents = {
+    "\n    query SearchProfileByExactUsername($username: String!) {\n        zucityProfileIndex(\n            first: 20,\n            filters: { where: { username: { equalTo: $username } } }\n        ) {\n            edges {\n                node {\n                    id\n                    username\n                    avatar\n                    author {\n                        id\n                    }\n                }\n            }\n        }\n    }\n": typeof types.SearchProfileByExactUsernameDocument,
+    "\n  query GetProfileByDID($did: ID!) {\n    node(id: $did) {\n      ...on CeramicAccount {\n        zucityProfile {\n          id\n          username\n          avatar\n          author {\n            id\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetProfileByDidDocument,
+    "\n  query GetMembers($source: String, $resourceId: String) {\n    zucityUserRolesIndex(\n      first: 1000\n      filters: {\n        where: {\n          source: { equalTo: $source }\n          resourceId: { equalTo: $resourceId }\n        }\n      }\n    ) {\n      edges {\n        node {\n          roleId\n          customAttributes {\n            tbd\n          }\n          userId {\n            zucityProfile {\n              avatar\n              username\n              author {\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetMembersDocument,
+    "\n  query GetUserRole($userId: String, $resourceId: String, $resource: String) {\n    zucityUserRolesIndex(\n      first: 1\n      filters: {\n        where: {\n          userId: { equalTo: $userId }\n          resourceId: { equalTo: $resourceId }\n          source: { equalTo: $resource }\n        }\n      }\n    ) {\n      edges {\n        node {\n          id\n          roleId\n          userId {\n            zucityProfile {\n              avatar\n              author {\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetUserRoleDocument,
+    "\n  mutation CreateZucityUserRoles($input: CreateZucityUserRolesInput!) {\n    createZucityUserRoles(input: $input) {\n      document {\n        userId {\n          id\n        }\n        created_at\n        updated_at\n        resourceId\n        source\n        roleId\n      }\n    }\n  }\n": typeof types.CreateZucityUserRolesDocument,
+    "\n  mutation enableIndexingZucityUserRoles(\n    $input: EnableIndexingZucityUserRolesInput!\n  ) {\n    enableIndexingZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n": typeof types.EnableIndexingZucityUserRolesDocument,
+    "\n  mutation UpdateZucityUserRoles($input: UpdateZucityUserRolesInput!) {\n    updateZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n": typeof types.UpdateZucityUserRolesDocument,
+    "\n  query GetUserRoles($userId: String) {\n    zucityUserRolesIndex(\n      first: 1000\n      filters: { where: { userId: { equalTo: $userId } } }\n    ) {\n      edges {\n        node {\n          roleId\n          resourceId\n          source\n          userId {\n            id\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetUserRolesDocument,
+    "\n  query GetSpace($id: ID!) {\n    node(id: $id) {\n      ... on ZucitySpace {\n        id\n        avatar\n        banner\n        description\n        name\n        profileId\n        tagline\n        website\n        twitter\n        telegram\n        nostr\n        lens\n        github\n        discord\n        ens\n        customAttributes {\n          tbd\n        }\n        admins {\n          id\n        }\n        superAdmin {\n          id\n          zucityProfile {\n            id\n            avatar\n            author {\n              id\n            }\n            username\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetSpaceDocument,
+};
+const documents: Documents = {
+    "\n    query SearchProfileByExactUsername($username: String!) {\n        zucityProfileIndex(\n            first: 20,\n            filters: { where: { username: { equalTo: $username } } }\n        ) {\n            edges {\n                node {\n                    id\n                    username\n                    avatar\n                    author {\n                        id\n                    }\n                }\n            }\n        }\n    }\n": types.SearchProfileByExactUsernameDocument,
+    "\n  query GetProfileByDID($did: ID!) {\n    node(id: $did) {\n      ...on CeramicAccount {\n        zucityProfile {\n          id\n          username\n          avatar\n          author {\n            id\n          }\n        }\n      }\n    }\n  }\n": types.GetProfileByDidDocument,
+    "\n  query GetMembers($source: String, $resourceId: String) {\n    zucityUserRolesIndex(\n      first: 1000\n      filters: {\n        where: {\n          source: { equalTo: $source }\n          resourceId: { equalTo: $resourceId }\n        }\n      }\n    ) {\n      edges {\n        node {\n          roleId\n          customAttributes {\n            tbd\n          }\n          userId {\n            zucityProfile {\n              avatar\n              username\n              author {\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n": types.GetMembersDocument,
+    "\n  query GetUserRole($userId: String, $resourceId: String, $resource: String) {\n    zucityUserRolesIndex(\n      first: 1\n      filters: {\n        where: {\n          userId: { equalTo: $userId }\n          resourceId: { equalTo: $resourceId }\n          source: { equalTo: $resource }\n        }\n      }\n    ) {\n      edges {\n        node {\n          id\n          roleId\n          userId {\n            zucityProfile {\n              avatar\n              author {\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n": types.GetUserRoleDocument,
+    "\n  mutation CreateZucityUserRoles($input: CreateZucityUserRolesInput!) {\n    createZucityUserRoles(input: $input) {\n      document {\n        userId {\n          id\n        }\n        created_at\n        updated_at\n        resourceId\n        source\n        roleId\n      }\n    }\n  }\n": types.CreateZucityUserRolesDocument,
+    "\n  mutation enableIndexingZucityUserRoles(\n    $input: EnableIndexingZucityUserRolesInput!\n  ) {\n    enableIndexingZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n": types.EnableIndexingZucityUserRolesDocument,
+    "\n  mutation UpdateZucityUserRoles($input: UpdateZucityUserRolesInput!) {\n    updateZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n": types.UpdateZucityUserRolesDocument,
+    "\n  query GetUserRoles($userId: String) {\n    zucityUserRolesIndex(\n      first: 1000\n      filters: { where: { userId: { equalTo: $userId } } }\n    ) {\n      edges {\n        node {\n          roleId\n          resourceId\n          source\n          userId {\n            id\n          }\n        }\n      }\n    }\n  }\n": types.GetUserRolesDocument,
+    "\n  query GetSpace($id: ID!) {\n    node(id: $id) {\n      ... on ZucitySpace {\n        id\n        avatar\n        banner\n        description\n        name\n        profileId\n        tagline\n        website\n        twitter\n        telegram\n        nostr\n        lens\n        github\n        discord\n        ens\n        customAttributes {\n          tbd\n        }\n        admins {\n          id\n        }\n        superAdmin {\n          id\n          zucityProfile {\n            id\n            avatar\n            author {\n              id\n            }\n            username\n          }\n        }\n      }\n    }\n  }\n": types.GetSpaceDocument,
+};
+
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query SearchProfileByExactUsername($username: String!) {\n        zucityProfileIndex(\n            first: 20,\n            filters: { where: { username: { equalTo: $username } } }\n        ) {\n            edges {\n                node {\n                    id\n                    username\n                    avatar\n                    author {\n                        id\n                    }\n                }\n            }\n        }\n    }\n"): typeof import('./graphql').SearchProfileByExactUsernameDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetProfileByDID($did: ID!) {\n    node(id: $did) {\n      ...on CeramicAccount {\n        zucityProfile {\n          id\n          username\n          avatar\n          author {\n            id\n          }\n        }\n      }\n    }\n  }\n"): typeof import('./graphql').GetProfileByDidDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetMembers($source: String, $resourceId: String) {\n    zucityUserRolesIndex(\n      first: 1000\n      filters: {\n        where: {\n          source: { equalTo: $source }\n          resourceId: { equalTo: $resourceId }\n        }\n      }\n    ) {\n      edges {\n        node {\n          roleId\n          customAttributes {\n            tbd\n          }\n          userId {\n            zucityProfile {\n              avatar\n              username\n              author {\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n"): typeof import('./graphql').GetMembersDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetUserRole($userId: String, $resourceId: String, $resource: String) {\n    zucityUserRolesIndex(\n      first: 1\n      filters: {\n        where: {\n          userId: { equalTo: $userId }\n          resourceId: { equalTo: $resourceId }\n          source: { equalTo: $resource }\n        }\n      }\n    ) {\n      edges {\n        node {\n          id\n          roleId\n          userId {\n            zucityProfile {\n              avatar\n              author {\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n"): typeof import('./graphql').GetUserRoleDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateZucityUserRoles($input: CreateZucityUserRolesInput!) {\n    createZucityUserRoles(input: $input) {\n      document {\n        userId {\n          id\n        }\n        created_at\n        updated_at\n        resourceId\n        source\n        roleId\n      }\n    }\n  }\n"): typeof import('./graphql').CreateZucityUserRolesDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation enableIndexingZucityUserRoles(\n    $input: EnableIndexingZucityUserRolesInput!\n  ) {\n    enableIndexingZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n"): typeof import('./graphql').EnableIndexingZucityUserRolesDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateZucityUserRoles($input: UpdateZucityUserRolesInput!) {\n    updateZucityUserRoles(input: $input) {\n      document {\n        id\n      }\n    }\n  }\n"): typeof import('./graphql').UpdateZucityUserRolesDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetUserRoles($userId: String) {\n    zucityUserRolesIndex(\n      first: 1000\n      filters: { where: { userId: { equalTo: $userId } } }\n    ) {\n      edges {\n        node {\n          roleId\n          resourceId\n          source\n          userId {\n            id\n          }\n        }\n      }\n    }\n  }\n"): typeof import('./graphql').GetUserRolesDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetSpace($id: ID!) {\n    node(id: $id) {\n      ... on ZucitySpace {\n        id\n        avatar\n        banner\n        description\n        name\n        profileId\n        tagline\n        website\n        twitter\n        telegram\n        nostr\n        lens\n        github\n        discord\n        ens\n        customAttributes {\n          tbd\n        }\n        admins {\n          id\n        }\n        superAdmin {\n          id\n          zucityProfile {\n            id\n            avatar\n            author {\n              id\n            }\n            username\n          }\n        }\n      }\n    }\n  }\n"): typeof import('./graphql').GetSpaceDocument;
+
+
+export function graphql(source: string) {
+  return (documents as any)[source] ?? {};
+}

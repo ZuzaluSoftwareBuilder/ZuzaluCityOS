@@ -21,24 +21,24 @@ export const getSettingSections = (spaceId: string): SettingSection[] => {
         {
           id: 'Overview',
           label: 'Community Overview',
-          path: `/spaces/${spaceId}/edit`,
+          path: `/spaces/${spaceId}/setting`,
         },
         {
           id: 'Roles',
           label: 'Roles',
-          path: `/spaces/${spaceId}/edit/roles`,
-          locked: true,
+          path: `/spaces/${spaceId}/setting/roles`,
+          locked: false,
         },
         {
           id: 'AccessManagement',
           label: 'Access Management',
-          path: `/spaces/${spaceId}/edit/access`,
+          path: `/spaces/${spaceId}/setting/access`,
           locked: true,
         },
         {
           id: 'Event',
           label: 'Event',
-          path: `/spaces/${spaceId}/edit/event`,
+          path: `/spaces/${spaceId}/setting/event`,
           locked: true,
         },
       ],
@@ -50,13 +50,13 @@ export const getSettingSections = (spaceId: string): SettingSection[] => {
         {
           id: 'ExploreApps',
           label: 'Explore Apps',
-          path: `/spaces/${spaceId}/edit/apps`,
+          path: `/spaces/${spaceId}/setting/apps`,
           locked: true,
         },
         {
           id: 'ManageApps',
           label: 'Manage Apps',
-          path: `/spaces/${spaceId}/edit/manage-apps`,
+          path: `/spaces/${spaceId}/setting/manage-apps`,
           locked: true,
         },
       ],
@@ -68,16 +68,16 @@ export const getSettingSections = (spaceId: string): SettingSection[] => {
         {
           id: 'MemberList',
           label: 'Member List',
-          path: `/spaces/${spaceId}/edit/member-list`,
+          path: `/spaces/${spaceId}/setting/member-list`,
           locked: true,
         },
         {
           id: 'Invitations',
           label: 'Invitations',
-          path: `/spaces/${spaceId}/edit/invitations`,
+          path: `/spaces/${spaceId}/setting/invitations`,
           locked: true,
         },
       ],
     },
   ];
-}; 
+};
