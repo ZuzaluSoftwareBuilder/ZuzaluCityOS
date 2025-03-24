@@ -6,11 +6,9 @@ import PcSpaceSettingSidebar from './components/settingSidebar/pcSpaceSettingSid
 import MobileSpaceSettingSidebar from './components/settingSidebar/mobileSpaceSettingSidebar';
 import BackHeader from './components/backHeader';
 import { getSettingSections } from './components/settingSidebar/settingsData';
-import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
-import { useCeramicContext } from '@/context/CeramicContext';
 import { Backdrop, CircularProgress } from '@mui/material';
 import * as React from 'react';
-import { useAccount } from 'wagmi';
+import useCheckWalletConnectAndPermission from '@/hooks/useCheckWalletConnectAndPermission';
 
 const SettingLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -18,18 +16,12 @@ const SettingLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const spaceId = params?.spaceid?.toString() || '';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isOwner, isAdmin, isLoading } = useSpacePermissions();
-  const { isAuthenticated } = useCeramicContext();
-  const { isConnected, isConnecting, status } = useAccount();
 
-  // TODO: wait for optimization, extract to a hook
-  const [checkStatus, setCheckStatus] = useState({
-    walletChecked: false,
-    permissionChecked: false,
-  });
-
-  const allChecksComplete =
-    checkStatus.walletChecked && checkStatus.permissionChecked;
+  const { isAuthenticated, isOwner, isAdmin, isConnected, allChecksComplete } =
+    useCheckWalletConnectAndPermission({
+      spaceId,
+      noPermissionCallback: () => router.push('/space'),
+    });
 
   const getCurrentTitle = useMemo(() => {
     const settingSections = getSettingSections(spaceId);
@@ -43,65 +35,14 @@ const SettingLayout = ({ children }: { children: React.ReactNode }) => {
     return 'Space Settings';
   }, [pathname, spaceId]);
 
-  useEffect(() => {
-    if (typeof status !== 'undefined') {
-      if (
-        (status === 'connected' || status === 'disconnected') &&
-        !checkStatus.walletChecked
-      ) {
-        console.log('wallet status confirmed:', status);
-        setCheckStatus((prev) => ({ ...prev, walletChecked: true }));
-      }
-    } else if (!isConnecting && !checkStatus.walletChecked) {
-      console.log('wallet status confirmed:', isConnected);
-      setCheckStatus((prev) => ({ ...prev, walletChecked: true }));
-    }
-  }, [status, isConnecting, isConnected, checkStatus.walletChecked]);
+  const shouldShowLoading = useMemo(() => {
+    if (!allChecksComplete) return true;
+    if (!isConnected) return true;
+    if (isAuthenticated && !isOwner && !isAdmin) return true;
+    return false;
+  }, [allChecksComplete, isAdmin, isAuthenticated, isConnected, isOwner]);
 
-  useEffect(() => {
-    if (!isLoading && !checkStatus.permissionChecked) {
-      setCheckStatus((prev) => ({ ...prev, permissionChecked: true }));
-    }
-  }, [isLoading, isOwner, isAdmin, checkStatus.permissionChecked]);
-
-  useEffect(() => {
-    if (!allChecksComplete) {
-      return;
-    }
-
-    console.log('all checks complete');
-
-    if (!isConnected) {
-      console.log('user is not connected, redirect to home');
-      router.push(`/spaces`);
-      return;
-    }
-
-    if (isAuthenticated && !isOwner && !isAdmin) {
-      console.log(
-        'user is authenticated but not owner or admin, redirect to home',
-      );
-      router.push(`/spaces`);
-    }
-  }, [
-    allChecksComplete,
-    isConnected,
-    isAuthenticated,
-    isOwner,
-    isAdmin,
-    router,
-    spaceId,
-  ]);
-
-  if (!allChecksComplete) {
-    return (
-      <Backdrop sx={{ color: '#fff', zIndex: 1300 }} open>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-    );
-  }
-
-  if (!isConnected || (isAuthenticated && !isOwner && !isAdmin)) {
+  if (shouldShowLoading) {
     return (
       <Backdrop sx={{ color: '#fff', zIndex: 1300 }} open>
         <CircularProgress color="inherit" />
