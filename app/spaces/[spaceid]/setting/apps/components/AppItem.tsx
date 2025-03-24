@@ -1,13 +1,17 @@
 'use client';
-import React, { memo, useMemo, useState } from 'react';
-import { Image, Skeleton } from '@heroui/react';
-import { useParams } from 'next/navigation';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import clsx from 'clsx';
+import { useParams } from 'next/navigation';
+import { Image, Skeleton } from '@heroui/react';
+import { CaretLineDown, Trash } from '@phosphor-icons/react';
 
 import { Dapp } from '@/types';
 import { Button } from '@/components/base';
-import { installDApp, InstallDAppParams } from '@/services/space/apps';
-import { InstallIcon } from '@/components/icons';
+import {
+  installDApp,
+  InstallDAppParams,
+  uninstallDApp,
+} from '@/services/space/apps';
 
 import { useDAppDetailDrawer } from './DAppDetailDrawer';
 import { useInstalledAppsData } from './InstalledAppsData';
@@ -52,12 +56,18 @@ const AppItem = (props: Props) => {
   // install button logic
   const [loading, setLoading] = useState(false);
   const {
+    queryInstalledAppIndexId,
     loading: installedDataFetching,
     isInstalled,
     addInstalledApp,
+    removeInstalledApp,
   } = useInstalledAppsData();
 
-  const handleInstall = () => {
+  const currentIsInstalled = useMemo(() => {
+    return idOrNativeAppName && isInstalled(idOrNativeAppName);
+  }, [isInstalled, idOrNativeAppName]);
+
+  const handleInstall = useCallback(() => {
     if (!data) return;
     setLoading(true);
     const params: InstallDAppParams = isNativeDApp(data)
@@ -66,13 +76,41 @@ const AppItem = (props: Props) => {
     installDApp(params)
       .then((res) => {
         if (res.data.status === 'success') {
-          addInstalledApp(idOrNativeAppName);
+          addInstalledApp({
+            installedAppIndexId: res.data.data.installedAppIndexId,
+            installedAppIdOrNativeAppName: idOrNativeAppName,
+          });
         }
       })
       .finally(() => {
         setLoading(false);
       });
-  };
+  }, [data, spaceId, idOrNativeAppName, addInstalledApp]);
+
+  const handleUninstall = useCallback(() => {
+    if (!data) return;
+    const installedAppIndexId = queryInstalledAppIndexId(idOrNativeAppName);
+    if (!installedAppIndexId) return;
+    setLoading(true);
+    uninstallDApp({
+      spaceId,
+      installedAppIndexId,
+    })
+      .then((res) => {
+        if (res.data.status === 'success') {
+          removeInstalledApp(idOrNativeAppName);
+        }
+      })
+      .finally(() => setLoading(false));
+  }, [data, idOrNativeAppName, queryInstalledAppIndexId, spaceId, removeInstalledApp]);
+
+  const handleInstallOrUninstall = useCallback(() => {
+    if (currentIsInstalled) {
+      handleUninstall();
+    } else {
+      handleInstall();
+    }
+  }, [currentIsInstalled, handleInstall, handleUninstall]);
 
   return (
     <div
@@ -145,13 +183,17 @@ const AppItem = (props: Props) => {
               'font-inter font-normal align-middle tabular-nums lining-num', // text
             ])}
           >
-            <span className="opacity-50 text-[10px] leading-[120%] tracking-[0.02em]">DEVELOPER:</span>
+            <span className="opacity-50 text-[10px] leading-[120%] tracking-[0.02em]">
+              DEVELOPER:
+            </span>
             <Image
               alt={profile.username || 'Developer'}
               src={profile.avatar}
               className="rounded-full w-[16px] h-[16px]"
             />
-            <span className="opacity-60 text-[13px] leading-[140%] tracking-[0.01em]">{profile.username ?? '-'}</span>
+            <span className="opacity-60 text-[13px] leading-[140%] tracking-[0.01em]">
+              {profile.username ?? '-'}
+            </span>
           </div>
         </div>
       </div>
@@ -164,12 +206,19 @@ const AppItem = (props: Props) => {
         <Button
           size="sm"
           color="functional"
-          startContent={!loading && !installedDataFetching && <InstallIcon />}
-          onClick={handleInstall}
-          isDisabled={isInstalled(idOrNativeAppName)}
+          startContent={
+            !loading && !installedDataFetching ? (
+              currentIsInstalled ? (
+                <Trash />
+              ) : (
+                <CaretLineDown />
+              )
+            ) : null
+          }
+          onClick={handleInstallOrUninstall}
           isLoading={loading || installedDataFetching}
         >
-          {isInstalled(idOrNativeAppName) ? 'Installed' : 'Install'}
+          {currentIsInstalled ? 'Uninstall' : 'Install'}
         </Button>
       )}
     </div>

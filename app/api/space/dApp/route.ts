@@ -24,8 +24,6 @@ export const POST = withSessionValidation(async (request, sessionData) => {
         validationResult.error.format(),
       );
     }
-
-    // TODO: Validate user permissions?
     
     const { spaceId: validatedSpaceId } = validationResult.data;
     
@@ -35,11 +33,6 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Error getting private key', 500);
     }
     
-    // According to the comments, since there's no direct spaceId filter field in the schema, we can use two methods:
-    // 1. Get all applications and filter on the client side
-    // 2. Use sourceId filter (if sourceId and spaceId are the same)
-    
-    // Here we use method 2, because from the install route we see that sourceId and spaceId are the same
     const result = await executeQuery(GET_SPACE_INSTALLED_APPS, {
       filters: {
         where: {
@@ -53,7 +46,6 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Failed to query application installation status', 500);
     }
     
-    // If further filtering is needed, we can use the filterInstalledAppsBySpaceId function
     const installedApps = result.data.zucityInstalledAppIndex?.edges;
     
     return createSuccessResponse({

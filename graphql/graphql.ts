@@ -3122,13 +3122,6 @@ export type InstallDappToSpaceMutationVariables = Exact<{
 
 export type InstallDappToSpaceMutation = { __typename?: 'Mutation', createZucityInstalledApp?: { __typename?: 'CreateZucityInstalledAppPayload', document: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, nativeAppName?: string | null, installedAppId?: any | null, createdAt: any, updatedAt: any, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string } | null } } | null };
 
-export type UninstallDappFromSpaceMutationVariables = Exact<{
-  input: EnableIndexingZucityInstalledAppInput;
-}>;
-
-
-export type UninstallDappFromSpaceMutation = { __typename?: 'Mutation', enableIndexingZucityInstalledApp?: { __typename?: 'EnableIndexingZucityInstalledAppPayload', document?: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, installedAppId?: any | null, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string } | null } | null } | null };
-
 export type GetSpaceInstalledAppsQueryVariables = Exact<{
   filters?: InputMaybe<ZucityInstalledAppFiltersInput>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -3137,6 +3130,13 @@ export type GetSpaceInstalledAppsQueryVariables = Exact<{
 
 
 export type GetSpaceInstalledAppsQuery = { __typename?: 'Query', zucityInstalledAppIndex?: { __typename?: 'ZucityInstalledAppConnection', edges?: Array<{ __typename?: 'ZucityInstalledAppEdge', node?: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, nativeAppName?: string | null, installedAppId?: any | null, createdAt: any, updatedAt: any, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string, appType: string, description: string, tagline: string, bannerUrl: string, appUrl?: string | null, openSource: string, devStatus: string, developerName: string, categories: string } | null, space?: { __typename?: 'ZucitySpace', id: string, name: string } | null } | null } | null> | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } | null };
+
+export type UninstallDappFromSpaceMutationVariables = Exact<{
+  input: EnableIndexingZucityInstalledAppInput;
+}>;
+
+
+export type UninstallDappFromSpaceMutation = { __typename?: 'Mutation', enableIndexingZucityInstalledApp?: { __typename?: 'EnableIndexingZucityInstalledAppPayload', document?: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, installedAppId?: any | null, createdAt: any, updatedAt: any, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string } | null } | null } | null };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -3383,22 +3383,6 @@ export const InstallDappToSpaceDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<InstallDappToSpaceMutation, InstallDappToSpaceMutationVariables>;
-export const UninstallDappFromSpaceDocument = new TypedDocumentString(`
-    mutation UninstallDappFromSpace($input: EnableIndexingZucityInstalledAppInput!) {
-  enableIndexingZucityInstalledApp(input: $input) {
-    document {
-      id
-      sourceId
-      spaceId
-      installedAppId
-      installedApp {
-        id
-        appName
-      }
-    }
-  }
-}
-    `) as unknown as TypedDocumentString<UninstallDappFromSpaceMutation, UninstallDappFromSpaceMutationVariables>;
 export const GetSpaceInstalledAppsDocument = new TypedDocumentString(`
     query GetSpaceInstalledApps($filters: ZucityInstalledAppFiltersInput, $first: Int, $after: String) {
   zucityInstalledAppIndex(filters: $filters, first: $first, after: $after) {
@@ -3437,3 +3421,21 @@ export const GetSpaceInstalledAppsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetSpaceInstalledAppsQuery, GetSpaceInstalledAppsQueryVariables>;
+export const UninstallDappFromSpaceDocument = new TypedDocumentString(`
+    mutation UninstallDappFromSpace($input: EnableIndexingZucityInstalledAppInput!) {
+  enableIndexingZucityInstalledApp(input: $input) {
+    document {
+      id
+      sourceId
+      spaceId
+      installedAppId
+      installedApp {
+        id
+        appName
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UninstallDappFromSpaceMutation, UninstallDappFromSpaceMutationVariables>;

@@ -121,7 +121,7 @@ import { ArrowCircleRightFillIcon } from './ArrowCircleRight';
 import { CaretDoubleRightIcon } from './CaretDoubleRight';
 import { StorefrontIcon } from './Storefront';
 import { VideoIcon } from './Video';
-import { InstallIcon } from './Install';
+
 export {
   HomeIcon,
   SearchIcon,
@@ -245,6 +245,5 @@ export {
   ArrowCircleRightFillIcon,
   CaretDoubleRightIcon,
   StorefrontIcon,
-  VideoIcon,
-  InstallIcon
+  VideoIcon
 };

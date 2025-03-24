@@ -2,13 +2,14 @@ import { withSessionValidation } from '@/utils/authMiddleware';
 import { dayjs } from '@/utils/dayjs';
 import utc from 'dayjs/plugin/utc';
 import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
-import { INSTALL_DAPP_TO_SPACE } from '@/services/graphql/space';
+import { INSTALL_DAPP_TO_SPACE, GET_SPACE_INSTALLED_APPS } from '@/services/graphql/space';
 import { z } from 'zod';
 import {
   createErrorResponse,
   createSuccessResponse,
 } from '@/utils/service/response';
 import { hasRequiredPermission } from '@/utils/service/role';
+import { PermissionName } from '@/types';
 
 dayjs.extend(utc);
 
@@ -35,24 +36,73 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       );
     }
     const { spaceId, appId, nativeAppName } = validationResult.data;
-    // sourceId is the same as spaceId
     const sourceId = spaceId;
 
-    // Verify if user has permission to install dApp (admin or owner)
     if (
-      !hasRequiredPermission(sessionData, 'admin') &&
-      !hasRequiredPermission(sessionData, 'owner')
+      !hasRequiredPermission(sessionData, PermissionName.MANAGE_APPS)
     ) {
       return createErrorResponse('Permission denied', 403);
     }
 
-    // Authenticate and get private key
     const error = await authenticateWithSpaceId(spaceId);
     if (error) {
       return createErrorResponse('Error getting private key', 500);
     }
 
-    // Execute GraphQL query to install dApp
+    const installedAppsResult = await executeQuery(GET_SPACE_INSTALLED_APPS, {
+      filters: {
+        where: {
+          sourceId: { equalTo: spaceId }
+        }
+      },
+      first: 100
+    });
+
+    if (installedAppsResult.errors) {
+      return createErrorResponse('Failed to query application installation status', 500);
+    }
+
+    const installedApps = installedAppsResult.data?.zucityInstalledAppIndex?.edges || [];
+    
+    const isAppAlreadyInstalled = installedApps.some(app => {
+      const node = app?.node;
+      if (!node) return false;
+      
+      if (appId && node.installedAppId === appId) {
+        return true;
+      }
+      
+      if (nativeAppName && node.nativeAppName === nativeAppName) {
+        return true;
+      }
+      
+      return false;
+    });
+    
+    if (isAppAlreadyInstalled && installedApps.length > 0) {
+      const installedApp = installedApps.find(app => {
+        const node = app?.node;
+        if (!node) return false;
+        
+        if (appId && node.installedAppId === appId) {
+          return true;
+        }
+        
+        if (nativeAppName && node.nativeAppName === nativeAppName) {
+          return true;
+        }
+        
+        return false;
+      })?.node;
+      
+      if (installedApp) {
+        return createSuccessResponse({
+          installedAppIndexId: installedApp.id,
+          message: 'dApp already installed'
+        });
+      }
+    }
+    
     const result = await executeQuery(INSTALL_DAPP_TO_SPACE, {
       input: {
         content: {
@@ -70,7 +120,9 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Failed to install dApp', 500);
     }
 
-    return createSuccessResponse('dApp installed successfully');
+    return createSuccessResponse({
+      installedAppIndexId: result.data.createZucityInstalledApp?.document.id,
+    });
   } catch (error: unknown) {
     console.error('Error installing dApp:', error);
     return createErrorResponse('Internal server error', 500);

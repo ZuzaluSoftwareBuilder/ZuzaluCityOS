@@ -27,6 +27,27 @@ export const installDApp = async (installDAppInput: InstallDAppParams) => {
   }
 };
 
+export type UninstallDAppParams = {
+  spaceId: string;
+  installedAppIndexId: string;
+};
+export const uninstallDApp = async (uninstallDAppInput: UninstallDAppParams) => {
+  try {
+    const response = await axiosInstance.post('/api/space/dApp/uninstall', {
+      id: uninstallDAppInput.spaceId,
+      resource: 'space',
+      installedAppIndexId: uninstallDAppInput.installedAppIndexId,
+    });
+    return response;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error.response?.data || error.message;
+    } else {
+      throw new Error('An unknown error occurred while uninstalling dApp');
+    }
+  }
+};
+
 export const getInstalledDApps = async (spaceId: string) => {
   try {
     const response = await axiosInstance.post('/api/space/dApp', {

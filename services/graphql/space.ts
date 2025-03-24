@@ -61,25 +61,6 @@ export const INSTALL_DAPP_TO_SPACE = graphql(`
   }
 `);
 
-export const UNINSTALL_DAPP_FROM_SPACE = graphql(`
-  mutation UninstallDappFromSpace(
-    $input: EnableIndexingZucityInstalledAppInput!
-  ) {
-    enableIndexingZucityInstalledApp(input: $input) {
-      document {
-        id
-        sourceId
-        spaceId
-        installedAppId
-        installedApp {
-          id
-          appName
-        }
-      }
-    }
-  }
-`);
-
 export const GET_SPACE_INSTALLED_APPS = graphql(`
   query GetSpaceInstalledApps(
     $filters: ZucityInstalledAppFiltersInput
@@ -118,6 +99,25 @@ export const GET_SPACE_INSTALLED_APPS = graphql(`
       pageInfo {
         hasNextPage
         endCursor
+      }
+    }
+  }
+`);
+
+export const UNINSTALL_DAPP_FROM_SPACE = graphql(`
+  mutation UninstallDappFromSpace($input: EnableIndexingZucityInstalledAppInput!) {
+    enableIndexingZucityInstalledApp(input: $input) {
+      document {
+        id
+        sourceId
+        spaceId
+        installedAppId
+        installedApp {
+          id
+          appName
+        }
+        createdAt
+        updatedAt
       }
     }
   }

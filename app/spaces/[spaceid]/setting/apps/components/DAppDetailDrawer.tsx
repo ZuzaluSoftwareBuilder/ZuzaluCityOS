@@ -4,20 +4,26 @@ import React, {
   memo,
   PropsWithChildren,
   useCallback,
+  useMemo,
   useState,
 } from 'react';
 import clsx from 'clsx';
 import get from 'lodash/get';
 import { Image } from '@heroui/react';
 import { useParams } from 'next/navigation';
+import { CaretLineDown, Trash } from '@phosphor-icons/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 
 import Drawer from '@/components/drawer';
 import FormHeader from '@/components/form/FormHeader';
 import { Button, Divider } from '@/components/base';
-import { ArrowUpRightIcon, InstallIcon } from '@/components/icons';
+import { ArrowUpRightIcon } from '@/components/icons';
 import ShowMoreEdit from '@/components/editor/ShowMoreEdit';
-import { installDApp, InstallDAppParams } from '@/services/space/apps';
+import {
+  installDApp,
+  InstallDAppParams,
+  uninstallDApp,
+} from '@/services/space/apps';
 import { NOOP } from '@/utils/function';
 import { Dapp } from '@/types';
 
@@ -131,7 +137,10 @@ DAppDetailDrawer.BasicInfo = memo(function BasicInfo(
         <Image
           alt={appName}
           src={bannerUrl}
-          className={clsx(['rounded-[10px]', 'w-[60px] h-[60px] border border-solid border-[rgba(255,255,255,0.1)]'])}
+          className={clsx([
+            'rounded-[10px]',
+            'w-[60px] h-[60px] border border-solid border-[rgba(255,255,255,0.1)]',
+          ])}
         />
       </div>
       <div className="flex flex-col gap-[5px] font-inter">
@@ -192,9 +201,15 @@ DAppDetailDrawer.InstallArea = function InstallArea(props: {
     loading: installedDataFetching,
     isInstalled,
     addInstalledApp,
+    removeInstalledApp,
+    queryInstalledAppIndexId,
   } = useInstalledAppsData();
 
-  const handleInstall = () => {
+  const currentIsInstalled = useMemo(() => {
+    return idOrNativeAppName && isInstalled(idOrNativeAppName);
+  }, [isInstalled, idOrNativeAppName]);
+
+  const handleInstall = useCallback(() => {
     if (!idOrNativeAppName) return;
     setLoading(true);
     installDApp({
@@ -204,13 +219,38 @@ DAppDetailDrawer.InstallArea = function InstallArea(props: {
     } as InstallDAppParams)
       .then((res) => {
         if (res.data.status === 'success') {
-          addInstalledApp(idOrNativeAppName);
+          addInstalledApp({
+            installedAppIndexId: res.data.data.installedAppIndexId,
+            installedAppIdOrNativeAppName: idOrNativeAppName,
+          });
         }
       })
       .finally(() => {
         setLoading(false);
       });
-  };
+  }, [idOrNativeAppName, spaceId, appId, nativeAppName, addInstalledApp]);
+
+  const handleUninstall = useCallback(() => {
+    if (!idOrNativeAppName) return;
+    const installedAppIndexId = queryInstalledAppIndexId(idOrNativeAppName);
+    if (!installedAppIndexId) return;
+    setLoading(true);
+    uninstallDApp({ spaceId, installedAppIndexId })
+      .then((res) => {
+        if (res.data.status === 'success') {
+          removeInstalledApp(idOrNativeAppName);
+        }
+      })
+      .finally(() => setLoading(false));
+  }, [idOrNativeAppName, queryInstalledAppIndexId, spaceId, removeInstalledApp]);
+
+  const handleInstallOrUninstall = useCallback(() => {
+    if (currentIsInstalled) {
+      handleUninstall();
+    } else {
+      handleInstall();
+    }
+  }, [currentIsInstalled, handleInstall, handleUninstall]);
 
   return (
     <div
@@ -219,19 +259,24 @@ DAppDetailDrawer.InstallArea = function InstallArea(props: {
         'flex flex-col gap-5 p-5', // layout
       ])}
     >
-      <span className="font-bold text-[20px] leading-[120%] opacity-70">Install on Space</span>
+      <span className="font-bold text-[20px] leading-[120%] opacity-70">
+        Install on Space
+      </span>
       <Button
         color="functional"
         isLoading={loading || installedDataFetching}
-        isDisabled={
-          !idOrNativeAppName || !spaceId || isInstalled(idOrNativeAppName)
+        startContent={
+          !loading && !installedDataFetching ? (
+            currentIsInstalled ? (
+              <Trash />
+            ) : (
+              <CaretLineDown />
+            )
+          ) : null
         }
-        startContent={!loading && !installedDataFetching && <InstallIcon />}
-        onClick={handleInstall}
+        onClick={handleInstallOrUninstall}
       >
-        {idOrNativeAppName && isInstalled(idOrNativeAppName)
-          ? 'Installed'
-          : 'Install to Space'}
+        {currentIsInstalled ? 'Uninstall' : 'Install to Space'}
       </Button>
     </div>
   );
@@ -253,7 +298,7 @@ DAppDetailDrawer.Description = memo(function Description(props: {
   );
 });
 
-DAppDetailDrawer.Status = memo(function Statuss(
+DAppDetailDrawer.Status = memo(function Status(
   props: Partial<Pick<Dapp, 'devStatus' | 'openSource' | 'repositoryUrl'>>,
 ) {
   const items = [
