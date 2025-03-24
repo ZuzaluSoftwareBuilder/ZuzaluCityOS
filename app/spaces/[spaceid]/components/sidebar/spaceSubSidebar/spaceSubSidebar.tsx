@@ -97,7 +97,7 @@ const SpaceSubSidebar = ({
           height={36}
           onClick={onCloseDrawer}
         />
-        {isAdmin && (
+        {isOwner || isAdmin && (
           <TabItem
             label="Manage Events"
             icon={<TableIcon size={20} />}
