@@ -72,7 +72,34 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
   );
 
   useEffect(() => {
-    const searchResultMembers = searchQuery ? searchedMembersItems : [];
+    if (!searchQuery) {
+      const selectedMembersItems = selectedMembers
+        .map((memberId) => {
+          const existingMember = existingMembers.find((m) => m.did === memberId);
+          if (existingMember) return existingMember;
+
+          const historyMember = searchHistoryRef.current.get(memberId);
+          if (historyMember) return historyMember;
+
+          return {
+            id: memberId,
+            name: 'User',
+            avatar: '/user/avatar_p.png',
+            address: '',
+            roleId: null,
+            did: memberId,
+          } as IMemberItem;
+        });
+
+      setDisplayedMembers(selectedMembersItems);
+      return;
+    }
+
+    if (searchIsLoading) {
+      return;
+    }
+
+    const searchResultMembers = searchedMembersItems;
 
     const selectedMembersNotInSearch = selectedMembers
       .filter(
@@ -107,7 +134,7 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
     );
 
     setDisplayedMembers(uniqueMembers);
-  }, [searchQuery, searchedMembersItems, selectedMembers, existingMembers]);
+  }, [searchQuery, searchedMembersItems, searchIsLoading, selectedMembers, existingMembers]);
 
   const handleSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -204,9 +231,6 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
               onChange={handleSearch}
               isDisabled={isAddingMember}
             />
-            {searchError && (
-              <div className="text-red-500 text-xs mt-1">{searchError}</div>
-            )}
           </div>
 
           <div
