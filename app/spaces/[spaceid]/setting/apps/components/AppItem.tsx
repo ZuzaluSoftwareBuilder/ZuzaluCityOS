@@ -86,11 +86,11 @@ const AppItem = (props: Props) => {
       <div
         className={clsx([
           'flex flex-1',
-          !isComingSoon && 'cursor-pointer',
+          !isNativeDApp(data) && 'cursor-pointer',
           'gap-5',
           'mobile:gap-[10px]',
         ])}
-        onClick={() => !isComingSoon && open(data)}
+        onClick={() => !isNativeDApp(data) && open(data)}
       >
         {/* banner */}
         <div
@@ -142,16 +142,16 @@ const AppItem = (props: Props) => {
           <div
             className={clsx([
               'flex items-center gap-[5px]', // container
-              'font-inter text-[13px] font-normal leading-[140%] tracking-[0.01em] align-middle tabular-nums lining-num', // text
+              'font-inter font-normal align-middle tabular-nums lining-num', // text
             ])}
           >
-            <span className="opacity-50">DEVELOPER:</span>
+            <span className="opacity-50 text-[10px] leading-[120%] tracking-[0.02em]">DEVELOPER:</span>
             <Image
               alt={profile.username || 'Developer'}
               src={profile.avatar}
               className="rounded-full w-[16px] h-[16px]"
             />
-            <span className="opacity-60">{profile.username ?? '-'}</span>
+            <span className="opacity-60 text-[13px] leading-[140%] tracking-[0.01em]">{profile.username ?? '-'}</span>
           </div>
         </div>
       </div>

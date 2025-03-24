@@ -56,7 +56,7 @@ export const DAppDetailDrawer = ({ children }: PropsWithChildren) => {
     >
       <Drawer open={drawerOpening} onClose={close} onOpen={open}>
         <FormHeader
-          title={'appName'}
+          title={appData?.appName ?? '-'}
           handleClose={close}
           extra={
             <Button
@@ -131,7 +131,7 @@ DAppDetailDrawer.BasicInfo = memo(function BasicInfo(
         <Image
           alt={appName}
           src={bannerUrl}
-          className={clsx(['rounded-[10px]', 'w-[60px] h-[60px]'])}
+          className={clsx(['rounded-[10px]', 'w-[60px] h-[60px] border border-solid border-[rgba(255,255,255,0.1)]'])}
         />
       </div>
       <div className="flex flex-col gap-[5px] font-inter">
@@ -219,7 +219,7 @@ DAppDetailDrawer.InstallArea = function InstallArea(props: {
         'flex flex-col gap-5 p-5', // layout
       ])}
     >
-      <span className="font-bold text-lg leading-[120%]">Install on Space</span>
+      <span className="font-bold text-[20px] leading-[120%] opacity-70">Install on Space</span>
       <Button
         color="functional"
         isLoading={loading || installedDataFetching}

@@ -151,7 +151,7 @@ export default function ExploreAppsPage() {
                 });
                 return (
                   <React.Fragment key={item.hash}>
-                    <div id={item.hash} className="w-full flex flex-col gap-3 ">
+                    <div id={item.hash} className="w-full flex flex-col gap-2.5 ">
                       <div className="leading-[140%] font-semibold text-[18px]">
                         {item.title}
                       </div>
