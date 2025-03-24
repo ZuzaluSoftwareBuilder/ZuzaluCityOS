@@ -8,6 +8,7 @@ import {
   GET_PROFILE_BY_DID_QUERY,
 } from '@/services/graphql/profile';
 import { IProfile, Profile } from '@/types';
+import { getWalletAddressFromDid } from '@/utils/did';
 
 export interface SearchUser {
   id: string;
@@ -56,7 +57,7 @@ export function useSearchUsers(initialQuery = '') {
         id,
         username,
         avatar: avatar || '/user/avatar_p.png',
-        address: authorId.includes(':') ? authorId.split(':')[4] : authorId,
+        address: getWalletAddressFromDid(authorId),
         did: authorId,
       };
       return [user];
@@ -81,15 +82,12 @@ export function useSearchUsers(initialQuery = '') {
         const profileData: IProfile = response.data as IProfile;
         return profileData.zucityProfileIndex.edges.map((edge: any) => {
           const authorId = edge.node.author?.id || '';
-          const address = authorId.includes(':')
-            ? authorId.split(':')[4] || authorId
-            : authorId;
 
           return {
             id: edge.node.id,
             username: edge.node.username || '',
             avatar: edge.node.avatar || '/user/avatar_p.png',
-            address,
+            address: getWalletAddressFromDid(authorId),
             did: authorId,
           };
         });

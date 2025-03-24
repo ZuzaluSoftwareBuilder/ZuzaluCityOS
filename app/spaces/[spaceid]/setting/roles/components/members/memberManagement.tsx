@@ -13,6 +13,7 @@ import {
   updateMembersRole,
 } from '@/services/member';
 import useGetSpaceMember from '@/hooks/useGetSpaceMember';
+import { getWalletAddressFromDid } from '@/utils/did';
 
 export interface IMemberItem {
   id: string;
@@ -187,7 +188,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
           id: did,
           name: profile.username,
           avatar: profile.avatar,
-          address: did?.split(':')[4],
+          address: getWalletAddressFromDid(did),
           roleId,
           did: profile.author?.id,
         } as IMemberItem;
@@ -201,7 +202,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
               id: owner?.author?.id,
               name: owner?.username,
               avatar: owner?.avatar,
-              address: owner?.author?.id.split(':')[4],
+              address: getWalletAddressFromDid(owner?.author?.id),
               roleId: null,
               did: owner?.author?.id,
             } as IMemberItem,
