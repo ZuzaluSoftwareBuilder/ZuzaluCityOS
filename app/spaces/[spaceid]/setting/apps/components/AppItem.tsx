@@ -1,9 +1,10 @@
 'use client';
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 import { useParams } from 'next/navigation';
 import { Image, Skeleton } from '@heroui/react';
 import { CaretLineDown, Trash } from '@phosphor-icons/react';
+import { useMutation } from '@tanstack/react-query';
 
 import { Dapp } from '@/types';
 import { Button } from '@/components/base';
@@ -11,6 +12,7 @@ import {
   installDApp,
   InstallDAppParams,
   uninstallDApp,
+  UninstallDAppParams,
 } from '@/services/space/apps';
 
 import { useDAppDetailDrawer } from './DAppDetailDrawer';
@@ -54,7 +56,6 @@ const AppItem = (props: Props) => {
   const { open } = useDAppDetailDrawer();
 
   // install button logic
-  const [loading, setLoading] = useState(false);
   const {
     queryInstalledAppIndexId,
     loading: installedDataFetching,
@@ -67,42 +68,41 @@ const AppItem = (props: Props) => {
     return idOrNativeAppName && isInstalled(idOrNativeAppName);
   }, [isInstalled, idOrNativeAppName]);
 
+  const { mutate: installMutation, isPending: isInstalling } = useMutation({
+    mutationFn: (params: InstallDAppParams) => installDApp(params),
+    onSuccess: (response) => {
+      if (response.data.status === 'success' && idOrNativeAppName) {
+        addInstalledApp({
+          installedAppIndexId: response.data.data.installedAppIndexId,
+          installedAppIdOrNativeAppName: idOrNativeAppName,
+        });
+      }
+    },
+  });
+
+  const { mutate: uninstallMutation, isPending: isUninstalling } = useMutation({
+    mutationFn: (params: UninstallDAppParams) => uninstallDApp(params),
+    onSuccess: (response) => {
+      if (response.data.status === 'success' && idOrNativeAppName) {
+        removeInstalledApp(idOrNativeAppName);
+      }
+    },
+  });
+
   const handleInstall = useCallback(() => {
     if (!data) return;
-    setLoading(true);
     const params: InstallDAppParams = isNativeDApp(data)
       ? { spaceId, nativeAppName: data.appIdentifier }
       : { spaceId, appId: data.id };
-    installDApp(params)
-      .then((res) => {
-        if (res.data.status === 'success') {
-          addInstalledApp({
-            installedAppIndexId: res.data.data.installedAppIndexId,
-            installedAppIdOrNativeAppName: idOrNativeAppName,
-          });
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [data, spaceId, idOrNativeAppName, addInstalledApp]);
+    installMutation(params);
+  }, [data, spaceId, installMutation]);
 
   const handleUninstall = useCallback(() => {
     if (!data) return;
     const installedAppIndexId = queryInstalledAppIndexId(idOrNativeAppName);
     if (!installedAppIndexId) return;
-    setLoading(true);
-    uninstallDApp({
-      spaceId,
-      installedAppIndexId,
-    })
-      .then((res) => {
-        if (res.data.status === 'success') {
-          removeInstalledApp(idOrNativeAppName);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, [data, idOrNativeAppName, queryInstalledAppIndexId, spaceId, removeInstalledApp]);
+    uninstallMutation({ spaceId, installedAppIndexId });
+  }, [data, idOrNativeAppName, queryInstalledAppIndexId, spaceId, uninstallMutation]);
 
   const handleInstallOrUninstall = useCallback(() => {
     if (currentIsInstalled) {
@@ -111,6 +111,9 @@ const AppItem = (props: Props) => {
       handleInstall();
     }
   }, [currentIsInstalled, handleInstall, handleUninstall]);
+
+  // 合并加载状态
+  const isLoading = isInstalling || isUninstalling || installedDataFetching;
 
   return (
     <div
@@ -207,7 +210,7 @@ const AppItem = (props: Props) => {
           size="sm"
           color="functional"
           startContent={
-            !loading && !installedDataFetching ? (
+            !isLoading ? (
               currentIsInstalled ? (
                 <Trash />
               ) : (
@@ -216,7 +219,7 @@ const AppItem = (props: Props) => {
             ) : null
           }
           onClick={handleInstallOrUninstall}
-          isLoading={loading || installedDataFetching}
+          isLoading={isLoading}
         >
           {currentIsInstalled ? 'Uninstall' : 'Install'}
         </Button>

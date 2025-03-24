@@ -13,6 +13,7 @@ import { Image } from '@heroui/react';
 import { useParams } from 'next/navigation';
 import { CaretLineDown, Trash } from '@phosphor-icons/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
+import { useMutation } from '@tanstack/react-query';
 
 import Drawer from '@/components/drawer';
 import FormHeader from '@/components/form/FormHeader';
@@ -23,6 +24,7 @@ import {
   installDApp,
   InstallDAppParams,
   uninstallDApp,
+  UninstallDAppParams,
 } from '@/services/space/apps';
 import { NOOP } from '@/utils/function';
 import { Dapp } from '@/types';
@@ -196,7 +198,6 @@ DAppDetailDrawer.InstallArea = function InstallArea(props: {
 }) {
   const { appId, nativeAppName, spaceId } = props;
   const idOrNativeAppName = appId ?? nativeAppName;
-  const [loading, setLoading] = useState(false);
   const {
     loading: installedDataFetching,
     isInstalled,
@@ -209,40 +210,42 @@ DAppDetailDrawer.InstallArea = function InstallArea(props: {
     return idOrNativeAppName && isInstalled(idOrNativeAppName);
   }, [isInstalled, idOrNativeAppName]);
 
+  const { mutate: installMutation, isPending: isInstalling } = useMutation({
+    mutationFn: (params: InstallDAppParams) => installDApp(params),
+    onSuccess: (response) => {
+      if (response.data.status === 'success' && idOrNativeAppName) {
+        addInstalledApp({
+          installedAppIndexId: response.data.data.installedAppIndexId,
+          installedAppIdOrNativeAppName: idOrNativeAppName,
+        });
+      }
+    },
+  });
+
+  const { mutate: uninstallMutation, isPending: isUninstalling } = useMutation({
+    mutationFn: (params: UninstallDAppParams) => uninstallDApp(params),
+    onSuccess: (response) => {
+      if (response.data.status === 'success' && idOrNativeAppName) {
+        removeInstalledApp(idOrNativeAppName);
+      }
+    },
+  });
+
   const handleInstall = useCallback(() => {
     if (!idOrNativeAppName) return;
-    setLoading(true);
-    installDApp({
+    installMutation({
       spaceId,
       appId,
       nativeAppName,
-    } as InstallDAppParams)
-      .then((res) => {
-        if (res.data.status === 'success') {
-          addInstalledApp({
-            installedAppIndexId: res.data.data.installedAppIndexId,
-            installedAppIdOrNativeAppName: idOrNativeAppName,
-          });
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [idOrNativeAppName, spaceId, appId, nativeAppName, addInstalledApp]);
+    } as InstallDAppParams);
+  }, [idOrNativeAppName, spaceId, appId, nativeAppName, installMutation]);
 
   const handleUninstall = useCallback(() => {
     if (!idOrNativeAppName) return;
     const installedAppIndexId = queryInstalledAppIndexId(idOrNativeAppName);
     if (!installedAppIndexId) return;
-    setLoading(true);
-    uninstallDApp({ spaceId, installedAppIndexId })
-      .then((res) => {
-        if (res.data.status === 'success') {
-          removeInstalledApp(idOrNativeAppName);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, [idOrNativeAppName, queryInstalledAppIndexId, spaceId, removeInstalledApp]);
+    uninstallMutation({ spaceId, installedAppIndexId });
+  }, [idOrNativeAppName, queryInstalledAppIndexId, spaceId, uninstallMutation]);
 
   const handleInstallOrUninstall = useCallback(() => {
     if (currentIsInstalled) {
@@ -251,6 +254,10 @@ DAppDetailDrawer.InstallArea = function InstallArea(props: {
       handleInstall();
     }
   }, [currentIsInstalled, handleInstall, handleUninstall]);
+
+  const isLoading = useMemo(() => {
+    return isInstalling || isUninstalling || installedDataFetching;
+  }, [isInstalling, isUninstalling, installedDataFetching]);
 
   return (
     <div
@@ -264,9 +271,9 @@ DAppDetailDrawer.InstallArea = function InstallArea(props: {
       </span>
       <Button
         color="functional"
-        isLoading={loading || installedDataFetching}
+        isLoading={isLoading}
         startContent={
-          !loading && !installedDataFetching ? (
+          !isLoading ? (
             currentIsInstalled ? (
               <Trash />
             ) : (
