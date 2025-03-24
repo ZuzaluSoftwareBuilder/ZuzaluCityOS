@@ -8,16 +8,14 @@ import React, {
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useAccount, useEnsName, useDisconnect } from 'wagmi';
 import ConnectWalletButton from './ConnectWalletButton';
+import { Button, Input, Spinner } from '@heroui/react';
 import {
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button,
-  Input,
-  Spinner,
-} from '@heroui/react';
+} from '@/components/base/modal';
 import { X } from '@phosphor-icons/react';
 import AuthButton from './AuthButton';
 
@@ -85,7 +83,7 @@ const NewAuthPrompt: React.FC = () => {
         setIsAuthenticating(false);
       } catch (error) {
         console.error('Authentication failed:', error);
-        
+
         console.log('Disconnecting wallet due to authentication failure');
         disconnect();
         setIsAuthenticating(false);
@@ -214,8 +212,8 @@ const NewAuthPrompt: React.FC = () => {
           <p className="text-[14px] leading-[1.4] text-white/70">
             {description}
           </p>
-          <ConnectWalletButton 
-            isLoading={isAuthenticating} 
+          <ConnectWalletButton
+            isLoading={isAuthenticating}
             onConnectClick={handleConnectButtonClick}
           />
         </ModalBody>
@@ -226,7 +224,12 @@ const NewAuthPrompt: React.FC = () => {
         </div>
       </>
     );
-  }, [connectWalletContent, renderCloseButton, isAuthenticating, handleConnectButtonClick]);
+  }, [
+    connectWalletContent,
+    renderCloseButton,
+    isAuthenticating,
+    handleConnectButtonClick,
+  ]);
 
   const renderNewUserContent = useCallback(() => {
     return (
@@ -358,35 +361,6 @@ const NewAuthPrompt: React.FC = () => {
       size="md"
       isDismissable={false}
       backdrop="opaque"
-      classNames={{
-        base: 'border-2 border-[rgba(255,255,255,0.1)] bg-[rgba(52,52,52,0.6)] backdrop-blur-[20px] rounded-[10px] shadow-none w-[420px] mobile:w-[calc(90vw)]',
-        header: 'p-0 text-[18px] leading-[1.2] font-bold',
-        body: 'px-[20px] py-0',
-        footer: 'p-[20px]',
-        closeButton: 'hidden',
-        backdrop: 'bg-[rgba(34,34,34,0.6)]',
-        wrapper: 'z-[1100]',
-      }}
-      motionProps={{
-        variants: {
-          enter: {
-            y: 0,
-            opacity: 1,
-            transition: {
-              duration: 0.15,
-              ease: 'easeOut',
-            },
-          },
-          exit: {
-            y: -20,
-            opacity: 0,
-            transition: {
-              duration: 0.15,
-              ease: 'easeIn',
-            },
-          },
-        },
-      }}
     >
       <ModalContent>{renderModalContent()}</ModalContent>
     </Modal>
