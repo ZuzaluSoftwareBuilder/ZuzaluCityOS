@@ -51,7 +51,7 @@
     "@fullcalendar/react": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
     "@heroicons/react": "^2.2.0",
-    "@heroui/react": "^2.7.2",
+    "@heroui/react": "^2.7.5",
     "@hookform/resolvers": "^3.9.0",
     "@irys/sdk": "^0.2.6",
     "@lit-protocol/auth-helpers": "^6.11.0",
