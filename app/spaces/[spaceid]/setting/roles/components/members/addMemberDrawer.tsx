@@ -109,10 +109,6 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
     setDisplayedMembers(uniqueMembers);
   }, [searchQuery, searchedMembersItems, selectedMembers, existingMembers]);
 
-  const filteredMembers = useMemo<IMemberItem[]>(() => {
-    return displayedMembers;
-  }, [displayedMembers]);
-
   const handleSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearchQuery(e.target.value);
@@ -145,6 +141,12 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
       clearSearch();
     }
   }, [isOpen, clearSearch]);
+
+  useEffect(() => {
+    return () => {
+      searchHistoryRef.current.clear();
+    };
+  }, []);
 
   return (
     <Drawer
@@ -217,8 +219,8 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
               Array.from({ length: 1 }).map((_, index) => (
                 <MemberSkeletonWithCheckbox key={`skeleton-${index}`} />
               ))
-            ) : filteredMembers.length > 0 ? (
-              filteredMembers.map((member: IMemberItem) => {
+            ) : displayedMembers.length > 0 ? (
+              displayedMembers.map((member: IMemberItem) => {
                 const isExistingMember = isMemberInRole(member.did);
                 const isSelected =
                   selectedMembers.includes(member.did) || isExistingMember;
