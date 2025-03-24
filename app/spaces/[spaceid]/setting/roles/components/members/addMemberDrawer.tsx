@@ -188,6 +188,7 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
                       avatarUrl={member.avatar || '/user/avatar_p.png'}
                       name={member.name}
                       address={member.address}
+                      showGreenColor={false}
                     />
                   </Checkbox>
                 </div>

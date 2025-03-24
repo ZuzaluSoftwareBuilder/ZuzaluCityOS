@@ -5,9 +5,15 @@ interface MemberProps {
   avatarUrl: string;
   name: string;
   address: string;
+  showGreenColor?: boolean;
 }
 
-export const MemberItem: React.FC<MemberProps> = ({ avatarUrl, name, address }) => {
+export const MemberItem: React.FC<MemberProps> = ({
+  avatarUrl,
+  name,
+  address,
+  showGreenColor = true,
+}) => {
   return (
     <div className="flex items-center gap-2.5">
       <Avatar
@@ -15,7 +21,11 @@ export const MemberItem: React.FC<MemberProps> = ({ avatarUrl, name, address }) 
         alt={name}
         className="w-8 h-8"
       />
-      <span className="text-[14px] font-semibold text-[#BFFF66]">{name}</span>
+      <span
+        className={`text-[14px] font-semibold ${showGreenColor ? 'text-[#BFFF66]' : 'text-white'}`}
+      >
+        {name}
+      </span>
       <span className="text-[12px] text-white/60">
         {formatAddressString(address)}
       </span>
