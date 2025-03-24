@@ -138,7 +138,7 @@ export default function ExploreAppsPage() {
             <div
               className={clsx(
                 'h-full w-full p-5  flex flex-col gap-5',
-                'pc:w-[600px] xl:mx-auto', // pc
+                'pc:w-[600px] mx-auto', // pc
                 'mobile:p-0', // mobile
               )}
             >

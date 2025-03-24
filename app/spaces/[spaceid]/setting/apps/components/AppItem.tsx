@@ -157,7 +157,7 @@ const AppItem = (props: Props) => {
       </div>
       {/* install button */}
       {isComingSoon ? (
-        <Button size="sm" color="functional">
+        <Button size="sm" isDisabled color="functional">
           Coming Soon
         </Button>
       ) : (
@@ -166,7 +166,7 @@ const AppItem = (props: Props) => {
           color="functional"
           startContent={<InstallIcon />}
           onClick={handleInstall}
-          disabled={isInstalled(idOrNativeAppName)}
+          isDisabled={isInstalled(idOrNativeAppName)}
           isLoading={loading || installedDataFetching}
         >
           {isInstalled(idOrNativeAppName) ? 'Installed' : 'Install'}

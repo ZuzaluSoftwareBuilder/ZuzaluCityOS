@@ -219,7 +219,7 @@ DAppDetailDrawer.InstallArea = (props: {
       <Button
         color="functional"
         isLoading={loading || installedDataFetching}
-        disabled={
+        isDisabled={
           !idOrNativeAppName || !spaceId || isInstalled(idOrNativeAppName)
         }
         startContent={<InstallIcon />}
