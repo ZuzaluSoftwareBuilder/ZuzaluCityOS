@@ -1,17 +1,13 @@
 'use client';
 
 import React, { useEffect, useCallback } from 'react';
+import { Button, Tabs, Tab, cn, Skeleton } from '@heroui/react';
 import {
-  Button,
-  Tabs,
-  Tab,
-  cn,
-  Skeleton,
   Drawer,
   DrawerContent,
-  DrawerHeader,
   DrawerBody,
-} from '@heroui/react';
+  CommonDrawerHeader,
+} from '@/components/base';
 import {
   CaretLeft,
   Info,
@@ -25,7 +21,6 @@ import { PermissionList } from './permission';
 import MemberManagement from './members/memberManagement';
 import { Profile, RolePermission, UserRole } from '@/types';
 import useOpenDraw from '@/hooks/useOpenDraw';
-
 
 interface RoleListProps {
   roleData: RolePermission[];
@@ -162,26 +157,10 @@ export default function RoleDetail({
           isDismissable={false}
           hideCloseButton={true}
           className="xl:hidden pc:hidden"
-          classNames={{
-            wrapper: ['z-[1100]'],
-            base: cn(
-              'bg-[rgba(34,34,34,0.8)] border-[rgba(255,255,255,0.06)] backdrop-blur-[20px] rounded-none',
-              'w-full border-t rounded-t-[16px]',
-            ),
-          }}
         >
           <DrawerContent>
-            <DrawerHeader className="flex justify-between items-center h-[56px] p-[10px] pb-[14px] border-b border-[rgba(255,255,255,0.1)]">
-              <div className="flex flex-col justify-center">
-                <h2 className="text-white text-[18px] font-bold">Roles</h2>
-              </div>
-              <button
-                className="bg-transparent hover:bg-[rgba(255,255,255,0.1)] rounded-lg w-[44px] h-[36px] flex items-center justify-center"
-                onClick={handleClose}
-              >
-                <X size={24} weight="light" className="text-white opacity-50" />
-              </button>
-            </DrawerHeader>
+            <CommonDrawerHeader title={'Roles'} onClose={handleClose} />
+
             <DrawerBody
               className={cn('flex flex-col gap-[20px]', 'p-[16px] pb-[24px]')}
             >

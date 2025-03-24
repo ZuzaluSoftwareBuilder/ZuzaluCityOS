@@ -1,16 +1,12 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import { Avatar, Button, Checkbox, Input, cn, Skeleton } from '@heroui/react';
 import {
-  Avatar,
-  Button,
-  Checkbox,
   Drawer,
+  DrawerHeader,
   DrawerBody,
   DrawerContent,
-  DrawerHeader,
-  Input,
-  cn,
-  Skeleton,
-} from '@heroui/react';
+  CommonDrawerHeader,
+} from '@/components/base/drawer';
 import { X } from '@phosphor-icons/react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { MemberItem } from './memberItem';
@@ -99,53 +95,35 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
       isOpen={isOpen}
       onClose={isAddingMember ? undefined : onClose}
       placement={isMobile ? 'bottom' : 'right'}
-      hideCloseButton={true}
       isDismissable={false}
-      classNames={{
-        wrapper: ['z-[1100]'],
-        base: cn(
-          'bg-[rgba(34,34,34,0.8)] border-[rgba(255,255,255,0.06)] backdrop-blur-[20px] rounded-none',
-          isMobile
-            ? 'w-full border-t rounded-t-[16px]'
-            : 'min-w-[600px] border-l',
-        ),
-      }}
+      hideCloseButton={true}
     >
       <DrawerContent>
-        <DrawerHeader
-          className={cn(
-            'flex items-center justify-between border-b border-[rgba(255,255,255,0.1)] p-[10px]',
-            isMobile && 'pb-[14px]',
-          )}
-        >
-          {isMobile && (
-            <div className="w-full flex flex-col items-center">
-              <div className="w-[36px] h-[4px] bg-[rgba(255,255,255,0.2)] rounded-full mb-[10px]" />
-              <h3 className="text-[18px] font-bold text-white leading-[1.4]">
-                Add Members to Role
-              </h3>
-            </div>
-          )}
+        {isMobile ? (
+          <CommonDrawerHeader
+            title={'Add Members to Role'}
+            onClose={onClose}
+            isDisabled={isAddingMember}
+          />
+        ) : (
+          <DrawerHeader className={'justify-start gap-[14px]'}>
+            <Button
+              variant="light"
+              className="rounded-[8px] px-[10px] min-w-[auto] h-[34px] flex gap-[10px]"
+              onPress={onClose}
+              isDisabled={isAddingMember}
+            >
+              <X size={20} className="text-white opacity-50" />
+              <span className="text-[14px] font-semibold text-white leading-[1.6]">
+                Close
+              </span>
+            </Button>
+            <h2 className="text-[18px] font-bold text-white leading-[1.4]">
+              Add Members to Role
+            </h2>
+          </DrawerHeader>
+        )}
 
-          {!isMobile && (
-            <div className="flex items-center gap-[14px]">
-              <Button
-                variant="light"
-                className="rounded-[8px] px-[10px] min-w-[auto] h-[34px] flex gap-[10px]"
-                onPress={onClose}
-                isDisabled={isAddingMember}
-              >
-                <X size={20} className="text-white opacity-50" />
-                <span className="text-[14px] font-semibold text-white leading-[1.6]">
-                  Close
-                </span>
-              </Button>
-              <h3 className="text-[18px] font-bold text-white leading-[1.4]">
-                Add Members to Role
-              </h3>
-            </div>
-          )}
-        </DrawerHeader>
         <DrawerBody
           className={cn(
             'flex flex-col gap-[20px]',
