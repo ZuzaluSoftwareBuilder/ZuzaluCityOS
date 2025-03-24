@@ -51,9 +51,9 @@ export const NATIVE_APPS: NativeDApp[] = [
 
     appName: 'Zuland',
     categories: 'Forums,Discussions,social',
-    tagline: 'A community forum',
+    tagline: 'A private, token-gated, decentralized social network',
     developerName: 'Urbe.eth',
-    description: 'A community forum for discussions and socializing.',
+    description: `A private, token-gated, decentralized social network built by AKASHA core and Builders’ Garden where only users with specific credentials can read and write content, enhances Zuzalu.city with a social feed function. It focuses on a commenting system and feed that can be integrated into other projects using Ceramic's ComposeDB and Web3 storage.`,
     devStatus: 'Live',
     openSource: true,
     repositoryUrl: '#',
@@ -83,4 +83,18 @@ export const NATIVE_APPS: NativeDApp[] = [
       username: 'Zuzalu City',
     },
   },
-].map((app) => ({ ...app, isNative: true }));
+].map((app) => ({
+  ...app,
+  isNative: true,
+  description: JSON.stringify({
+    time: +Date.now(),
+    blocks: [
+      {
+        id: 'description',
+        type: 'paragraph',
+        data: { text: app.description },
+      },
+    ],
+    version: '2.29.1',
+  }),
+}));
