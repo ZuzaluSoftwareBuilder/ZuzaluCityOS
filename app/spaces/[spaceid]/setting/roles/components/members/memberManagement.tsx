@@ -71,7 +71,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
           (member) => member.userId.zucityProfile?.author?.id === memberId,
         );
 
-        if (existingMember && existingMember.roleId) {
+        if (existingMember?.roleId) {
           membersWithRoles.push(memberId);
         } else {
           membersWithoutRoles.push(memberId);
