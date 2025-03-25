@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import SpaceLayout from '@/app/spaces/[spaceid]/components/spaceLayout';
 import SpaceTopHeader from '@/app/spaces/[spaceid]/components/spaceTopHeader';
+import { SpacePermissionProvider } from './components/permission';
 
 interface SpacePageLayoutPropTypes {
   children: React.ReactNode;
@@ -28,14 +29,13 @@ export const generateMetadata = async ({
 export default function SpacePageLayout({
   children,
 }: SpacePageLayoutPropTypes) {
-
   return (
-    <>
+    <SpacePermissionProvider>
       <SpaceTopHeader />
       <div className="flex pc:pl-[62px] tablet:pl-[62px] text-white min-h-[calc(100vh-50px)]">
         <SpaceLayout />
         <div className="flex-1 overflow-auto">{children}</div>
       </div>
-    </>
+    </SpacePermissionProvider>
   );
 }

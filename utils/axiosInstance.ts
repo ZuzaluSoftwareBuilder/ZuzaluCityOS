@@ -1,5 +1,4 @@
 import axios, { AxiosInstance } from 'axios';
-import Router from 'next/router';
 
 const getBaseUrl = () => {
   if (typeof window !== 'undefined') {
@@ -16,6 +15,21 @@ const axiosInstance: AxiosInstance = axios.create({
   },
 });
 
+axiosInstance.interceptors.request.use(
+  (config) => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('ceramic:eth_did');
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
@@ -24,10 +38,10 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          Router.push('/');
+          // Router.push('/');
           break;
         case 403:
-          Router.push('/');
+          // Router.push('/');
           break;
         // case 500:
 

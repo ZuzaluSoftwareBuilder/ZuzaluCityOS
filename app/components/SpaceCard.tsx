@@ -8,9 +8,8 @@ import {
   UsersIcon,
 } from '@/components/icons';
 import { Button } from '@/components/base';
-import { useCeramicContext } from '@/context/CeramicContext';
 import { useRouter } from 'next/navigation';
-import { isUserAssociated } from '@/utils/permissions';
+import useUserJoinSpace from '@/hooks/useUserJoin';
 
 export function SpaceCardSkeleton() {
   return (
@@ -65,15 +64,10 @@ export function SpaceCard({ data }: SpaceCardProps) {
     admins,
     superAdmin,
     category,
+    id,
   } = data;
-  const { profile } = useCeramicContext();
   const router = useRouter();
-
-  const currentUserId = profile?.author?.id;
-
-  const isUserJoined = useMemo(() => {
-    return currentUserId && isUserAssociated(data, currentUserId);
-  }, [currentUserId, data]);
+  const { joined: isUserJoined } = useUserJoinSpace({ spaceId: id });
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers =

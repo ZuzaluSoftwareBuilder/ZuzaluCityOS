@@ -7,11 +7,11 @@ import React, {
 } from 'react';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import { ComposeClient } from '@composedb/client';
-import { RuntimeCompositeDefinition } from '@composedb/types';
-import { definition } from '../composites/definition.js';
 import { authenticateCeramic } from '../utils/ceramicAuth';
 import { Profile, CreateProfileResult } from '@/types/index.js';
 import { ceramic, composeClient } from '@/constant';
+
+type ConnectSource = 'connectButton' | 'invalidAction';
 
 interface CeramicContextType {
   ceramic: CeramicClient;
@@ -23,10 +23,12 @@ interface CeramicContextType {
   newUser: boolean | undefined;
   logout: () => void;
   isAuthPromptVisible: boolean;
-  showAuthPrompt: () => void;
+  showAuthPrompt: (source?: ConnectSource) => void;
   hideAuthPrompt: () => void;
   createProfile: (newName: string) => Promise<void>;
   getProfile: () => Promise<void>;
+  connectSource: ConnectSource;
+  setConnectSource: (source: ConnectSource) => void;
 }
 
 const CeramicContext = createContext<CeramicContextType>({
@@ -43,6 +45,8 @@ const CeramicContext = createContext<CeramicContextType>({
   hideAuthPrompt: () => {},
   createProfile: async (newName: string) => {},
   getProfile: async () => {},
+  connectSource: 'invalidAction',
+  setConnectSource: () => {},
 });
 
 export const CeramicProvider = ({ children }: any) => {
@@ -51,13 +55,21 @@ export const CeramicProvider = ({ children }: any) => {
   const [username, setUsername] = useState<string | undefined>(undefined);
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
   const [newUser, setNewUser] = useState<boolean | undefined>(undefined);
+  const [connectSource, setConnectSource] = useState<ConnectSource>('invalidAction');
   const authenticate = async () => {
     console.log('authenticate');
-    await authenticateCeramic(ceramic, composeClient);
-    await getProfile();
-    setIsAuthenticated(true);
+    try {
+      await authenticateCeramic(ceramic, composeClient);
+      await getProfile();
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('Authentication failed in CeramicContext:', error);
+      setIsAuthenticated(false);
+      throw error;
+    }
   };
-  const showAuthPrompt = () => {
+  const showAuthPrompt = (source: ConnectSource = 'invalidAction') => {
+    setConnectSource(source);
     setAuthPromptVisible(true);
     const existingusername = localStorage.getItem('username');
     if (existingusername) {
@@ -156,6 +168,8 @@ export const CeramicProvider = ({ children }: any) => {
         hideAuthPrompt,
         createProfile,
         getProfile,
+        connectSource,
+        setConnectSource,
       }}
     >
       {children}

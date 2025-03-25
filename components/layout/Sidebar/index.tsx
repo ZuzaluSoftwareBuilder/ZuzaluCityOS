@@ -20,6 +20,9 @@ import { useQuery } from '@tanstack/react-query';
 import { isUserAssociated } from '@/utils/permissions';
 import { getSpacesQuery } from '@/services/space';
 import { EVENTS_QUERY } from '@/graphql/eventQueries';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import { GET_USER_ROLES_QUERY } from '@/services/graphql/role';
+import { data } from 'remark';
 
 interface SidebarProps {
   selected: string;
@@ -156,6 +159,23 @@ const Sidebar: React.FC<SidebarProps> = ({
     enabled: isAuthenticated,
   });
 
+  const { data: userRoles } = useGraphQL(
+    ['GET_USER_ROLES_QUERY', userDID],
+    GET_USER_ROLES_QUERY,
+    {
+      userId: userDID,
+    },
+    {
+      select: ({ data }) => {
+        return (
+          data?.zucityUserRolesIndex?.edges?.map(
+            (edge) => edge?.node?.resourceId,
+          ) || []
+        );
+      },
+    },
+  );
+
   const userEvents = useMemo(() => {
     if (!allEvents || !userDID) return [];
 
@@ -165,8 +185,12 @@ const Sidebar: React.FC<SidebarProps> = ({
   const userSpaces = useMemo(() => {
     if (!spacesData || !userDID) return [];
 
-    return spacesData.filter((space) => isUserAssociated(space, userDID));
-  }, [spacesData, userDID]);
+    return spacesData
+      .filter((space) => isUserAssociated(space, userDID))
+      .concat(
+        spacesData.filter((space) => userRoles?.includes(space.id.toString())),
+      );
+  }, [spacesData, userDID, userRoles]);
 
   const handleClick = useCallback(
     (item: any) => {
@@ -369,7 +393,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
         <Button
           variant="light"
-          border
+          color="functional"
           className="text-[13px] leading-[1.4] p-[6px_14px]"
           endContent={<ArrowUpRightIcon size={5} />}
           onPress={() =>

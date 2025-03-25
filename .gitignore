@@ -41,3 +41,5 @@ next-env.d.ts
 *storybook.log
 .idea/
 yarn.lock
+
+*.local.sh

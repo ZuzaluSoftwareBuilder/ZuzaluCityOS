@@ -13,6 +13,7 @@ const config = {
   ],
   theme: {
     screens: {
+      xl: { min: '1445px' },
       pc: { min: '1200px' },
       tablet: { min: '810px', max: '1199px' },
       mobile: { min: '1px', max: '809px' },

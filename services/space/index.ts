@@ -24,7 +24,15 @@ export const getSpaceEventsQuery = (eventCount: number = 10) => `
               id
             }
             superAdmin{
-              id 
+              id
+              zucityProfile {
+                id
+                avatar
+                author {
+                  id
+                }
+                username
+              }
             }
             events(first: ${eventCount}) {
               edges {

@@ -121,13 +121,6 @@ import { ArrowCircleRightFillIcon } from './ArrowCircleRight';
 import { CaretDoubleRightIcon } from './CaretDoubleRight';
 import { StorefrontIcon } from './Storefront';
 import { VideoIcon } from './Video';
-import { CaretLeftIcon } from './CaretLeft';
-import { UsersThreeIcon } from './UsersThree';
-import { NewspaperClippingIcon } from './NewspaperClipping';
-import { BuildingOfficeIcon } from './BuildingOffice';
-import { CodeIcon } from './Code';
-import { AirTrafficControlIcon } from './AirTrafficControl';
-import { CareRightIcon } from './CareRight';
 
 export {
   HomeIcon,
@@ -252,12 +245,5 @@ export {
   ArrowCircleRightFillIcon,
   CaretDoubleRightIcon,
   StorefrontIcon,
-  VideoIcon,
-  CaretLeftIcon,
-  UsersThreeIcon,
-  NewspaperClippingIcon,
-  BuildingOfficeIcon,
-  CodeIcon,
-  AirTrafficControlIcon,
-  CareRightIcon,
+  VideoIcon
 };
