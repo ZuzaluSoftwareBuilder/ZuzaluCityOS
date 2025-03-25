@@ -14,6 +14,7 @@ interface EventCalendarProps {
   calendarWidth?: string;
   isMobile?: boolean;
   className?: string;
+  inDropdown?: boolean;
 }
 
 const EventCalendar: React.FC<EventCalendarProps> = ({
@@ -26,6 +27,7 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
   calendarWidth = '320px',
   isMobile = false,
   className = '',
+  inDropdown = false,
 }) => {
   return (
     <Calendar
@@ -42,7 +44,13 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
             variant="light"
             fullWidth
             className="text-[14px] h-[30px] opacity-80"
-            startContent={isMobile ? <ArrowsCounterClockwise size={16} /> : <ArrowsCounterClockwiseIcon />}
+            startContent={
+              isMobile ? (
+                <ArrowsCounterClockwise size={16} />
+              ) : (
+                <ArrowsCounterClockwiseIcon />
+              )
+            }
             onPress={onReset}
           >
             Reset
@@ -51,17 +59,23 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
       }
       onChange={onChange}
       className={className}
-      classNames={isMobile ? {
-        base: 'border-b-w-10 border-1 rounded-larg shadow-none bg-transparent',
-        headerWrapper: 'bg-transparent',
-        title: 'text-white',
-        gridHeader: 'bg-transparent',
-        gridHeaderRow: 'justify-between pb-0 text-white/80',
-        gridBodyRow: 'justify-between px-[14px]',
-        cellButton: '!no-underline',
-      } : undefined}
+      classNames={
+        isMobile
+          ? {
+              base: `border-b-w-10 border-1 rounded-larg shadow-none bg-transparent ${inDropdown ? 'mb-[-5px]' : ''}`,
+              headerWrapper: 'bg-transparent',
+              title: 'text-white',
+              gridHeader: 'bg-transparent',
+              gridHeaderRow: 'justify-between pb-0 text-white/80',
+              gridBodyRow: 'justify-between px-[14px]',
+              cellButton: '!no-underline',
+            }
+          : {
+              base: inDropdown ? 'mb-[-5px]' : '',
+            }
+      }
     />
   );
 };
 
-export default EventCalendar; 
+export default EventCalendar;

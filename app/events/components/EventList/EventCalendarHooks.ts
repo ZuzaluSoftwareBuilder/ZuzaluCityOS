@@ -10,7 +10,7 @@ dayjs.extend(minMax);
 
 export function useCalendarConstraints(
   timeFilter: ITimeEnum,
-  events: Event[] = [],
+  events: Event[],
 ) {
   return useMemo(() => {
     switch (timeFilter) {

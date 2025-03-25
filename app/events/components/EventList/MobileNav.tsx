@@ -65,7 +65,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
     ongoingEvents || [],
   );
 
-  const calendarDateConstraints = useCalendarConstraints(timeFilter);
+  const calendarDateConstraints = useCalendarConstraints(timeFilter, currentEvents);
 
   const isDateUnavailable = useDateAvailability(
     currentEvents,
@@ -92,7 +92,20 @@ const MobileNav: React.FC<MobileNavProps> = ({
     setIsLocationDropdownOpen(false);
   };
 
-  const dropdownClassNames = { content: ['bg-transparent', 'shadow-none'] };
+  const blurBgClassNames = [
+    'bg-[rgba(34,34,34,0.8)] backdrop-blur-[12px]',
+    'border-2 border-[rgba(255,255,255,0.1)]',
+    'rounded-[10px]',
+  ]
+  const dropdownContentClassNames = ['bg-transparent', 'shadow-none', 'p-0']
+
+  const dropdownClassNames = { 
+    base: [
+      'p-[10px] min-w-[202px]',
+      ...blurBgClassNames,
+    ],
+    content: dropdownContentClassNames
+  };
   const dropdownMotionProp = {
     variants: {
       enter: {
@@ -113,12 +126,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
     backfaceVisibility: 'hidden' as const,
   };
   const dropdownMenuClassNames = {
-    base: [
-      'p-[10px] min-w-[202px]',
-      'bg-[rgba(34,34,34,0.8)] backdrop-blur-[12px]',
-      'border-2 border-[rgba(255,255,255,0.1)]',
-      'rounded-[10px]',
-    ],
+    base: ['p-0'],
     list: ['gap-[4px]'],
   };
   const dropdownItemBaseClassName =
@@ -240,10 +248,12 @@ const MobileNav: React.FC<MobileNavProps> = ({
                         `${timeFilter === option.key} ?? bg-[rgba(255,255,255,0.1)]`,
                       )}
                     >
-                      {option.label}
-                      {timeFilter === option.key && (
-                        <span className="ml-[5px]">✓</span>
-                      )}
+                      <div className={'flex justify-between items-center'}>
+                        <span> {option.label}</span>
+                        {timeFilter === option.key && (
+                          <span className="ml-[5px]">✓</span>
+                        )}
+                      </div>
                     </DropdownItem>
                   ))}
                 </DropdownMenu>
@@ -254,7 +264,10 @@ const MobileNav: React.FC<MobileNavProps> = ({
               isOpen={isCalendarDropdownOpen}
               onOpenChange={(open) => setIsCalendarDropdownOpen(open)}
               placement="bottom-end"
-              classNames={dropdownClassNames}
+              classNames={{
+                base: ['p-0',...blurBgClassNames],
+                content: dropdownContentClassNames
+              }}
               motionProps={dropdownMotionProp}
             >
               <DropdownTrigger>
@@ -272,15 +285,8 @@ const MobileNav: React.FC<MobileNavProps> = ({
                 aria-label="Calendar"
                 className="w-[280px] bg-transparent"
                 closeOnSelect={false}
-                classNames={{
-                  base: [
-                    'p-0',
-                    'bg-[rgba(34,34,34,0.8)] backdrop-blur-[12px]',
-                    'border-2 border-[rgba(255,255,255,0.1)]',
-                    'rounded-[10px]',
-                  ],
-                  list: ['gap-0'],
-                }}
+                classNames={dropdownMenuClassNames}
+                style={OptimizedDropdownStyles}
                 itemClasses={{
                   base: [
                     'p-0',
@@ -302,6 +308,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
                     isDateUnavailable={isDateUnavailable}
                     calendarWidth="100%"
                     isMobile={true}
+                    inDropdown={true}
                   />
                 </DropdownItem>
               </DropdownMenu>
