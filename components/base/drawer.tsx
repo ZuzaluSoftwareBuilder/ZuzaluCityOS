@@ -16,6 +16,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>((props, ref) => {
   const { classNames, ...rest } = props;
 
   const baseStyles = {
+    backdrop: ['z-[1100]', ...(classNames?.backdrop || [])],
     wrapper: ['z-[1100]', ...(classNames?.wrapper || [])],
     base: cn(
       'z-[1100] bg-[rgba(34,34,34,0.8)] backdrop-blur-[20px] border-[rgba(255,255,255,0.06)]',
@@ -27,8 +28,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>((props, ref) => {
       header: classNames.header,
       body: classNames.body,
       footer: classNames.footer,
-      closeButton: classNames.closeButton,
-      backdrop: classNames.backdrop,
+      closeButton: classNames.closeButton
     }),
   };
 
