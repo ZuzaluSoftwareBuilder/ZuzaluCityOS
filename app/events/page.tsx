@@ -87,7 +87,7 @@ const EventPage = () => {
           className="mb-[10px]"
         />
 
-        <EventListWithCalendar />
+        <EventListWithCalendar searchVal={searchVal} />
 
       </Stack>
     </LocalizationProvider>

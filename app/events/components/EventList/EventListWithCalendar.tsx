@@ -1,7 +1,7 @@
 import { Select } from '@/components/base';
 import { MapIcon } from '@/components/icons';
 import { DateValue } from '@heroui/react';
-import React, { useMemo, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -35,7 +35,13 @@ export const TimeFilterOptions = [
   { key: ITimeEnum.OnGoing, label: 'On Going' },
 ];
 
-const EventListWithCalendar = () => {
+export interface IEventListWithCalendarProps {
+  searchVal?: string;
+}
+
+const EventListWithCalendar: FC<IEventListWithCalendarProps> = ({
+  searchVal,
+}) => {
   const [selectedDate, setSelectedDate] = useState<DateValue | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<string>('anywhere');
   const [timeFilter, setTimeFilter] = useState<ITimeEnum>(ITimeEnum.UpComing);
@@ -167,7 +173,15 @@ const EventListWithCalendar = () => {
   const filteredEvents = useMemo(() => {
     if (!currentEvents) return [];
 
-    return currentEvents.filter((event: Event) => {
+    let events: Event[] = currentEvents;
+
+    if (searchVal) {
+      events = events.filter((event) =>
+        event.title.toLowerCase().includes(searchVal.toLowerCase()),
+      );
+    }
+
+    return events.filter((event: Event) => {
       const dateMatches =
         !selectedDate ||
         (dayjs(event.startTime).date() === selectedDate.day &&
@@ -178,11 +192,11 @@ const EventListWithCalendar = () => {
         selectedLocation === 'anywhere' ||
         (event.location &&
           event.location.toLowerCase().replace(/\s+/g, '-') ===
-          selectedLocation);
+            selectedLocation);
 
       return dateMatches && locationMatches;
     });
-  }, [currentEvents, selectedDate, selectedLocation]);
+  }, [currentEvents, searchVal, selectedDate, selectedLocation]);
 
   const calendarDateConstraints = useCalendarConstraints(timeFilter);
 
