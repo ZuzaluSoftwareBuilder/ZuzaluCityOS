@@ -20,7 +20,7 @@ export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
     )}>
       <div className="relative">
         <Skeleton className="rounded-none">
-          <div className="w-full h-[106px] tablet:h-[148px] mobile:h-[148px]"></div>
+          <div className="w-full aspect-[2.528] pc:aspect-[2.522] tablet:aspect-[2.520] mobile:aspect-[2.520]"></div>
         </Skeleton>
         <Skeleton className="absolute left-[11px] w-[60px] h-[60px] bottom-[-21px] z-10 rounded-full" />
       </div>
@@ -72,8 +72,6 @@ export function SpaceCard({ data, autoWidth }: SpaceCardProps) {
     id,
   } = data;
   const router = useRouter();
-  const isMobile = useMediaQuery('(max-width: 809px)');
-  const isTablet = useMediaQuery('(max-width:1199px)');
   const { joined: isUserJoined } = useUserJoinSpace({ spaceId: id });
 
   const formattedMemberCount = useMemo(() => {
@@ -92,12 +90,18 @@ export function SpaceCard({ data, autoWidth }: SpaceCardProps) {
       )}
     >
       <div className="relative">
+        {/* 
+          xl: width/height = 268/106 = 2.528
+          pc: width/height = 285/113 = 2.522
+          tablet: width/height = 373/148 = 2.520
+          mobile: width/height = 368/146 = 2.520
+        */}
         <Image
           src={banner}
           alt={name}
           width={'100%'}
-          height={isTablet || isMobile ? '148' : '106'}
-          className="w-full h-[106px] tablet:h-[148px] mobile:h-[148px] object-cover rounded-none"
+          height={'100%'}
+          className="w-full aspect-[2.528] pc:aspect-[2.522] tablet:aspect-[2.520] mobile:aspect-[2.520] object-cover rounded-none"
         />
         <Avatar
           src={avatar}
