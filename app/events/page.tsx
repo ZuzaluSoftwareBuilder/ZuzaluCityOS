@@ -58,7 +58,7 @@ const EventPage = () => {
         bgImageHeight={220}
         bgImageTop={20}
         title={'Events'}
-        subTitle={'Subtitle'}
+        subTitle={'Explore & Join Community Events'}
         versionLabel={'AppName v0.0.5'}
         addButtonText={'Create Event'}
       />
