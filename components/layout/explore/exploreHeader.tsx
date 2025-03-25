@@ -67,7 +67,7 @@ export interface IExploreHeaderProps {
   title: string;
   subTitle: string;
   versionLabel: string;
-  onAdd: () => void;
+  onAdd?: () => void;
   bgImage?: string;
   addButtonText: string;
   addButtonIcon?: React.ReactNode;
@@ -87,7 +87,7 @@ export default function ExploreHeader({
   addButtonText,
   addButtonIcon,
   titlePrefixIcon,
-                                        bgImageWidth,
+  bgImageWidth,
   bgImageHeight,
   bgImageTop,
 }: IExploreHeaderProps) {
@@ -95,13 +95,15 @@ export default function ExploreHeader({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { isAuthenticated, showAuthPrompt } = useCeramicContext();
 
-  const defaultAddButtonIcon = <Plus size={20} weight={'fill'} format={'Stroke'} />
+  const defaultAddButtonIcon = (
+    <Plus size={20} weight={'fill'} format={'Stroke'} />
+  );
 
   const handleClick = useCallback(() => {
     if (!isAuthenticated) {
       showAuthPrompt();
     } else {
-      onAdd();
+      onAdd?.();
     }
   }, [isAuthenticated, onAdd, showAuthPrompt]);
 
@@ -119,7 +121,7 @@ export default function ExploreHeader({
             background: 'linear-gradient(272deg, #222 2.52%, #2C2C2C 107.14%)',
           },
         },
-        borderBottom: '1px solid rgba(255, 255, 255, 0.10)'
+        borderBottom: '1px solid rgba(255, 255, 255, 0.10)',
       }}
     >
       <Typography
@@ -144,7 +146,12 @@ export default function ExploreHeader({
           width: `${bgImageWidth || 220}px`,
           height: `${bgImageHeight || 200}px`,
           position: 'absolute',
-          top: bgImageTop || bgImageTop === 0 ? `${bgImageTop}px`: isMobile ? '10px' : '20px',
+          top:
+            bgImageTop || bgImageTop === 0
+              ? `${bgImageTop}px`
+              : isMobile
+                ? '10px'
+                : '20px',
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 1,
@@ -186,7 +193,7 @@ export default function ExploreHeader({
           >
             {subTitle}
           </Typography>
-          {!isMobile && (
+          {!!onAdd && !isMobile && (
             <AddButton
               isMobile={isMobile}
               isDisabled={false}
@@ -198,7 +205,7 @@ export default function ExploreHeader({
           )}
         </Stack>
       </Stack>
-      {isMobile && (
+      {!!onAdd && isMobile && (
         <AddButton
           isMobile={isMobile}
           isDisabled={false}

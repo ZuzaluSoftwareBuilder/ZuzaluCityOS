@@ -15,14 +15,10 @@ const ExploreSearch: React.FC<IExploreSearchProps> = ({
   value,
   onChange,
   placeholder = "Search",
-  leftIcon = <Broadcast size={24} weight={'fill'} format={'Stroke'} />,
   className = "",
 }) => {
   return (
     <div className={`flex h-[40px] ${className}`}>
-      <div className="w-[40px] h-[40px] flex justify-center items-center opacity-50">
-        {leftIcon}
-      </div>
       <OutlinedInput
         value={value}
         placeholder={placeholder}

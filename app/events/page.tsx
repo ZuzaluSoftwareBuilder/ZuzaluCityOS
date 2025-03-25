@@ -61,7 +61,6 @@ const EventPage = () => {
         subTitle={'Subtitle'}
         versionLabel={'AppName v0.0.5'}
         addButtonText={'Create Event'}
-        onAdd={createButtonHandler}
       />
 
       <Dialog
@@ -85,7 +84,6 @@ const EventPage = () => {
         <ExploreSearch
           value={searchVal}
           onChange={setSearchVal}
-          placeholder="Search Spaces"
           className="mb-[10px]"
         />
 
