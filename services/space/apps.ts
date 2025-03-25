@@ -50,10 +50,10 @@ export const uninstallDApp = async (uninstallDAppInput: UninstallDAppParams) => 
 
 export const getInstalledDApps = async (spaceId: string) => {
   try {
-    const response = await axiosInstance.post('/api/space/dApp', {
-      spaceId: spaceId,
-      id: spaceId,
-      resource: 'space',
+    const response = await axiosInstance.get('/api/space/dApp', {
+      params: {
+        id: spaceId,
+      },
     });
     return response.data;
   } catch (error) {
