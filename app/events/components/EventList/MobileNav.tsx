@@ -136,7 +136,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
     'flex items-center min-w-[auto] h-[32px] gap-[5px] px-[10px] rounded-[5px] bg-[#363636] active:bg-[#4A4A4A] hover:bg-[#4A4A4A]';
 
   return (
-    <div className="hidden mobile:block sticky top-[95px] z-[1000] bg-[rgba(34,34,34,0.90)] backdrop-blur-[10px] pb-[10px]">
+    <div className="hidden tablet:block mobile:block sticky top-[95px] z-[1000] bg-[rgba(34,34,34,0.90)] backdrop-blur-[10px] pb-[10px]">
       <Accordion
         className="w-full"
         motionProps={{

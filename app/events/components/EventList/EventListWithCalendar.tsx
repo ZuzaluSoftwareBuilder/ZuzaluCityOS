@@ -208,7 +208,7 @@ const EventListWithCalendar: FC<IEventListWithCalendarProps> = ({
   return (
     <>
       {/* pc/tablet navigation */}
-      <div className="mobile:hidden flex items-center gap-[10px] bg-[rgba(34,34,34,0.90)] backdrop-blur-[10px] py-[10px] ">
+      <div className="tablet:hidden mobile:hidden flex items-center gap-[10px] bg-[rgba(34,34,34,0.90)] backdrop-blur-[10px] py-[10px] ">
         <Ticket size={24} weight="fill" format="Stroke" />
         <p className="text-[25px] tablet:text-[20px] font-bold text-white leading-[1.2] shadow-[0px_5px_10px_rgba(0,0,0,0.15)]">
           Events
@@ -235,7 +235,7 @@ const EventListWithCalendar: FC<IEventListWithCalendarProps> = ({
       <div className="flex justify-start items-start gap-[20px] mt-[10px]">
         <EventList events={filteredEvents} isLoading={isLoading} />
 
-        <div className="mobile:hidden w-[360px] px-[20px] flex flex-col gap-[20px] ">
+        <div className="tablet:hidden mobile:hidden w-[360px] px-[20px] flex flex-col gap-[20px] ">
           <p className="py-[20px] px-[10px] text-[18px] font-[700] leading-[1.2] border-b border-b-w-10">
             Sort & Filter Events
           </p>
