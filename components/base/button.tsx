@@ -64,4 +64,4 @@ const Button = extendVariants(HButton, {
   },
 });
 
-export default Button;
+export { Button };
