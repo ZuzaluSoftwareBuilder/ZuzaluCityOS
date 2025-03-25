@@ -50,7 +50,7 @@ const Banner = () => {
         </p>
         <div className="flex items-center gap-[10px] mobile:flex-col mobile:items-start">
           <Button
-            border
+            // border
             startContent={<RightArrowIcon />}
             className="bg-[#383838] font-[600] mobile:w-full"
           >
