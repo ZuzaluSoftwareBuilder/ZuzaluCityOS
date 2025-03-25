@@ -79,6 +79,7 @@ const SpaceList = () => {
             width: '100%',
             maxWidth: '100%',
           },
+          alignContent: 'flex-start'
         }}
       >
         {isLoading
