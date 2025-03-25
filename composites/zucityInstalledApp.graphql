@@ -4,6 +4,7 @@ type ZucityInstalledApp
     description: "Installed Apps for Zuzalu.city beta version"
   )
   @createIndex(fields: [{ path: "sourceId" }])
+  @createIndex(fields: [{ path: "nativeAppName" }])
   @createIndex(fields: [{ path: "installedAppId" }]) {
   author: DID! @documentAccount
   nativeAppName: String @string(minLength: 1, maxLength: 10000)
