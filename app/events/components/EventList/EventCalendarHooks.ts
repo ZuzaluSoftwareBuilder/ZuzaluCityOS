@@ -2,10 +2,16 @@ import { useMemo } from 'react';
 import { DateValue } from '@heroui/react';
 import { fromAbsolute, getLocalTimeZone, today } from '@internationalized/date';
 import dayjs from 'dayjs';
+import minMax from 'dayjs/plugin/minMax';
 import { Event } from '@/types';
 import { ITimeEnum } from './EventListWithCalendar';
 
-export function useCalendarConstraints(timeFilter: ITimeEnum) {
+dayjs.extend(minMax);
+
+export function useCalendarConstraints(
+  timeFilter: ITimeEnum,
+  events: Event[] = [],
+) {
   return useMemo(() => {
     switch (timeFilter) {
       case ITimeEnum.UpComing:
@@ -18,25 +24,44 @@ export function useCalendarConstraints(timeFilter: ITimeEnum) {
           minValue: undefined,
           maxValue: today(getLocalTimeZone()),
         };
-      case ITimeEnum.OnGoing:
+      case ITimeEnum.OnGoing: {
+        if (events.length === 0) {
+          return {
+            minValue: today(getLocalTimeZone()),
+            maxValue: today(getLocalTimeZone()),
+          };
+        }
+
+        const startTimes = events.map((event) => dayjs(event.startTime));
+        const endTimes = events.map((event) => dayjs(event.endTime));
+
+        const earliestStart = (dayjs.min(startTimes) || startTimes[0])
+          .subtract(1, 'day')
+          .startOf('day');
+        const latestEnd = (dayjs.max(endTimes) || endTimes[0]).endOf('day');
+
         return {
-          minValue: undefined,
-          maxValue: undefined,
+          minValue: fromAbsolute(
+            earliestStart.unix() * 1000,
+            getLocalTimeZone(),
+          ),
+          maxValue: fromAbsolute(latestEnd.unix() * 1000, getLocalTimeZone()),
         };
+      }
       default:
         return {
           minValue: today(getLocalTimeZone()).add({ days: 1 }),
           maxValue: undefined,
         };
     }
-  }, [timeFilter]);
+  }, [timeFilter, events]);
 }
 
 export function useEventsByTimeFilter(
   timeFilter: ITimeEnum,
   upcomingEvents: Event[] = [],
   pastEvents: Event[] = [],
-  ongoingEvents: Event[] = []
+  ongoingEvents: Event[] = [],
 ) {
   return useMemo(() => {
     switch (timeFilter) {
@@ -54,19 +79,13 @@ export function useEventsByTimeFilter(
 
 export function useDateAvailability(
   events: Event[],
-  calendarConstraints: { minValue?: DateValue; maxValue?: DateValue }
+  calendarConstraints: { minValue?: DateValue; maxValue?: DateValue },
 ) {
   return (date: DateValue) => {
-    if (
-      calendarConstraints.minValue &&
-      date < calendarConstraints.minValue
-    ) {
+    if (calendarConstraints.minValue && date < calendarConstraints.minValue) {
       return true;
     }
-    if (
-      calendarConstraints.maxValue &&
-      date > calendarConstraints.maxValue
-    ) {
+    if (calendarConstraints.maxValue && date > calendarConstraints.maxValue) {
       return true;
     }
 
@@ -84,4 +103,4 @@ export function useDateAvailability(
       }) === -1
     );
   };
-} 
+}

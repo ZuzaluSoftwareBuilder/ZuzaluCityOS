@@ -198,7 +198,7 @@ const EventListWithCalendar: FC<IEventListWithCalendarProps> = ({
     });
   }, [currentEvents, searchVal, selectedDate, selectedLocation]);
 
-  const calendarDateConstraints = useCalendarConstraints(timeFilter);
+  const calendarDateConstraints = useCalendarConstraints(timeFilter, currentEvents);
 
   const isDateUnavailable = useDateAvailability(
     currentEvents,
