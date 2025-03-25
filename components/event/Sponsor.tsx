@@ -24,7 +24,7 @@ import { TICKET_ABI } from '@/utils/ticket_abi';
 import { TICKET_WITH_WHITELIST_ABI } from '@/utils/ticket_with_whitelist_abi';
 import { Abi, AbiItem } from 'viem';
 import { ERC20_ABI } from '@/utils/erc20_abi';
-import { scrollSepolia } from 'viem/chains';
+import { sepolia } from 'viem/chains';
 import { writeContract, waitForTransactionReceipt } from 'wagmi/actions';
 import { ZuButton, ZuInput } from '@/components/core';
 import gaslessFundAndUpload from '@/utils/gaslessFundAndUpload';
@@ -320,7 +320,7 @@ export const SponsorMint: React.FC<IProps> = ({
   ) => {
     try {
       const approveHash = await writeContract(config, {
-        chainId: scrollSepolia.id,
+        chainId: sepolia.id,
         address: tokenAddress,
         functionName: 'approve',
         abi: ERC20_ABI,
@@ -358,7 +358,7 @@ export const SponsorMint: React.FC<IProps> = ({
         );
         const ABI = isWhiteList ? TICKET_WITH_WHITELIST_ABI : TICKET_ABI;
         const MintHash = await writeContract(config, {
-          chainId: scrollSepolia.id,
+          chainId: sepolia.id,
           address: ticketAddress,
           functionName: 'purchaseTicket',
           abi: ABI,

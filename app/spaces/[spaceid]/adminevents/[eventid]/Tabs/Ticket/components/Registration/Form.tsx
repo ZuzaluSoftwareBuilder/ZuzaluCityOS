@@ -17,7 +17,7 @@ import {
   UpdateRegAndAccessRequest,
 } from '@/types';
 import { isDev } from '@/constant';
-import { scroll, scrollSepolia } from 'viem/chains';
+import { sepolia, mainnet } from 'viem/chains';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useCreateEventId } from '../../hooks/useCreateEventId';
 import { useEventContext } from '../../../../EventContext';
@@ -108,7 +108,7 @@ const ConfigForm: React.FC<RegistrationMethodSelectorProps> = ({
               .filter(Boolean)
               .map(
                 (address) =>
-                  `did:pkh:eip155:${isDev ? scrollSepolia.id : scroll.id}:${address.trim()}`,
+                  `did:pkh:eip155:${isDev ? sepolia.id : mainnet.id}:${address.trim()}`,
               ) || undefined;
           createMutation.mutate({
             eventId,

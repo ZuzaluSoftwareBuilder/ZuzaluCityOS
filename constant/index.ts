@@ -1,7 +1,7 @@
 import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
 import { createPublicClient, createWalletClient, getContract } from 'viem';
 import { http } from 'wagmi';
-import { scrollSepolia } from 'wagmi/chains';
+import { sepolia, mainnet } from 'wagmi/chains';
 import { EdDSAPublicKey } from '@pcd/eddsa-pcd';
 import { EdDSATicketPCDTypeName } from '@pcd/eddsa-ticket-pcd';
 import { PipelineEdDSATicketZuAuthConfig } from '@pcd/passport-interface';
@@ -51,11 +51,11 @@ export const ticketFactoryContract = {
 } as const;
 
 const read = createPublicClient({
-  chain: scrollSepolia,
+  chain: sepolia,
   transport: http(),
   batch: { multicall: true },
 });
-const write = createWalletClient({ chain: scrollSepolia, transport: http() });
+const write = createWalletClient({ chain: sepolia, transport: http() });
 export const ticketFactoryGetContract = getContract({
   address: TICKET_FACTORY_ADDRESS,
   abi: TICKET_FACTORY_ABI,
