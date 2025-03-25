@@ -40,7 +40,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
   isLoading,
 }) => {
   const spaceId = useParams()?.spaceid;
-  const { checkPermission, isOwner, isAdmin, isMember } = useSpacePermissions();
+  const { checkPermission } = useSpacePermissions();
   const { refetchMembers } = useGetSpaceMember(spaceId as string);
 
   const [searchQuery, setSearchQuery] = useState('');

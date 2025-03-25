@@ -1,32 +1,20 @@
 'use client';
-import { Stack, Grid, useTheme, useMediaQuery } from '@mui/material';
+import {
+  Stack,
+  Grid,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
 import { Sidebar } from 'components/layout';
 import { SpaceHeader } from './components';
 import { SpaceCard } from '@/components/cards';
 import { SpaceCardSkeleton } from '@/components/cards/SpaceCard';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_SPACE_QUERY } from '@/services/graphql/space';
-import { Space } from '@/types';
+import useSpaceAndEvent from '@/hooks/useSpaceAndEvent';
 
 const Home = () => {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
-
-  const { data: spaces, isLoading } = useGraphQL(
-    ['spaces'],
-    GET_SPACE_QUERY,
-    { first: 100 },
-    {
-      select: (data) => {
-        if (data?.data?.zucitySpaceIndex?.edges) {
-          return data.data.zucitySpaceIndex.edges.map(
-            (edge) => edge?.node,
-          ) as Space[];
-        }
-        return [];
-      },
-    },
-  );
+  const { userJoinedSpaceIds, userFollowedResourceIds, allSpaces: spaces, isAllSpaceLoading: isLoading } = useSpaceAndEvent();
 
   return (
     <Stack
@@ -34,7 +22,7 @@ const Home = () => {
       sx={{ backgroundColor: '#222222' }}
       minHeight="100vh"
     >
-      {!isTablet && <Sidebar selected="Spaces" />}
+      {!isTablet && <Sidebar selected={'Spaces'} />}
       <Stack direction="column" borderLeft="1px solid #383838" flex={1}>
         <SpaceHeader />
         <Stack
@@ -78,6 +66,8 @@ const Home = () => {
                     title={item.name}
                     categories={item.category}
                     tagline={item.tagline}
+                    isUserJoined={userJoinedSpaceIds.has(item.id)}
+                    isFollow={userFollowedResourceIds.has(item.id)}
                   />
                 </Grid>
               ))

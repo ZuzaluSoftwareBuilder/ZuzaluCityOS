@@ -3251,6 +3251,13 @@ export type GetOwnProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetOwnProfileQuery = { __typename?: 'Query', viewer?: { __typename?: 'CeramicAccount', zucityProfile?: { __typename?: 'ZucityProfile', avatar?: string | null, id: string, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } | null };
 
+export type GetUserSpaceAndEventQueryVariables = Exact<{
+  did: Scalars['ID']['input'];
+}>;
+
+
+export type GetUserSpaceAndEventQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount', zucityProfile?: { __typename?: 'ZucityProfile', id: string, username: string, author: { __typename?: 'CeramicAccount', id: string }, events: { __typename?: 'ZucityEventConnection', edges?: Array<{ __typename?: 'ZucityEventEdge', node?: { __typename?: 'ZucityEvent', id: string, title: string, superAdmin: Array<{ __typename?: 'CeramicAccount', id: string }>, members?: Array<{ __typename?: 'CeramicAccount', id: string } | null> | null } | null } | null> | null }, spaces: { __typename?: 'ZucitySpaceConnection', edges?: Array<{ __typename?: 'ZucitySpaceEdge', node?: { __typename?: 'ZucitySpace', id: string, name: string, superAdmin: Array<{ __typename?: 'CeramicAccount', id: string }>, members?: Array<{ __typename?: 'CeramicAccount', id: string } | null> | null } | null } | null> | null } } | null } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace' } | { __typename?: 'ZucityUserRoles' } | null };
+
 export type GetMembersQueryVariables = Exact<{
   source?: InputMaybe<Scalars['String']['input']>;
   resourceId?: InputMaybe<Scalars['String']['input']>;
@@ -3431,6 +3438,49 @@ export const GetProfileByDidDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetProfileByDidQuery, GetProfileByDidQueryVariables>;
+export const GetUserSpaceAndEventDocument = new TypedDocumentString(`
+    query GetUserSpaceAndEvent($did: ID!) {
+  node(id: $did) {
+    ... on CeramicAccount {
+      zucityProfile {
+        id
+        username
+        author {
+          id
+        }
+        events(first: 1000) {
+          edges {
+            node {
+              id
+              title
+              superAdmin {
+                id
+              }
+              members {
+                id
+              }
+            }
+          }
+        }
+        spaces(first: 1000) {
+          edges {
+            node {
+              id
+              name
+              superAdmin {
+                id
+              }
+              members {
+                id
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetUserSpaceAndEventQuery, GetUserSpaceAndEventQueryVariables>;
 export const CreateProfileDocument = new TypedDocumentString(`
     mutation CreateProfile($input: SetZucityProfileInput!) {
   setZucityProfile(input: $input) {

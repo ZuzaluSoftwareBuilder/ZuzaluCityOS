@@ -9,7 +9,6 @@ import {
 } from '@/components/icons';
 import { Button } from '@/components/base';
 import { useRouter } from 'next/navigation';
-import useUserJoinSpace from '@/hooks/useUserJoin';
 
 export function SpaceCardSkeleton() {
   return (
@@ -52,14 +51,22 @@ const formatMemberCount = (count: number): string => {
 
 interface SpaceCardProps {
   data: Space;
+  isUserJoined: boolean;
+  isFollow: boolean;
 }
 
-export function SpaceCard({ data }: SpaceCardProps) {
-  const { banner, name, tagline, avatar, tags, id } = data;
+export function SpaceCard({ data, isUserJoined, isFollow }: SpaceCardProps) {
+  const {
+    banner,
+    name,
+    tagline,
+    avatar,
+    tags,
+  } = data;
   const router = useRouter();
-  const { joined: isUserJoined } = useUserJoinSpace({ spaceId: id });
 
   const formattedMemberCount = useMemo(() => {
+    // TODO calc totalMembers
     const totalMembers = 1;
     return formatMemberCount(totalMembers);
   }, []);
@@ -84,7 +91,9 @@ export function SpaceCard({ data }: SpaceCardProps) {
         {isUserJoined && (
           <div className="flex items-center gap-[5px] px-[10px] py-[5px] rounded-[4px] border border-b-w-10 bg-[rgba(34,34,34,0.60)] backdrop-filter backdrop-blur-[5px] absolute right-[10px] top-[10px] z-10">
             <CheckCircleIcon size={4} />
-            <span className="text-[14px] font-[500]">Joined</span>
+            <span className="text-[14px] font-[500]">
+              {isFollow ? 'Followed' : 'Joined'}
+            </span>
           </div>
         )}
       </div>

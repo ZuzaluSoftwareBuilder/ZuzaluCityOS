@@ -37,6 +37,50 @@ export const GET_PROFILE_BY_DID_QUERY = graphql(`
   }
 `).toString();
 
+export const GET_USER_SPACE_AND_EVENT = graphql(`
+  query GetUserSpaceAndEvent($did: ID!) {
+    node(id: $did) {
+      ... on CeramicAccount {
+        zucityProfile {
+          id
+          username
+          author {
+            id
+          }
+          events(first: 1000) {
+            edges {
+              node {
+                id
+                title
+                superAdmin {
+                  id
+                }
+                members {
+                  id
+                }
+              }
+            }
+          }
+          spaces(first: 1000) {
+            edges {
+              node {
+                id
+                name
+                superAdmin {
+                  id
+                }
+                members {
+                  id
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`);
+
 export const CREATE_PROFILE_MUTATION = graphql(`
   mutation CreateProfile($input: SetZucityProfileInput!) {
     setZucityProfile(input: $input) {

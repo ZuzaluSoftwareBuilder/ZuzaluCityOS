@@ -69,7 +69,7 @@ export const getSpaceEventsQuery = (eventCount: number = 10) => `
 
 export const getSpacesQuery = `
       query GetSpaces {
-        zucitySpaceIndex(first: 30) {
+        zucitySpaceIndex(first: 100) {
           edges {
             node {
               admins {
