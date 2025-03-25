@@ -24,7 +24,7 @@ export const composeClient = new ComposeClient({
 export const dashboardEvent = process.env.NEXT_PUBLIC_EVENT_ID;
 export const resendApiKey = process.env.NEXT_PUBLIC_RESEND_API_KEY;
 export const JWT_SECRET = 'ZuCity';
-export const chainID = isDev ? 534351 : 534352;
+export const chainID = isDev ? 11155111 : 1;
 export const PROVIDER =
   'https://eth-sepolia.g.alchemy.com/v2/dIHWHPAPI_-uPhkXh5mcNrqJV88vkI-2';
 
