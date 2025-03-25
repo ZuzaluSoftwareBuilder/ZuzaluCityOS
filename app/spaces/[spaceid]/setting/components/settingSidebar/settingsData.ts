@@ -51,7 +51,6 @@ export const getSettingSections = (spaceId: string): SettingSection[] => {
           id: 'ExploreApps',
           label: 'Explore Apps',
           path: `/spaces/${spaceId}/setting/apps`,
-          locked: true,
         },
         {
           id: 'ManageApps',

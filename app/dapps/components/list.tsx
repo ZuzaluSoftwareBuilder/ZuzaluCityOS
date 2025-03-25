@@ -16,6 +16,8 @@ import Filter from './filter';
 import { useQuery } from '@tanstack/react-query';
 import { Dapp } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
+import { executeQuery } from '@/utils/ceramic';
 
 interface ListProps {
   onDetailClick: (data: Dapp) => void;
@@ -25,7 +27,7 @@ interface ListProps {
 export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { composeClient, ceramic } = useCeramicContext();
+  const { ceramic } = useCeramicContext();
   const userDID = ceramic.did?.parent;
   const [filter, setFilter] = useState<string[]>([]);
   const [searchVal, setSearchVal] = useState<string>('');
@@ -33,36 +35,14 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
   const { data, isLoading } = useQuery<Dapp[]>({
     queryKey: ['getDappInfoList'],
     queryFn: async () => {
-      const response: any = await composeClient.executeQuery(`
-      query {
-        zucityDappInfoIndex(first: 100) {
-          edges {
-            node {
-              id
-              appName
-              tagline
-              developerName
-              description
-              bannerUrl
-              categories
-              devStatus
-              openSource
-              repositoryUrl
-              appUrl
-              websiteUrl
-              docsUrl
-              profile {
-                author {
-                  id
-                }
-              }
-            }
-          }
-        }
-      }
-    `);
+      const response = await executeQuery(GET_DAPP_LIST_QUERY);
 
-      if (response && response.data && 'zucityDappInfoIndex' in response.data) {
+      if (
+        response &&
+        response.data &&
+        'zucityDappInfoIndex' in response.data &&
+        response.data.zucityDappInfoIndex?.edges
+      ) {
         return response.data.zucityDappInfoIndex.edges.map(
           (edge: any) => edge.node,
         );
