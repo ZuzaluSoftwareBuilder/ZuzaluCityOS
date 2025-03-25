@@ -15,9 +15,8 @@ import { CaretLineDown, Trash } from '@phosphor-icons/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { useMutation } from '@tanstack/react-query';
 
-import Drawer from '@/components/drawer';
 import FormHeader from '@/components/form/FormHeader';
-import { Button, Divider } from '@/components/base';
+import { Button, Divider, Drawer, DrawerBody, DrawerContent } from '@/components/base';
 import { ArrowUpRightIcon } from '@/components/icons';
 import ShowMoreEdit from '@/components/editor/ShowMoreEdit';
 import {
@@ -62,47 +61,69 @@ export const DAppDetailDrawer = ({ children }: PropsWithChildren) => {
         close,
       }}
     >
-      <Drawer open={drawerOpening} onClose={close} onOpen={open}>
-        <FormHeader
-          title={appData?.appName ?? '-'}
-          handleClose={close}
-          extra={
-            <Button
-              size="sm"
-              color="dark"
-              className="opacity-60"
-              endContent={<ArrowUpRightIcon size={4} />}
-              onClick={() => window.open(appData?.appUrl)}
-            >
-              View App Page
-            </Button>
-          }
-        />
-        <div className="flex flex-col gap-5 p-5">
-          <DAppDetailDrawer.Disclaimer />
-          <DAppDetailDrawer.BasicInfo
-            bannerUrl={appData?.bannerUrl}
-            appName={appData?.appName}
-            tagline={appData?.tagline}
-          />
-          <div className="flex flex-col gap-2.5">
-            <DAppDetailDrawer.Categories categories={appData?.categories} />
-            <DAppDetailDrawer.Developer developer={appData?.developerName} />
-          </div>
-          <Divider orientation="horizontal" className="m-0" />
-          <DAppDetailDrawer.InstallArea
-            appId={get(appData, 'id')}
-            nativeAppName={get(appData, 'appIdentifier')}
-            spaceId={spaceId}
-          />
-          <DAppDetailDrawer.Description description={appData?.description} />
-          <Divider orientation="horizontal" className="m-0" />
-          <DAppDetailDrawer.Status
-            devStatus={appData?.devStatus}
-            openSource={appData?.openSource}
-            repositoryUrl={appData?.repositoryUrl}
-          />
-        </div>
+      <Drawer
+        isOpen={drawerOpening}
+        classNames={{
+          base: 'w-[700px] max-w-[700px] mobile:w-[100%] mobile:max-w-[100%]',
+        }}
+        onOpenChange={(open) => setDrawerOpening(open)}
+      >
+        <DrawerContent>
+          {(onClose) => {
+            return (
+              <>
+                <FormHeader
+                  title={appData?.appName ?? '-'}
+                  handleClose={onClose}
+                  extra={
+                    <Button
+                      size="sm"
+                      color="dark"
+                      className="opacity-60"
+                      endContent={<ArrowUpRightIcon size={4} />}
+                      onClick={() => window.open(appData?.appUrl)}
+                    >
+                      View App Page
+                    </Button>
+                  }
+                />
+                <DrawerBody className="p-5">
+                  <div className="flex flex-col gap-5">
+                    <DAppDetailDrawer.Disclaimer />
+                    <DAppDetailDrawer.BasicInfo
+                      bannerUrl={appData?.bannerUrl}
+                      appName={appData?.appName}
+                      tagline={appData?.tagline}
+                    />
+                    <div className="flex flex-col gap-2.5">
+                      <DAppDetailDrawer.Categories
+                        categories={appData?.categories}
+                      />
+                      <DAppDetailDrawer.Developer
+                        developer={appData?.developerName}
+                      />
+                    </div>
+                    <Divider orientation="horizontal" className="m-0" />
+                    <DAppDetailDrawer.InstallArea
+                      appId={get(appData, 'id')}
+                      nativeAppName={get(appData, 'appIdentifier')}
+                      spaceId={spaceId}
+                    />
+                    <DAppDetailDrawer.Description
+                      description={appData?.description}
+                    />
+                    <Divider orientation="horizontal" className="m-0" />
+                    <DAppDetailDrawer.Status
+                      devStatus={appData?.devStatus}
+                      openSource={appData?.openSource}
+                      repositoryUrl={appData?.repositoryUrl}
+                    />
+                  </div>
+                </DrawerBody>
+              </>
+            );
+          }}
+        </DrawerContent>
       </Drawer>
       {children}
     </DAppDetailDrawerContext.Provider>
@@ -273,13 +294,7 @@ DAppDetailDrawer.InstallArea = function InstallArea(props: {
         color="functional"
         isLoading={isLoading}
         startContent={
-          !isLoading ? (
-            currentIsInstalled ? (
-              <Trash />
-            ) : (
-              <CaretLineDown />
-            )
-          ) : null
+          !isLoading ? currentIsInstalled ? <Trash /> : <CaretLineDown /> : null
         }
         onClick={handleInstallOrUninstall}
       >

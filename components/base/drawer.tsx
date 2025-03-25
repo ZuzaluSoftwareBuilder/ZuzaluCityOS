@@ -18,7 +18,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>((props, ref) => {
   const baseStyles = {
     wrapper: ['z-[1100]', ...(classNames?.wrapper || [])],
     base: cn(
-      'bg-[rgba(34,34,34,0.8)] backdrop-blur-[20px] border-[rgba(255,255,255,0.06)]',
+      'z-[1100] bg-[rgba(34,34,34,0.8)] backdrop-blur-[20px] border-[rgba(255,255,255,0.06)]',
       'rounded-none min-w-[600px] border-l',
       'mobile:min-w-0 mobile:w-full mobile:border-t mobile:rounded-t-[16px]',
       classNames?.base,
