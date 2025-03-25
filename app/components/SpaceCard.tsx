@@ -10,6 +10,7 @@ import {
 import { Button } from '@/components/base';
 import { useRouter } from 'next/navigation';
 import useUserJoinSpace from '@/hooks/useUserJoin';
+import { useMediaQuery } from '@mui/material';
 
 export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
   return (
@@ -19,7 +20,7 @@ export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
     )}>
       <div className="relative">
         <Skeleton className="rounded-none">
-          <div className="w-full h-[108px]"></div>
+          <div className="w-full h-[106px] tablet:h-[148px] mobile:h-[148px]"></div>
         </Skeleton>
         <Skeleton className="absolute left-[11px] w-[60px] h-[60px] bottom-[-21px] z-10 rounded-full" />
       </div>
@@ -71,6 +72,8 @@ export function SpaceCard({ data, autoWidth }: SpaceCardProps) {
     id,
   } = data;
   const router = useRouter();
+  const isMobile = useMediaQuery('(max-width: 809px)');
+  const isTablet = useMediaQuery('(max-width:1199px)');
   const { joined: isUserJoined } = useUserJoinSpace({ spaceId: id });
 
   const formattedMemberCount = useMemo(() => {
@@ -92,9 +95,9 @@ export function SpaceCard({ data, autoWidth }: SpaceCardProps) {
         <Image
           src={banner}
           alt={name}
-          width="100%"
-          height="108px"
-          className="object-cover rounded-none"
+          width={'100%'}
+          height={isTablet || isMobile ? '148' : '106'}
+          className="w-full h-[106px] tablet:h-[148px] mobile:h-[148px] object-cover rounded-none"
         />
         <Avatar
           src={avatar}
