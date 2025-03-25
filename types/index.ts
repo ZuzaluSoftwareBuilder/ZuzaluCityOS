@@ -629,6 +629,8 @@ export enum PermissionName {
   VIEW_ANALYTICS = 'view_analytics',
   MANAGE_APPS = 'manage_apps',
   VIEW_APPS = 'view_apps',
+  MANAGE_SPACE_ANNOUNCEMENT = 'manage_space_announcement',
+  VIEW_SPACE_ANNOUNCEMENT = 'view_space_announcement',
 }
 
 export interface Role {
@@ -663,5 +665,5 @@ export interface UserRoleData {
 export interface IProfile {
   zucityProfileIndex: {
     edges: { node: Profile }[];
-  }
+  };
 }
