@@ -328,7 +328,7 @@ export default function UpcomingEventList() {
             bottomContent={
               <div className="p-[14px] w-full pt-0">
                 <Button
-                  border
+                  color="functional"
                   variant="light"
                   fullWidth
                   className="text-[14px] h-[30px] opacity-80"

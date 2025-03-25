@@ -393,7 +393,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
         <Button
           variant="light"
-          border
+          color="functional"
           className="text-[13px] leading-[1.4] p-[6px_14px]"
           endContent={<ArrowUpRightIcon size={5} />}
           onPress={() =>
