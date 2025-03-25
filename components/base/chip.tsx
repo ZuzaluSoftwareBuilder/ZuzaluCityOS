@@ -41,4 +41,4 @@ const Chip = extendVariants(HChip, {
   // 复合变体
 });
 
-export default Chip;
+export { Chip };

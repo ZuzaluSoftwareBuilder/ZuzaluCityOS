@@ -27,4 +27,4 @@ const Input = extendVariants(HInput, {
   },
 });
 
-export default Input;
+export { Input };

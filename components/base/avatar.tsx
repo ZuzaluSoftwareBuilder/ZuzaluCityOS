@@ -1,6 +1,6 @@
 import { Avatar as HAvatar, extendVariants } from '@heroui/react';
 
-export const Avatar = extendVariants(HAvatar, {
+const Avatar = extendVariants(HAvatar, {
     variants: {
         size: {
             md: {
@@ -19,5 +19,4 @@ export const Avatar = extendVariants(HAvatar, {
     }
 })
 
-export type AvatarProps = Parameters<typeof Avatar>[0]
-export default Avatar
+export { Avatar }
