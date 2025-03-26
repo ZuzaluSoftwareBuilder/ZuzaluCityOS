@@ -84,6 +84,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
           created_at: dayjs().utc().toISOString(),
           updated_at: dayjs().utc().toISOString(),
           roleId,
+          spaceId: id,
         },
       },
     });
