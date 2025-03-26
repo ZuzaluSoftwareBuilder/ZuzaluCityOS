@@ -2,9 +2,11 @@ import { useTheme } from '@mui/material';
 import { useMediaQuery as useMuiMediaQuery } from '@mui/material';
 
 const useMediaQuery = () => {
-  const { breakpoints } = useTheme();
-  const isMobile = useMuiMediaQuery(breakpoints.down('md'));
-  return { isMobile };
+  const isMobile = useMuiMediaQuery('(max-width: 809px)');
+  const isTablet = useMuiMediaQuery('(min-width: 810px) and (max-width: 1199px)');
+  const isPc = useMuiMediaQuery('(min-width: 1200px)');
+
+  return { isMobile, isTablet, isPc };
 };
 
 export { useMediaQuery };

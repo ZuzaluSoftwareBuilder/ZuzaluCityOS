@@ -27,7 +27,11 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import { createUrl } from '@/services/url';
 import { useMediaQuery } from '@/hooks';
 import { Button } from '@/components/base';
-import { XMarkIcon, ChevronRightIcon, ArrowDownTrayIcon } from '@heroicons/react/20/solid';
+import {
+  XMarkIcon,
+  ChevronRightIcon,
+  ArrowDownTrayIcon,
+} from '@heroicons/react/20/solid';
 import { ArrowLineDown, X as XIcon } from '@phosphor-icons/react';
 
 dayjs.extend(utc);
@@ -70,7 +74,7 @@ const DEFAULT_BANNER =
   'https://nftstorage.link/ipfs/bafybeifqan4j2n7gygwkmekcty3dsp7v4rxbjimpo7nrktclwxgxreiyay';
 
 const EditSapce = () => {
-  const [selectedTab, setSelectedTab] = useState(TabContentEnum.Categories);
+  const [selectedTab, setSelectedTab] = useState(TabContentEnum.Profile);
   const [tabStatuses, setTabStatuses] = useState<Record<string, TabStatus>>({
     [TabContentEnum.Profile]: TabStatus.Active,
     [TabContentEnum.Categories]: TabStatus.Inactive,
@@ -78,7 +82,7 @@ const EditSapce = () => {
   });
   const [isSubmit, setIsSubmit] = useState(false);
   const router = useRouter();
-  const { isMobile } = useMediaQuery();
+  const { isMobile, isPc, isTablet } = useMediaQuery();
   const { ceramic, composeClient, isAuthenticated, profile } =
     useCeramicContext();
   const profileForm = useForm<ProfileFormData>({
@@ -319,7 +323,6 @@ const EditSapce = () => {
       <>
         <div className={cn({ hidden: selectedTab !== TabContentEnum.Profile })}>
           <ProfileContent
-            onBack={handleProfileBack}
             form={profileForm}
             onSubmit={handleProfileSubmit}
           />
@@ -344,9 +347,35 @@ const EditSapce = () => {
       </>
     );
   };
+  const ButtonGroup = ({ className = '' }: { className?: string }) => {
+    return (
+      <div className={className}>
+        <Button
+          color="primary"
+          size="md"
+          // className="bg-[rgba(103,219,255,0.1)] border border-[rgba(103,219,255,0.2)] text-[#67DBFF]"
+          className="mobile:w-full tablet:w-full"
+          startContent={<ArrowLineDown size={20} />}
+          onClick={handleLinksSubmit}
+        >
+          Save Changed
+        </Button>
+        <Button
+          type="button"
+          size="md"
+          color="default"
+          className="bg-white/[0.05] mobile:w-full tablet:w-full"
+          startContent={<XIcon size={20} />}
+        >
+          Discard Changes
+        </Button>
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col w-full min-h-screen">
+      {/* 移动端 */}
       <div
         className={cn(
           'flex justify-start gap-[40px] py-[20px] px-[40px] mx-auto w-full',
@@ -368,30 +397,12 @@ const EditSapce = () => {
 
         {/* 中间内容区域 */}
         <div className="w-full max-w-[600px] p-[20px] mobile:p-[10px]">
+          {isTablet && <ButtonGroup className="flex flex-col gap-[10px] mb-[30px]"/>}
           {renderTabContent()}
           {/* 底部按钮 */}
-          <div className="flex justify-end gap-2.5 mt-[30px]">
-            <Button
-              type="button"
-              size="md"
-              color="default"
-              className="bg-white/[0.05]"
-              startContent={<XIcon size={20} />}
-            >
-              Discard Changes
-            </Button>
-            <Button
-              type="submit"
-              color="primary"
-              size="md"
-              // className="bg-[rgba(103,219,255,0.1)] border border-[rgba(103,219,255,0.2)] text-[#67DBFF]"
-              className=""
-              startContent={<ArrowLineDown size={20} />}
-              onClick={handleLinksSubmit}
-            >
-              Save Changed
-            </Button>
-          </div>
+          {isPc && (
+            <ButtonGroup className="flex justify-end gap-2.5 mt-[30px]" />
+          )}
         </div>
       </div>
     </div>
