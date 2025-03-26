@@ -39,11 +39,11 @@ const selectedChain = isDev ? sepolia : mainnet;
 
 const RPC_CONFIG = {
   [sepolia.id]: fallback(
-    [http('/api/rpc'), http('https://eth-sepolia.reddio.com')],
+    [http('https://eth-sepolia.reddio.com'), http('/api/rpc')],
     { retryCount: 3 },
   ),
   [mainnet.id]: fallback(
-    [http('/api/rpc'), http('https://eth-mainnet.reddio.com')],
+    [http('https://eth-mainnet.reddio.com'), http('/api/rpc')],
     { retryCount: 3 },
   ),
 } as const;
