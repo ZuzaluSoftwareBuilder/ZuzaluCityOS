@@ -29,7 +29,7 @@ const Button = extendVariants(HButton, {
   variants: {
     // 根据设计稿定义颜色变体
     color: {
-      primary: 'bg-[#363636] hover:bg-[#404040] text-white',
+      primary: 'bg-[rgba(103,219,255,0.1)] text-[#67DBFF]',
       secondary:
         'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.05)] text-white',
       dark: 'bg-[#222222] hover:bg-[#363636] text-white',
@@ -59,7 +59,7 @@ const Button = extendVariants(HButton, {
   defaultVariants: {
     color: 'primary',
     size: 'md',
-    radius: 'md',
+    radius: 'sm',
     // state: "active",
   },
 });
