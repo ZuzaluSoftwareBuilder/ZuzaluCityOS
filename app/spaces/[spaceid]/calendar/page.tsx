@@ -10,7 +10,6 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { CalendarConfig, Space } from '@/types';
-import SubSidebar from 'components/layout/Sidebar/SubSidebar';
 import Drawer from '@/components/drawer';
 import { getSpaceEventsQuery } from '@/services/space';
 import { useQuery } from '@tanstack/react-query';
@@ -26,6 +25,7 @@ import { supabase } from '@/utils/supabase/client';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { rrulestr } from 'rrule';
+import { useSpacePermissions } from '../components/permission';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -38,10 +38,9 @@ const Calendar = () => {
 
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<string>('');
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isMember, setIsMember] = useState(false);
   const [currentCategory, setCurrentCategory] = useState('All');
   const [currentEvent, setCurrentEvent] = useState<any>(null);
+  const { isAdmin } = useSpacePermissions();
 
   const searchParams = useSearchParams();
 
@@ -347,26 +346,6 @@ const Calendar = () => {
   ]);
 
   useEffect(() => {
-    if (spaceData) {
-      const admins =
-        spaceData?.admins?.map((admin) => admin.id.toLowerCase()) || [];
-      const superAdmins =
-        spaceData?.superAdmin?.map((superAdmin) =>
-          superAdmin.id.toLowerCase(),
-        ) || [];
-      const members =
-        spaceData?.members?.map((member) => member.id.toLowerCase()) || [];
-      const userDID = ceramic?.did?.parent.toString().toLowerCase() || '';
-      if (admins.includes(userDID) || superAdmins.includes(userDID)) {
-        setIsAdmin(true);
-      }
-      if (members.includes(userDID)) {
-        setIsMember(true);
-      }
-    }
-  }, [ceramic?.did?.parent, spaceData]);
-
-  useEffect(() => {
     if (currentEvent && !currentEvent.recurring) {
       eventsData?.forEach((event: any) => {
         if (event.id === currentEvent.id) {
@@ -437,13 +416,6 @@ const Calendar = () => {
 
   return (
     <Stack direction="row" width={'100%'} height={'100%'}>
-      {/* <SubSidebar
-        title={spaceData?.name}
-        spaceId={params.spaceid.toString()}
-        avatar={spaceData?.avatar}
-        banner={spaceData?.banner}
-        isAdmin={isAdmin}
-      /> */}
       <Stack width="100%" position="relative">
         {content}
         <Drawer open={open} onClose={toggleDrawer} onOpen={toggleDrawer}>

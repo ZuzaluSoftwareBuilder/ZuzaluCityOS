@@ -70,8 +70,6 @@ const Carousel: React.FC<CarouselProps> = ({ items }) => {
               : '/5.webp'
           }
           title={item.name}
-          description={item.description}
-          members={item.members}
           categories={item.category}
           tagline={item.tagline}
         />

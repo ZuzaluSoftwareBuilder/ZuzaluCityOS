@@ -11,11 +11,6 @@ export type SpaceCardProps = {
   bgImage?: string;
   logoImage?: string;
   title?: string;
-  description?: string;
-  joined?: boolean;
-  members?: {
-    id: string;
-  }[];
   categories?: string;
   tagline?: string;
 };
@@ -25,13 +20,9 @@ const SpaceCard: React.FC<SpaceCardProps> = ({
   bgImage = '/5.webp',
   logoImage = '/1.webp',
   title,
-  description,
-  joined = false,
-  members = [],
   categories = '',
   tagline,
 }) => {
-
   const { joined: isUserJoined } = useUserJoinSpace({ spaceId: id as string });
 
   return (
@@ -50,7 +41,6 @@ const SpaceCard: React.FC<SpaceCardProps> = ({
         minHeight={252}
         maxHeight={288}
       >
-
         {isUserJoined && (
           <div className="flex items-center gap-[5px] px-[10px] py-[5px] rounded-[4px] border border-b-w-10 bg-[rgba(34,34,34,0.60)] backdrop-filter backdrop-blur-[5px] absolute right-[10px] top-[10px] z-10">
             <CheckCircleIcon size={4} />

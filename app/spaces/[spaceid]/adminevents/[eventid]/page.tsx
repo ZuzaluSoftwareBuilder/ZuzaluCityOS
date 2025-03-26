@@ -199,21 +199,6 @@ const EventContent: React.FC = () => {
     }
   };
 
-  React.useEffect(() => {
-    if (spaceData) {
-      const superAdmins =
-        spaceData?.superAdmin?.map((superAdmin) =>
-          superAdmin.id.toLowerCase(),
-        ) || [];
-      const admins =
-        spaceData?.admins?.map((admin) => admin.id.toLowerCase()) || [];
-      const userDID = ceramic?.did?.parent.toString().toLowerCase() || '';
-      if (!admins.includes(userDID) && !superAdmins.includes(userDID)) {
-        router.push('/');
-      }
-    }
-  }, [ceramic?.did?.parent, router, spaceData]);
-
   return (
     <Stack width="100%" id="111122">
       <Navbar spaceName={event?.space?.name} />
