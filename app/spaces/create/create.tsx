@@ -35,6 +35,9 @@ import { uint8ArrayToBase64 } from '@/utils';
 import { getResolver } from 'key-did-resolver';
 import { Ed25519Provider } from 'key-did-provider-ed25519';
 import { DID } from 'dids';
+import { CREATE_SPACE_MUTATION } from '@/services/graphql/space';
+import { executeQuery } from '@/utils/ceramic';
+
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,
 });
@@ -54,6 +57,11 @@ const validationSchema = yup.object({
     .max(30, 'Categories select up to 30 items.')
     .required('Categories are required.'),
 });
+
+type Link = {
+  links: string;
+  title: string;
+};
 
 const Create = () => {
   const router = useRouter();
@@ -89,8 +97,8 @@ const Create = () => {
       return;
     }
 
-    let socialLinks = {};
-    let customLinks = [];
+    let socialLinks = [] as Link[];
+    let customLinks = [] as Link[];
     if (
       socialLinksRef &&
       socialLinksRef.current &&
@@ -110,7 +118,10 @@ const Create = () => {
               'input',
             )?.value;
           if (key) {
-            socialLinks = { ...socialLinks, [key]: value };
+            socialLinks.push({
+              links: value || '',
+              title: key,
+            });
           }
         }
       }
@@ -136,8 +147,8 @@ const Create = () => {
             )?.value;
           if (key) {
             customLinks.push({
-              links: value,
-              title: key,
+              links: value || '',
+              title: key || '',
             });
           }
         }
@@ -153,53 +164,28 @@ const Create = () => {
         tagline: tagline,
         categories: categories,
       });
-      const result = await composeClient.executeQuery(
-        `
-      mutation createZucitySpaceMutation($input: CreateZucitySpaceInput!) {
-        createZucitySpace(
-          input: $input
-        ) {
-          document {
-            id
-            name
-            description
-            profileId
-            avatar
-            banner
-            category
-          }
-        }
-      }
-      `,
-        {
-          input: {
-            content: {
-              customLinks,
-              ...socialLinks,
-              name: name,
-              description: descriptionEditorStore.getValueString(),
-              tagline: tagline,
-              superAdmin: adminId,
-              profileId: profileId,
-              avatar:
-                avatar ||
-                'https://nftstorage.link/ipfs/bafybeifcplhgttja4hoj5vx4u3x7ucft34acdpiaf62fsqrobesg5bdsqe',
-              banner:
-                banner ||
-                'https://nftstorage.link/ipfs/bafybeifqan4j2n7gygwkmekcty3dsp7v4rxbjimpo7nrktclwxgxreiyay',
-              category: categories.join(', '),
-              customAttributes: [
-                {
-                  tbd: JSON.stringify({
-                    key: 'createdTime',
-                    value: dayjs().utc().toISOString(),
-                  }),
-                },
-              ],
-            },
+      const result = await executeQuery(CREATE_SPACE_MUTATION, {
+        input: {
+          content: {
+            customLinks,
+            socialLinks,
+            name: name,
+            description: descriptionEditorStore.getValueString(),
+            tagline: tagline,
+            owner: adminId,
+            profileId: profileId,
+            avatar:
+              avatar ||
+              'https://nftstorage.link/ipfs/bafybeifcplhgttja4hoj5vx4u3x7ucft34acdpiaf62fsqrobesg5bdsqe',
+            banner:
+              banner ||
+              'https://nftstorage.link/ipfs/bafybeifqan4j2n7gygwkmekcty3dsp7v4rxbjimpo7nrktclwxgxreiyay',
+            tags: categories.map((category) => ({ tag: category })),
+            createdAt: dayjs().utc().toISOString(),
+            updatedAt: dayjs().utc().toISOString(),
           },
         },
-      );
+      });
       if (result.errors?.length) {
         console.error('Detailed error info:', result.errors);
         throw new Error(

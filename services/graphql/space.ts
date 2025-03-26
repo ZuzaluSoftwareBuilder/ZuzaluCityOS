@@ -1,6 +1,6 @@
 import { graphql } from '@/graphql/gql';
 
-export const GET_SPACE_QUERY = graphql(`
+export const GET_SPACE_QUERY_BY_ID = graphql(`
   query GetSpace($id: ID!) {
     node(id: $id) {
       ... on ZucitySpace {
@@ -124,6 +124,69 @@ export const UNINSTALL_DAPP_FROM_SPACE = graphql(`
         }
         createdAt
         updatedAt
+      }
+    }
+  }
+`);
+
+export const CREATE_SPACE_MUTATION = graphql(`
+  mutation createZucitySpaceMutation($input: CreateZucitySpaceInput!) {
+    createZucitySpace(input: $input) {
+      document {
+        id
+        name
+        description
+        profileId
+        avatar
+        banner
+        category
+      }
+    }
+  }
+`);
+
+export const GET_SPACE_QUERY = graphql(`
+  query GetSpaces($first: Int) {
+    zucitySpaceIndex(first: $first) {
+      edges {
+        node {
+          id
+          avatar
+          banner
+          description
+          name
+          profileId
+          tagline
+          category
+          color
+          createdAt
+          updatedAt
+          tags {
+            tag
+          }
+          customAttributes {
+            tbd
+          }
+          socialLinks {
+            title
+            links
+          }
+          customLinks {
+            title
+            links
+          }
+          owner {
+            id
+            zucityProfile {
+              id
+              avatar
+              author {
+                id
+              }
+              username
+            }
+          }
+        }
       }
     }
   }

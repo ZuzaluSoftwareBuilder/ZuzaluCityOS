@@ -3326,6 +3326,20 @@ export type UninstallDappFromSpaceMutationVariables = Exact<{
 
 export type UninstallDappFromSpaceMutation = { __typename?: 'Mutation', enableIndexingZucityInstalledApp?: { __typename?: 'EnableIndexingZucityInstalledAppPayload', document?: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, installedAppId?: any | null, createdAt: any, updatedAt: any, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string } | null } | null } | null };
 
+export type CreateZucitySpaceMutationMutationVariables = Exact<{
+  input: CreateZucitySpaceInput;
+}>;
+
+
+export type CreateZucitySpaceMutationMutation = { __typename?: 'Mutation', createZucitySpace?: { __typename?: 'CreateZucitySpacePayload', document: { __typename?: 'ZucitySpace', id: string, name: string, description: string, profileId: any, avatar?: string | null, banner?: string | null, category?: string | null } } | null };
+
+export type GetSpacesQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type GetSpacesQuery = { __typename?: 'Query', zucitySpaceIndex?: { __typename?: 'ZucitySpaceConnection', edges?: Array<{ __typename?: 'ZucitySpaceEdge', node?: { __typename?: 'ZucitySpace', id: string, avatar?: string | null, banner?: string | null, description: string, name: string, profileId: any, tagline?: string | null, category?: string | null, color?: string | null, createdAt: any, updatedAt: any, tags?: Array<{ __typename?: 'ZucitySpaceTag', tag: string } | null> | null, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, socialLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, customLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, owner: { __typename?: 'CeramicAccount', id: string, zucityProfile?: { __typename?: 'ZucityProfile', id: string, avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } } | null } | null> | null } | null };
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -3655,3 +3669,64 @@ export const UninstallDappFromSpaceDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UninstallDappFromSpaceMutation, UninstallDappFromSpaceMutationVariables>;
+export const CreateZucitySpaceMutationDocument = new TypedDocumentString(`
+    mutation createZucitySpaceMutation($input: CreateZucitySpaceInput!) {
+  createZucitySpace(input: $input) {
+    document {
+      id
+      name
+      description
+      profileId
+      avatar
+      banner
+      category
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CreateZucitySpaceMutationMutation, CreateZucitySpaceMutationMutationVariables>;
+export const GetSpacesDocument = new TypedDocumentString(`
+    query GetSpaces($first: Int) {
+  zucitySpaceIndex(first: $first) {
+    edges {
+      node {
+        id
+        avatar
+        banner
+        description
+        name
+        profileId
+        tagline
+        category
+        color
+        createdAt
+        updatedAt
+        tags {
+          tag
+        }
+        customAttributes {
+          tbd
+        }
+        socialLinks {
+          title
+          links
+        }
+        customLinks {
+          title
+          links
+        }
+        owner {
+          id
+          zucityProfile {
+            id
+            avatar
+            author {
+              id
+            }
+            username
+          }
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetSpacesQuery, GetSpacesQueryVariables>;
