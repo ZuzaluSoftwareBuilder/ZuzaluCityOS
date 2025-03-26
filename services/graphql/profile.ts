@@ -38,65 +38,65 @@ export const GET_PROFILE_BY_DID_QUERY = graphql(`
 `).toString();
 
 export const GET_USER_SPACE_AND_EVENT = graphql(`
-query GetUserSpaceAndEvent($did: ID!) {
-  node(id: $did) {
-    ... on CeramicAccount {
-      zucityProfile {
-        id
-        username
-        author {
+  query GetUserSpaceAndEvent($did: ID!) {
+    node(id: $did) {
+      ... on CeramicAccount {
+        zucityProfile {
           id
-        }
-        events(first: 100) {
-          edges {
-            node {
-              id
-              imageUrl
-              title
-              createdAt
-              description
-              endTime
-              externalUrl
-              gated
-              profileId
-              spaceId
-              startTime
-              status
-              tagline
-              supportChain
-              timezone
-              tracks
+          username
+          author {
+            id
+          }
+          events(first: 100) {
+            edges {
+              node {
+                id
+                imageUrl
+                title
+                createdAt
+                description
+                endTime
+                externalUrl
+                gated
+                profileId
+                spaceId
+                startTime
+                status
+                tagline
+                supportChain
+                timezone
+                tracks
+              }
             }
           }
-        }
-        spaces(first: 100) {
-          edges {
-            node {
-              id
-              name
-              avatar
-              banner
-              category
-              customAttributes {
-                tbd
+          spaces(first: 100) {
+            edges {
+              node {
+                id
+                name
+                avatar
+                banner
+                category
+                customAttributes {
+                  tbd
+                }
+                description
+                discord
+                ens
+                gated
+                github
+                nostr
+                tagline
+                telegram
+                twitter
+                website
               }
-              description
-              discord
-              ens
-              gated
-              github
-              nostr
-              tagline
-              telegram
-              twitter
-              website
             }
           }
         }
       }
     }
   }
-}
 `);
 
 export const CREATE_PROFILE_MUTATION = graphql(`

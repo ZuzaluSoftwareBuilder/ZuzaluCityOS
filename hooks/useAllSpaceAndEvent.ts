@@ -3,31 +3,30 @@ import { EVENTS_QUERY } from '@/graphql/eventQueries';
 import { EventData, SpaceData } from '@/types';
 import { getSpacesQuery } from '@/services/space';
 import { composeClient } from '@/constant';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import { GET_ALL_SPACE_QUERY } from '@/services/graphql/space';
+import { GET_ALL_EVENT_QUERY } from '@/services/graphql/event';
 
 const useAllSpaceAndEvent = () => {
-  const {
-    data: allEvents,
-    isLoading: isAllEventLoading,
-    isFetched: isAllEventFetched,
-  } = useQuery({
-    queryKey: ['userEvents'],
-    queryFn: async () => {
-      try {
-        const response: any = await composeClient.executeQuery(EVENTS_QUERY);
-
-        if (response && response.data && 'zucityEventIndex' in response.data) {
-          const eventData: EventData = response.data as EventData;
-          return eventData.zucityEventIndex.edges.map((edge) => edge.node);
-        } else {
-          console.error('Invalid data structure:', response.data);
-          return [];
-        }
-      } catch (error) {
-        console.error('Failed to fetch events:', error);
-        return [];
-      }
+  const { data: allSpaceList } = useGraphQL(
+    'GET_ALL_SPACE_QUERY',
+    GET_ALL_SPACE_QUERY,
+    {
+      select: (data) => {
+        return data?.zucitySpaceIndex?.edges?.map((edge) => edge?.node) || [];
+      },
     },
-  });
+  );
+
+  const { data: allEventList } = useGraphQL(
+    'GET_ALL_EVENT_QUERY',
+    GET_ALL_EVENT_QUERY,
+    {
+      select: (data) => {
+        return data?.zucityEventIndex?.edges?.map((edge) => edge?.node) || [];
+      },
+    },
+  );
 
   const {
     data: allSpaces,
@@ -52,6 +51,31 @@ const useAllSpaceAndEvent = () => {
       }
     },
   });
+
+  const {
+    data: allEvents,
+    isLoading: isAllEventLoading,
+    isFetched: isAllEventFetched,
+  } = useQuery({
+    queryKey: ['userEvents'],
+    queryFn: async () => {
+      try {
+        const response: any = await composeClient.executeQuery(EVENTS_QUERY);
+
+        if (response && response.data && 'zucityEventIndex' in response.data) {
+          const eventData: EventData = response.data as EventData;
+          return eventData.zucityEventIndex.edges.map((edge) => edge.node);
+        } else {
+          console.error('Invalid data structure:', response.data);
+          return [];
+        }
+      } catch (error) {
+        console.error('Failed to fetch events:', error);
+        return [];
+      }
+    },
+  });
+
 
   return {
     allSpaces: allSpaces || [],

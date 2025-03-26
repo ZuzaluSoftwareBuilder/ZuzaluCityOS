@@ -1,5 +1,4 @@
 import { SpaceCard, SpaceCardSkeleton } from './SpaceCard';
-import { Space } from '@/types';
 import { useRouter } from 'next/navigation';
 import CommonHeader from './CommonHeader';
 import { BuildingsIcon } from '@/components/icons';

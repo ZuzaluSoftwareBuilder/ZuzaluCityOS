@@ -145,6 +145,49 @@ export const CREATE_SPACE_MUTATION = graphql(`
   }
 `);
 
+export const GET_ALL_SPACE_QUERY = graphql(`
+  query GetAllSpaces {
+    zucitySpaceIndex(first: 1000) {
+      edges {
+        node {
+          id
+          avatar
+          banner
+          description
+          name
+          profileId
+          tagline
+          category
+          customAttributes {
+            tbd
+          }
+          discord
+          ens
+          gated
+          github
+          nostr
+          telegram
+          twitter
+          website
+          superAdmin {
+            id
+          }
+          admins {
+            id
+          }
+          author {
+            id
+          }
+          customLinks {
+            links
+            title
+          }
+        }
+      }
+    }
+  }
+`);
+
 export const GET_SPACE_QUERY = graphql(`
   query GetSpaces($first: Int) {
     zucitySpaceIndex(first: $first) {
