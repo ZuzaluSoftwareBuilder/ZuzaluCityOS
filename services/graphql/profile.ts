@@ -63,57 +63,14 @@ export const GET_OWN_PROFILE_QUERY = graphql(`
   }
 `);
 
-export const GET_USER_SPACE_AND_EVENT = graphql(`
-query GetUserSpaceAndEvent($did: ID!) {
+export const GET_USER_OWN_SPACE = graphql(`
+query GetUserOwnSpace($did: ID!) {
   node(id: $did) {
     ... on CeramicAccount {
       zucityProfile {
         id
         username
         avatar
-        events(first: 100) {
-          edges {
-            node {
-              id
-              admins {
-                id
-              }
-              createdAt
-              author {
-                id
-              }
-              customAttributes {
-                tbd
-              }
-              customLinks {
-                links
-                title
-              }
-              description
-              endTime
-              externalUrl
-              gated
-              imageUrl
-              members {
-                id
-              }
-              participantCount
-              minParticipant
-              profileId
-              spaceId
-              startTime
-              status
-              superAdmin {
-                id
-              }
-              supportChain
-              tagline
-              timezone
-              title
-              tracks
-            }
-          }
-        }
         author {
           id
         }
@@ -159,3 +116,63 @@ query GetUserSpaceAndEvent($did: ID!) {
   }
 }
 `);
+
+export const GET_USER_OWN_EVENT = graphql(`
+  query GetUserOwnEvent($did: ID!) {
+    node(id: $did) {
+      ... on CeramicAccount {
+        zucityProfile {
+          id
+          username
+          avatar
+          events(first: 100) {
+            edges {
+              node {
+                id
+                admins {
+                  id
+                }
+                createdAt
+                author {
+                  id
+                }
+                customAttributes {
+                  tbd
+                }
+                customLinks {
+                  links
+                  title
+                }
+                description
+                endTime
+                externalUrl
+                gated
+                imageUrl
+                members {
+                  id
+                }
+                participantCount
+                minParticipant
+                profileId
+                spaceId
+                startTime
+                status
+                superAdmin {
+                  id
+                }
+                supportChain
+                tagline
+                timezone
+                title
+                tracks
+              }
+            }
+          }
+          author {
+            id
+          }
+        }
+      }
+    }
+  }
+  `);

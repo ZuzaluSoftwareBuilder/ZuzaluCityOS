@@ -1,44 +1,27 @@
-import { GET_USER_SPACE_AND_EVENT } from '@/services/graphql/profile';
-import { supabase } from '@/utils/supabase/client';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo } from 'react';
+import {
+  GET_USER_OWN_SPACE,
+} from '@/services/graphql/profile';
+import { useMemo } from 'react';
 import { useGraphQL } from './useGraphQL';
-import { GET_USER_ROLES_QUERY } from '@/services/graphql/role';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { IUserProfileWithSpaceAndEvent } from '@/types';
 import { GET_SPACE_QUERY_BY_IDS } from '@/services/graphql/space';
+import useUserRole from '@/hooks/useUserRole';
 
 const useUserSpace = () => {
   const { profile } = useCeramicContext();
   const userDId = profile?.author?.id;
 
-  const {
-    data: userRoles,
-    isLoading: isUserRoleLoading,
-    isFetched: isUserRoleFetched,
-  } = useGraphQL(
-    ['GET_USER_ROLES_QUERY', userDId],
-    GET_USER_ROLES_QUERY,
-    {
-      userId: userDId,
-    },
-    {
-      select: ({ data }) => {
-        return (
-          data?.zucityUserRolesIndex?.edges?.map((edge) => edge?.node) || []
-        );
-      },
-      enabled: !!userDId,
-    },
-  );
+  const { userRoles, isUserRoleLoading, isUserRoleFetched, followerRoleId } =
+    useUserRole();
 
   const {
-    data: userSpaceAndEvent,
-    isLoading: isUserSpaceAndEventLoading,
-    isFetched: isUserSpaceAndEventFetched,
+    data: userOwnSpace,
+    isLoading: isUserOwnSpaceLoading,
+    isFetched: isUserOwnSpaceFetched,
   } = useGraphQL(
-    ['GET_USER_SPACE_AND_EVENT', userDId],
-    GET_USER_SPACE_AND_EVENT,
+    ['GET_USER_OWN_SPACE', userDId],
+    GET_USER_OWN_SPACE,
     {
       did: userDId as string,
     },
@@ -50,19 +33,9 @@ const useUserSpace = () => {
     },
   );
 
-  const { data: followerRoleId } = useQuery({
-    queryKey: ['getFollowerRoleId'],
-    queryFn: () => {
-      return supabase.from('role').select('*').eq('level', 'follower');
-    },
-    select: (data: any) => {
-      return data.data.id;
-    },
-  });
-
   const ownerSpaces = useMemo(() => {
-    return (userSpaceAndEvent?.spaces?.edges || []).map((edge) => edge.node);
-  }, [userSpaceAndEvent]);
+    return (userOwnSpace?.spaces?.edges || []).map((edge) => edge.node);
+  }, [userOwnSpace]);
 
   const userJoinedSpaceIds = useMemo(() => {
     const spaceIds = ownerSpaces.map((space) => space?.id);
@@ -79,7 +52,11 @@ const useUserSpace = () => {
     return userJoinedSpaceIds.size > 0 ? Array.from(userJoinedSpaceIds) : [];
   }, [userJoinedSpaceIds]);
 
-  const { data: userJoinedSpaces, isLoading: isUserJoinedSpaceLoading, isFetched: isUserJoinedSpaceFetched } = useGraphQL(
+  const {
+    data: userJoinedSpaces,
+    isLoading: isUserJoinedSpaceLoading,
+    isFetched: isUserJoinedSpaceFetched,
+  } = useGraphQL(
     ['GET_SPACE_QUERY_BY_IDS', userJoinedSpaceIdArray],
     GET_SPACE_QUERY_BY_IDS,
     { ids: userJoinedSpaceIdArray as string[] },
@@ -105,8 +82,10 @@ const useUserSpace = () => {
     userJoinedSpaces: userJoinedSpaces || [],
     userJoinedSpaceIds,
     userFollowedSpaceIds,
-    isUserSpaceLoading: isUserRoleLoading || isUserSpaceAndEventLoading || isUserJoinedSpaceLoading,
-    isUserSpaceFetched: isUserRoleFetched && isUserSpaceAndEventFetched && isUserJoinedSpaceFetched,
+    isUserSpaceLoading:
+      isUserRoleLoading || isUserOwnSpaceLoading || isUserJoinedSpaceLoading,
+    isUserSpaceFetched:
+      isUserRoleFetched && isUserOwnSpaceFetched && isUserJoinedSpaceFetched,
   };
 };
 
