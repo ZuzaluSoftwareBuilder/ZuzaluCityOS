@@ -39,6 +39,7 @@ type ZucityDappInfo
   auditLogUrl: String @string(minLength: 1, maxLength: 10000)
   isInstallable: String! @string(minLength: 1, maxLength: 10000)
   integrateType: String @string(minLength: 1, maxLength: 10000)
+  auditStatus: String @string(minLength: 1, maxLength: 10000)
   customAttributes: [TBD] @list(maxLength: 10000)
 }
 
