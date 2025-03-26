@@ -6,17 +6,17 @@ import { BuildingsIcon } from '@/components/icons';
 import { useMemo } from 'react';
 import { ScrollShadow } from '@heroui/react';
 import { useMediaQuery } from '@/hooks';
-import useSpaceAndEvent from '@/hooks/useSpaceAndEvent';
-import useUserJoinedSpace from '@/hooks/useUserJoinedSpace';
+import useAllSpaceAndEvent from '@/hooks/useAllSpaceAndEvent';
+import useUserSpaceAndEvent from '@/hooks/useUserSpaceAndEvent';
 import dayjs from '@/utils/dayjs';
 
 export default function Communities() {
   const router = useRouter();
   const { isMobile } = useMediaQuery();
 
-  const { userJoinedSpaceIds, userFollowedResourceIds } = useUserJoinedSpace();
+  const { userJoinedSpaceIds, userFollowedResourceIds } = useUserSpaceAndEvent();
   const { allSpaces: spacesData, isAllSpaceLoading: isLoading } =
-    useSpaceAndEvent();
+    useAllSpaceAndEvent();
 
   const filteredSpacesData = useMemo(() => {
     if (!spacesData) {

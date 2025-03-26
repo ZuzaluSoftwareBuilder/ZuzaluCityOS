@@ -1,26 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
 import { EVENTS_QUERY } from '@/graphql/eventQueries';
 import { EventData, SpaceData } from '@/types';
 import { getSpacesQuery } from '@/services/space';
 import { composeClient } from '@/constant';
-import useUserJoinedSpace from '@/hooks/useUserJoinedSpace';
 
-const useSpaceAndEvent = () => {
-
-  const {
-    userJoinedSpaceIds,
-    userJoinedEventIds,
-    isUserRoleLoading,
-    isUserRoleFetched,
-    isUserSpaceAndEventFetched,
-    isUserSpaceAndEventLoading,
-  } = useUserJoinedSpace();
-
+const useAllSpaceAndEvent = () => {
   const {
     data: allEvents,
-    isLoading: isEventsLoading,
-    isFetched: isEventFetched,
+    isLoading: isAllEventLoading,
+    isFetched: isAllEventFetched,
   } = useQuery({
     queryKey: ['userEvents'],
     queryFn: async () => {
@@ -43,8 +31,8 @@ const useSpaceAndEvent = () => {
 
   const {
     data: allSpaces,
-    isLoading: isSpacesLoading,
-    isFetched: isSpaceFetched,
+    isLoading: isAllSpaceLoading,
+    isFetched: isAllSpaceFetched,
   } = useQuery({
     queryKey: ['spaces'],
     queryFn: async () => {
@@ -65,34 +53,14 @@ const useSpaceAndEvent = () => {
     },
   });
 
-  const userSpaces = useMemo(() => {
-    return (allSpaces || []).filter((space) =>
-      userJoinedSpaceIds.has(space.id),
-    );
-  }, [userJoinedSpaceIds, allSpaces]);
-
-  const userEvents = useMemo(() => {
-    return (allEvents || []).filter((event) =>
-      userJoinedEventIds.has(event.id),
-    );
-  }, [userJoinedEventIds, allEvents]);
-
   return {
     allSpaces: allSpaces || [],
     allEvents: allEvents || [],
-    userSpaces,
-    userEvents,
-    isAllSpaceLoading: isSpacesLoading,
-    isAllEventLoading: isEventsLoading,
-    isUserEventsLoading:
-      isUserRoleLoading || isEventsLoading || isUserSpaceAndEventLoading,
-    isUserEventFetched:
-      isUserRoleFetched && isEventFetched && isUserSpaceAndEventFetched,
-    isUserSpacesLoading:
-      isUserRoleLoading || isSpacesLoading || isUserSpaceAndEventLoading,
-    isUserSpaceFetched:
-      isUserRoleFetched && isSpaceFetched && isUserSpaceAndEventFetched,
+    isAllSpaceLoading,
+    isAllEventLoading,
+    isAllEventFetched,
+    isAllSpaceFetched,
   };
 };
 
-export default useSpaceAndEvent;
+export default useAllSpaceAndEvent;

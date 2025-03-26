@@ -5,14 +5,14 @@ import { Sidebar } from 'components/layout';
 import { SpaceHeader } from './components';
 import { SpaceCard } from '@/components/cards';
 import { SpaceCardSkeleton } from '@/components/cards/SpaceCard';
-import useSpaceAndEvent from '@/hooks/useSpaceAndEvent';
-import useUserJoinedSpace from '@/hooks/useUserJoinedSpace';
+import useAllSpaceAndEvent from '@/hooks/useAllSpaceAndEvent';
+import useUserSpaceAndEvent from '@/hooks/useUserSpaceAndEvent';
 
 const Home = () => {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
-  const { userJoinedSpaceIds, userFollowedResourceIds } = useUserJoinedSpace();
-  const { allSpaces: spaces, isAllSpaceLoading: isLoading } = useSpaceAndEvent();
+  const { userJoinedSpaceIds, userFollowedResourceIds } = useUserSpaceAndEvent();
+  const { allSpaces: spaces, isAllSpaceLoading: isLoading } = useAllSpaceAndEvent();
 
   return (
     <Stack

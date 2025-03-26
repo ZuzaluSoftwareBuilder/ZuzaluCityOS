@@ -14,7 +14,8 @@ import { useCallback, useState } from 'react';
 import Image from 'next/image';
 import { cn, Tab, Tabs, ScrollShadow, Skeleton } from '@heroui/react';
 import { Button } from '@/components/base';
-import useSpaceAndEvent from '@/hooks/useSpaceAndEvent';
+import useAllSpaceAndEvent from '@/hooks/useAllSpaceAndEvent';
+import useUserSpaceAndEvent from '@/hooks/useUserSpaceAndEvent';
 
 interface SidebarProps {
   selected: string;
@@ -106,7 +107,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const [selectedTab, setSelectedTab] = useState('events');
 
-  const { userSpaces, userEvents, isUserEventsLoading: isEventsLoading, isUserSpacesLoading: isSpacesLoading} = useSpaceAndEvent();
+  const { userEvents, userSpaces, isUserEventLoading, isUserSpaceLoading } = useUserSpaceAndEvent()
 
   const handleClick = useCallback(
     (item: any) => {
@@ -174,7 +175,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const renderTabContent = useCallback(() => {
     const isEventsTab = selectedTab === 'events';
-    const isLoading = isEventsTab ? isEventsLoading : isSpacesLoading;
+    const isLoading = isEventsTab ? isUserEventLoading : isUserSpaceLoading;
     const items = isEventsTab ? userEvents : userSpaces;
 
     if (isLoading) {
@@ -184,8 +185,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     return items.map((item) => renderItem(item, isEventsTab));
   }, [
     selectedTab,
-    isEventsLoading,
-    isSpacesLoading,
+    isUserEventLoading,
+    isUserSpaceLoading,
     userEvents,
     userSpaces,
     renderLoadingSkeleton,

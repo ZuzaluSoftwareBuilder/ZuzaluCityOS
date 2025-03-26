@@ -5,10 +5,20 @@ import { GET_USER_SPACE_AND_EVENT } from '@/services/graphql/profile';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/utils/supabase/client';
 import { useMemo } from 'react';
+import useAllSpaceAndEvent from '@/hooks/useAllSpaceAndEvent';
 
-const useUserJoinedSpace = () => {
+const useUserSpaceAndEvent = () => {
   const { profile } = useCeramicContext();
   const userDId = profile?.author?.id;
+
+  const {
+    allSpaces,
+    allEvents,
+    isAllSpaceLoading,
+    isAllEventLoading,
+    isAllSpaceFetched,
+    isAllEventFetched,
+  } = useAllSpaceAndEvent();
 
   const {
     data: userRoles,
@@ -99,16 +109,34 @@ const useUserJoinedSpace = () => {
     return new Set(ids);
   }, [userRoles, followerRoleId]);
 
+  const userJoinedSpaces = useMemo(() => {
+    return (allSpaces || []).filter((space) =>
+      userJoinedSpaceIds.has(space.id),
+    );
+  }, [userJoinedSpaceIds, allSpaces]);
+
+  const userJoinedEvents = useMemo(() => {
+    return (allEvents || []).filter((event) =>
+      userJoinedEventIds.has(event.id),
+    );
+  }, [userJoinedEventIds, allEvents]);
+
   return {
     userRoles,
+    userSpaces: userJoinedSpaces,
+    userEvents: userJoinedEvents,
     userJoinedSpaceIds,
     userJoinedEventIds,
     userFollowedResourceIds,
-    isUserRoleLoading,
-    isUserRoleFetched,
-    isUserSpaceAndEventLoading,
-    isUserSpaceAndEventFetched
-  }
-}
+    isUserSpaceLoading:
+      isUserRoleLoading || isUserSpaceAndEventLoading || isAllSpaceLoading,
+    isUserSpaceFetched:
+      isUserRoleFetched && isUserSpaceAndEventFetched && isAllSpaceFetched,
+    isUserEventLoading:
+      isUserRoleLoading || isUserSpaceAndEventLoading || isAllEventLoading,
+    isUserEventFetched:
+      isUserRoleFetched && isUserSpaceAndEventFetched && isAllEventFetched,
+  };
+};
 
-export default useUserJoinedSpace;
+export default useUserSpaceAndEvent;

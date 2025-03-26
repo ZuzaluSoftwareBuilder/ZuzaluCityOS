@@ -6,7 +6,8 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Image, Tooltip, Skeleton } from '@heroui/react';
-import useSpaceAndEvent from '@/hooks/useSpaceAndEvent';
+import useAllSpaceAndEvent from '@/hooks/useAllSpaceAndEvent';
+import useUserSpaceAndEvent from '@/hooks/useUserSpaceAndEvent';
 
 const SpaceItemSkeleton = () => {
   return (
@@ -26,8 +27,7 @@ const SpaceList = () => {
   const { isAuthenticated, profile } = useCeramicContext();
   const [isClientReady, setIsClientReady] = useState(false);
 
-  const { userSpaces, isUserSpacesLoading, isUserSpaceFetched } =
-    useSpaceAndEvent();
+  const { userSpaces, isUserSpaceLoading, isUserSpaceFetched } = useUserSpaceAndEvent()
 
   useEffect(() => {
     setIsClientReady(true);
@@ -35,7 +35,7 @@ const SpaceList = () => {
 
   const shouldShowSkeleton =
     isClientReady &&
-    (isUserSpacesLoading || !isUserSpaceFetched || !isAuthenticated) &&
+    (isUserSpaceLoading || !isUserSpaceFetched || !isAuthenticated) &&
     !!profile;
 
   return (
