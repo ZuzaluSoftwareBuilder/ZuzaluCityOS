@@ -48,7 +48,7 @@ const SpaceList = () => {
         </>
       ) : (
         userJoinedSpaces.length > 0 &&
-        userJoinedSpaces.map((space) => <SpaceItem key={space?.id} space={space as unknown as Space} />)
+        userJoinedSpaces.map((space) => <SpaceItem key={(space as unknown as Space).id} space={space as unknown as Space} />)
       )}
     </div>
   );
