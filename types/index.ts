@@ -657,3 +657,17 @@ export interface IProfile {
     edges: { node: Profile }[];
   };
 }
+
+
+export interface IUserProfileWithSpaceAndEvent {
+  zucityProfile: {
+    id: string;
+    username: string;
+    spaces: {
+      edges: { node: Space }[];
+    };
+    events: {
+      edges: { node: Event }[];
+    };
+  };
+}

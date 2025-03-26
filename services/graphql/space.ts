@@ -145,7 +145,7 @@ export const CREATE_SPACE_MUTATION = graphql(`
   }
 `);
 
-export const GET_SPACE_QUERY = graphql(`
+export const GET_ALL_SPACE_QUERY = graphql(`
   query GetSpaces($first: Int) {
     zucitySpaceIndex(first: $first) {
       edges {

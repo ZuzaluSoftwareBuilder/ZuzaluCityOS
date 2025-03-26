@@ -52,12 +52,13 @@ const formatMemberCount = (count: number): string => {
 
 interface SpaceCardProps {
   data: Space;
+  isJoined: boolean;
+  isFollowed: boolean;
 }
 
-export function SpaceCard({ data }: SpaceCardProps) {
-  const { banner, name, tagline, avatar, tags, id } = data;
+export function SpaceCard({ data, isJoined, isFollowed }: SpaceCardProps) {
+  const { banner, name, tagline, avatar, tags } = data;
   const router = useRouter();
-  const { joined: isUserJoined } = useUserJoinSpace({ spaceId: id });
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers = 1;
@@ -81,10 +82,10 @@ export function SpaceCard({ data }: SpaceCardProps) {
             base: 'absolute left-[11px] w-[60px] h-[60px] bottom-[-21px] z-10 shadow-[0px_0px_0px_1px_rgba(34,34,34,0.10)]',
           }}
         />
-        {isUserJoined && (
+        {isJoined && (
           <div className="flex items-center gap-[5px] px-[10px] py-[5px] rounded-[4px] border border-b-w-10 bg-[rgba(34,34,34,0.60)] backdrop-filter backdrop-blur-[5px] absolute right-[10px] top-[10px] z-10">
             <CheckCircleIcon size={4} />
-            <span className="text-[14px] font-[500]">Joined</span>
+            <span className="text-[14px] font-[500]">{isFollowed ? 'Followed' : 'Joined'}</span>
           </div>
         )}
       </div>
