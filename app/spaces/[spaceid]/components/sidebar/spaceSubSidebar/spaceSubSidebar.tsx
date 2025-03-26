@@ -2,14 +2,12 @@
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { InstalledApp } from '@/types';
 import { useCallback, useMemo } from 'react';
-import { House, Ticket, CalendarDots } from '@phosphor-icons/react';
+import { House, Ticket, CalendarDots, Megaphone } from '@phosphor-icons/react';
 import TabItem from './tabItem';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/sidebarHeader';
 import { TableIcon } from '@/components/icons';
 import { cn, Image, Skeleton } from '@heroui/react';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
-import { getInstalledDApps } from '@/services/space/apps';
-import { useQuery } from '@tanstack/react-query';
 import { useSpaceData } from '../../context/spaceData';
 
 interface MainSubSidebarProps {
@@ -141,6 +139,14 @@ const SpaceSubSidebar = ({
           icon={<Ticket />}
           href={`/spaces/${spaceId}/events`}
           isActive={isRouteActive('events')}
+          height={36}
+          onClick={onCloseDrawer}
+        />
+        <TabItem
+          label="Announcements"
+          icon={<Megaphone />}
+          href={`/spaces/${spaceId}/announcements`}
+          isActive={isRouteActive('announcements')}
           height={36}
           onClick={onCloseDrawer}
         />
