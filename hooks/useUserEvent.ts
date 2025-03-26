@@ -12,7 +12,11 @@ const useUserEvent = () => {
   const { profile } = useCeramicContext();
   const userDId = profile?.author?.id;
 
-  const { data: allEvents, isLoading: isAllEventLoading, isFetched: isAllEventFetched } = useGraphQL(
+  const {
+    data: allEvents,
+    isLoading: isAllEventLoading,
+    isFetched: isAllEventFetched,
+  } = useGraphQL(
     ['GET_ALL_EVENT_QUERY'],
     GET_ALL_EVENT_QUERY,
     { first: 100 },
@@ -21,9 +25,7 @@ const useUserEvent = () => {
         if (!data?.data?.zucityEventIndex?.edges) {
           return [];
         }
-        return data.data.zucityEventIndex.edges.map(
-          (edge) => edge!.node,
-        );
+        return data.data.zucityEventIndex.edges.map((edge) => edge!.node);
       },
     },
   );
@@ -80,7 +82,6 @@ const useUserEvent = () => {
     return (userSpaceAndEvent?.events?.edges || []).map((edge) => edge.node);
   }, [userSpaceAndEvent]);
 
-
   const userJoinedEventIds = useMemo(() => {
     const eventIds = ownerEvents.map((event) => event?.id);
     const participatedEventIds = (userRoles || [])
@@ -114,6 +115,6 @@ const useUserEvent = () => {
     isUserEventFetched:
       isUserRoleFetched && isUserSpaceAndEventFetched && isAllEventFetched,
   };
-}
+};
 
 export default useUserEvent;
