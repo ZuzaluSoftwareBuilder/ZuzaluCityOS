@@ -1,13 +1,11 @@
 'use client';
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { useTheme, useMediaQuery } from '@mui/material';
 import { MenuIcon } from 'components/icons';
-import { useCeramicContext } from '@/context/CeramicContext';
 import SidebarDrawer from '../Sidebar/SidebarDrawer';
 import { useAppContext } from '@/context/AppContext';
-import Image from 'next/image';
 import { Button } from '@/components/base';
 import UserProfileSection from '../UserProfileSection';
 
@@ -39,8 +37,7 @@ const Header = () => {
           (pathName.split('/')[1] === 'spaces' &&
             pathName.split('/').length > 2)) && (
           <Button
-            variant="light"
-            className="w-[40px] min-w-[40px] p-[10px]"
+            className="w-[40px] min-w-[40px] p-[10px] bg-transparent"
             onPress={() => setOpenSidebar(true)}
           >
             <MenuIcon />
@@ -59,9 +56,9 @@ const Header = () => {
           </span>
         ) : null}
       </Box>
-      
+
       <UserProfileSection />
-      
+
       <SidebarDrawer
         selected={'Home'}
         open={openSidebar}

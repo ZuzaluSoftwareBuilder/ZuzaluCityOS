@@ -11,21 +11,25 @@ export const GET_SPACE_QUERY = graphql(`
         name
         profileId
         tagline
-        website
-        twitter
-        telegram
-        nostr
-        lens
-        github
-        discord
-        ens
+        category
+        color
+        createdAt
+        updatedAt
+        tags {
+          tag
+        }
         customAttributes {
           tbd
         }
-        admins {
-          id
+        socialLinks {
+          title
+          links
         }
-        superAdmin {
+        customLinks {
+          title
+          links
+        }
+        owner {
           id
           zucityProfile {
             id
@@ -105,7 +109,9 @@ export const GET_SPACE_INSTALLED_APPS = graphql(`
 `);
 
 export const UNINSTALL_DAPP_FROM_SPACE = graphql(`
-  mutation UninstallDappFromSpace($input: EnableIndexingZucityInstalledAppInput!) {
+  mutation UninstallDappFromSpace(
+    $input: EnableIndexingZucityInstalledAppInput!
+  ) {
     enableIndexingZucityInstalledApp(input: $input) {
       document {
         id

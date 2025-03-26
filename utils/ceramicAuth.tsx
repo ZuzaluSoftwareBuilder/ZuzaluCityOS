@@ -95,7 +95,7 @@ const authenticateEthPKH = async (
               ethProvider,
               accountId,
             );
-            
+
             try {
               session = await DIDSession.authorize(authMethod, {
                 resources: compose.resources,
@@ -113,7 +113,11 @@ const authenticateEthPKH = async (
           }
         }
 
-        if (session && session.did) {
+        if (
+          session &&
+          session.did &&
+          !(session.did as any)._parentId.includes('did:pkh:eip155:534351')
+        ) {
           compose.setDID(session.did);
           ceramic.did = session.did;
           localStorage.setItem('display did', session.did.toString());
