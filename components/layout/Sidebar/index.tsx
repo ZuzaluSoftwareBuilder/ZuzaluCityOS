@@ -11,19 +11,17 @@ import {
   VideoIcon,
 } from 'components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { EventData, SpaceData } from '@/types';
+import { EventData, Space } from '@/types';
 import { useCallback, useState, useMemo } from 'react';
 import Image from 'next/image';
 import { cn, Tab, Tabs, ScrollShadow, Skeleton } from '@heroui/react';
 import { Button } from '@/components/base';
 import { useQuery } from '@tanstack/react-query';
 import { isUserAssociated } from '@/utils/permissions';
-import { getSpacesQuery } from '@/services/space';
 import { EVENTS_QUERY } from '@/graphql/eventQueries';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_USER_ROLES_QUERY } from '@/services/graphql/role';
-import { data } from 'remark';
-
+import { GET_SPACE_QUERY } from '@/services/graphql/space';
 interface SidebarProps {
   selected: string;
   isMobile?: boolean;
@@ -138,26 +136,18 @@ const Sidebar: React.FC<SidebarProps> = ({
     enabled: isAuthenticated,
   });
 
-  const { data: spacesData, isLoading: isSpacesLoading } = useQuery({
-    queryKey: ['spaces'],
-    queryFn: async () => {
-      try {
-        const response: any = await composeClient.executeQuery(getSpacesQuery);
-        if ('zucitySpaceIndex' in response.data) {
-          const spaceData: SpaceData = response.data as SpaceData;
-
-          return spaceData.zucitySpaceIndex.edges.map((edge) => edge.node);
-        } else {
-          console.error('Invalid data structure:', response.data);
-          return [];
-        }
-      } catch (error) {
-        console.error('Failed to fetch spaces:', error);
-        throw error;
-      }
+  const { data: spacesData, isLoading: isSpacesLoading } = useGraphQL(
+    ['spaces'],
+    GET_SPACE_QUERY,
+    { first: 100 },
+    {
+      select: (data) => {
+        return data?.data?.zucitySpaceIndex?.edges?.map(
+          (edge) => edge?.node,
+        ) as Space[];
+      },
     },
-    enabled: isAuthenticated,
-  });
+  );
 
   const { data: userRoles } = useGraphQL(
     ['GET_USER_ROLES_QUERY', userDID],
@@ -186,7 +176,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     if (!spacesData || !userDID) return [];
 
     return spacesData
-      .filter((space) => isUserAssociated(space, userDID))
+      .filter((space) => space.owner?.zucityProfile.author?.id === userDID)
       .concat(
         spacesData.filter((space) => userRoles?.includes(space.id.toString())),
       );

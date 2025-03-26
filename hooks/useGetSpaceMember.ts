@@ -1,34 +1,32 @@
-import { useCeramicContext } from '@/context/CeramicContext';
+import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
 import { getMembers } from '@/services/member';
 import { getRoles } from '@/services/role';
-import { getSpaceEventsQuery } from '@/services/space';
 import { Space, UserRole } from '@/types';
 import { useQuery } from '@tanstack/react-query';
+import { useGraphQL } from './useGraphQL';
 import { useMemo } from 'react';
 
 export default function useGetSpaceMember(spaceId: string) {
-  const { composeClient } = useCeramicContext();
   const { data: roles, isLoading: isLoadingRoles } = useQuery({
     queryKey: ['getRoles'],
     queryFn: () => getRoles('space', spaceId as string),
   });
 
-  const { data: spaceData, isLoading: isLoadingOwner } = useQuery({
-    queryKey: ['getSpaceByID', spaceId],
-    queryFn: () => {
-      return composeClient.executeQuery(getSpaceEventsQuery(), {
-        id: spaceId,
-      });
+  const { data: spaceData, isLoading: isLoadingOwner } = useGraphQL(
+    ['getSpaceByID', spaceId],
+    GET_SPACE_QUERY_BY_ID,
+    { id: spaceId },
+    {
+      select: (data) => {
+        return data?.data?.node as Space;
+      },
     },
-    select: (data) => {
-      return data?.data?.node as Space;
-    },
-  });
+  );
 
-  const { 
-    data: members, 
-    isLoading: isLoadingMembers, 
-    refetch: refetchMembers 
+  const {
+    data: members,
+    isLoading: isLoadingMembers,
+    refetch: refetchMembers,
   } = useQuery({
     queryKey: ['getSpaceMembers', spaceId],
     queryFn: () => getMembers(spaceId, 'space'),
@@ -38,7 +36,7 @@ export default function useGetSpaceMember(spaceId: string) {
   });
 
   const owner = useMemo(() => {
-    return spaceData?.superAdmin?.[0]?.zucityProfile;
+    return spaceData?.owner?.zucityProfile;
   }, [spaceData]);
 
   return {
