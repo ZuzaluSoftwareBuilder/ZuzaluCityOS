@@ -197,27 +197,17 @@ export interface Space {
   name: string;
   profileId?: string;
   tagline: string;
-  website?: string;
-  twitter?: string;
-  telegram?: string;
-  nostr?: string;
-  lens?: string;
-  github?: string;
-  discord?: string;
-  ens?: string;
   category?: string;
-  members?: {
-    id: string;
+  tags?: {
+    tag: string;
   }[];
-  admins?: {
-    id: string;
-  }[];
-  superAdmin?: {
+  owner: {
     id: string;
     zucityProfile: Profile;
-  }[];
+  };
   customLinks?: Link[];
-  events?: {
+  socialLinks?: Link[];
+  events: {
     edges: {
       node: {
         startTime: string;
@@ -225,8 +215,9 @@ export interface Space {
       };
     }[];
   };
-  customAttributes?: TBD[];
-  spaceType?: string;
+  customAttributes: TBD[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CalendarConfig {
@@ -664,5 +655,5 @@ export interface UserRoleData {
 export interface IProfile {
   zucityProfileIndex: {
     edges: { node: Profile }[];
-  }
+  };
 }

@@ -57,6 +57,11 @@ interface CreateSpaceInput {
 const DEFAULT_AVATAR = 'https://nftstorage.link/ipfs/bafybeifcplhgttja4hoj5vx4u3x7ucft34acdpiaf62fsqrobesg5bdsqe';
 const DEFAULT_BANNER = 'https://nftstorage.link/ipfs/bafybeifqan4j2n7gygwkmekcty3dsp7v4rxbjimpo7nrktclwxgxreiyay';
 
+type Link = {
+  links: string;
+  title: string;
+};
+
 const Create = () => {
   const [selectedTab, setSelectedTab] = useState(TabContentEnum.Profile);
   const [tabStatuses, setTabStatuses] = useState<Record<string, TabStatus>>({

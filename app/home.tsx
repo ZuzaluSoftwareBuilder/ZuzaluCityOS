@@ -3,7 +3,7 @@ import { Box, useMediaQuery, useTheme } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Sidebar } from 'components/layout';
-import React, {  } from 'react';
+import React from 'react';
 import Banner from './components/Banner';
 import Communities from './components/Communities';
 import OngoingEventList from './components/OngoingEventList';
@@ -25,7 +25,7 @@ const Home: React.FC = () => {
           height={'calc(100vh - 50px)'}
         >
           {!isTablet && <Sidebar selected="Home" />}
-          <div className="flex-1 w-full lg:w-[calc(100vw-260px)] h-full overflow-y-auto overflow-x-hidden text-white">
+          <div className="flex-1 w-screen pc:w-full lg:w-[calc(100vw-260px)] h-full overflow-y-auto overflow-x-hidden text-white">
             <Banner />
             <Communities />
             <OngoingEventList />

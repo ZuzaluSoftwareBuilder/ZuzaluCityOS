@@ -14,10 +14,10 @@ import {
 } from '@heroui/react';
 import UserProfileSection from '@/components/layout/UserProfileSection';
 import SpaceSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/spaceSubSidebar';
-import { useQuery } from '@tanstack/react-query';
 import { Space } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { getSpaceEventsQuery } from '@/services/space';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
 
 const SpaceTopHeader: React.FC = () => {
   const router = useRouter();
@@ -25,25 +25,21 @@ const SpaceTopHeader: React.FC = () => {
   const params = useParams();
   const spaceId = params.spaceid.toString();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { composeClient } = useCeramicContext();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  const { data: spaceData, isLoading } = useQuery({
-    queryKey: ['getSpaceByID', spaceId],
-    enabled: !!spaceId && !!composeClient,
-    queryFn: () => {
-      return composeClient.executeQuery(getSpaceEventsQuery(), {
-        id: spaceId,
-      });
+  const { data: spaceData, isLoading } = useGraphQL(
+    ['getSpaceByID', spaceId],
+    GET_SPACE_QUERY_BY_ID,
+    { id: spaceId },
+    {
+      select: (data) => data?.data?.node as Space,
+      enabled: !!spaceId,
     },
-    select: (data) => {
-      return data?.data?.node as Space;
-    },
-  });
+  );
 
   const handleBack = () => {
     router.replace(`/spaces`);

@@ -55,27 +55,14 @@ interface SpaceCardProps {
 }
 
 export function SpaceCard({ data }: SpaceCardProps) {
-  const {
-    banner,
-    name,
-    tagline,
-    avatar,
-    members,
-    admins,
-    superAdmin,
-    category,
-    id,
-  } = data;
+  const { banner, name, tagline, avatar, tags, id } = data;
   const router = useRouter();
   const { joined: isUserJoined } = useUserJoinSpace({ spaceId: id });
 
   const formattedMemberCount = useMemo(() => {
-    const totalMembers =
-      (members?.length || 0) +
-      (admins?.length || 0) +
-      (superAdmin?.length || 0);
+    const totalMembers = 1;
     return formatMemberCount(totalMembers);
-  }, [members?.length, admins?.length, superAdmin?.length]);
+  }, []);
 
   return (
     <div className="w-[276px] flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden hover:bg-white/5 transition-colors">
@@ -115,17 +102,17 @@ export function SpaceCard({ data }: SpaceCardProps) {
           {tagline}
         </p>
         <div className="mb-[10px] flex items-center gap-[10px] opacity-40">
-          {category
-            ?.split(',')
-            .slice(0, 2)
-            .map((item) => (
-              <span key={item} className="text-[10px] leading-[1.2] uppercase">
-                {item}
-              </span>
-            ))}
-          {category && category.split(',').length > 2 && (
+          {tags?.slice(0, 2).map((item) => (
+            <span
+              key={item.tag}
+              className="text-[10px] leading-[1.2] uppercase"
+            >
+              {item.tag}
+            </span>
+          ))}
+          {tags && tags.length > 2 && (
             <span className="text-[10px] leading-[1.2]">
-              +{category.split(',').length - 2}
+              +{tags.length - 2}
             </span>
           )}
         </div>

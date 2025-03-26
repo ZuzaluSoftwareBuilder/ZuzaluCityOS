@@ -1,15 +1,16 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import { ComposeClient } from '@composedb/client';
 import { authenticateCeramic } from '../utils/ceramicAuth';
-import { Profile, CreateProfileResult } from '@/types/index.js';
+import { Profile } from '@/types/index.js';
 import { ceramic, composeClient } from '@/constant';
+import { getAccount } from 'wagmi/actions';
+import { config } from '@/context/WalletContext';
+import { executeQuery } from '@/utils/ceramic';
+import {
+  CREATE_PROFILE_MUTATION,
+  GET_OWN_PROFILE_QUERY,
+} from '@/services/graphql/profile';
 
 type ConnectSource = 'connectButton' | 'invalidAction';
 
@@ -55,7 +56,8 @@ export const CeramicProvider = ({ children }: any) => {
   const [username, setUsername] = useState<string | undefined>(undefined);
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
   const [newUser, setNewUser] = useState<boolean | undefined>(undefined);
-  const [connectSource, setConnectSource] = useState<ConnectSource>('invalidAction');
+  const [connectSource, setConnectSource] =
+    useState<ConnectSource>('invalidAction');
   const authenticate = async () => {
     console.log('authenticate');
     try {
@@ -91,25 +93,7 @@ export const CeramicProvider = ({ children }: any) => {
 
   const getProfile = async () => {
     if (ceramic.did !== undefined) {
-      const profile: any = await composeClient.executeQuery(`
-        query {
-            viewer {
-              zucityProfile {
-                author {
-                  id
-                }
-                avatar
-                id
-                username
-                myEvents {
-                  imageUrl
-                  streamID
-                  title
-                }
-              }
-            }
-          }
-      `);
+      const profile: any = await executeQuery(GET_OWN_PROFILE_QUERY);
       const basicProfile: { id: string; username: string } | undefined =
         profile?.data?.viewer?.zucityProfile;
       if (basicProfile?.id) {
@@ -124,24 +108,21 @@ export const CeramicProvider = ({ children }: any) => {
   };
 
   const createProfile = async (newName: string) => {
-    if (!ceramic.did || !newName) {
+    const { address } = getAccount(config);
+    if (!ceramic.did || !newName || !address) {
       console.error('Invalid DID or name provided.');
+      return;
     }
 
     try {
-      const update = await composeClient.executeQuery(`
-        mutation {
-          createZucityProfile(input: {
-            content: {
-              username: "${newName}"
-            }
-          }) {
-            document {
-              username
-            }
-          }
-        }
-      `);
+      const update = await executeQuery(CREATE_PROFILE_MUTATION, {
+        input: {
+          content: {
+            username: newName,
+            address: address.toString().toLowerCase(),
+          },
+        },
+      });
 
       if (update.errors) {
         console.error('Error creating profile:', update.errors);

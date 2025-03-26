@@ -10,7 +10,7 @@ import { TICKET_ABI } from '@/utils/ticket_abi';
 import { TICKET_WITH_WHITELIST_ABI } from '@/utils/ticket_with_whitelist_abi';
 import React, { Dispatch, useEffect, useMemo, useState } from 'react';
 import { Address, isAddress, parseUnits } from 'viem';
-import { scroll, scrollSepolia } from 'viem/chains';
+import { mainnet, sepolia } from 'viem/chains';
 import {
   writeContract,
   waitForTransactionReceipt,
@@ -160,7 +160,7 @@ export const WithdrawToken = ({
     try {
       const ABI = ticket[8]?.result ? TICKET_WITH_WHITELIST_ABI : TICKET_ABI;
       const withdrawHash = await writeContract(config, {
-        chainId: isDev ? scrollSepolia.id : scroll.id,
+        chainId: isDev ? sepolia.id : mainnet.id,
         address: ticketAddress as Address,
         functionName: 'withdraw',
         abi: ABI,
@@ -441,7 +441,7 @@ export const SendNFTTicket = ({
       const uploadedID = await gaslessFundAndUpload(metadataFile, tags, 'EVM');
       const ABI = ticket[8]?.result ? TICKET_WITH_WHITELIST_ABI : TICKET_ABI;
       const adminMintHash = await writeContract(config, {
-        chainId: isDev ? scrollSepolia.id : scroll.id,
+        chainId: isDev ? sepolia.id : mainnet.id,
         address: ticketAddress as Address,
         functionName: 'adminMint',
         abi: ABI,
@@ -1030,7 +1030,7 @@ export const Whitelist = ({
       setIsLoading(true);
       const { addresses, emails } = data;
       const appendHash = await writeContract(config, {
-        chainId: isDev ? scrollSepolia.id : scroll.id,
+        chainId: isDev ? sepolia.id : mainnet.id,
         address: ticketAddress as Address,
         functionName: 'appendToWhitelist',
         abi: TICKET_WITH_WHITELIST_ABI,
@@ -1115,7 +1115,7 @@ export const Whitelist = ({
               abi: ticket[8]?.result ? TICKET_WITH_WHITELIST_ABI : TICKET_ABI,
               functionName: 'balanceOf',
               args: [address as Address],
-              chainId: isDev ? scrollSepolia.id : scroll.id,
+              chainId: isDev ? sepolia.id : mainnet.id,
             });
             return { result: balance };
           } catch (error) {

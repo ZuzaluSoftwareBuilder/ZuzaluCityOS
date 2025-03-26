@@ -30,7 +30,7 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import { RegistrationAndAccess } from '@/types';
 import { isAddress } from 'viem';
 import { isDev } from '@/constant';
-import { scrollSepolia, scroll } from 'wagmi/chains';
+import { sepolia, mainnet, scrollSepolia } from 'wagmi/chains';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
 import { formatAddressString } from '@/components/layout/UserProfileSection';
@@ -116,7 +116,7 @@ export default function Form({ regAndAccess, onClose }: FormProps) {
         .filter(Boolean)
         .map(
           (address) =>
-            `did:pkh:eip155:${isDev ? scrollSepolia.id : scroll.id}:${address}`,
+            `did:pkh:eip155:${isDev ? sepolia.id : mainnet.id}:${address}`,
         );
       updateMutation.mutate({
         type: 'whitelist',
@@ -150,7 +150,7 @@ export default function Form({ regAndAccess, onClose }: FormProps) {
       .filter((v, index) => index !== removeIndex)
       .map(
         (address) =>
-          `did:pkh:eip155:${isDev ? scrollSepolia.id : scroll.id}:${address}`,
+          `did:pkh:eip155:${isDev ? sepolia.id : mainnet.id}:${address}`,
       );
     queryClient.cancelQueries({
       queryKey: ['fetchEventById'],

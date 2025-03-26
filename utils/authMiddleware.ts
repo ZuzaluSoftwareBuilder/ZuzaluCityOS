@@ -3,7 +3,7 @@ import { DIDSession } from 'did-session';
 import { supabase } from './supabase/client';
 import { Permission, UserRole, Space, RolePermission } from '@/types';
 import { CHECK_EXISTING_ROLE_QUERY } from '@/services/graphql/role';
-import { GET_SPACE_QUERY } from '@/services/graphql/space';
+import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
 import { executeQuery } from './ceramic';
 
 export type SessionCheckResult = {
@@ -62,14 +62,12 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
         `and(resource.eq.${resource},resource_id.eq.${id}),and(resource.is.null,resource_id.is.null)`,
       );
     if (resource === 'space') {
-      const spaceResult = await executeQuery(GET_SPACE_QUERY, {
+      const spaceResult = await executeQuery(GET_SPACE_QUERY_BY_ID, {
         id,
       });
 
       const space = spaceResult.data?.node as Space;
-      const isOwner = space.superAdmin?.some(
-        (admin) => admin.zucityProfile.author?.id === operatorId,
-      );
+      const isOwner = space.owner?.zucityProfile.author?.id === operatorId;
       if (isOwner) {
         return {
           isValid: true,

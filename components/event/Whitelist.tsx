@@ -33,7 +33,7 @@ import { TICKET_ABI } from '@/utils/ticket_abi';
 import { TICKET_WITH_WHITELIST_ABI } from '@/utils/ticket_with_whitelist_abi';
 import { Abi, AbiItem } from 'viem';
 import { ERC20_ABI } from '@/utils/erc20_abi';
-import { scroll, scrollSepolia } from 'viem/chains';
+import { sepolia, mainnet } from 'viem/chains';
 import { writeContract, waitForTransactionReceipt } from 'wagmi/actions';
 import { ZuButton } from '@/components/core';
 import gaslessFundAndUpload from '@/utils/gaslessFundAndUpload';
@@ -89,7 +89,7 @@ export const Verify: React.FC<IProps> = ({
   const readFromContract = async () => {
     try {
       setVerifying(true);
-      const chainId = isDev ? scrollSepolia.id : scroll.id;
+      const chainId = isDev ? sepolia.id : mainnet.id;
       await switchChainAsync({
         chainId,
       });
@@ -695,7 +695,7 @@ export const Mint: React.FC<IProps> = ({
   ) => {
     try {
       setIsMinting(true);
-      const chainId = isDev ? scrollSepolia.id : scroll.id;
+      const chainId = isDev ? sepolia.id : mainnet.id;
       await switchChainAsync({
         chainId,
       });
@@ -740,7 +740,7 @@ export const Mint: React.FC<IProps> = ({
         const ABI = TICKET_WITH_WHITELIST_ABI;
         setBlockTokenClickModal(false);
         const MintHash = await writeContract(config, {
-          chainId: isDev ? scrollSepolia.id : scroll.id,
+          chainId: isDev ? sepolia.id : mainnet.id,
           address: ticketAddress,
           functionName: 'purchaseTicket',
           abi: ABI,
