@@ -41,8 +41,6 @@ const SpaceTopHeader: React.FC = () => {
     },
   );
 
-  console.log(spaceData);
-
   const handleBack = () => {
     router.replace(`/spaces`);
     setDrawerOpen(false);
