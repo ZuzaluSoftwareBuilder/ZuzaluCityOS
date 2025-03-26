@@ -46,9 +46,14 @@ const useUserEvent = () => {
     return new Set([...eventIds, ...participatedEventIds]);
   }, [ownerEvents, userRoles]);
 
-  const userFollowedResourceIds = useMemo(() => {
+  const userFollowedEventIds = useMemo(() => {
     const ids = (userRoles || [])
-      .filter((role) => role?.resourceId && role.roleId === followerRoleId)
+      .filter(
+        (role) =>
+          role?.resourceId &&
+          role.roleId === followerRoleId &&
+          role?.source?.toLocaleLowerCase() === 'event',
+      )
       .map((role) => role?.resourceId);
     return new Set(ids);
   }, [userRoles, followerRoleId]);
@@ -74,7 +79,7 @@ const useUserEvent = () => {
   return {
     userJoinedEvents,
     userJoinedEventIds,
-    userFollowedResourceIds,
+    userFollowedEventIds,
     isUserEventLoading:
       isUserRoleLoading || isUserOwnEventLoading || isUserJoinedEventLoading,
     isUserEventFetched:

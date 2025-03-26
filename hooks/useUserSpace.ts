@@ -1,6 +1,4 @@
-import {
-  GET_USER_OWN_SPACE,
-} from '@/services/graphql/profile';
+import { GET_USER_OWN_SPACE } from '@/services/graphql/profile';
 import { useMemo } from 'react';
 import { useGraphQL } from './useGraphQL';
 import { useCeramicContext } from '@/context/CeramicContext';
