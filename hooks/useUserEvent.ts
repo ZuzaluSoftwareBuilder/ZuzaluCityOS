@@ -6,29 +6,11 @@ import { IUserProfileWithSpaceAndEvent } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/utils/supabase/client';
 import { useMemo } from 'react';
-import { GET_ALL_EVENT_QUERY } from '@/services/graphql/event';
+import { GET_EVENT_QUERY_BY_IDS } from '@/services/graphql/event';
 
 const useUserEvent = () => {
   const { profile } = useCeramicContext();
   const userDId = profile?.author?.id;
-
-  const {
-    data: allEvents,
-    isLoading: isAllEventLoading,
-    isFetched: isAllEventFetched,
-  } = useGraphQL(
-    ['GET_ALL_EVENT_QUERY'],
-    GET_ALL_EVENT_QUERY,
-    { first: 100 },
-    {
-      select: (data) => {
-        if (!data?.data?.zucityEventIndex?.edges) {
-          return [];
-        }
-        return data.data.zucityEventIndex.edges.map((edge) => edge!.node);
-      },
-    },
-  );
 
   const {
     data: userRoles,
@@ -100,20 +82,28 @@ const useUserEvent = () => {
     return new Set(ids);
   }, [userRoles, followerRoleId]);
 
-  const userJoinedEvents = useMemo(() => {
-    return (allEvents || []).filter((event) =>
-      userJoinedEventIds.has(event?.id),
-    );
-  }, [userJoinedEventIds, allEvents]);
+  const userJoinedEventIdArray = useMemo(() => {
+    return userJoinedEventIds.size > 0 ? Array.from(userJoinedEventIds) : [];
+  }, [userJoinedEventIds]);
+
+  const { data: userJoinedEvents, isLoading: isUserJoinedEventLoading, isFetched: isUserJoinedEventFetched } = useGraphQL(
+    ['GET_EVENT_QUERY_BY_IDS', userJoinedEventIdArray],
+    GET_EVENT_QUERY_BY_IDS,
+    { ids: userJoinedEventIdArray as string[] },
+    {
+      select: (data) => data.data?.nodes || [],
+      enabled: userJoinedEventIdArray.length > 0,
+    },
+  );
 
   return {
     userJoinedEvents,
     userJoinedEventIds,
     userFollowedResourceIds,
     isUserEventLoading:
-      isUserRoleLoading || isUserSpaceAndEventLoading || isAllEventLoading,
+      isUserRoleLoading || isUserSpaceAndEventLoading || isUserJoinedEventLoading,
     isUserEventFetched:
-      isUserRoleFetched && isUserSpaceAndEventFetched && isAllEventFetched,
+      isUserRoleFetched && isUserSpaceAndEventFetched && isUserJoinedEventFetched,
   };
 };
 

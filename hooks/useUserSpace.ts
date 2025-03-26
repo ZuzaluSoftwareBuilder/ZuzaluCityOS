@@ -79,7 +79,7 @@ const useUserSpace = () => {
     return userJoinedSpaceIds.size > 0 ? Array.from(userJoinedSpaceIds) : [];
   }, [userJoinedSpaceIds]);
 
-  const { data: userJoinedSpaces } = useGraphQL(
+  const { data: userJoinedSpaces, isLoading: isUserJoinedSpaceLoading, isFetched: isUserJoinedSpaceFetched } = useGraphQL(
     ['GET_SPACE_QUERY_BY_IDS', userJoinedSpaceIdArray],
     GET_SPACE_QUERY_BY_IDS,
     { ids: userJoinedSpaceIdArray as string[] },
@@ -105,8 +105,8 @@ const useUserSpace = () => {
     userJoinedSpaces: userJoinedSpaces || [],
     userJoinedSpaceIds,
     userFollowedSpaceIds,
-    isUserSpaceLoading: isUserRoleLoading || isUserSpaceAndEventLoading,
-    isUserSpaceFetched: isUserRoleFetched && isUserSpaceAndEventFetched,
+    isUserSpaceLoading: isUserRoleLoading || isUserSpaceAndEventLoading || isUserJoinedSpaceLoading,
+    isUserSpaceFetched: isUserRoleFetched && isUserSpaceAndEventFetched && isUserJoinedSpaceFetched,
   };
 };
 

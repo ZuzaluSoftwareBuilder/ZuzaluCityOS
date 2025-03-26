@@ -10,7 +10,7 @@ import {
   StorefrontIcon,
   VideoIcon,
 } from 'components/icons';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { cn, Tab, Tabs, ScrollShadow, Skeleton } from '@heroui/react';
 import { Button } from '@/components/base';
