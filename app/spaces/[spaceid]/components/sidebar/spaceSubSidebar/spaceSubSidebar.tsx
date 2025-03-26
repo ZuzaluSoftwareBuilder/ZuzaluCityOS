@@ -1,9 +1,7 @@
 'use client';
-import { useParams, useRouter, usePathname } from 'next/navigation';
-import { getSpaceEventsQuery } from '@/services/space';
+import { useParams, usePathname } from 'next/navigation';
 import { Space } from '@/types';
-import { useCallback, useEffect, useState } from 'react';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useCallback } from 'react';
 import {
   House,
   Ticket,
@@ -14,10 +12,11 @@ import {
 import TabItem from './tabItem';
 import SubTabItemContainer from './subTabItemContainer';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/sidebarHeader';
-import { useQuery } from '@tanstack/react-query';
 import { TableIcon } from '@/components/icons';
 import { cn } from '@heroui/react';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
 
 interface MainSubSidebarProps {
   needBlur?: boolean;
@@ -31,21 +30,18 @@ const SpaceSubSidebar = ({
   const pathname = usePathname();
   const params = useParams();
   const spaceId = params.spaceid.toString();
-  const { composeClient } = useCeramicContext();
 
   const { isOwner, isAdmin } = useSpacePermissions();
 
-  const { data: spaceData, isLoading } = useQuery({
-    queryKey: ['getSpaceByID', spaceId],
-    queryFn: () => {
-      return composeClient.executeQuery(getSpaceEventsQuery(), {
-        id: spaceId,
-      });
+  const { data: spaceData, isLoading } = useGraphQL(
+    ['getSpaceByID', spaceId],
+    GET_SPACE_QUERY_BY_ID,
+    { id: spaceId },
+    {
+      select: (data) => data?.data?.node as Space,
+      enabled: !!spaceId,
     },
-    select: (data) => {
-      return data?.data?.node as Space;
-    },
-  });
+  );
 
   const isRouteActive = useCallback(
     (route: string) => {
