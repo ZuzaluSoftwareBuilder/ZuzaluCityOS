@@ -1,16 +1,12 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getSpacesQuery } from '@/services/space';
-import { Space, SpaceData } from '@/types';
+import { useState, useEffect } from 'react';
+import { Space } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Image, Tooltip, Skeleton } from '@heroui/react';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_USER_ROLES_QUERY } from '@/services/graphql/role';
-import { GET_SPACE_QUERY } from '@/services/graphql/space';
+import useUserSpace from '@/hooks/useUserSpace';
 
 const SpaceItemSkeleton = () => {
   return (
@@ -31,59 +27,15 @@ const SpaceList = () => {
     useCeramicContext();
   const [isClientReady, setIsClientReady] = useState(false);
 
+  const { userJoinedSpaces, isUserSpaceLoading, isUserSpaceFetched} = useUserSpace()
+
   useEffect(() => {
     setIsClientReady(true);
   }, []);
 
-  const userDID = ceramic?.did?.parent?.toString();
-
-  const {
-    data: spacesData,
-    isLoading: isSpacesLoading,
-    isFetched,
-  } = useGraphQL(
-    ['spaces'],
-    GET_SPACE_QUERY,
-    { first: 100 },
-    {
-      select: (data) => {
-        return data?.data?.zucitySpaceIndex?.edges?.map(
-          (edge) => edge?.node,
-        ) as Space[];
-      },
-    },
-  );
-
-  const { data: userRoles } = useGraphQL(
-    ['GET_USER_ROLES_QUERY', userDID],
-    GET_USER_ROLES_QUERY,
-    {
-      userId: userDID,
-    },
-    {
-      select: ({ data }) => {
-        return (
-          data?.zucityUserRolesIndex?.edges?.map(
-            (edge) => edge?.node?.resourceId,
-          ) || []
-        );
-      },
-    },
-  );
-
-  const userSpaces = useMemo(() => {
-    if (!spacesData || !userDID) return [];
-
-    return spacesData
-      .filter((space) => space.owner?.zucityProfile.author?.id === userDID)
-      .concat(
-        spacesData.filter((space) => userRoles?.includes(space.id.toString())),
-      );
-  }, [spacesData, userDID, userRoles]);
-
   const shouldShowSkeleton =
     isClientReady &&
-    (isSpacesLoading || !isFetched || !isAuthenticated) &&
+    (isUserSpaceLoading || !isUserSpaceFetched || !isAuthenticated) &&
     !!profile;
 
   return (
@@ -95,8 +47,8 @@ const SpaceList = () => {
           <SpaceItemSkeleton />
         </>
       ) : (
-        userSpaces.length > 0 &&
-        userSpaces.map((space) => <SpaceItem key={space.id} space={space} />)
+        userJoinedSpaces.length > 0 &&
+        userJoinedSpaces.map((space) => <SpaceItem key={(space as unknown as Space).id} space={space as unknown as Space} />)
       )}
     </div>
   );

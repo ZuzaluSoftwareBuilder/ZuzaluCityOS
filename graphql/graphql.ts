@@ -1129,9 +1129,11 @@ export type PartialZucityApplicationFormInput = {
 };
 
 export type PartialZucityDappInfoInput = {
+  appLogoUrl?: InputMaybe<Scalars['String']['input']>;
   appName?: InputMaybe<Scalars['String']['input']>;
   appType?: InputMaybe<Scalars['String']['input']>;
   appUrl?: InputMaybe<Scalars['String']['input']>;
+  auditLogUrl?: InputMaybe<Scalars['String']['input']>;
   audited?: InputMaybe<Scalars['String']['input']>;
   bannerUrl?: InputMaybe<Scalars['String']['input']>;
   categories?: InputMaybe<Scalars['String']['input']>;
@@ -1144,6 +1146,9 @@ export type PartialZucityDappInfoInput = {
   installEnv?: InputMaybe<Scalars['String']['input']>;
   installedEvents?: InputMaybe<Array<InputMaybe<Scalars['CeramicStreamID']['input']>>>;
   installedSpaces?: InputMaybe<Array<InputMaybe<Scalars['CeramicStreamID']['input']>>>;
+  integrateType?: InputMaybe<Scalars['String']['input']>;
+  isInstallable?: InputMaybe<Scalars['String']['input']>;
+  isSCApp?: InputMaybe<Scalars['String']['input']>;
   openSource?: InputMaybe<Scalars['String']['input']>;
   profileId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
   repositoryUrl?: InputMaybe<Scalars['String']['input']>;
@@ -2054,9 +2059,11 @@ export type ZucityApplicationFormInput = {
 
 export type ZucityDappInfo = Node & {
   __typename?: 'ZucityDappInfo';
+  appLogoUrl: Scalars['String']['output'];
   appName: Scalars['String']['output'];
   appType: Scalars['String']['output'];
   appUrl?: Maybe<Scalars['String']['output']>;
+  auditLogUrl?: Maybe<Scalars['String']['output']>;
   audited?: Maybe<Scalars['String']['output']>;
   /** Account controlling the document */
   author: CeramicAccount;
@@ -2072,6 +2079,9 @@ export type ZucityDappInfo = Node & {
   installEnv?: Maybe<Scalars['String']['output']>;
   installedEvents?: Maybe<Array<Maybe<Scalars['CeramicStreamID']['output']>>>;
   installedSpaces?: Maybe<Array<Maybe<Scalars['CeramicStreamID']['output']>>>;
+  integrateType?: Maybe<Scalars['String']['output']>;
+  isInstallable: Scalars['String']['output'];
+  isSCApp?: Maybe<Scalars['String']['output']>;
   openSource: Scalars['String']['output'];
   profile?: Maybe<ZucityProfile>;
   profileId: Scalars['CeramicStreamID']['output'];
@@ -2106,9 +2116,11 @@ export type ZucityDappInfoFiltersInput = {
 };
 
 export type ZucityDappInfoInput = {
+  appLogoUrl: Scalars['String']['input'];
   appName: Scalars['String']['input'];
   appType: Scalars['String']['input'];
   appUrl?: InputMaybe<Scalars['String']['input']>;
+  auditLogUrl?: InputMaybe<Scalars['String']['input']>;
   audited?: InputMaybe<Scalars['String']['input']>;
   bannerUrl: Scalars['String']['input'];
   categories: Scalars['String']['input'];
@@ -2121,6 +2133,9 @@ export type ZucityDappInfoInput = {
   installEnv?: InputMaybe<Scalars['String']['input']>;
   installedEvents?: InputMaybe<Array<InputMaybe<Scalars['CeramicStreamID']['input']>>>;
   installedSpaces?: InputMaybe<Array<InputMaybe<Scalars['CeramicStreamID']['input']>>>;
+  integrateType?: InputMaybe<Scalars['String']['input']>;
+  isInstallable: Scalars['String']['input'];
+  isSCApp?: InputMaybe<Scalars['String']['input']>;
   openSource: Scalars['String']['input'];
   profileId: Scalars['CeramicStreamID']['input'];
   repositoryUrl?: InputMaybe<Scalars['String']['input']>;
@@ -2136,6 +2151,8 @@ export type ZucityDappInfoObjectFilterInput = {
   devStatus?: InputMaybe<StringValueFilterInput>;
   developerName?: InputMaybe<StringValueFilterInput>;
   installEnv?: InputMaybe<StringValueFilterInput>;
+  isInstallable?: InputMaybe<StringValueFilterInput>;
+  isSCApp?: InputMaybe<StringValueFilterInput>;
   openSource?: InputMaybe<StringValueFilterInput>;
 };
 
@@ -2147,6 +2164,8 @@ export type ZucityDappInfoSortingInput = {
   devStatus?: InputMaybe<SortOrder>;
   developerName?: InputMaybe<SortOrder>;
   installEnv?: InputMaybe<SortOrder>;
+  isInstallable?: InputMaybe<SortOrder>;
+  isSCApp?: InputMaybe<SortOrder>;
   openSource?: InputMaybe<SortOrder>;
 };
 
@@ -3225,6 +3244,20 @@ export type GetDappListQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetDappListQuery = { __typename?: 'Query', zucityDappInfoIndex?: { __typename?: 'ZucityDappInfoConnection', edges?: Array<{ __typename?: 'ZucityDappInfoEdge', node?: { __typename?: 'ZucityDappInfo', id: string, appName: string, tagline: string, developerName: string, description: string, bannerUrl: string, categories: string, devStatus: string, openSource: string, repositoryUrl?: string | null, appUrl?: string | null, websiteUrl?: string | null, docsUrl?: string | null, profile?: { __typename?: 'ZucityProfile', avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } | null } | null> | null } | null };
 
+export type GetAllEventsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type GetAllEventsQuery = { __typename?: 'Query', zucityEventIndex?: { __typename?: 'ZucityEventConnection', edges?: Array<{ __typename?: 'ZucityEventEdge', node?: { __typename?: 'ZucityEvent', id: string, description?: string | null, profileId: any, tagline?: string | null, gated?: string | null, createdAt: any, endTime: any, externalUrl?: string | null, imageUrl?: string | null, participantCount?: number | null, spaceId: any, startTime: any, status?: string | null, supportChain?: string | null, timezone?: string | null, title: string, tracks?: string | null, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, superAdmin: Array<{ __typename?: 'CeramicAccount', id: string }>, admins?: Array<{ __typename?: 'CeramicAccount', id: string } | null> | null, author: { __typename?: 'CeramicAccount', id: string }, customLinks?: Array<{ __typename?: 'ZucityEventLink', links: string, title: string } | null> | null, members?: Array<{ __typename?: 'CeramicAccount', id: string } | null> | null } | null } | null> | null } | null };
+
+export type GetEventByIdsQueryVariables = Exact<{
+  ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+}>;
+
+
+export type GetEventByIdsQuery = { __typename?: 'Query', nodes: Array<{ __typename?: 'CeramicAccount' } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent', id: string, description?: string | null, profileId: any, tagline?: string | null, gated?: string | null, createdAt: any, endTime: any, externalUrl?: string | null, imageUrl?: string | null, participantCount?: number | null, spaceId: any, startTime: any, status?: string | null, supportChain?: string | null, timezone?: string | null, title: string, tracks?: string | null, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, superAdmin: Array<{ __typename?: 'CeramicAccount', id: string }>, admins?: Array<{ __typename?: 'CeramicAccount', id: string } | null> | null, author: { __typename?: 'CeramicAccount', id: string }, customLinks?: Array<{ __typename?: 'ZucityEventLink', links: string, title: string } | null> | null, members?: Array<{ __typename?: 'CeramicAccount', id: string } | null> | null } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace' } | { __typename?: 'ZucityUserRoles' } | null> };
+
 export type SearchProfileByExactUsernameQueryVariables = Exact<{
   username: Scalars['String']['input'];
 }>;
@@ -3250,6 +3283,20 @@ export type GetOwnProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetOwnProfileQuery = { __typename?: 'Query', viewer?: { __typename?: 'CeramicAccount', zucityProfile?: { __typename?: 'ZucityProfile', avatar?: string | null, id: string, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } | null };
+
+export type GetUserOwnSpaceQueryVariables = Exact<{
+  did: Scalars['ID']['input'];
+}>;
+
+
+export type GetUserOwnSpaceQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount', zucityProfile?: { __typename?: 'ZucityProfile', id: string, username: string, avatar?: string | null, author: { __typename?: 'CeramicAccount', id: string }, spaces: { __typename?: 'ZucitySpaceConnection', edges?: Array<{ __typename?: 'ZucitySpaceEdge', node?: { __typename?: 'ZucitySpace', id: string, avatar?: string | null, banner?: string | null, name: string, description: string, category?: string | null, color?: string | null, profileId: any, tagline?: string | null, createdAt: any, updatedAt: any, author: { __typename?: 'CeramicAccount', id: string }, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, customLinks?: Array<{ __typename?: 'ZucitySpaceLink', links: string, title: string } | null> | null, owner: { __typename?: 'CeramicAccount', id: string }, socialLinks?: Array<{ __typename?: 'ZucitySpaceLink', links: string, title: string } | null> | null, tags?: Array<{ __typename?: 'ZucitySpaceTag', tag: string } | null> | null } | null } | null> | null } } | null } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace' } | { __typename?: 'ZucityUserRoles' } | null };
+
+export type GetUserOwnEventQueryVariables = Exact<{
+  did: Scalars['ID']['input'];
+}>;
+
+
+export type GetUserOwnEventQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount', zucityProfile?: { __typename?: 'ZucityProfile', id: string, username: string, avatar?: string | null, events: { __typename?: 'ZucityEventConnection', edges?: Array<{ __typename?: 'ZucityEventEdge', node?: { __typename?: 'ZucityEvent', id: string, createdAt: any, description?: string | null, endTime: any, externalUrl?: string | null, gated?: string | null, imageUrl?: string | null, participantCount?: number | null, minParticipant?: number | null, profileId: any, spaceId: any, startTime: any, status?: string | null, supportChain?: string | null, tagline?: string | null, timezone?: string | null, title: string, tracks?: string | null, admins?: Array<{ __typename?: 'CeramicAccount', id: string } | null> | null, author: { __typename?: 'CeramicAccount', id: string }, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, customLinks?: Array<{ __typename?: 'ZucityEventLink', links: string, title: string } | null> | null, members?: Array<{ __typename?: 'CeramicAccount', id: string } | null> | null, superAdmin: Array<{ __typename?: 'CeramicAccount', id: string }> } | null } | null> | null }, author: { __typename?: 'CeramicAccount', id: string } } | null } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace' } | { __typename?: 'ZucityUserRoles' } | null };
 
 export type GetMembersQueryVariables = Exact<{
   source?: InputMaybe<Scalars['String']['input']>;
@@ -3302,6 +3349,13 @@ export type GetSpaceQueryVariables = Exact<{
 
 
 export type GetSpaceQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount' } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace', id: string, avatar?: string | null, banner?: string | null, description: string, name: string, profileId: any, tagline?: string | null, category?: string | null, color?: string | null, createdAt: any, updatedAt: any, tags?: Array<{ __typename?: 'ZucitySpaceTag', tag: string } | null> | null, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, socialLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, customLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, owner: { __typename?: 'CeramicAccount', id: string, zucityProfile?: { __typename?: 'ZucityProfile', id: string, avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } } | { __typename?: 'ZucityUserRoles' } | null };
+
+export type GetSpaceByIdsQueryVariables = Exact<{
+  ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+}>;
+
+
+export type GetSpaceByIdsQuery = { __typename?: 'Query', nodes: Array<{ __typename?: 'CeramicAccount' } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace', id: string, avatar?: string | null, banner?: string | null, description: string, name: string, profileId: any, tagline?: string | null, category?: string | null, color?: string | null, createdAt: any, updatedAt: any, tags?: Array<{ __typename?: 'ZucitySpaceTag', tag: string } | null> | null, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, socialLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, customLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, owner: { __typename?: 'CeramicAccount', id: string, zucityProfile?: { __typename?: 'ZucityProfile', id: string, avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } } | { __typename?: 'ZucityUserRoles' } | null> };
 
 export type InstallDappToSpaceMutationVariables = Exact<{
   input: CreateZucityInstalledAppInput;
@@ -3396,6 +3450,96 @@ export const GetDappListDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetDappListQuery, GetDappListQueryVariables>;
+export const GetAllEventsDocument = new TypedDocumentString(`
+    query GetAllEvents($first: Int) {
+  zucityEventIndex(first: $first) {
+    edges {
+      node {
+        id
+        description
+        profileId
+        tagline
+        customAttributes {
+          tbd
+        }
+        gated
+        superAdmin {
+          id
+        }
+        admins {
+          id
+        }
+        author {
+          id
+        }
+        customLinks {
+          links
+          title
+        }
+        createdAt
+        endTime
+        externalUrl
+        imageUrl
+        members {
+          id
+        }
+        participantCount
+        spaceId
+        startTime
+        status
+        supportChain
+        timezone
+        title
+        tracks
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetAllEventsQuery, GetAllEventsQueryVariables>;
+export const GetEventByIdsDocument = new TypedDocumentString(`
+    query GetEventByIds($ids: [ID!]!) {
+  nodes(ids: $ids) {
+    ... on ZucityEvent {
+      id
+      description
+      profileId
+      tagline
+      customAttributes {
+        tbd
+      }
+      gated
+      superAdmin {
+        id
+      }
+      admins {
+        id
+      }
+      author {
+        id
+      }
+      customLinks {
+        links
+        title
+      }
+      createdAt
+      endTime
+      externalUrl
+      imageUrl
+      members {
+        id
+      }
+      participantCount
+      spaceId
+      startTime
+      status
+      supportChain
+      timezone
+      title
+      tracks
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetEventByIdsQuery, GetEventByIdsQueryVariables>;
 export const SearchProfileByExactUsernameDocument = new TypedDocumentString(`
     query SearchProfileByExactUsername($username: String!) {
   zucityProfileIndex(
@@ -3455,6 +3599,118 @@ export const GetOwnProfileDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetOwnProfileQuery, GetOwnProfileQueryVariables>;
+export const GetUserOwnSpaceDocument = new TypedDocumentString(`
+    query GetUserOwnSpace($did: ID!) {
+  node(id: $did) {
+    ... on CeramicAccount {
+      zucityProfile {
+        id
+        username
+        avatar
+        author {
+          id
+        }
+        spaces(first: 100) {
+          edges {
+            node {
+              id
+              author {
+                id
+              }
+              avatar
+              banner
+              name
+              description
+              category
+              color
+              profileId
+              customAttributes {
+                tbd
+              }
+              customLinks {
+                links
+                title
+              }
+              owner {
+                id
+              }
+              socialLinks {
+                links
+                title
+              }
+              tagline
+              tags {
+                tag
+              }
+              createdAt
+              updatedAt
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetUserOwnSpaceQuery, GetUserOwnSpaceQueryVariables>;
+export const GetUserOwnEventDocument = new TypedDocumentString(`
+    query GetUserOwnEvent($did: ID!) {
+  node(id: $did) {
+    ... on CeramicAccount {
+      zucityProfile {
+        id
+        username
+        avatar
+        events(first: 100) {
+          edges {
+            node {
+              id
+              admins {
+                id
+              }
+              createdAt
+              author {
+                id
+              }
+              customAttributes {
+                tbd
+              }
+              customLinks {
+                links
+                title
+              }
+              description
+              endTime
+              externalUrl
+              gated
+              imageUrl
+              members {
+                id
+              }
+              participantCount
+              minParticipant
+              profileId
+              spaceId
+              startTime
+              status
+              superAdmin {
+                id
+              }
+              supportChain
+              tagline
+              timezone
+              title
+              tracks
+            }
+          }
+        }
+        author {
+          id
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetUserOwnEventQuery, GetUserOwnEventQueryVariables>;
 export const GetMembersDocument = new TypedDocumentString(`
     query GetMembers($source: String, $resourceId: String) {
   zucityUserRolesIndex(
@@ -3601,6 +3857,50 @@ export const GetSpaceDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetSpaceQuery, GetSpaceQueryVariables>;
+export const GetSpaceByIdsDocument = new TypedDocumentString(`
+    query GetSpaceByIds($ids: [ID!]!) {
+  nodes(ids: $ids) {
+    ... on ZucitySpace {
+      id
+      avatar
+      banner
+      description
+      name
+      profileId
+      tagline
+      category
+      color
+      createdAt
+      updatedAt
+      tags {
+        tag
+      }
+      customAttributes {
+        tbd
+      }
+      socialLinks {
+        title
+        links
+      }
+      customLinks {
+        title
+        links
+      }
+      owner {
+        id
+        zucityProfile {
+          id
+          avatar
+          author {
+            id
+          }
+          username
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetSpaceByIdsQuery, GetSpaceByIdsQueryVariables>;
 export const InstallDappToSpaceDocument = new TypedDocumentString(`
     mutation InstallDappToSpace($input: CreateZucityInstalledAppInput!) {
   createZucityInstalledApp(input: $input) {
