@@ -1,20 +1,18 @@
 'use client';
-import {
-  Stack,
-  Grid,
-  useTheme,
-  useMediaQuery,
-} from '@mui/material';
+import { useState } from 'react';
+import { Stack, Grid, useTheme, useMediaQuery } from '@mui/material';
 import { Sidebar } from 'components/layout';
 import { SpaceHeader } from './components';
 import { SpaceCard } from '@/components/cards';
 import { SpaceCardSkeleton } from '@/components/cards/SpaceCard';
 import useSpaceAndEvent from '@/hooks/useSpaceAndEvent';
+import useUserJoinedSpace from '@/hooks/useUserJoinedSpace';
 
 const Home = () => {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
-  const { userJoinedSpaceIds, userFollowedResourceIds, allSpaces: spaces, isAllSpaceLoading: isLoading } = useSpaceAndEvent();
+  const { userJoinedSpaceIds, userFollowedResourceIds } = useUserJoinedSpace();
+  const { allSpaces: spaces, isAllSpaceLoading: isLoading } = useSpaceAndEvent();
 
   return (
     <Stack

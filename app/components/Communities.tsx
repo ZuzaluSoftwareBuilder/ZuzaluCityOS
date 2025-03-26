@@ -1,4 +1,5 @@
 import { SpaceCard, SpaceCardSkeleton } from './SpaceCard';
+import { Space } from '@/types';
 import { useRouter } from 'next/navigation';
 import CommonHeader from './CommonHeader';
 import { BuildingsIcon } from '@/components/icons';
@@ -6,18 +7,16 @@ import { useMemo } from 'react';
 import { ScrollShadow } from '@heroui/react';
 import { useMediaQuery } from '@/hooks';
 import useSpaceAndEvent from '@/hooks/useSpaceAndEvent';
+import useUserJoinedSpace from '@/hooks/useUserJoinedSpace';
 import dayjs from '@/utils/dayjs';
 
 export default function Communities() {
   const router = useRouter();
   const { isMobile } = useMediaQuery();
 
-  const {
-    userJoinedSpaceIds,
-    userFollowedResourceIds,
-    allSpaces: spacesData,
-    isAllSpaceLoading: isLoading,
-  } = useSpaceAndEvent();
+  const { userJoinedSpaceIds, userFollowedResourceIds } = useUserJoinedSpace();
+  const { allSpaces: spacesData, isAllSpaceLoading: isLoading } =
+    useSpaceAndEvent();
 
   const filteredSpacesData = useMemo(() => {
     if (!spacesData) {
