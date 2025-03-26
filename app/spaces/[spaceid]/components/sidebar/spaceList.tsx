@@ -4,13 +4,13 @@ import { useMemo, useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getSpacesQuery } from '@/services/space';
 import { Space, SpaceData } from '@/types';
-import { isUserAssociated } from '@/utils/permissions';
 import { useCeramicContext } from '@/context/CeramicContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Image, Tooltip, Skeleton } from '@heroui/react';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_USER_ROLES_QUERY } from '@/services/graphql/role';
+import { GET_SPACE_QUERY } from '@/services/graphql/space';
 
 const SpaceItemSkeleton = () => {
   return (
@@ -27,7 +27,6 @@ const SpaceItemSkeleton = () => {
 };
 
 const SpaceList = () => {
-  const [selected, setSelected] = useState('Spaces');
   const { isAuthenticated, profile, composeClient, ceramic } =
     useCeramicContext();
   const [isClientReady, setIsClientReady] = useState(false);
@@ -42,26 +41,18 @@ const SpaceList = () => {
     data: spacesData,
     isLoading: isSpacesLoading,
     isFetched,
-  } = useQuery({
-    queryKey: ['spaces'],
-    queryFn: async () => {
-      try {
-        const response: any = await composeClient.executeQuery(getSpacesQuery);
-        if ('zucitySpaceIndex' in response.data) {
-          const spaceData: SpaceData = response.data as SpaceData;
-
-          return spaceData.zucitySpaceIndex.edges.map((edge) => edge.node);
-        } else {
-          console.error('Invalid data structure:', response.data);
-          return [];
-        }
-      } catch (error) {
-        console.error('Failed to fetch spaces:', error);
-        throw error;
-      }
+  } = useGraphQL(
+    ['spaces'],
+    GET_SPACE_QUERY,
+    { first: 100 },
+    {
+      select: (data) => {
+        return data?.data?.zucitySpaceIndex?.edges?.map(
+          (edge) => edge?.node,
+        ) as Space[];
+      },
     },
-    enabled: !!profile && isAuthenticated,
-  });
+  );
 
   const { data: userRoles } = useGraphQL(
     ['GET_USER_ROLES_QUERY', userDID],
@@ -84,7 +75,7 @@ const SpaceList = () => {
     if (!spacesData || !userDID) return [];
 
     return spacesData
-      .filter((space) => isUserAssociated(space, userDID))
+      .filter((space) => space.owner?.zucityProfile.author?.id === userDID)
       .concat(
         spacesData.filter((space) => userRoles?.includes(space.id.toString())),
       );

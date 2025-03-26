@@ -1,5 +1,5 @@
 'use client';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useTheme } from '@mui/material/styles';
 import {
   Box,
@@ -10,15 +10,12 @@ import {
   Stack,
 } from '@mui/material';
 import { EventCard } from '@/components/cards';
-// import AnnouncementCard from 'components/AnnouncementCart';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { ChevronDownIcon, ShareIcon } from '@/components/icons';
 import SidebarButton from '@/components/layout/Sidebar/SidebarButton';
 import Image from 'next/image';
-import React, { Fragment, useEffect, useState } from 'react';
-import SubSidebar from '@/components/layout/Sidebar/SubSidebar';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { Space, Event, SpaceEventData } from '@/types';
+import React, { Fragment, useMemo, useState } from 'react';
+import { Space, Event } from '@/types';
 import {
   EventCardMonthGroup,
   EventCardSkeleton,
@@ -27,12 +24,9 @@ import {
 } from '@/components/cards/EventCard';
 import { ChevronUpIcon } from '@/components/icons/ChevronUp';
 import dynamic from 'next/dynamic';
-import { getSpaceEventsQuery } from '@/services/space';
 import useGetShareLink from '@/hooks/useGetShareLink';
-import {
-  JoinSpaceNoGate,
-  JoinSpaceWithGate,
-} from '@/components/modals/access/joinSpace';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import { GET_SPACE_AND_EVENTS_QUERY_BY_ID } from '@/services/graphql/space';
 
 const EditorPreview = dynamic(
   () => import('@/components/editor/EditorPreview'),
@@ -44,63 +38,28 @@ const EditorPreview = dynamic(
 export default function SpaceDetailPage() {
   const params = useParams();
   const theme = useTheme();
-  const router = useRouter();
-  const { composeClient, ceramic } = useCeramicContext();
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
-  const [space, setSpace] = useState<Space>();
   const [showCopyToast, setShowCopyToast] = useState(false);
-  const [events, setEvents] = useState<Event[]>([]);
-  const [isEventsLoading, setIsEventsLoading] = useState<boolean>(true);
-  const [currentHref, setCurrentHref] = useState('');
-
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   const spaceId = params?.spaceid.toString() ?? '';
-  const { shareUrl } = useGetShareLink({ id: spaceId, name: space?.name });
 
-  const getSpaceByID = async () => {
-    setIsEventsLoading(true);
-    const spaceId = params?.spaceid.toString();
-
-    const response: any = await composeClient.executeQuery(
-      getSpaceEventsQuery(),
-      {
-        id: spaceId,
+  const { data: spaceData, isLoading } = useGraphQL(
+    ['getSpaceAndEvents', spaceId],
+    GET_SPACE_AND_EVENTS_QUERY_BY_ID,
+    { id: spaceId },
+    {
+      select: (data) => {
+        return data?.data?.node as Space;
       },
-    );
-    const spaceData: Space = response.data.node as Space;
-    setSpace(spaceData);
-    const eventData: SpaceEventData = response.data.node
-      .events as SpaceEventData;
-    const fetchedEvents: Event[] = eventData.edges.map((edge) => edge.node);
-    setEvents(fetchedEvents);
-    return spaceData;
-  };
-  useEffect(() => {
-    const fetchData = async () => {
-      setCurrentHref(window.location.href);
-      const space = await getSpaceByID();
-      document.title = space?.name + ' - ' + 'Zuzalu City';
-      const admins =
-        space?.admins?.map((admin) => admin.id.toLowerCase()) || [];
-      const superAdmins =
-        space?.superAdmin?.map((superAdmin) => superAdmin.id.toLowerCase()) ||
-        [];
-      const userDID = ceramic?.did?.parent.toString().toLowerCase() || '';
-      if (admins.includes(userDID) || superAdmins.includes(userDID)) {
-        setIsAdmin(true);
-      }
-    };
+    },
+  );
 
-    fetchData()
-      .catch((error) => {
-        console.error('An error occurred:', error);
-      })
-      .finally(() => {
-        setIsEventsLoading(false);
-      });
-  }, [ceramic?.did?.parent]);
+  const eventsData = useMemo(() => {
+    return spaceData?.events?.edges.map((edge) => edge.node) as Event[];
+  }, [spaceData]);
+
+  const { shareUrl } = useGetShareLink({ id: spaceId, name: spaceData?.name });
 
   return (
     <Box
@@ -111,16 +70,6 @@ export default function SpaceDetailPage() {
         overflowY: 'auto',
       }}
     >
-      {/* <JoinSpaceNoGate /> */}
-      {/* <JoinSpaceWithGate /> */}
-      {/* hide in 2025.03.06*/}
-      {/*<SubSidebar*/}
-      {/*  title={space?.name}*/}
-      {/*  spaceId={params.spaceid.toString()}*/}
-      {/*  avatar={space?.avatar}*/}
-      {/*  banner={space?.banner}*/}
-      {/*  isAdmin={isAdmin}*/}
-      {/*/>*/}
       <Box
         sx={{
           width: 'calc(100% - 280px)',
@@ -153,13 +102,13 @@ export default function SpaceDetailPage() {
               height: '240px',
             }}
           >
-            {space ? (
+            {spaceData ? (
               <Image
                 src={
-                  space.banner ||
+                  spaceData.banner ||
                   'https://framerusercontent.com/images/MapDq7Vvn8BNPMgVHZVBMSpwI.png'
                 }
-                alt={space.name || ''}
+                alt={spaceData.name || ''}
                 width={1280}
                 height={240}
                 style={{
@@ -195,20 +144,20 @@ export default function SpaceDetailPage() {
                 flexDirection: 'row',
               }}
             >
-              {space ? (
+              {spaceData ? (
                 <Image
                   loader={() =>
-                    space?.avatar ||
+                    spaceData?.avatar ||
                     'https://framerusercontent.com/images/UkqE1HWpcAnCDpQzQYeFjpCWhRM.png'
                   }
                   src={
-                    space?.avatar ||
+                    spaceData?.avatar ||
                     'https://framerusercontent.com/images/UkqE1HWpcAnCDpQzQYeFjpCWhRM.png'
                   }
                   style={{ borderRadius: '100%' }}
                   width={80}
                   height={80}
-                  alt={space.name}
+                  alt={spaceData.name}
                 />
               ) : (
                 <Skeleton variant="circular" width={80} height={80} />
@@ -229,26 +178,8 @@ export default function SpaceDetailPage() {
                 gap: '10px',
               }}
             >
-              {/*<SidebarButton*/}
-              {/*  content="Join Space"*/}
-              {/*  sx={{*/}
-              {/*    padding: '10px 14px',*/}
-              {/*    borderRadius: '10px',*/}
-              {/*    backgroundColor: '#ffffff0a',*/}
-              {/*    '&:hover': {*/}
-              {/*      backgroundColor: '#ffffff1a',*/}
-              {/*    },*/}
-              {/*    display: 'flex',*/}
-              {/*    flexDirection: 'row',*/}
-              {/*    gap: '10px',*/}
-              {/*    cursor: 'pointer',*/}
-              {/*    whiteSpace: 'nowrap',*/}
-              {/*    alignItems: 'center',*/}
-              {/*  }}*/}
-              {/*  icon={<PlusCircleIcon />}*/}
-              {/*/>*/}
               <CopyToClipboard
-                text={shareUrl || currentHref}
+                text={shareUrl || ''}
                 onCopy={() => {
                   setShowCopyToast(true);
                 }}
@@ -289,10 +220,10 @@ export default function SpaceDetailPage() {
             }}
           >
             <Typography fontWeight={700} fontSize={'25px'} lineHeight={'120%'}>
-              {space ? space.name : <Skeleton width={200} />}
+              {spaceData ? spaceData.name : <Skeleton width={200} />}
             </Typography>
             <Typography color={'#bebebe'}>
-              {space ? space.tagline : <Skeleton />}
+              {spaceData ? spaceData.tagline : <Skeleton />}
             </Typography>
             <Box
               sx={{
@@ -304,7 +235,7 @@ export default function SpaceDetailPage() {
                 textTransform: 'uppercase',
               }}
             >
-              <p>{space?.category}</p>
+              <p>{spaceData?.tags?.map((tag) => tag.tag).join(', ')}</p>
             </Box>
           </Box>
         </Box>
@@ -318,12 +249,12 @@ export default function SpaceDetailPage() {
               boxSizing: 'border-box',
             }}
           >
-            {space ? (
+            {spaceData ? (
               <>
                 <Box
                   sx={{ fontSize: '18px', fontWeight: '700', color: '#919191' }}
                 >
-                  About {space.name}
+                  About {spaceData.name}
                 </Box>
                 <Box
                   sx={{
@@ -336,7 +267,7 @@ export default function SpaceDetailPage() {
                   }}
                 >
                   <EditorPreview
-                    value={space.description}
+                    value={spaceData.description}
                     collapsed={isCollapsed}
                     onCollapse={(collapsed) => {
                       setIsCanCollapse((v) => {
@@ -388,7 +319,7 @@ export default function SpaceDetailPage() {
               </SidebarButton>
             )}
           </Box>
-          {isEventsLoading ? (
+          {isLoading ? (
             <Box
               sx={{
                 padding: '20px',
@@ -403,7 +334,7 @@ export default function SpaceDetailPage() {
               <EventCardSkeleton />
               <EventCardSkeleton />
             </Box>
-          ) : events.length > 0 ? (
+          ) : eventsData.length > 0 ? (
             <Box
               sx={{
                 padding: '20px',
@@ -428,37 +359,8 @@ export default function SpaceDetailPage() {
                     color: '#919191',
                   }}
                 >
-                  Upcoming Events ({filterUpcomingEvents(events).length})
+                  Upcoming Events ({filterUpcomingEvents(eventsData).length})
                 </Box>
-                {/*<SidebarButton
-                  onClick={() => {
-                    router.push(`/spaces/${params.spaceid}/events`);
-                  }}
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    padding: '4px 10px',
-                    cursor: 'pointer',
-                    '&:hover': {
-                      backgroundColor: '#e6e6e61a',
-                    },
-                    backgroundColor: 'transparent',
-                    borderRadius: '10px',
-                    opacity: 0.7,
-                  }}
-                >
-                  <Stack
-                    direction={'row'}
-                    alignItems={'center'}
-                    spacing={'10px'}
-                  >
-                    <span style={{ fontSize: 16, fontWeight: 400 }}>
-                      View All Events
-                    </span>
-                    <RightArrowCircleSmallIcon />
-                  </Stack>
-                </SidebarButton>*/}
               </Box>
               <Box
                 sx={{
@@ -469,7 +371,7 @@ export default function SpaceDetailPage() {
                 }}
               >
                 {Object.entries(
-                  groupEventsByMonth(filterUpcomingEvents(events)),
+                  groupEventsByMonth(filterUpcomingEvents(eventsData)),
                 ).map(([key, value], index) => {
                   return (
                     <Fragment key={key + index}>
@@ -488,42 +390,7 @@ export default function SpaceDetailPage() {
                   flexDirection: 'column',
                   gap: '20px',
                 }}
-              >
-                {/*<Box*/}
-                {/*  sx={{*/}
-                {/*    display: 'flex',*/}
-                {/*    width: '100%',*/}
-                {/*    justifyContent: 'space-between',*/}
-                {/*    alignItems: 'center',*/}
-                {/*    flexDirection: 'row',*/}
-                {/*  }}*/}
-                {/*>*/}
-                {/*  <Box*/}
-                {/*    sx={{*/}
-                {/*      fontSize: '18px',*/}
-                {/*      fontWeight: '700',*/}
-                {/*      color: '#919191',*/}
-                {/*    }}*/}
-                {/*  >*/}
-                {/*    Past Events ({MOCK_DATA.pastEvents.length})*/}
-                {/*  </Box>*/}
-                {/*  <SidebarButton*/}
-                {/*    sx={{*/}
-                {/*      display: 'flex',*/}
-                {/*      flexDirection: 'row',*/}
-                {/*      padding: '4px 10px',*/}
-                {/*      cursor: 'pointer',*/}
-                {/*      '&:hover': {*/}
-                {/*        backgroundColor: '#e6e6e61a',*/}
-                {/*      },*/}
-                {/*      backgroundColor: 'transparent',*/}
-                {/*      borderRadius: '10px',*/}
-                {/*      opacity: 0.7,*/}
-                {/*    }}*/}
-                {/*    content="See All"*/}
-                {/*  ></SidebarButton>*/}
-                {/*</Box>*/}
-              </Box>
+              ></Box>
             </Box>
           ) : null}
         </Box>

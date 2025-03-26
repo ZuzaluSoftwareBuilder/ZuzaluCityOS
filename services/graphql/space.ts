@@ -191,3 +191,76 @@ export const GET_SPACE_QUERY = graphql(`
     }
   }
 `);
+
+export const GET_SPACE_AND_EVENTS_QUERY_BY_ID = graphql(`
+  query GetSpaceAndEvents($id: ID!) {
+    node(id: $id) {
+      ... on ZucitySpace {
+        id
+        avatar
+        banner
+        description
+        name
+        profileId
+        tagline
+        category
+        color
+        createdAt
+        updatedAt
+        tags {
+          tag
+        }
+        customAttributes {
+          tbd
+        }
+        socialLinks {
+          title
+          links
+        }
+        customLinks {
+          title
+          links
+        }
+        owner {
+          id
+          zucityProfile {
+            id
+            avatar
+            author {
+              id
+            }
+            username
+          }
+        }
+        events(first: 100) {
+          edges {
+            node {
+              createdAt
+              description
+              endTime
+              externalUrl
+              gated
+              id
+              imageUrl
+              maxParticipant
+              meetingUrl
+              minParticipant
+              participantCount
+              profileId
+              spaceId
+              startTime
+              status
+              tagline
+              timezone
+              title
+              space {
+                name
+                avatar
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`);
