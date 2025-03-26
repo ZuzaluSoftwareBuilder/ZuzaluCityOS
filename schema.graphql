@@ -786,9 +786,11 @@ input PartialZucityApplicationFormInput {
 }
 
 input PartialZucityDappInfoInput {
+  appLogoUrl: String
   appName: String
   appType: String
   appUrl: String
+  auditLogUrl: String
   audited: String
   bannerUrl: String
   categories: String
@@ -801,6 +803,9 @@ input PartialZucityDappInfoInput {
   installEnv: String
   installedEvents: [CeramicStreamID]
   installedSpaces: [CeramicStreamID]
+  integrateType: String
+  isInstallable: String
+  isSCApp: String
   openSource: String
   profileId: CeramicStreamID
   repositoryUrl: String
@@ -1614,9 +1619,11 @@ input ZucityApplicationFormInput {
 }
 
 type ZucityDappInfo implements Node {
+  appLogoUrl: String!
   appName: String!
   appType: String!
   appUrl: String
+  auditLogUrl: String
   audited: String
   """Account controlling the document"""
   author: CeramicAccount!
@@ -1632,6 +1639,9 @@ type ZucityDappInfo implements Node {
   installEnv: String
   installedEvents: [CeramicStreamID]
   installedSpaces: [CeramicStreamID]
+  integrateType: String
+  isInstallable: String!
+  isSCApp: String
   openSource: String!
   profile: ZucityProfile
   profileId: CeramicStreamID!
@@ -1664,9 +1674,11 @@ input ZucityDappInfoFiltersInput {
 }
 
 input ZucityDappInfoInput {
+  appLogoUrl: String!
   appName: String!
   appType: String!
   appUrl: String
+  auditLogUrl: String
   audited: String
   bannerUrl: String!
   categories: String!
@@ -1679,6 +1691,9 @@ input ZucityDappInfoInput {
   installEnv: String
   installedEvents: [CeramicStreamID]
   installedSpaces: [CeramicStreamID]
+  integrateType: String
+  isInstallable: String!
+  isSCApp: String
   openSource: String!
   profileId: CeramicStreamID!
   repositoryUrl: String
@@ -1694,6 +1709,8 @@ input ZucityDappInfoObjectFilterInput {
   devStatus: StringValueFilterInput
   developerName: StringValueFilterInput
   installEnv: StringValueFilterInput
+  isInstallable: StringValueFilterInput
+  isSCApp: StringValueFilterInput
   openSource: StringValueFilterInput
 }
 
@@ -1705,6 +1722,8 @@ input ZucityDappInfoSortingInput {
   devStatus: SortOrder
   developerName: SortOrder
   installEnv: SortOrder
+  isInstallable: SortOrder
+  isSCApp: SortOrder
   openSource: SortOrder
 }
 

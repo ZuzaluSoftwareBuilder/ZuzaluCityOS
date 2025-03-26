@@ -9,7 +9,6 @@ import {
 } from '@/components/icons';
 import { Button } from '@/components/base';
 import { useRouter } from 'next/navigation';
-import useUserJoinSpace from '@/hooks/useUserJoin';
 
 export function SpaceCardSkeleton() {
   return (

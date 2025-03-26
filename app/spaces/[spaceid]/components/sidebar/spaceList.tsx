@@ -1,17 +1,12 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getSpacesQuery } from '@/services/space';
-import { Space, SpaceData } from '@/types';
+import { useState, useEffect } from 'react';
+import { Space } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Image, Tooltip, Skeleton } from '@heroui/react';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_USER_ROLES_QUERY } from '@/services/graphql/role';
-import { GET_ALL_SPACE_QUERY } from '@/services/graphql/space';
-import useUserSpaceAndEvent from '@/hooks/useUserSpaceAndEvent';
+import useUserSpace from '@/hooks/useUserSpace';
 
 const SpaceItemSkeleton = () => {
   return (
@@ -32,7 +27,7 @@ const SpaceList = () => {
     useCeramicContext();
   const [isClientReady, setIsClientReady] = useState(false);
 
-  const { userJoinedSpaces: userSpaces, isUserSpaceLoading: isSpacesLoading, isUserSpaceFetched: isFetched } = useUserSpaceAndEvent()
+  const { userJoinedSpaces, isUserSpaceLoading, isUserSpaceFetched} = useUserSpace()
 
   useEffect(() => {
     setIsClientReady(true);
@@ -40,7 +35,7 @@ const SpaceList = () => {
 
   const shouldShowSkeleton =
     isClientReady &&
-    (isSpacesLoading || !isFetched || !isAuthenticated) &&
+    (isUserSpaceLoading || !isUserSpaceFetched || !isAuthenticated) &&
     !!profile;
 
   return (
@@ -52,8 +47,8 @@ const SpaceList = () => {
           <SpaceItemSkeleton />
         </>
       ) : (
-        userSpaces.length > 0 &&
-        userSpaces.map((space) => <SpaceItem key={space!.id} space={space as unknown as Space} />)
+        userJoinedSpaces.length > 0 &&
+        userJoinedSpaces.map((space) => <SpaceItem key={space?.id} space={space as unknown as Space} />)
       )}
     </div>
   );

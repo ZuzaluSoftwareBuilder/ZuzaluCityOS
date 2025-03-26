@@ -7,14 +7,28 @@ import { SpaceCardSkeleton } from '@/components/cards/SpaceCard';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_ALL_SPACE_QUERY } from '@/services/graphql/space';
 import { Space } from '@/types';
-import useAllSpaceAndEvent from '@/hooks/useAllSpaceAndEvent';
-import useUserSpaceAndEvent from '@/hooks/useUserSpaceAndEvent';
+import useUserSpace from '@/hooks/useUserSpace';
 const Home = () => {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
 
-  const { allSpaces: spaces, isAllSpaceLoading: isLoading } = useAllSpaceAndEvent();
-  const { userJoinedSpaceIds, userFollowedResourceIds } = useUserSpaceAndEvent();
+  const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
+
+  const { data: spaces, isLoading: isLoading  } = useGraphQL(
+    ['GET_ALL_SPACE_QUERY'],
+    GET_ALL_SPACE_QUERY,
+    { first: 100 },
+    {
+      select: (data) => {
+        if (!data?.data?.zucitySpaceIndex?.edges) {
+          return [];
+        }
+        return data.data.zucitySpaceIndex.edges.map(
+          (edge) => edge!.node,
+        ) as Space[];
+      },
+    },
+  );
   
   return (
     <Stack
@@ -67,7 +81,7 @@ const Home = () => {
                   categories={item.category}
                   tagline={item.tagline}
                   isJoined={userJoinedSpaceIds.has(item.id)}
-                  isFollowed={userFollowedResourceIds.has(item.id)}
+                  isFollowed={userFollowedSpaceIds.has(item.id)}
                 />
               </Grid>
             ))

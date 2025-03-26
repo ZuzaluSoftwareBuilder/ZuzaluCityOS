@@ -10,12 +10,12 @@ import {
   StorefrontIcon,
   VideoIcon,
 } from 'components/icons';
-import { useCeramicContext } from '@/context/CeramicContext';
 import { useCallback, useState } from 'react';
 import Image from 'next/image';
 import { cn, Tab, Tabs, ScrollShadow, Skeleton } from '@heroui/react';
 import { Button } from '@/components/base';
-import useUserSpaceAndEvent from '@/hooks/useUserSpaceAndEvent';
+import useUserSpace from '@/hooks/useUserSpace';
+import useUserEvent from '@/hooks/useUserEvent';
 interface SidebarProps {
   selected: string;
   isMobile?: boolean;
@@ -106,7 +106,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const [selectedTab, setSelectedTab] = useState('events');
 
-  const { userJoinedSpaces: userSpaces, userJoinedEvents: userEvents, isUserSpaceLoading: isSpacesLoading, isUserEventLoading: isEventsLoading } = useUserSpaceAndEvent()
+  const { userJoinedSpaces, isUserSpaceLoading } = useUserSpace();
+  const { userJoinedEvents, isUserEventLoading } = useUserEvent();
 
   const handleClick = useCallback(
     (item: any) => {
@@ -174,20 +175,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const renderTabContent = useCallback(() => {
     const isEventsTab = selectedTab === 'events';
-    const isLoading = isEventsTab ? isEventsLoading : isSpacesLoading;
-    const items = isEventsTab ? userEvents : userSpaces;
+    const isLoading = isEventsTab ? isUserEventLoading : isUserSpaceLoading;
+    const items = isEventsTab ? userJoinedEvents : userJoinedSpaces;
 
     if (isLoading) {
       return renderLoadingSkeleton();
     }
 
-    return items.map((item) => renderItem(item, isEventsTab));
+    return items?.map((item) => renderItem(item, isEventsTab));
   }, [
     selectedTab,
-    isEventsLoading,
-    isSpacesLoading,
-    userEvents,
-    userSpaces,
+    isUserEventLoading,
+    isUserSpaceLoading,
+    userJoinedEvents,
+    userJoinedSpaces,
     renderLoadingSkeleton,
     renderItem,
   ]);

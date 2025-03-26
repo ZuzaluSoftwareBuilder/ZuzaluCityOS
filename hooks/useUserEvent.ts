@@ -2,24 +2,31 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_USER_ROLES_QUERY } from '@/services/graphql/role';
 import { GET_USER_SPACE_AND_EVENT } from '@/services/graphql/profile';
+import { IUserProfileWithSpaceAndEvent } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/utils/supabase/client';
 import { useMemo } from 'react';
-import useAllSpaceAndEvent from '@/hooks/useAllSpaceAndEvent';
-import { IUserProfileWithSpaceAndEvent } from '@/types';
+import { GET_ALL_EVENT_QUERY } from '@/services/graphql/event';
 
-const useUserSpaceAndEvent = () => {
+const useUserEvent = () => {
   const { profile } = useCeramicContext();
   const userDId = profile?.author?.id;
 
-  const {
-    allSpaces,
-    allEvents,
-    isAllSpaceLoading,
-    isAllEventLoading,
-    isAllSpaceFetched,
-    isAllEventFetched,
-  } = useAllSpaceAndEvent();
+  const { data: allEvents, isLoading: isAllEventLoading, isFetched: isAllEventFetched } = useGraphQL(
+    ['GET_ALL_EVENT_QUERY'],
+    GET_ALL_EVENT_QUERY,
+    { first: 100 },
+    {
+      select: (data) => {
+        if (!data?.data?.zucityEventIndex?.edges) {
+          return [];
+        }
+        return data.data.zucityEventIndex.edges.map(
+          (edge) => edge!.node,
+        );
+      },
+    },
+  );
 
   const {
     data: userRoles,
@@ -69,24 +76,10 @@ const useUserSpaceAndEvent = () => {
     },
   });
 
-  const ownerSpaces = useMemo(() => {
-    return (userSpaceAndEvent?.spaces?.edges || []).map((edge) => edge.node);
-  }, [userSpaceAndEvent]);
-
   const ownerEvents = useMemo(() => {
     return (userSpaceAndEvent?.events?.edges || []).map((edge) => edge.node);
   }, [userSpaceAndEvent]);
 
-  const userJoinedSpaceIds = useMemo(() => {
-    const spaceIds = ownerSpaces.map((space) => space?.id);
-    const participatedSpaceIds = (userRoles || [])
-      .filter(
-        (role) =>
-          role?.resourceId && role?.source?.toLocaleLowerCase() === 'space',
-      )
-      .map((role) => role?.resourceId);
-    return new Set([...spaceIds, ...participatedSpaceIds]);
-  }, [ownerSpaces, userRoles]);
 
   const userJoinedEventIds = useMemo(() => {
     const eventIds = ownerEvents.map((event) => event?.id);
@@ -106,12 +99,6 @@ const useUserSpaceAndEvent = () => {
     return new Set(ids);
   }, [userRoles, followerRoleId]);
 
-  const userJoinedSpaces = useMemo(() => {
-    return (allSpaces || []).filter((space) =>
-      userJoinedSpaceIds.has(space?.id),
-    );
-  }, [userJoinedSpaceIds, allSpaces]);
-
   const userJoinedEvents = useMemo(() => {
     return (allEvents || []).filter((event) =>
       userJoinedEventIds.has(event?.id),
@@ -119,20 +106,14 @@ const useUserSpaceAndEvent = () => {
   }, [userJoinedEventIds, allEvents]);
 
   return {
-    userJoinedSpaces,
     userJoinedEvents,
-    userJoinedSpaceIds,
     userJoinedEventIds,
     userFollowedResourceIds,
-    isUserSpaceLoading:
-      isUserRoleLoading || isUserSpaceAndEventLoading || isAllSpaceLoading,
-    isUserSpaceFetched:
-      isUserRoleFetched && isUserSpaceAndEventFetched && isAllSpaceFetched,
     isUserEventLoading:
       isUserRoleLoading || isUserSpaceAndEventLoading || isAllEventLoading,
     isUserEventFetched:
       isUserRoleFetched && isUserSpaceAndEventFetched && isAllEventFetched,
   };
-};
+}
 
-export default useUserSpaceAndEvent;
+export default useUserEvent;

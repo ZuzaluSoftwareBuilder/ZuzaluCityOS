@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { Typography, Button, Box, Stack, Skeleton } from '@mui/material';
 import { CheckCircleIcon, PlusCircleIcon, UsersIcon } from '../icons';
 import { SPACE_CATEGORIES } from '@/constant';
-import useUserJoinSpace from '@/hooks/useUserJoin';
 
 export type SpaceCardProps = {
   id?: string;

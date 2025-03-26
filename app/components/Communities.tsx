@@ -6,15 +6,32 @@ import { useMemo } from 'react';
 import { ScrollShadow } from '@heroui/react';
 import { useMediaQuery } from '@/hooks';
 import dayjs from '@/utils/dayjs';
-import useAllSpaceAndEvent from '@/hooks/useAllSpaceAndEvent';
-import useUserSpaceAndEvent from '@/hooks/useUserSpaceAndEvent';
+import useUserSpace from '@/hooks/useUserSpace';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import { Space } from '@/types';
+import { GET_ALL_SPACE_QUERY } from '@/services/graphql/space';
 
 export default function Communities() {
   const router = useRouter();
   const { isMobile } = useMediaQuery();
 
-  const { allSpaces: spacesData, isAllSpaceLoading: isLoading } = useAllSpaceAndEvent()
-  const { userJoinedSpaceIds, userFollowedResourceIds } = useUserSpaceAndEvent()
+  const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace()
+
+  const { data: spacesData, isLoading } = useGraphQL(
+    ['GET_ALL_SPACE_QUERY'],
+    GET_ALL_SPACE_QUERY,
+    { first: 100 },
+    {
+      select: (data) => {
+        if (!data?.data?.zucitySpaceIndex?.edges) {
+          return [];
+        }
+        return data.data.zucitySpaceIndex.edges.map(
+          (edge) => edge!.node,
+        ) as Space[];
+      },
+    },
+  );
 
   const filteredSpacesData = useMemo(() => {
     if (!spacesData) {
@@ -45,7 +62,7 @@ export default function Communities() {
               <SpaceCardSkeleton key={index} />
             ))
             : filteredSpacesData?.map((item) => (
-              <SpaceCard key={item.id} data={item} isJoined={userJoinedSpaceIds.has(item.id)} isFollowed={userFollowedResourceIds.has(item.id)} />
+              <SpaceCard key={item.id} data={item} isJoined={userJoinedSpaceIds.has(item.id)} isFollowed={userFollowedSpaceIds.has(item.id)} />
             ))}
         </div>
       </ScrollShadow>

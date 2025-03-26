@@ -45,6 +45,52 @@ export const GET_SPACE_QUERY_BY_ID = graphql(`
   }
 `);
 
+export const GET_SPACE_QUERY_BY_IDS = graphql(`
+  query GetSpaceByIds($ids: [ID!]!) {
+    nodes (ids: $ids) {
+      ... on ZucitySpace {
+        id
+        avatar
+        banner
+        description
+        name
+        profileId
+        tagline
+        category
+        color
+        createdAt
+        updatedAt
+        tags {
+          tag
+        }
+        customAttributes {
+          tbd
+        }
+        socialLinks {
+          title
+          links
+        }
+        customLinks {
+          title
+          links
+        }
+        owner {
+          id
+          zucityProfile {
+            id
+            avatar
+            author {
+              id
+            }
+            username
+          }
+        }
+      }
+    }
+  }
+`)
+
+
 export const INSTALL_DAPP_TO_SPACE = graphql(`
   mutation InstallDappToSpace($input: CreateZucityInstalledAppInput!) {
     createZucityInstalledApp(input: $input) {
