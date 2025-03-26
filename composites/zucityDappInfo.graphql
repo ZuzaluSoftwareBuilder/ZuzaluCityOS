@@ -10,12 +10,15 @@ type ZucityDappInfo
   @createIndex(fields: [{ path: "devStatus" }])
   @createIndex(fields: [{ path: "audited" }])
   @createIndex(fields: [{ path: "installEnv" }])
-  @createIndex(fields: [{ path: "appType" }]) {
+  @createIndex(fields: [{ path: "appType" }])
+  @createIndex(fields: [{ path: "isInstallable" }])
+  @createIndex(fields: [{ path: "isSCApp" }]){
   author: DID! @documentAccount
   appName: String! @string(minLength: 1, maxLength: 10000)
   developerName: String! @string(minLength: 1, maxLength: 10000)
   description: String! @string(minLength: 1, maxLength: 50000)
   bannerUrl: String! @string(minLength: 1, maxLength: 10000)
+  appLogoUrl: String! @string(minLength: 1, maxLength: 10000)
   categories: String! @string(minLength: 1, maxLength: 10000)
   devStatus: String! @string(minLength: 1, maxLength: 10000)
   openSource: String! @string(minLength: 1, maxLength: 10000)
@@ -32,6 +35,10 @@ type ZucityDappInfo
   installEnv: String @string(minLength: 1, maxLength: 10000)
   appType: String! @string(minLength: 1, maxLength: 10000)
   audited: String @string(minLength: 1, maxLength: 10000)
+  isSCApp: String @string(minLength: 1, maxLength: 10000)
+  auditLogUrl: String @string(minLength: 1, maxLength: 10000)
+  isInstallable: String! @string(minLength: 1, maxLength: 10000)
+  integrateType: String @string(minLength: 1, maxLength: 10000)
   customAttributes: [TBD] @list(maxLength: 10000)
 }
 
