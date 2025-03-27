@@ -683,3 +683,9 @@ export interface IUserProfileWithSpaceAndEvent {
     };
   };
 }
+
+export interface InstalledApp {
+  installedAppId?: string;
+  nativeAppName?: string;
+  installedApp?: Dapp;
+}

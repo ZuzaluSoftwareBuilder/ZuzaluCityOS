@@ -40,7 +40,11 @@ const Calendar = () => {
   const [type, setType] = useState<string>('');
   const [currentCategory, setCurrentCategory] = useState('All');
   const [currentEvent, setCurrentEvent] = useState<any>(null);
-  const { isAdmin } = useSpacePermissions();
+  const {
+    isAdmin,
+    isOwner,
+    isLoading: isLoadingPermissions,
+  } = useSpacePermissions();
 
   const searchParams = useSearchParams();
 
@@ -205,7 +209,7 @@ const Calendar = () => {
   );
 
   const content = useMemo(() => {
-    if (isLoadingSpace) {
+    if (isLoadingSpace || isLoadingPermissions) {
       return (
         <CircularProgress
           sx={{
@@ -218,7 +222,7 @@ const Calendar = () => {
         />
       );
     }
-    if (!calendarConfig && isAdmin) {
+    if (!calendarConfig && (isAdmin || isOwner)) {
       return (
         <ConfigPanel
           title="Configure Space Calendar"
@@ -337,6 +341,7 @@ const Calendar = () => {
     isLoadingSpace,
     calendarConfig,
     isAdmin,
+    isOwner,
     canAccessCalendar,
     handleType,
     filteredEventsData,
@@ -433,7 +438,7 @@ const Calendar = () => {
             <ViewEvent
               handleEdit={setType}
               event={currentEvent}
-              isAdmin={isAdmin}
+              isAdmin={true}
               refetch={refetchEvents}
               handleClose={handleFormClose}
             />
