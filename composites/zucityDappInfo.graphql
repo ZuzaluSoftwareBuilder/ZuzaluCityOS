@@ -40,6 +40,7 @@ type ZucityDappInfo
   isInstallable: String! @string(minLength: 1, maxLength: 10000)
   integrateType: String @string(minLength: 1, maxLength: 10000)
   auditStatus: String @string(minLength: 1, maxLength: 10000)
+  scAddresses: [SCAddress] @list(maxLength: 10000)
   customAttributes: [TBD] @list(maxLength: 10000)
 }
 
@@ -50,4 +51,9 @@ type ZucityProfile @loadModel(id: "$Profile_ID") {
 
 type TBD {
   tbd: String @string(minLength: 1, maxLength: 10000)
+}
+
+type SCAddress {
+  address: String @string(minLength: 1, maxLength: 10000)
+  chain: String @string(minLength: 1, maxLength: 10000)
 }
