@@ -3631,6 +3631,15 @@ export type GetSpaceAndEventsQueryVariables = Exact<{
 
 export type GetSpaceAndEventsQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount' } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace', id: string, avatar?: string | null, banner?: string | null, description: string, name: string, profileId: any, tagline?: string | null, category?: string | null, color?: string | null, createdAt: any, updatedAt: any, tags?: Array<{ __typename?: 'ZucitySpaceTag', tag: string } | null> | null, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, socialLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, customLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, owner: { __typename?: 'CeramicAccount', id: string, zucityProfile?: { __typename?: 'ZucityProfile', id: string, avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null }, events: { __typename?: 'ZucityEventConnection', edges?: Array<{ __typename?: 'ZucityEventEdge', node?: { __typename?: 'ZucityEvent', createdAt: any, description?: string | null, endTime: any, externalUrl?: string | null, gated?: string | null, id: string, imageUrl?: string | null, maxParticipant?: number | null, meetingUrl?: string | null, minParticipant?: number | null, participantCount?: number | null, profileId: any, spaceId: any, startTime: any, status?: string | null, tagline?: string | null, timezone?: string | null, title: string, space?: { __typename?: 'ZucitySpace', name: string, avatar?: string | null } | null } | null } | null> | null } } | { __typename?: 'ZucitySpaceGating' } | { __typename?: 'ZucityUserRoles' } | null };
 
+export type GetSpacesAndMembersQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  userRolesFirst?: InputMaybe<Scalars['Int']['input']>;
+  userRolesFilters?: InputMaybe<ZucityUserRolesFiltersInput>;
+}>;
+
+
+export type GetSpacesAndMembersQuery = { __typename?: 'Query', zucitySpaceIndex?: { __typename?: 'ZucitySpaceConnection', edges?: Array<{ __typename?: 'ZucitySpaceEdge', node?: { __typename?: 'ZucitySpace', id: string, avatar?: string | null, banner?: string | null, description: string, name: string, profileId: any, tagline?: string | null, category?: string | null, color?: string | null, createdAt: any, updatedAt: any, tags?: Array<{ __typename?: 'ZucitySpaceTag', tag: string } | null> | null, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, socialLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, customLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, owner: { __typename?: 'CeramicAccount', id: string, zucityProfile?: { __typename?: 'ZucityProfile', id: string, avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null }, userRoles: { __typename?: 'ZucityUserRolesConnection', edges?: Array<{ __typename?: 'ZucityUserRolesEdge', node?: { __typename?: 'ZucityUserRoles', roleId: string } | null } | null> | null } } | null } | null> | null } | null };
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -4339,3 +4348,56 @@ export const GetSpaceAndEventsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetSpaceAndEventsQuery, GetSpaceAndEventsQueryVariables>;
+export const GetSpacesAndMembersDocument = new TypedDocumentString(`
+    query GetSpacesAndMembers($first: Int, $userRolesFirst: Int = 100, $userRolesFilters: ZucityUserRolesFiltersInput) {
+  zucitySpaceIndex(first: $first) {
+    edges {
+      node {
+        id
+        avatar
+        banner
+        description
+        name
+        profileId
+        tagline
+        category
+        color
+        createdAt
+        updatedAt
+        tags {
+          tag
+        }
+        customAttributes {
+          tbd
+        }
+        socialLinks {
+          title
+          links
+        }
+        customLinks {
+          title
+          links
+        }
+        owner {
+          id
+          zucityProfile {
+            id
+            avatar
+            author {
+              id
+            }
+            username
+          }
+        }
+        userRoles(filters: $userRolesFilters, first: $userRolesFirst) {
+          edges {
+            node {
+              roleId
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetSpacesAndMembersQuery, GetSpacesAndMembersQueryVariables>;

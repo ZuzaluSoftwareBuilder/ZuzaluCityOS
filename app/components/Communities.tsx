@@ -9,18 +9,29 @@ import dayjs from '@/utils/dayjs';
 import useUserSpace from '@/hooks/useUserSpace';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { Space } from '@/types';
-import { GET_ALL_SPACE_QUERY } from '@/services/graphql/space';
+import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
+import { useBuildInRole } from '@/context/BuildInRoleContext';
 
 export default function Communities() {
   const router = useRouter();
   const { isMobile } = useMediaQuery();
 
-  const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace()
+  const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
+  const { adminRole, memberRole } = useBuildInRole();
 
   const { data: spacesData, isLoading } = useGraphQL(
-    ['GET_ALL_SPACE_QUERY'],
-    GET_ALL_SPACE_QUERY,
-    { first: 100 },
+    ['GET_ALL_SPACE_AND_MEMBER_QUERY'],
+    GET_ALL_SPACE_AND_MEMBER_QUERY,
+    {
+      first: 100,
+      userRolesFilters: {
+        where: {
+          roleId: {
+            in: [adminRole, memberRole].map((role) => role?.id ?? ''),
+          },
+        },
+      },
+    },
     {
       select: (data) => {
         if (!data?.data?.zucitySpaceIndex?.edges) {
@@ -30,6 +41,7 @@ export default function Communities() {
           (edge) => edge!.node,
         ) as Space[];
       },
+      enabled: !!adminRole && !!memberRole,
     },
   );
 
@@ -59,11 +71,16 @@ export default function Communities() {
         <div className="flex gap-[20px] overflow-auto px-[20px]">
           {isLoading
             ? Array.from({ length: 5 }).map((_, index) => (
-              <SpaceCardSkeleton key={index} />
-            ))
+                <SpaceCardSkeleton key={index} />
+              ))
             : filteredSpacesData?.map((item) => (
-              <SpaceCard key={item.id} data={item} isJoined={userJoinedSpaceIds.has(item.id)} isFollowed={userFollowedSpaceIds.has(item.id)} />
-            ))}
+                <SpaceCard
+                  key={item.id}
+                  data={item}
+                  isJoined={userJoinedSpaceIds.has(item.id)}
+                  isFollowed={userFollowedSpaceIds.has(item.id)}
+                />
+              ))}
         </div>
       </ScrollShadow>
     </div>

@@ -47,7 +47,7 @@ export const GET_SPACE_QUERY_BY_ID = graphql(`
 
 export const GET_SPACE_QUERY_BY_IDS = graphql(`
   query GetSpaceByIds($ids: [ID!]!) {
-    nodes (ids: $ids) {
+    nodes(ids: $ids) {
       ... on ZucitySpace {
         id
         avatar
@@ -88,8 +88,7 @@ export const GET_SPACE_QUERY_BY_IDS = graphql(`
       }
     }
   }
-`)
-
+`);
 
 export const INSTALL_DAPP_TO_SPACE = graphql(`
   mutation InstallDappToSpace($input: CreateZucityInstalledAppInput!) {
@@ -302,6 +301,64 @@ export const GET_SPACE_AND_EVENTS_QUERY_BY_ID = graphql(`
               space {
                 name
                 avatar
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`);
+
+export const GET_ALL_SPACE_AND_MEMBER_QUERY = graphql(`
+  query GetSpacesAndMembers(
+    $first: Int
+    $userRolesFirst: Int = 100
+    $userRolesFilters: ZucityUserRolesFiltersInput
+  ) {
+    zucitySpaceIndex(first: $first) {
+      edges {
+        node {
+          id
+          avatar
+          banner
+          description
+          name
+          profileId
+          tagline
+          category
+          color
+          createdAt
+          updatedAt
+          tags {
+            tag
+          }
+          customAttributes {
+            tbd
+          }
+          socialLinks {
+            title
+            links
+          }
+          customLinks {
+            title
+            links
+          }
+          owner {
+            id
+            zucityProfile {
+              id
+              avatar
+              author {
+                id
+              }
+              username
+            }
+          }
+          userRoles(filters: $userRolesFilters, first: $userRolesFirst) {
+            edges {
+              node {
+                roleId
               }
             }
           }
