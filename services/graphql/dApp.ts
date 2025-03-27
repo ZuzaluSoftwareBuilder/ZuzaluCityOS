@@ -30,3 +30,23 @@ export const GET_DAPP_LIST_QUERY = graphql(`
     }
   }
 `);
+
+export const CREATE_DAPP_MUTATION = graphql(`
+  mutation CreateZucityDappMutation($input: CreateZucityDappInfoInput!) {
+    createZucityDappInfo(input: $input) {
+      document {
+        id
+      }
+    }
+  }
+`);
+
+export const UPDATE_DAPP_MUTATION = graphql(`
+  mutation UpdateZucityDappMutation($input: UpdateZucityDappInfoInput!) {
+    updateZucityDappInfo(input: $input) {
+      document {
+        id
+      }
+    }
+  }
+`);

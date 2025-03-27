@@ -1223,6 +1223,7 @@ export type PartialZucityDappInfoInput = {
   openSource?: InputMaybe<Scalars['String']['input']>;
   profileId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
   repositoryUrl?: InputMaybe<Scalars['String']['input']>;
+  scAddresses?: InputMaybe<Array<InputMaybe<ZucityDappInfoScAddressInput>>>;
   tagline?: InputMaybe<Scalars['String']['input']>;
   websiteUrl?: InputMaybe<Scalars['String']['input']>;
 };
@@ -2204,6 +2205,7 @@ export type ZucityDappInfo = Node & {
   profile?: Maybe<ZucityProfile>;
   profileId: Scalars['CeramicStreamID']['output'];
   repositoryUrl?: Maybe<Scalars['String']['output']>;
+  scAddresses?: Maybe<Array<Maybe<ZucityDappInfoScAddress>>>;
   tagline: Scalars['String']['output'];
   websiteUrl?: Maybe<Scalars['String']['output']>;
 };
@@ -2258,6 +2260,7 @@ export type ZucityDappInfoInput = {
   openSource: Scalars['String']['input'];
   profileId: Scalars['CeramicStreamID']['input'];
   repositoryUrl?: InputMaybe<Scalars['String']['input']>;
+  scAddresses?: InputMaybe<Array<InputMaybe<ZucityDappInfoScAddressInput>>>;
   tagline: Scalars['String']['input'];
   websiteUrl?: InputMaybe<Scalars['String']['input']>;
 };
@@ -2273,6 +2276,17 @@ export type ZucityDappInfoObjectFilterInput = {
   isInstallable?: InputMaybe<StringValueFilterInput>;
   isSCApp?: InputMaybe<StringValueFilterInput>;
   openSource?: InputMaybe<StringValueFilterInput>;
+};
+
+export type ZucityDappInfoScAddress = {
+  __typename?: 'ZucityDappInfoScAddress';
+  address?: Maybe<Scalars['String']['output']>;
+  chain?: Maybe<Scalars['String']['output']>;
+};
+
+export type ZucityDappInfoScAddressInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
+  chain?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ZucityDappInfoSortingInput = {
@@ -3474,6 +3488,20 @@ export type GetDappListQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetDappListQuery = { __typename?: 'Query', zucityDappInfoIndex?: { __typename?: 'ZucityDappInfoConnection', edges?: Array<{ __typename?: 'ZucityDappInfoEdge', node?: { __typename?: 'ZucityDappInfo', id: string, appName: string, tagline: string, developerName: string, description: string, bannerUrl: string, categories: string, devStatus: string, openSource: string, repositoryUrl?: string | null, appUrl?: string | null, websiteUrl?: string | null, docsUrl?: string | null, profile?: { __typename?: 'ZucityProfile', avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } | null } | null> | null } | null };
 
+export type CreateZucityDappMutationMutationVariables = Exact<{
+  input: CreateZucityDappInfoInput;
+}>;
+
+
+export type CreateZucityDappMutationMutation = { __typename?: 'Mutation', createZucityDappInfo?: { __typename?: 'CreateZucityDappInfoPayload', document: { __typename?: 'ZucityDappInfo', id: string } } | null };
+
+export type UpdateZucityDappMutationMutationVariables = Exact<{
+  input: UpdateZucityDappInfoInput;
+}>;
+
+
+export type UpdateZucityDappMutationMutation = { __typename?: 'Mutation', updateZucityDappInfo?: { __typename?: 'UpdateZucityDappInfoPayload', document: { __typename?: 'ZucityDappInfo', id: string } } | null };
+
 export type GetAllEventsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
 }>;
@@ -3689,6 +3717,24 @@ export const GetDappListDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetDappListQuery, GetDappListQueryVariables>;
+export const CreateZucityDappMutationDocument = new TypedDocumentString(`
+    mutation CreateZucityDappMutation($input: CreateZucityDappInfoInput!) {
+  createZucityDappInfo(input: $input) {
+    document {
+      id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CreateZucityDappMutationMutation, CreateZucityDappMutationMutationVariables>;
+export const UpdateZucityDappMutationDocument = new TypedDocumentString(`
+    mutation UpdateZucityDappMutation($input: UpdateZucityDappInfoInput!) {
+  updateZucityDappInfo(input: $input) {
+    document {
+      id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateZucityDappMutationMutation, UpdateZucityDappMutationMutationVariables>;
 export const GetAllEventsDocument = new TypedDocumentString(`
     query GetAllEvents($first: Int) {
   zucityEventIndex(first: $first) {
