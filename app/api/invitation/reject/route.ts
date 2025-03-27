@@ -20,7 +20,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
   try {
     const body = await request.json();
     const validationResult = rejectInvitationSchema.safeParse(body);
-    
+
     if (!validationResult.success) {
       return createErrorResponse(
         'Invalid request parameters',
@@ -31,7 +31,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
 
     const { invitationId } = validationResult.data;
     const operatorId = sessionData.operatorId;
-    
+
     if (!operatorId) {
       return createErrorResponse('Failed to get user information', 401);
     }
@@ -61,7 +61,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     }
 
     const invitation = result.data?.node;
-    
+
     if (!invitation) {
       return createErrorResponse('Invitation not found', 404);
     }
@@ -82,19 +82,45 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('You do not have permission to reject this invitation', 403);
     }
 
+    // Update invitation status
     const updateMutation = `
-      mutation UpdateInvitation($id: ID!, $content: UpdateZucityInvitationInput!) {
-        updateZucityInvitation(id: $id, content: $content) {
+      mutation UpdateInvitation($input: UpdateZucityInvitationInput!) {
+        updateZucityInvitation(input: $input) {
           document {
             id
+            author {
+              id
+            }
+            inviterId
+            inviteeId
+            resource
+            resourceId
+            roleId
             status
+            message
+            isRead
+            inviterProfileId
+            inviterProfile {
+              id
+              username
+              avatar
+            }
+            inviteeProfileId
+            inviteeProfile {
+              id
+              username
+              avatar
+            }
+            createdAt
+            expiresAt
             updatedAt
+            lastSentAt
           }
         }
       }
     `;
 
-    // Ready to update invitation status
+    // Authenticate with resource ID
     const error = await authenticateWithSpaceId(invitation.resourceId);
     if (error) {
       return createErrorResponse('Failed to get private key', 500);
@@ -102,18 +128,22 @@ export const POST = withSessionValidation(async (request, sessionData) => {
 
     // Update invitation status to rejected
     const updateResult = await composeClient.executeQuery(updateMutation, {
-      id: invitationId,
-      content: {
-        status: InvitationStatus.REJECTED,
-        updatedAt: dayjs().toISOString(),
-      }
+      input: {
+        id: invitationId,
+        content: {
+          status: InvitationStatus.REJECTED,
+          isRead: true,
+          updatedAt: dayjs().toISOString(),
+        },
+      },
     });
 
     if (updateResult.errors) {
       throw new Error(updateResult.errors.map((e: any) => e.message).join(', '));
     }
 
-    return createSuccessResponse({ id: invitationId }, 'Invitation rejected');
+    const updatedInvitation = updateResult.data?.updateZucityInvitation?.document;
+    return createSuccessResponse(updatedInvitation, 'Invitation rejected successfully');
   } catch (error: any) {
     console.error('Failed to reject invitation:', error);
     return createErrorResponse('Failed to reject invitation', 500, error.message);

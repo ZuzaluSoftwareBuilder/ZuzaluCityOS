@@ -7,6 +7,8 @@ type ZucityInvitation
   @createIndex(fields: [{ path: "status" }]) 
   @createIndex(fields: [{ path: "inviterId" }])
   @createIndex(fields: [{ path: "inviteeId" }])
+  @createIndex(fields: [{ path: "inviterProfileId" }])
+  @createIndex(fields: [{ path: "inviteeProfileId" }])
   @createIndex(fields: [{ path: "isRead" }]) {
   author: DID! @documentAccount
   inviterId: DID!
@@ -16,7 +18,12 @@ type ZucityInvitation
   roleId: StreamID!
   status: String! @string(minLength: 1, maxLength: 100)
   message: String @string(minLength: 1, maxLength: 5000)
-  isRead: Boolean! 
+  isRead: Boolean!
+  
+  inviterProfileId: StreamID @documentReference(model: "ZucityProfile")
+  inviterProfile: ZucityProfile @relationDocument(property: "inviterProfileId")
+  inviteeProfileId: StreamID @documentReference(model: "ZucityProfile")
+  inviteeProfile: ZucityProfile @relationDocument(property: "inviteeProfileId")
 
   createdAt: DateTime!
   expiresAt: DateTime!
@@ -28,4 +35,8 @@ type ZucityInvitation
 
 type CustomAttribute {
   tbd: String @string(minLength: 1, maxLength: 10000)
+}
+
+type ZucityProfile @loadModel(id: "$Profile_ID") {
+  id: ID!
 } 

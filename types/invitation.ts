@@ -18,6 +18,9 @@ export interface ZucityInvitation {
   lastSentAt?: string;
 
   customAttributes?: Array<{ tbd?: string }>;
+  
+  inviterProfile?: ProfileInfo | null;
+  inviteeProfile?: ProfileInfo | null;
 }
 
 export enum InvitationStatus {
@@ -69,4 +72,13 @@ export interface InvitationQueryParams {
   status?: InvitationStatus;
   offset?: number;
   limit?: number;
+}
+
+export interface ProfileInfo {
+  id: string;
+  username: string;
+  avatar?: string;
+  author: {
+    id: string;
+  };
 } 

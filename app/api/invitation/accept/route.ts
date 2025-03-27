@@ -98,66 +98,120 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('You already have a role in this resource', 409);
     }
 
-    // Update invitation status
-    const updateMutation = `
-      mutation UpdateInvitation($id: ID!, $content: UpdateZucityInvitationInput!) {
-        updateZucityInvitation(id: $id, content: $content) {
-          document {
-            id
-            status
-            updatedAt
+    // Create user role after accepting invitation
+    const checkExistingQuery = `
+      query CheckExistingRole($userId: String, $roleId: ID, $resourceId: String) {
+        zucityUserRolesIndex(
+          filters: {
+            and: [
+              { userId: { id: { equalTo: $userId } } }
+              { roleId: { equalTo: $roleId } }
+              { resourceId: { equalTo: $resourceId } }
+            ]
+          }
+        ) {
+          edges {
+            node {
+              id
+            }
           }
         }
       }
     `;
 
-    // Prepare to update invitation status
-    const error = await authenticateWithSpaceId(invitation.resourceId);
-    if (error) {
-      return createErrorResponse('Failed to get private key', 500);
+    const checkResult = await executeQuery(CHECK_EXISTING_ROLE_QUERY, {
+      userId: operatorId,
+      roleId: invitation.roleId,
+      resourceId: invitation.resourceId,
+    });
+
+    const existingRolesAfterCheck = checkResult?.data?.zucityUserRolesIndex?.edges || [];
+    if (existingRolesAfterCheck.length === 0) {
+      const createRoleQuery = `
+        mutation CreateUserRole($input: CreateZucityUserRolesInput!) {
+          createZucityUserRoles(input: $input) {
+            document {
+              id
+              userId {
+                id
+              }
+              roleId
+              resourceId
+              source
+            }
+          }
+        }
+      `;
+
+      await executeQuery(CREATE_ROLE_QUERY, {
+        input: {
+          content: {
+            userId: { id: operatorId },
+            roleId: invitation.roleId,
+            resourceId: invitation.resourceId,
+            source: 'invitation',
+            created_at: dayjs().utc().toISOString(),
+            updated_at: dayjs().utc().toISOString(),
+          },
+        },
+      });
     }
 
-    // Update invitation status to accepted
-    const updateResult = await composeClient.executeQuery(updateMutation, {
-      id: invitationId,
-      content: {
-        status: InvitationStatus.ACCEPTED,
-        updatedAt: dayjs().toISOString(),
+    // Update invitation status
+    const updateMutation = `
+      mutation UpdateInvitation($input: UpdateZucityInvitationInput!) {
+        updateZucityInvitation(input: $input) {
+          document {
+            id
+            author {
+              id
+            }
+            inviterId
+            inviteeId
+            resource
+            resourceId
+            roleId
+            status
+            message
+            isRead
+            inviterProfileId
+            inviterProfile {
+              id
+              username
+              avatar
+            }
+            inviteeProfileId
+            inviteeProfile {
+              id
+              username
+              avatar
+            }
+            createdAt
+            expiresAt
+            updatedAt
+            lastSentAt
+          }
+        }
       }
+    `;
+
+    const updateResult = await composeClient.executeQuery(updateMutation, {
+      input: {
+        id: invitationId,
+        content: {
+          status: InvitationStatus.ACCEPTED,
+          isRead: true,
+          updatedAt: dayjs().toISOString(),
+        },
+      },
     });
 
     if (updateResult.errors) {
       throw new Error(updateResult.errors.map((e: any) => e.message).join(', '));
     }
 
-    // Add user role
-    const createRoleResult = await executeQuery(CREATE_ROLE_QUERY, {
-      input: {
-        content: {
-          userId: operatorId,
-          resourceId: invitation.resourceId,
-          source: invitation.resource,
-          roleId: invitation.roleId,
-          created_at: dayjs().utc().toISOString(),
-          updated_at: dayjs().utc().toISOString(),
-        },
-      }
-    });
-
-    if (createRoleResult.errors) {
-      // If adding the role fails, rollback invitation status
-      await composeClient.executeQuery(updateMutation, {
-        id: invitationId,
-        content: {
-          status: InvitationStatus.PENDING,
-          updatedAt: dayjs().toISOString(),
-        }
-      });
-
-      throw new Error(createRoleResult.errors.map((e: any) => e.message).join(', '));
-    }
-
-    return createSuccessResponse({ id: invitationId }, 'Invitation accepted');
+    const updatedInvitation = updateResult.data?.updateZucityInvitation?.document;
+    return createSuccessResponse(updatedInvitation, 'Invitation accepted successfully');
   } catch (error: any) {
     console.error('Failed to accept invitation:', error);
     return createErrorResponse('Failed to accept invitation', 500, error.message);

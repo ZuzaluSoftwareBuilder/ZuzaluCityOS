@@ -47,7 +47,34 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     const defaultExpiration = dayjs().add(7, 'day');
     const expirationDate = expiresAt ? dayjs(expiresAt) : defaultExpiration;
 
-    // TODO: Check if invited user exists
+    const getProfileIdByDid = async (did: string) => {
+      try {
+        const query = `
+          query GetProfileByDID($did: ID!) {
+            node(id: $did) {
+              ... on CeramicAccount {
+                zucityProfile {
+                  id
+                }
+              }
+            }
+          }
+        `;
+
+        const result = await composeClient.executeQuery(query, { did });
+        return result.data?.node?.zucityProfile?.id || null;
+      } catch (error) {
+        console.error(`Failed to get profile ID for DID ${did}:`, error);
+        return null;
+      }
+    };
+
+    if (!sessionData.operatorId) {
+      return createErrorResponse('Failed to get user information', 401);
+    }
+
+    const inviterProfileId = await getProfileIdByDid(sessionData.operatorId);
+    const inviteeProfileId = await getProfileIdByDid(inviteeId);
 
     // Use ceramic client
     const error = await authenticateWithSpaceId(resourceId);
@@ -65,6 +92,8 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       status: InvitationStatus.PENDING,
       message: message || '',
       isRead: false,
+      inviterProfileId,
+      inviteeProfileId,
       createdAt: dayjs().toISOString(),
       expiresAt: expirationDate.toISOString(),
       lastSentAt: dayjs().toISOString(),
@@ -86,6 +115,18 @@ export const POST = withSessionValidation(async (request, sessionData) => {
             status
             message
             isRead
+            inviterProfileId
+            inviterProfile {
+              id
+              username
+              avatar
+            }
+            inviteeProfileId
+            inviteeProfile {
+              id
+              username
+              avatar
+            }
             createdAt
             expiresAt
             lastSentAt
@@ -103,8 +144,8 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     }
 
     const createdInvitation = result.data?.createZucityInvitation?.document;
-
     return createSuccessResponse(createdInvitation, 'Invitation created successfully');
+
   } catch (error: any) {
     console.error('Failed to create invitation:', error);
     return createErrorResponse('Failed to create invitation', 500, error.message);
@@ -145,6 +186,18 @@ export const GET = withSessionValidation(async (request, sessionData) => {
               status
               message
               isRead
+              inviterProfileId
+              inviterProfile {
+                id
+                username
+                avatar
+              }
+              inviteeProfileId
+              inviteeProfile {
+                id
+                username
+                avatar
+              }
               createdAt
               expiresAt
               updatedAt
@@ -201,6 +254,18 @@ export const GET = withSessionValidation(async (request, sessionData) => {
                 status
                 message
                 isRead
+                inviterProfileId
+                inviterProfile {
+                  id
+                  username
+                  avatar
+                }
+                inviteeProfileId
+                inviteeProfile {
+                  id
+                  username
+                  avatar
+                }
                 createdAt
                 expiresAt
                 updatedAt
