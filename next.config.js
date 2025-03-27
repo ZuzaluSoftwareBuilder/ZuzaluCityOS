@@ -53,7 +53,7 @@ const nextConfig = {
       },
     ],
   },
-  swcMinify: true,
+  swcMinify: false,
 };
 
 export default nextConfig;
