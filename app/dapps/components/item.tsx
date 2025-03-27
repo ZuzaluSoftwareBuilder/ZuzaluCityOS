@@ -17,7 +17,6 @@ export default function Item({ data, onClick }: ItemProps) {
     isInstallable,
   } = data;
   const tags = categories.split(',');
-  console.log(isInstallable);
   return (
     <div
       className="p-[10px] rounded-[10px] border border-transparent cursor-pointer hover:border-white/10 hover:bg-white/5 gap-[10px] flex flex-col justify-between"

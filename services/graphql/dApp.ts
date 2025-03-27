@@ -19,6 +19,7 @@ export const GET_DAPP_LIST_QUERY = graphql(`
           websiteUrl
           docsUrl
           isInstallable
+          appLogoUrl
           profile {
             author {
               id
