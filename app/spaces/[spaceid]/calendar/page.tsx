@@ -26,6 +26,8 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { rrulestr } from 'rrule';
 import { useSpacePermissions } from '../components/permission';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -33,7 +35,7 @@ dayjs.extend(timezone);
 const Calendar = () => {
   const params = useParams();
   const router = useRouter();
-  const { ceramic, composeClient } = useCeramicContext();
+  const { ceramic } = useCeramicContext();
   const spaceId = params.spaceid.toString();
 
   const [open, setOpen] = useState(false);
@@ -52,18 +54,17 @@ const Calendar = () => {
     data: spaceData,
     refetch: refetchSpace,
     isLoading: isLoadingSpace,
-  } = useQuery({
-    queryKey: ['getSpaceByID', spaceId, ceramic?.did?.parent.toString()],
-    queryFn: () => {
-      return composeClient.executeQuery(getSpaceEventsQuery(), {
-        id: spaceId,
-      });
+  } = useGraphQL(
+    ['getCalendarConfig', spaceId],
+    GET_SPACE_QUERY_BY_ID,
+    { id: spaceId },
+    {
+      select: (data) => {
+        const space = data?.data?.node as Space;
+        return space;
+      },
     },
-    select: (data) => {
-      const space = data?.data?.node as Space;
-      return space;
-    },
-  });
+  );
 
   const calendarConfig = useMemo(() => {
     if (spaceData && spaceData.customAttributes) {
@@ -339,6 +340,7 @@ const Calendar = () => {
     );
   }, [
     isLoadingSpace,
+    isLoadingPermissions,
     calendarConfig,
     isAdmin,
     isOwner,
