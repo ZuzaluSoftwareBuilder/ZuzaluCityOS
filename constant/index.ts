@@ -376,3 +376,5 @@ export const apps = [
       'Zupass is a webapp delivering digital identity and community management through zero-knowledge proofs, aiming to revolutionize data privacy and user control in decentralized networks.',
   },
 ];
+
+export const USER_AVATAR_URL = '/user/avatar_p.png';

@@ -1,8 +1,8 @@
 import { graphql } from '@/graphql/gql';
 
 export const GET_DAPP_LIST_QUERY = graphql(`
-  query GetDappList($first: Int = 100) {
-    zucityDappInfoIndex(first: $first) {
+  query GetDappList($first: Int = 100, $filters: ZucityDappInfoFiltersInput) {
+    zucityDappInfoIndex(first: $first, filters: $filters) {
       edges {
         node {
           id

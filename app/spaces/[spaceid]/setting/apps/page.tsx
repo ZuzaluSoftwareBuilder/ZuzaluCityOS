@@ -42,7 +42,15 @@ const APP_CATEGORY: Record<
     title: 'Community Apps',
     subTitle: 'Install apps built by the community',
     getApps: async () => {
-      const response = await executeQuery(GET_DAPP_LIST_QUERY);
+      const response = await executeQuery(GET_DAPP_LIST_QUERY, {
+        filters: {
+          where: {
+            isInstallable: {
+              equalTo: '1',
+            },
+          },
+        },
+      });
 
       if (
         response &&
@@ -151,7 +159,10 @@ export default function ExploreAppsPage() {
                 });
                 return (
                   <React.Fragment key={item.hash}>
-                    <div id={item.hash} className="w-full flex flex-col gap-2.5 ">
+                    <div
+                      id={item.hash}
+                      className="w-full flex flex-col gap-2.5 "
+                    >
                       <div className="leading-[140%] font-semibold text-[18px]">
                         {item.title}
                       </div>

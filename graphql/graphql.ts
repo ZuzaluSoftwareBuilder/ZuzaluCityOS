@@ -3485,6 +3485,7 @@ export type ZucityUserRolesSortingInput = {
 
 export type GetDappListQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
+  filters?: InputMaybe<ZucityDappInfoFiltersInput>;
 }>;
 
 
@@ -3690,8 +3691,8 @@ export class TypedDocumentString<TResult, TVariables>
 }
 
 export const GetDappListDocument = new TypedDocumentString(`
-    query GetDappList($first: Int = 100) {
-  zucityDappInfoIndex(first: $first) {
+    query GetDappList($first: Int = 100, $filters: ZucityDappInfoFiltersInput) {
+  zucityDappInfoIndex(first: $first, filters: $filters) {
     edges {
       node {
         id
