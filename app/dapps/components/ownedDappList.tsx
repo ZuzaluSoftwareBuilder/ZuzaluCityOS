@@ -60,6 +60,9 @@ export default function OwnedDappList({
                 src={dapp.appLogoUrl || ''}
                 alt={dapp.appName}
                 className="w-[80px] h-[80px] rounded-[10px] border border-[rgba(255,255,255,0.1)]"
+                classNames={{
+                  wrapper: 'shrink-0',
+                }}
               />
               <div className="flex flex-col gap-[5px]">
                 <p className="text-[16px] font-bold leading-[1.2] opacity-80">
