@@ -2,7 +2,7 @@ import { CalendarProps } from '@heroui/react';
 
 import { Calendar as HCalendar } from '@heroui/react';
 
-export default function Calendar({ classNames, ...props }: CalendarProps) {
+function Calendar({ classNames, ...props }: CalendarProps) {
   return (
     <HCalendar
       className="text-decoration-line-none"
@@ -20,3 +20,5 @@ export default function Calendar({ classNames, ...props }: CalendarProps) {
     />
   );
 }
+
+export { Calendar };
