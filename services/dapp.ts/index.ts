@@ -40,7 +40,7 @@ export const createDapp = async (dappInput: any) => {
       content: {
         profileId,
         createdAtTime: dayjs().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-        appType: 'beta',
+        appType: 'space',
         appName,
         developerName,
         description,
@@ -52,11 +52,12 @@ export const createDapp = async (dappInput: any) => {
         openSource: getBooleanValue(openSource),
         repositoryUrl: getValue(repositoryUrl),
         isSCApp: getBooleanValue(isSCApp),
-        scAddresses: isSCApp && scAddresses
-          ? scAddresses.split(',').map((item: string) => ({
-              address: item,
-            }))
-          : null,
+        scAddresses:
+          isSCApp && scAddresses
+            ? scAddresses.split(',').map((item: string) => ({
+                address: item,
+              }))
+            : null,
         isInstallable: getBooleanValue(isInstallable),
         websiteUrl: getValue(websiteUrl),
         docsUrl: getValue(docsUrl),

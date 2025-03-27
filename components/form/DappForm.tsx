@@ -149,12 +149,11 @@ const DappForm: React.FC<DappFormProps> = ({
         return updateDapp(composeClient, { ...data, id: initialData?.id });
       }
     },
-    onSuccess: (data) => {
-      if (!data) return;
+    onSuccess: () => {
       resetForm();
       refetch?.();
       handleClose();
-      queryClient.invalidateQueries({ queryKey: ['getDappInfoList'] });
+      queryClient.invalidateQueries({ queryKey: ['GET_DAPP_LIST_QUERY'] });
     },
   });
 

@@ -601,6 +601,7 @@ export interface Dapp {
   websiteUrl: string;
   docsUrl: string;
   tagline: string;
+  isInstallable: string;
   profile: {
     author: {
       id: string;
