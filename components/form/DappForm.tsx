@@ -3,7 +3,6 @@ import {
   FormHelperText,
   MenuItem,
   OutlinedInput,
-  Select,
   Stack,
   Typography,
 } from '@mui/material';
@@ -30,7 +29,7 @@ import dynamic from 'next/dynamic';
 import FormUploader from './FormUploader';
 import SelectCheckItem from '../select/selectCheckItem';
 import { createDapp, updateDapp } from '@/services/dapp.ts';
-import { Button } from '../base';
+import { Button, Select, SelectItem } from '../base';
 import { Check } from '@phosphor-icons/react';
 import { isAddress } from 'viem';
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
@@ -117,22 +116,26 @@ const DappForm: React.FC<DappFormProps> = ({
       appName: initialData?.appName || '',
       developerName: initialData?.developerName || '',
       description: initialData?.description || '',
-      categories: initialData?.categories?.split(',') || [],
-      bannerUrl: initialData?.bannerUrl || '',
-      appLogoUrl: initialData?.appLogoUrl || '',
-      developmentStatus: initialData?.devStatus || '',
       tagline: initialData?.tagline || '',
+      categories: initialData?.categories?.split(',') || [],
+      appLogoUrl: initialData?.appLogoUrl || '',
+      bannerUrl: initialData?.bannerUrl || '',
+      developmentStatus: initialData?.devStatus || '',
       openSource: Number(initialData?.openSource) === 1 || false,
       repositoryUrl: initialData?.repositoryUrl || '',
-      appUrl: initialData?.appUrl || '',
+      isSCApp: Number(initialData?.isSCApp) === 1 || false,
+      scAddresses:
+        initialData?.scAddresses?.map((item) => item.address).join(',') || '',
+      isInstallable: Number(initialData?.isInstallable) === 1 || false,
       websiteUrl: initialData?.websiteUrl || '',
       docsUrl: initialData?.docsUrl || '',
+      appUrl: initialData?.appUrl || '',
+      auditLogUrl: initialData?.auditLogUrl || '',
     },
   });
 
   const openSource = watch('openSource');
   const isSCApp = watch('isSCApp');
-  const developmentStatus = watch('developmentStatus');
   const tagline = watch('tagline');
   const isInstallable = watch('isInstallable');
 
@@ -146,7 +149,7 @@ const DappForm: React.FC<DappFormProps> = ({
       if (type === 'create') {
         return createDapp({ ...data, profileId });
       } else {
-        return updateDapp(composeClient, { ...data, id: initialData?.id });
+        return updateDapp({ ...data, id: initialData?.id });
       }
     },
     onSuccess: () => {
@@ -417,23 +420,22 @@ const DappForm: React.FC<DappFormProps> = ({
             <Controller
               control={control}
               name="developmentStatus"
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  size="small"
-                  renderValue={(selected) => selected}
-                  input={<OutlinedInput label="Name" />}
-                >
-                  {developmentStatusOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      <SelectCheckItem
-                        label={option.label}
-                        isChecked={developmentStatus === option.value}
-                      />
-                    </MenuItem>
-                  ))}
-                </Select>
-              )}
+              render={({ field }) => {
+                return (
+                  <Select
+                    selectedKeys={[field.value]}
+                    onSelectionChange={(value) => {
+                      console.log(value.currentKey);
+                      setValue('developmentStatus', value.currentKey!);
+                    }}
+                    {...field}
+                  >
+                    {developmentStatusOptions.map((option) => (
+                      <SelectItem key={option.value}>{option.label}</SelectItem>
+                    ))}
+                  </Select>
+                );
+              }}
             />
             {errors?.developmentStatus && (
               <FormHelperText error>

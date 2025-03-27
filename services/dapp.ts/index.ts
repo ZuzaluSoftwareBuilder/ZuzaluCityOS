@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
-import { ComposeClient } from '@composedb/client';
 import { executeQuery } from '@/utils/ceramic';
-import { CREATE_DAPP_MUTATION } from '../graphql/dApp';
+import { CREATE_DAPP_MUTATION, UPDATE_DAPP_MUTATION } from '../graphql/dApp';
 
 const getValue = (value: any) => {
   return !value || value === '' ? null : value;
@@ -72,10 +71,7 @@ export const createDapp = async (dappInput: any) => {
   return result?.data?.createZucityDappInfo?.document?.id;
 };
 
-export const updateDapp = async (
-  composeClient: ComposeClient,
-  dappInput: any,
-) => {
+export const updateDapp = async (dappInput: any) => {
   const {
     appName,
     developerName,
@@ -90,41 +86,42 @@ export const updateDapp = async (
     appUrl,
     docsUrl,
     id,
+    appLogoUrl,
+    isInstallable,
+    isSCApp,
+    scAddresses,
+    auditLogUrl,
   } = dappInput;
 
-  const update: any = await composeClient.executeQuery(
-    `
-      mutation UpdateZucityDappMutation($input: UpdateZucityDappInfoInput!) {
-        updateZucityDappInfo(
-          input: $input
-        ) {
-          document {
-            id
-          }
-        }
-      }
-      `,
-    {
-      input: {
-        id,
-        content: {
-          appUrl: !appUrl || appUrl === '' ? null : appUrl,
-          appName,
-          developerName,
-          description,
-          tagline,
-          bannerUrl,
-          devStatus: developmentStatus,
-          categories: categories.join(','),
-          openSource: openSource ? '1' : '0',
-          websiteUrl: !websiteUrl || websiteUrl === '' ? null : websiteUrl,
-          repositoryUrl:
-            !repositoryUrl || repositoryUrl === '' ? null : repositoryUrl,
-          docsUrl: !docsUrl || docsUrl === '' ? null : docsUrl,
-        },
+  const update: any = await executeQuery(UPDATE_DAPP_MUTATION, {
+    input: {
+      id,
+      content: {
+        appUrl: !appUrl || appUrl === '' ? null : appUrl,
+        appName,
+        appLogoUrl,
+        developerName,
+        description,
+        tagline,
+        bannerUrl,
+        devStatus: developmentStatus,
+        categories: categories.join(','),
+        openSource: getBooleanValue(openSource),
+        websiteUrl: getValue(websiteUrl),
+        repositoryUrl: getValue(repositoryUrl),
+        docsUrl: getValue(docsUrl),
+        isSCApp: getBooleanValue(isSCApp),
+        scAddresses:
+          isSCApp && scAddresses
+            ? scAddresses.split(',').map((item: string) => ({
+                address: item,
+              }))
+            : null,
+        isInstallable: getBooleanValue(isInstallable),
+        auditLogUrl: getValue(auditLogUrl),
       },
     },
-  );
+  });
 
   console.log(update);
 

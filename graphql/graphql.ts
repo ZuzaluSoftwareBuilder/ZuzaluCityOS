@@ -3488,7 +3488,7 @@ export type GetDappListQueryVariables = Exact<{
 }>;
 
 
-export type GetDappListQuery = { __typename?: 'Query', zucityDappInfoIndex?: { __typename?: 'ZucityDappInfoConnection', edges?: Array<{ __typename?: 'ZucityDappInfoEdge', node?: { __typename?: 'ZucityDappInfo', id: string, appName: string, tagline: string, developerName: string, description: string, bannerUrl: string, categories: string, devStatus: string, openSource: string, repositoryUrl?: string | null, appUrl?: string | null, websiteUrl?: string | null, docsUrl?: string | null, isInstallable: string, appLogoUrl: string, profile?: { __typename?: 'ZucityProfile', avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } | null } | null> | null } | null };
+export type GetDappListQuery = { __typename?: 'Query', zucityDappInfoIndex?: { __typename?: 'ZucityDappInfoConnection', edges?: Array<{ __typename?: 'ZucityDappInfoEdge', node?: { __typename?: 'ZucityDappInfo', id: string, appName: string, tagline: string, developerName: string, description: string, bannerUrl: string, categories: string, devStatus: string, openSource: string, repositoryUrl?: string | null, appUrl?: string | null, websiteUrl?: string | null, docsUrl?: string | null, isInstallable: string, appLogoUrl: string, auditLogUrl?: string | null, isSCApp?: string | null, scAddresses?: Array<{ __typename?: 'ZucityDappInfoScAddress', address?: string | null, chain?: string | null } | null> | null, profile?: { __typename?: 'ZucityProfile', avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } | null } | null> | null } | null };
 
 export type CreateZucityDappMutationMutationVariables = Exact<{
   input: CreateZucityDappInfoInput;
@@ -3709,6 +3709,12 @@ export const GetDappListDocument = new TypedDocumentString(`
         docsUrl
         isInstallable
         appLogoUrl
+        auditLogUrl
+        isSCApp
+        scAddresses {
+          address
+          chain
+        }
         profile {
           author {
             id

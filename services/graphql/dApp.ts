@@ -20,6 +20,12 @@ export const GET_DAPP_LIST_QUERY = graphql(`
           docsUrl
           isInstallable
           appLogoUrl
+          auditLogUrl
+          isSCApp
+          scAddresses {
+            address
+            chain
+          }
           profile {
             author {
               id

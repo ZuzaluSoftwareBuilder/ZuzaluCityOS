@@ -602,6 +602,12 @@ export interface Dapp {
   docsUrl: string;
   tagline: string;
   isInstallable: string;
+  isSCApp: boolean;
+  scAddresses: {
+    address: string;
+    chain: string;
+  }[];
+  auditLogUrl: string;
   profile: {
     author: {
       id: string;
