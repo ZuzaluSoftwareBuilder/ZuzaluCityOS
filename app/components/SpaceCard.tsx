@@ -9,7 +9,6 @@ import {
 } from '@/components/icons';
 import { Button } from '@/components/base';
 import { useRouter } from 'next/navigation';
-import useUserJoinSpace from '@/hooks/useUserJoin';
 
 export function SpaceCardSkeleton() {
   return (
@@ -52,17 +51,18 @@ const formatMemberCount = (count: number): string => {
 
 interface SpaceCardProps {
   data: Space;
+  isJoined: boolean;
+  isFollowed: boolean;
 }
 
-export function SpaceCard({ data }: SpaceCardProps) {
-  const { banner, name, tagline, avatar, tags, id } = data;
+export function SpaceCard({ data, isJoined, isFollowed }: SpaceCardProps) {
+  const { banner, name, tagline, avatar, tags, userRoles } = data;
   const router = useRouter();
-  const { joined: isUserJoined } = useUserJoinSpace({ spaceId: id });
 
   const formattedMemberCount = useMemo(() => {
-    const totalMembers = 1;
-    return formatMemberCount(totalMembers);
-  }, []);
+    const totalMembers = userRoles?.edges.map((item) => item.node).length ?? 0;
+    return formatMemberCount(totalMembers + 1);
+  }, [userRoles]);
 
   return (
     <div className="w-[276px] flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden hover:bg-white/5 transition-colors">
@@ -81,10 +81,12 @@ export function SpaceCard({ data }: SpaceCardProps) {
             base: 'absolute left-[11px] w-[60px] h-[60px] bottom-[-21px] z-10 shadow-[0px_0px_0px_1px_rgba(34,34,34,0.10)]',
           }}
         />
-        {isUserJoined && (
+        {isJoined && (
           <div className="flex items-center gap-[5px] px-[10px] py-[5px] rounded-[4px] border border-b-w-10 bg-[rgba(34,34,34,0.60)] backdrop-filter backdrop-blur-[5px] absolute right-[10px] top-[10px] z-10">
             <CheckCircleIcon size={4} />
-            <span className="text-[14px] font-[500]">Joined</span>
+            <span className="text-[14px] font-[500]">
+              {isFollowed ? 'Followed' : 'Joined'}
+            </span>
           </div>
         )}
       </div>

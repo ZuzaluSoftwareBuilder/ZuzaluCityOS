@@ -5,26 +5,41 @@ import { SpaceHeader } from './components';
 import { SpaceCard } from '@/components/cards';
 import { SpaceCardSkeleton } from '@/components/cards/SpaceCard';
 import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_SPACE_QUERY } from '@/services/graphql/space';
+import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
 import { Space } from '@/types';
+import useUserSpace from '@/hooks/useUserSpace';
+import { useBuildInRole } from '@/context/BuildInRoleContext';
 
 const Home = () => {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
 
+  const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
+
+  const { adminRole, memberRole } = useBuildInRole();
   const { data: spaces, isLoading } = useGraphQL(
-    ['spaces'],
-    GET_SPACE_QUERY,
-    { first: 100 },
+    ['GET_ALL_SPACE_AND_MEMBER_QUERY'],
+    GET_ALL_SPACE_AND_MEMBER_QUERY,
+    {
+      first: 100,
+      userRolesFilters: {
+        where: {
+          roleId: {
+            in: [adminRole, memberRole].map((role) => role?.id ?? ''),
+          },
+        },
+      },
+    },
     {
       select: (data) => {
-        if (data?.data?.zucitySpaceIndex?.edges) {
-          return data.data.zucitySpaceIndex.edges.map(
-            (edge) => edge?.node,
-          ) as Space[];
+        if (!data?.data?.zucitySpaceIndex?.edges) {
+          return [];
         }
-        return [];
+        return data.data.zucitySpaceIndex.edges.map(
+          (edge) => edge!.node,
+        ) as Space[];
       },
+      enabled: !!adminRole && !!memberRole,
     },
   );
 
@@ -78,6 +93,8 @@ const Home = () => {
                     title={item.name}
                     categories={item.category}
                     tagline={item.tagline}
+                    isJoined={userJoinedSpaceIds.has(item.id)}
+                    isFollowed={userFollowedSpaceIds.has(item.id)}
                   />
                 </Grid>
               ))

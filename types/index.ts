@@ -207,12 +207,17 @@ export interface Space {
   };
   customLinks?: Link[];
   socialLinks?: Link[];
-  events: {
+  events?: {
     edges: {
       node: {
         startTime: string;
         endTime: string;
       };
+    }[];
+  };
+  userRoles?: {
+    edges: {
+      node: UserRole;
     }[];
   };
   customAttributes: TBD[];
@@ -655,5 +660,18 @@ export interface UserRoleData {
 export interface IProfile {
   zucityProfileIndex: {
     edges: { node: Profile }[];
+  };
+}
+
+export interface IUserProfileWithSpaceAndEvent {
+  zucityProfile: {
+    id: string;
+    username: string;
+    spaces: {
+      edges: { node: Space }[];
+    };
+    events: {
+      edges: { node: Event }[];
+    };
   };
 }

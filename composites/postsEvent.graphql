@@ -10,6 +10,10 @@ type ZucityAnnouncement @loadModel(id: "$Announcement_ID") {
   id: ID!
 }
 
+type ZucityUserRoles @loadModel(id: "$UserRoles_ID") {
+  id: ID!
+}
+
 type ZucityEvent @loadModel(id: "$Event_ID") {
   posts: [ZucityEventPost]
     @relationFrom(model: "ZucityEventPost", property: "eventId")
@@ -17,4 +21,6 @@ type ZucityEvent @loadModel(id: "$Event_ID") {
     @relationFrom(model: "ZucityInstalledApp", property: "eventId")
   announcements: [ZucityAnnouncement]
     @relationFrom(model: "ZucityAnnouncement", property: "eventId")
+  userRoles: [ZucityUserRoles]
+    @relationFrom(model: "ZucityUserRoles", property: "eventId")
 }

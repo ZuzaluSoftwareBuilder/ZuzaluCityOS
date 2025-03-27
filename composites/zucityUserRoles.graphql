@@ -12,6 +12,10 @@ type ZucityUserRoles
   userId: DID!
   resourceId: String @string(minLength: 1, maxLength: 10000)
   source: String @string(minLength: 1, maxLength: 10000)
+  eventId: StreamID @documentReference(model: "ZucityEvent")
+  event: ZucityEvent @relationDocument(property: "eventId")
+  spaceId: StreamID @documentReference(model: "ZucitySpace")
+  space: ZucitySpace @relationDocument(property: "spaceId")
   created_at: DateTime!
   updated_at: DateTime!
   customAttributes: [TBD] @list(maxLength: 10000)
@@ -20,4 +24,12 @@ type ZucityUserRoles
 
 type TBD {
   tbd: String @string(minLength: 1, maxLength: 10000)
+}
+
+type ZucitySpace @loadModel(id: "$Space_ID") {
+  id: ID!
+}
+
+type ZucityEvent @loadModel(id: "$Event_ID") {
+  id: ID!
 }
