@@ -21,7 +21,7 @@ export enum PermissionCheckStatus {
 }
 
 export interface ICheckWalletPermissionConfig {
-  permissionCheck?: {
+  permissionCheck: {
     type: PermissionCheckType;
     // when type is SPECIFIC_PERMISSION, permissionName is required
     permissionName?: PermissionName;
