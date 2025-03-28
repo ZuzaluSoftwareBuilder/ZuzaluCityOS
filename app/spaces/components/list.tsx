@@ -9,6 +9,7 @@ import useUserSpace from '@/hooks/useUserSpace';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
+import dayjs from '@/utils/dayjs';
 
 const SpaceList = () => {
   const theme = useTheme();
@@ -51,7 +52,9 @@ const SpaceList = () => {
     }
     return spaces?.filter((space) =>
       space.name.toLowerCase().includes(searchVal.toLowerCase()),
-    );
+    ).sort((a, b) => {
+      return dayjs(b.createdAt).diff(dayjs(a.createdAt));
+    });
   }, [spaces, searchVal]);
 
   return (
