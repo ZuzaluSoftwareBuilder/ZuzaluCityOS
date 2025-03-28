@@ -38,8 +38,8 @@ const CalendarSelect: React.FC<ISelectProps> = ({
       placeholder={placeholder}
       startContent={startContent}
       classNames={{
-        trigger: 'border-b-w-10',
         ...props.classNames,
+        trigger: `border-b-w-10 ${props.classNames?.trigger || ''}`,
       }}
       onSelectionChange={handleSelectionChange}
       {...props}
