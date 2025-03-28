@@ -1,4 +1,4 @@
- 'use client';
+'use client';
 import React from 'react';
 import { Controller, UseFormReturn } from 'react-hook-form';
 import { Image } from '@heroui/react';
@@ -55,20 +55,18 @@ export const ProfilValidationSchema = Yup.object().shape({
 
 interface ProfileContentProps {
   form: UseFormReturn<ProfileFormData>;
-  onSubmit: (data: ProfileFormData) => void;
+  descriptionEditorStore: ReturnType<typeof useEditorStore>;
 }
 
 const ProfileContent: React.FC<ProfileContentProps> = ({
   form,
-  onSubmit,
+  descriptionEditorStore,
 }) => {
   const {
     control,
     formState: { errors },
     watch,
   } = form;
-  
-  const descriptionEditorStore = useEditorStore();
   
   return (
     <div className="space-y-[30px] mobile:space-y-[20px]">

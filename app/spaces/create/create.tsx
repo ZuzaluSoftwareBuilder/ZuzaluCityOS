@@ -8,7 +8,7 @@ import CategoriesContent from './components/CategoriesContent';
 import CreateSpaceTabs, { TabStatus, TabContentEnum } from './components/CreateSpaceTabs';
 import HSpaceCard from '@/components/cards/HSpaceCard';
 import Header from './components/Header';
-import { cn } from '@heroui/react';
+import { cn, input } from '@heroui/react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ProfileFormData, ProfilValidationSchema } from './components/ProfileContent';
@@ -19,48 +19,23 @@ import { covertNameToUrlName } from '@/utils/format';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { createUrl } from '@/services/url';
 import { useMediaQuery } from '@/hooks';
+import { CREATE_SPACE_MUTATION } from '@/services/graphql/space';
+import { executeQuery } from '@/utils/ceramic';
+import { useEditorStore } from '@/components/editor/useEditorStore';
+import { ZucitySpaceInput } from '@/graphql/graphql'
+import { supabase } from '@/utils/supabase/client';
+import { uint8ArrayToBase64 } from '@/utils';
+import { getResolver } from 'key-did-resolver';
+import { Ed25519Provider } from 'key-did-provider-ed25519';
+import { DID } from 'dids';
+import { Categories } from './components/constant';
 
 dayjs.extend(utc);
 
-// 添加类型定义
-interface CreateSpaceDocument {
-  id: string;
-  name: string;
-  description: string;
-  profileId: string;
-  avatar: string;
-  banner: string;
-  category: string;
-}
-
-interface CreateSpaceResponse {
-  createZucitySpace: {
-    document: CreateSpaceDocument;
-  };
-}
-
-interface CreateSpaceInput {
-  content: {
-    customLinks: Array<{ title: string; links: string }>;
-    name: string;
-    description: string;
-    tagline: string;
-    superAdmin: string;
-    profileId: string;
-    avatar: string;
-    banner: string;
-    category: string;
-    customAttributes: Array<{ tbd: string }>;
-  };
-}
 
 const DEFAULT_AVATAR = 'https://nftstorage.link/ipfs/bafybeifcplhgttja4hoj5vx4u3x7ucft34acdpiaf62fsqrobesg5bdsqe';
 const DEFAULT_BANNER = 'https://nftstorage.link/ipfs/bafybeifqan4j2n7gygwkmekcty3dsp7v4rxbjimpo7nrktclwxgxreiyay';
 
-type Link = {
-  links: string;
-  title: string;
-};
 
 const Create = () => {
   const [selectedTab, setSelectedTab] = useState(TabContentEnum.Profile);
@@ -87,13 +62,14 @@ const Create = () => {
       banner: ''
     }
   });
+  const descriptionEditorStore = useEditorStore();
 
   const categoriesForm = useForm<CategoriesFormData>({
     resolver: yupResolver(CategoriesValidationSchema),
     mode: 'all',
     defaultValues: {
-      selectedCategory: 1,
-      categories: [],
+      category: Categories[0].value,
+      tags: [],
     }
   });
 
@@ -103,8 +79,8 @@ const Create = () => {
     defaultValues: {
       socialLinks: [
         {
-          platform: '',
-          url: ''
+          title: '',
+          links: ''
         },
       ],
       customLinks: [
@@ -117,8 +93,8 @@ const Create = () => {
   });
   const spaceName = profileForm.watch('name');
   const spaceTagline = profileForm.watch('tagline');
-  const spaceTags = categoriesForm.watch('categories');
-  const spaceType = categoriesForm.watch('selectedCategory');
+  const tags = categoriesForm.watch('tags');
+  const category = categoriesForm.watch('category');
   const spaceAvatar = profileForm.watch('avatar');
   const spaceBanner = profileForm.watch('banner');
   const handleTabChange = (key: TabContentEnum) => {
@@ -177,77 +153,77 @@ const Create = () => {
   };
 
   // 优化数据转换函数
-  const transformFormData = (): CreateSpaceInput => {
-    const { name, tagline, description, avatar, banner } = profileForm.getValues();
-    const { categories, selectedCategory } = categoriesForm.getValues();
+  const transformFormData = (): ZucitySpaceInput => {
+    const { name, tagline, avatar, banner } = profileForm.getValues();
+    const { tags, category } = categoriesForm.getValues();
     const { socialLinks, customLinks } = linksForm.getValues();
     const adminId = ceramic?.did?.parent || '';
     const profileId = profile?.id || '';
-
-    const socialLinksMap = socialLinks.reduce<Record<string, string>>(
-      (acc, { platform, url }) => {
-        if (platform && url) {
-          acc[platform] = url;
-        }
-        return acc;
-      },
-      {}
-    );
-
     return {
-      content: {
-        customLinks,
-        ...socialLinksMap,
-        name,
-        description,
-        tagline,
-        superAdmin: adminId,
-        profileId,
-        avatar: avatar || DEFAULT_AVATAR,
-        banner: banner || DEFAULT_BANNER,
-        category: categories.join(', '),
-        customAttributes: [
-          {
-            tbd: JSON.stringify({
-              key: 'createdTime',
-              value: dayjs().utc().toISOString(),
-            }),
-          },
-        ],
-      },
+      customLinks,
+      socialLinks,
+      name: name,
+      description: descriptionEditorStore.getValueString(),
+      tagline: tagline,
+      owner: adminId,
+      profileId: profileId,
+      avatar:
+        avatar ||
+        DEFAULT_AVATAR,
+      banner:
+        banner ||
+        DEFAULT_BANNER,
+      tags: tags.map((i) => ({ tag: i })),
+      category: category,
+      createdAt: dayjs().utc().toISOString(),
+      updatedAt: dayjs().utc().toISOString(),
     };
   };
 
   // 优化创建空间函数
-  const createSpace = async (input: CreateSpaceInput): Promise<CreateSpaceDocument | null> => {
-    if (!isAuthenticated) {
-      throw new Error('User not authenticated');
-    }
-
-    const result = await composeClient.executeQuery<CreateSpaceResponse>(
-      `
-      mutation createZucitySpaceMutation($input: CreateZucitySpaceInput!) {
-        createZucitySpace(input: $input) {
-          document {
-            id
-            name
-            description
-            profileId
-            avatar
-            banner
-            category
-          }
+  const createSpace = async (content: ZucitySpaceInput)  => {
+    try {
+      const result = await executeQuery(CREATE_SPACE_MUTATION, {
+        input: {
+          content
         }
+      });
+      if (result.errors?.length) {
+        console.error('Detailed error info:', result.errors);
+        throw new Error(
+          `Error creating space: ${JSON.stringify(result.errors)}`,
+        );
       }
-      `,
-      { input }
-    );
+      const urlName = covertNameToUrlName(content.name);
+      // @ts-ignore
+      await createUrl(
+        urlName,
+        // @ts-ignore
+        result.data?.createZucitySpace?.document?.id,
+        'spaces',
+      );
+      let seed = crypto.getRandomValues(new Uint8Array(32));
+      const provider = new Ed25519Provider(seed);
+      const did = new DID({ provider, resolver: getResolver() });
+      await did.authenticate();
+      //TODO: Encrypt this private key
+      const { data: spaceData, error: spaceError } = await supabase
+        .from('spaceAgent')
+        .insert({
+          agentKey: uint8ArrayToBase64(seed),
+          agentDID: did.id,
+          // @ts-ignore
+          spaceId: result.data?.createZucitySpace?.document?.id,
+        });
 
-    if (result.errors?.length) {
-      throw new Error(`Error creating space: ${JSON.stringify(result.errors)}`);
+      if (spaceError) {
+        console.error('Error creating space agent:', spaceError);
+      }
+      return spaceData
+    } catch (error) {
+      console.error('Error creating space:', error);
+      throw new Error('Error creating space');
     }
-
-    return result.data?.createZucitySpace?.document || null;
   };
 
   // 优化提交处理函数
@@ -266,14 +242,14 @@ const Create = () => {
         throw new Error('Form validation failed');
       }
 
-      const input = transformFormData();
-      const space = await createSpace(input);
+      const content = transformFormData();
+      const space = await createSpace(content);
 
-      if (space?.id) {
-        const urlName = covertNameToUrlName(input.content.name);
-        await createUrl(urlName, space.id, 'spaces');
-        router.push('/spaces');
-      }
+      // if (space?.id) {
+      //   const urlName = covertNameToUrlName(input.content.name);
+      //   await createUrl(urlName, space.id, 'spaces');
+      //   router.push('/spaces');
+      // }
     } catch (error) {
       console.error('Error creating space:', error);
       // TODO: 添加用户友好的错误提示
@@ -300,7 +276,7 @@ const Create = () => {
 
   const renderTabContent = () => {
     return (<>
-      <div className={cn({ "hidden": selectedTab !== TabContentEnum.Profile })}><ProfileContent onBack={handleProfileBack} form={profileForm} onSubmit={handleProfileSubmit} /></div>
+      <div className={cn({ "hidden": selectedTab !== TabContentEnum.Profile })}><ProfileContent descriptionEditorStore={descriptionEditorStore} onBack={handleProfileBack} form={profileForm} onSubmit={handleProfileSubmit} /></div>
       <div className={cn({ "hidden": selectedTab !== TabContentEnum.Categories })}><CategoriesContent onBack={handleCategoriesBack} form={categoriesForm} onSubmit={handleCategoriesSubmit} /></div>
       <div className={cn({ "hidden": selectedTab !== TabContentEnum.Links })}><LinksContent isLoading={isSubmit} onBack={handleLinksBack} form={linksForm} onSubmit={handleLinksSubmit} /></div>
     </>)
@@ -340,12 +316,22 @@ const Create = () => {
               id: 'preview',
               name: spaceName || 'Community Name',
               tagline: spaceTagline || 'Community tagline',
-              category: spaceTags.join(','),
-              members: Array(123).fill({ id: 'dummy' }),
+              category: category,
               description: '',
-              spaceType: spaceType.toString(),
+              tags: tags.map((i) => ({ tag: i })),
               banner: spaceBanner,
               avatar: spaceAvatar,
+              owner: {
+                id: '',
+                zucityProfile: {
+                  id: '',
+                  avatar: '',
+                  username: '',
+                },
+              },
+              customAttributes: [],
+              createdAt: '',
+              updatedAt: '',
             }}
             size="lg"
             showFooter={false}

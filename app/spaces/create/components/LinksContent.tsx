@@ -10,8 +10,8 @@ import { ChevronRightIcon} from '@heroicons/react/20/solid'
 // 定义表单类型
 export interface LinksFormData {
     socialLinks: Array<{
-        platform: string;
-        url: string;
+        title: string;
+        links: string;
     }>;
     customLinks: Array<{
         title: string;
@@ -23,8 +23,8 @@ export interface LinksFormData {
 export const LinksValidationSchema = yup.object({
     socialLinks: yup.array().of(
         yup.object({
-            platform: yup.string().required('Please select a social platform'),
-            url: yup.string().url('Please enter a valid URL').required('Please enter URL'),
+            title: yup.string().required('Please select a social platform'),
+            links: yup.string().url('Please enter a valid URL').required('Please enter URL'),
         })
     ).required(),
     customLinks: yup.array().of(
@@ -90,7 +90,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                                     <label className="block text-base text-white font-medium">Select Social</label>
                                     <div className='flex gap-[10px] items-start mobile:flex-col mobile:items-end'>
                                         <Controller
-                                            name={`socialLinks.${index}.platform`}
+                                            name={`socialLinks.${index}.title`}
                                             control={control}
                                             render={({ field: { onChange, value } }) => (
                                                 <Select
@@ -99,8 +99,8 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                                                     variant="flat"
                                                     selectedKeys={value ? [value] : []}
                                                     onChange={(e) => onChange(e.target.value)}
-                                                    errorMessage={errors.socialLinks?.[index]?.platform?.message}
-                                                    isInvalid={!!errors.socialLinks?.[index]?.platform}
+                                                    errorMessage={errors.socialLinks?.[index]?.title?.message}
+                                                    isInvalid={!!errors.socialLinks?.[index]?.title}
                                                 >
                                                     {SOCIAL_TYPES.map((option) => (
                                                         <SelectItem key={option.key}>
@@ -111,7 +111,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                                             )}
                                         />
                                         <Controller
-                                            name={`socialLinks.${index}.url`}
+                                            name={`socialLinks.${index}.links`}
                                             control={control}
                                             render={({ field }) => (
                                                 <Input
@@ -119,8 +119,8 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                                                     type="url"
                                                     placeholder="https://"
                                                     className="w-full"
-                                                    errorMessage={errors.socialLinks?.[index]?.url?.message}
-                                                    isInvalid={!!errors.socialLinks?.[index]?.url}
+                                                    errorMessage={errors.socialLinks?.[index]?.links?.message}
+                                                    isInvalid={!!errors.socialLinks?.[index]?.links}
                                                 />
                                             )}
                                         />
@@ -142,7 +142,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
 
                     <button
                         type="button"
-                        onClick={() => appendSocial({ platform: '', url: '' })}
+                        onClick={() => appendSocial({ title: '', links: '' })}
                         className="h-[40px] mt-[10px] w-full bg-transparent opacity-80 py-2 px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
                     >
                         <PlusIcon className="h-5 w-5" />

@@ -9,7 +9,7 @@ import { Space } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { isUserAssociated } from '@/utils/permissions';
-import { SpaceTypes } from '@/app/spaces/create/components/constant';
+import { Categories } from '@/app/spaces/create/components/constant';
 
 // 格式化成员数的工具函数
 const formatMemberCount = (count: number): string => {
@@ -81,12 +81,9 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md', s
         avatar,
         name,
         tagline,
-        members,
-        admins,
-        superAdmin,
-        category,
+        tags,
         id,
-        spaceType,
+        category,
     } = data;
     const { profile } = useCeramicContext();
     const router = useRouter();
@@ -97,24 +94,24 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md', s
     const isUserJoined = React.useMemo(() => {
         return currentUserId && isUserAssociated(data, currentUserId);
     }, [currentUserId, data]);
-
-    const formattedMemberCount = React.useMemo(() => {
-        const totalMembers =
-            (members?.length || 0) +
-            (admins?.length || 0) +
-            (superAdmin?.length || 0);
-        return formatMemberCount(totalMembers);
-    }, [members?.length, admins?.length, superAdmin?.length]);
+    // todo: 获取成员数
+    // const formattedMemberCount = React.useMemo(() => {
+    //     const totalMembers =
+    //         (members?.length || 0) +
+    //         (admins?.length || 0) +
+    //         (superAdmin?.length || 0);
+    //     return formatMemberCount(totalMembers);
+    // }, [members?.length, admins?.length, superAdmin?.length]);
 
     const SpaceChip = () => {
-        const spaceInfo = React.useMemo(() =>
-            SpaceTypes.find((c) => c.id === Number(spaceType)),
-            [spaceType]
+        const categoryInfo = React.useMemo(() =>
+            Categories.find((c) => c.value === category),
+            [category]
         );
 
-        if (spaceInfo) {
-            const Icon = React.cloneElement(spaceInfo.icon, { size: 4 });
-            return <Chip startContent={Icon} size="sm">{spaceInfo.name}</Chip>;
+        if (categoryInfo) {
+            const Icon = React.cloneElement(categoryInfo.icon, { size: 4 });
+            return <Chip startContent={Icon} size="sm">{categoryInfo.label}</Chip>;
         }
         return (
             <Chip startContent={<BuildingsIcon size={4} />} size="sm">
@@ -176,10 +173,10 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md', s
                 )}
 
                 {/* Member Count */}
-                <div className="absolute bottom-[-30px] right-[6px] flex items-center gap-[6px] opacity-50">
+                {/* <div className="absolute bottom-[-30px] right-[6px] flex items-center gap-[6px] opacity-50">
                     <UsersIcon size={4} />
                     <span className="text-[13px] leading-[1.4]">{formattedMemberCount}</span>
-                </div>
+                </div> */}
             </CardHeader>
 
             <CardBody className="pt-[30px] px-[10px] pb-0">
@@ -196,20 +193,19 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md', s
                     {tagline}
                 </p>
 
-                {/* Categories */}
+                {/* tags */}
                 <div className="mb-[10px] flex items-center gap-[10px] opacity-40">
-                    {!category && <span className="text-[10px] leading-[1.2]">TAG</span>}
-                    {category && category
-                        ?.split(',')
+                    {!tags && <span className="text-[10px] leading-[1.2]">TAG</span>}
+                    {tags && tags
                         .slice(0, 2)
                         .map((item) => (
-                            <span key={item} className="text-[10px] leading-[1.2] uppercase">
-                                {item}
+                            <span key={item.tag} className="text-[10px] leading-[1.2] uppercase">
+                                {item.tag}
                             </span>
                         ))}
-                    {category && category.split(',').length > 2 && (
+                    {tags && tags.length > 2 && (
                         <span className="text-[10px] leading-[1.2]">
-                            +{category.split(',').length - 2}
+                            +{tags.length - 2}
                         </span>
                     )}
                 </div>

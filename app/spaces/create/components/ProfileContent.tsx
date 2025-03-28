@@ -60,10 +60,11 @@ export const ProfilValidationSchema = Yup.object().shape({
 interface ProfileContentProps {
     form: UseFormReturn<ProfileFormData>;
     onSubmit: (data: ProfileFormData) => void;
+    descriptionEditorStore: ReturnType<typeof useEditorStore>;
     onBack: () => void;
 }
 
-const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack }) => {
+const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack, descriptionEditorStore }) => {
     const {
         control,
         handleSubmit,
@@ -73,7 +74,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack 
     const onSubmitHandler = (data: ProfileFormData) => {
         onSubmit(data);
     };
-    const descriptionEditorStore = useEditorStore();
     return (
         <div className="space-y-[30px] mobile:space-y-[20px]">
             <div className="space-y-2">

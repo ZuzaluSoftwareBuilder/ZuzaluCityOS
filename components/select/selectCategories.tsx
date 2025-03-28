@@ -25,9 +25,9 @@ export default function SelectCategories({
   // 添加受控能力
   React.useEffect(() => {
     if (outerValue) {
-      setValue(SPACE_CATEGORIES.filter((item) => outerValue.includes(item.value)));
+      setValue(outerValue.map((item) => ({ value: item, label: item, isAdd: false })));
     }
-  }, [JSON.stringify(outerValue)]);
+  }, [outerValue]);
 
   const handleChange = useCallback(
     (value: FilmOptionType[]) => {

@@ -3,7 +3,7 @@ import { Controller, UseFormReturn } from 'react-hook-form';
 import * as yup from 'yup';
 import { Card, CardBody, Chip } from '@/components/base';
 import SelectCategories from '@/components/select/selectCategories';
-import { SpaceTypes } from '@/app/spaces/create/components/constant';
+import { Categories } from '@/app/spaces/create/components/constant';
 
 // 类型定义
 interface IconProps {
@@ -12,8 +12,8 @@ interface IconProps {
 }
 
 export interface CategoriesFormData {
-  selectedCategory: number;
-  categories: string[];
+  category: string;
+  tags: string[];
 }
 
 interface CategoryCardProps {
@@ -26,17 +26,17 @@ interface CategoryCardProps {
 
 interface CategoriesContentProps {
   form: UseFormReturn<CategoriesFormData>;
-  onSubmit: (data: CategoriesFormData) => void;
-  onBack: () => void;
 }
 
 // 验证 schema
 export const CategoriesValidationSchema = yup
   .object({
-    selectedCategory: yup.number().required('Please select a category'),
-    categories: yup
+    category: yup.string().required('Please select a category'),
+    tags: yup
       .array()
-      .of(yup.string().defined())
+      .of(
+        yup.string().defined()
+      )
       .min(1, 'Please select at least one tag')
       .max(5, 'Please select at most 5 tags')
       .required('Please select tags'),
@@ -58,11 +58,10 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
 
   return (
     <Card
-      className={`cursor-pointer transition-all duration-200 ${
-        selected
+      className={`cursor-pointer transition-all duration-200 ${selected
           ? 'bg-white/[0.1] border border-white'
           : 'bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05]'
-      } rounded-[10px] h-[50px]`}
+        } rounded-[10px] h-[50px]`}
     >
       <CardBody
         className="flex flex-row gap-[14px] justify-start items-center px-[20px] py-[10px]"
@@ -78,9 +77,9 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
 // 子组件：分类选择区域
 const CategorySelection: React.FC<{
   control: UseFormReturn<CategoriesFormData>['control'];
-  selectedCategory: number;
+  category: string;
   error?: string;
-}> = ({ control, selectedCategory, error }) => (
+}> = ({ control, category, error }) => (
   <div className="space-y-[20px]">
     <div className="space-y-[10px]">
       <h3 className="text-base font-medium">Select Categories*</h3>
@@ -90,20 +89,20 @@ const CategorySelection: React.FC<{
     </div>
 
     <Controller
-      name="selectedCategory"
+      name="category"
       control={control}
       render={({ field }) => (
         <div className="grid grid-cols-3 gap-2 mobile:grid-cols-1">
-          {SpaceTypes.map((type) => (
+          {Categories.map((type) => (
             <CategoryCard
-              key={type.id}
+              key={type.value}
               icon={type.icon}
-              title={type.name}
+              title={type.label}
               color={type.color}
-              selected={selectedCategory === type.id}
+              selected={category === type.value}
               onClick={() => {
-                field.onChange(type.id);
-                console.log('selectedCategory', type.id);
+                field.onChange(type.value);
+                console.log('category', type.value);
               }}
             />
           ))}
@@ -122,26 +121,21 @@ const CategorySelection: React.FC<{
 // 主组件
 const CategoriesContent: React.FC<CategoriesContentProps> = ({
   form,
-  onSubmit,
-  onBack,
 }) => {
   const {
     control,
-    handleSubmit,
     watch,
-    setValue,
-    formState: { errors, isValid },
+    formState: { errors },
   } = form;
-
-  const selectedCategory = watch('selectedCategory');
+  const category = watch('category');
 
   return (
     <div className="space-y-[30px] mobile:space-y-[20px]">
       {/* 分类选择部分 */}
       <CategorySelection
         control={control}
-        selectedCategory={selectedCategory}
-        error={errors.selectedCategory?.message}
+        category={category}
+        error={errors.category?.message}
       />
       <div className="space-y-[20px]">
         <div className="space-y-2">
@@ -153,14 +147,14 @@ const CategoriesContent: React.FC<CategoriesContentProps> = ({
 
         <div className="space-y-[10px]">
           <Controller
-            name="categories"
+            name="tags"
             control={control}
             render={({ field }) => (
-              <SelectCategories onChange={field.onChange} value={field.value} />
+              <SelectCategories onChange={field.onChange} value={field.value ? field.value : []} />
             )}
           />
-          {errors.categories && (
-            <p className="text-error text-sm">{errors.categories.message}</p>
+          {errors.tags && (
+            <p className="text-error text-sm">{errors.tags.message}</p>
           )}
         </div>
       </div>

@@ -15,18 +15,12 @@ import {
   ChevronLeftIcon,
 } from '@heroicons/react/24/outline';
 import * as yup from 'yup';
-import { ChevronRightIcon } from '@heroicons/react/20/solid';
+import { Link } from '@/types';
 
 // 定义表单类型
 export interface LinksFormData {
-  socialLinks: Array<{
-    platform: string;
-    url: string;
-  }>;
-  customLinks: Array<{
-    title: string;
-    links: string;
-  }>;
+  socialLinks: Link[];
+  customLinks: Link[];
 }
 
 // 定义验证模式
@@ -35,8 +29,8 @@ export const LinksValidationSchema = yup.object({
     .array()
     .of(
       yup.object({
-        platform: yup.string().required('Please select a social platform'),
-        url: yup
+        title: yup.string().required('Please select a social platform'),
+        links: yup
           .string()
           .url('Please enter a valid URL')
           .required('Please enter URL'),
@@ -59,21 +53,14 @@ export const LinksValidationSchema = yup.object({
 
 interface LinksContentProps {
   form: UseFormReturn<LinksFormData>;
-  onSubmit: () => void;
-  onBack: () => void;
-  isLoading: boolean;
 }
 
 const LinksContent: React.FC<LinksContentProps> = ({
   form,
-  onSubmit,
-  onBack,
-  isLoading,
 }) => {
   const {
     control,
-    formState: { errors, isValid },
-    handleSubmit,
+    formState: { errors },
   } = form;
 
   const {
@@ -94,10 +81,6 @@ const LinksContent: React.FC<LinksContentProps> = ({
     name: 'customLinks',
   });
 
-  const onSubmitHandler = (data: LinksFormData) => {
-    onSubmit();
-  };
-
   return (
     <div className="space-y-[30px] mobile:space-y-[20px]">
       <div className="pb-[20px] border-b border-white/10">
@@ -111,7 +94,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
                 </label>
                 <div className="flex gap-[10px] items-start mobile:flex-col mobile:items-end">
                   <Controller
-                    name={`socialLinks.${index}.platform`}
+                    name={`socialLinks.${index}.title`}
                     control={control}
                     render={({ field: { onChange, value } }) => (
                       <Select
@@ -121,9 +104,9 @@ const LinksContent: React.FC<LinksContentProps> = ({
                         selectedKeys={value ? [value] : []}
                         onChange={(e) => onChange(e.target.value)}
                         errorMessage={
-                          errors.socialLinks?.[index]?.platform?.message
+                          errors.socialLinks?.[index]?.title?.message
                         }
-                        isInvalid={!!errors.socialLinks?.[index]?.platform}
+                        isInvalid={!!errors.socialLinks?.[index]?.title}
                       >
                         {SOCIAL_TYPES.map((option) => (
                           <SelectItem key={option.key}>
@@ -134,7 +117,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
                     )}
                   />
                   <Controller
-                    name={`socialLinks.${index}.url`}
+                    name={`socialLinks.${index}.links`}
                     control={control}
                     render={({ field }) => (
                       <Input
@@ -142,8 +125,8 @@ const LinksContent: React.FC<LinksContentProps> = ({
                         type="url"
                         placeholder="https://"
                         className="w-full"
-                        errorMessage={errors.socialLinks?.[index]?.url?.message}
-                        isInvalid={!!errors.socialLinks?.[index]?.url}
+                        errorMessage={errors.socialLinks?.[index]?.links?.message}
+                        isInvalid={!!errors.socialLinks?.[index]?.links}
                       />
                     )}
                   />
@@ -166,7 +149,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
 
         <button
           type="button"
-          onClick={() => appendSocial({ platform: '', url: '' })}
+          onClick={() => appendSocial({ title: '', links: '' })}
           className="h-[40px] mt-[10px] w-full bg-transparent opacity-80 py-2 px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
         >
           <PlusIcon className="h-5 w-5" />

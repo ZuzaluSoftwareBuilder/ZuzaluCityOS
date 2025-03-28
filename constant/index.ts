@@ -376,3 +376,12 @@ export const apps = [
       'Zupass is a webapp delivering digital identity and community management through zero-knowledge proofs, aiming to revolutionize data privacy and user control in decentralized networks.',
   },
 ];
+
+export const Categories: { value: string; label: string }[] = [
+  { value: 'general-group', label: 'General Group'},
+  { value: 'event-org', label: 'Event Org'},
+  { value: 'venue', label: 'Venue'},
+  { value: 'shop', label: 'Shop'},
+  { value: 'developer', label: 'Developer' },
+  { value: 'permahub', label: 'PermaHub'},
+];

@@ -55,7 +55,6 @@ const TabItem: React.FC<TabItemProps> = ({ label, onClick, status }) => {
 interface EditSpaceTabsProps {
   selectedTab: TabContentEnum;
   onTabChange: (key: TabContentEnum) => void;
-  tabStatuses?: Partial<Record<string, TabStatus>>;
 }
 
 /**
