@@ -63,6 +63,7 @@ export default function SelectCategories({
 
         return filtered;
       }}
+      disablePortal
       selectOnFocus
       clearOnBlur
       handleHomeEndKeys

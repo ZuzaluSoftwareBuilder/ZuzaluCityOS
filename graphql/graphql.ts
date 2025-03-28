@@ -1223,6 +1223,7 @@ export type PartialZucityDappInfoInput = {
   openSource?: InputMaybe<Scalars['String']['input']>;
   profileId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
   repositoryUrl?: InputMaybe<Scalars['String']['input']>;
+  scAddresses?: InputMaybe<Array<InputMaybe<ZucityDappInfoScAddressInput>>>;
   tagline?: InputMaybe<Scalars['String']['input']>;
   websiteUrl?: InputMaybe<Scalars['String']['input']>;
 };
@@ -2204,6 +2205,7 @@ export type ZucityDappInfo = Node & {
   profile?: Maybe<ZucityProfile>;
   profileId: Scalars['CeramicStreamID']['output'];
   repositoryUrl?: Maybe<Scalars['String']['output']>;
+  scAddresses?: Maybe<Array<Maybe<ZucityDappInfoScAddress>>>;
   tagline: Scalars['String']['output'];
   websiteUrl?: Maybe<Scalars['String']['output']>;
 };
@@ -2258,6 +2260,7 @@ export type ZucityDappInfoInput = {
   openSource: Scalars['String']['input'];
   profileId: Scalars['CeramicStreamID']['input'];
   repositoryUrl?: InputMaybe<Scalars['String']['input']>;
+  scAddresses?: InputMaybe<Array<InputMaybe<ZucityDappInfoScAddressInput>>>;
   tagline: Scalars['String']['input'];
   websiteUrl?: InputMaybe<Scalars['String']['input']>;
 };
@@ -2273,6 +2276,17 @@ export type ZucityDappInfoObjectFilterInput = {
   isInstallable?: InputMaybe<StringValueFilterInput>;
   isSCApp?: InputMaybe<StringValueFilterInput>;
   openSource?: InputMaybe<StringValueFilterInput>;
+};
+
+export type ZucityDappInfoScAddress = {
+  __typename?: 'ZucityDappInfoScAddress';
+  address?: Maybe<Scalars['String']['output']>;
+  chain?: Maybe<Scalars['String']['output']>;
+};
+
+export type ZucityDappInfoScAddressInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
+  chain?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ZucityDappInfoSortingInput = {
@@ -3469,10 +3483,34 @@ export type ZucityUserRolesSortingInput = {
   userId?: InputMaybe<SortOrder>;
 };
 
-export type GetDappListQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetDappListQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  filters?: InputMaybe<ZucityDappInfoFiltersInput>;
+}>;
 
 
-export type GetDappListQuery = { __typename?: 'Query', zucityDappInfoIndex?: { __typename?: 'ZucityDappInfoConnection', edges?: Array<{ __typename?: 'ZucityDappInfoEdge', node?: { __typename?: 'ZucityDappInfo', id: string, appName: string, tagline: string, developerName: string, description: string, bannerUrl: string, categories: string, devStatus: string, openSource: string, repositoryUrl?: string | null, appUrl?: string | null, websiteUrl?: string | null, docsUrl?: string | null, profile?: { __typename?: 'ZucityProfile', avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } | null } | null> | null } | null };
+export type GetDappListQuery = { __typename?: 'Query', zucityDappInfoIndex?: { __typename?: 'ZucityDappInfoConnection', edges?: Array<{ __typename?: 'ZucityDappInfoEdge', node?: { __typename?: 'ZucityDappInfo', id: string, appName: string, tagline: string, developerName: string, description: string, bannerUrl: string, categories: string, devStatus: string, openSource: string, repositoryUrl?: string | null, appUrl?: string | null, websiteUrl?: string | null, docsUrl?: string | null, isInstallable: string, appLogoUrl: string, auditLogUrl?: string | null, isSCApp?: string | null, scAddresses?: Array<{ __typename?: 'ZucityDappInfoScAddress', address?: string | null, chain?: string | null } | null> | null, profile?: { __typename?: 'ZucityProfile', avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } | null } | null> | null } | null };
+
+export type CreateZucityDappMutationMutationVariables = Exact<{
+  input: CreateZucityDappInfoInput;
+}>;
+
+
+export type CreateZucityDappMutationMutation = { __typename?: 'Mutation', createZucityDappInfo?: { __typename?: 'CreateZucityDappInfoPayload', document: { __typename?: 'ZucityDappInfo', id: string } } | null };
+
+export type UpdateZucityDappMutationMutationVariables = Exact<{
+  input: UpdateZucityDappInfoInput;
+}>;
+
+
+export type UpdateZucityDappMutationMutation = { __typename?: 'Mutation', updateZucityDappInfo?: { __typename?: 'UpdateZucityDappInfoPayload', document: { __typename?: 'ZucityDappInfo', id: string } } | null };
+
+export type GetDappByIdQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetDappByIdQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount' } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo', id: string, appName: string, tagline: string, developerName: string, description: string, bannerUrl: string, categories: string, devStatus: string, openSource: string, repositoryUrl?: string | null, appUrl?: string | null, websiteUrl?: string | null, docsUrl?: string | null, isInstallable: string, appLogoUrl: string, auditLogUrl?: string | null, isSCApp?: string | null, scAddresses?: Array<{ __typename?: 'ZucityDappInfoScAddress', address?: string | null, chain?: string | null } | null> | null, profile?: { __typename?: 'ZucityProfile', avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace' } | { __typename?: 'ZucitySpaceGating' } | { __typename?: 'ZucityUserRoles' } | null };
 
 export type GetAllEventsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -3601,7 +3639,7 @@ export type GetSpaceInstalledAppsQueryVariables = Exact<{
 }>;
 
 
-export type GetSpaceInstalledAppsQuery = { __typename?: 'Query', zucityInstalledAppIndex?: { __typename?: 'ZucityInstalledAppConnection', edges?: Array<{ __typename?: 'ZucityInstalledAppEdge', node?: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, nativeAppName?: string | null, installedAppId?: any | null, createdAt: any, updatedAt: any, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string, appType: string, description: string, tagline: string, bannerUrl: string, appUrl?: string | null, openSource: string, devStatus: string, developerName: string, categories: string } | null, space?: { __typename?: 'ZucitySpace', id: string, name: string } | null } | null } | null> | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } | null };
+export type GetSpaceInstalledAppsQuery = { __typename?: 'Query', zucityInstalledAppIndex?: { __typename?: 'ZucityInstalledAppConnection', edges?: Array<{ __typename?: 'ZucityInstalledAppEdge', node?: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, nativeAppName?: string | null, installedAppId?: any | null, createdAt: any, updatedAt: any, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string, appType: string, description: string, tagline: string, bannerUrl: string, appUrl?: string | null, openSource: string, devStatus: string, developerName: string, categories: string, appLogoUrl: string } | null, space?: { __typename?: 'ZucitySpace', id: string, name: string } | null } | null } | null> | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } | null };
 
 export type UninstallDappFromSpaceMutationVariables = Exact<{
   input: EnableIndexingZucityInstalledAppInput;
@@ -3660,8 +3698,8 @@ export class TypedDocumentString<TResult, TVariables>
 }
 
 export const GetDappListDocument = new TypedDocumentString(`
-    query GetDappList {
-  zucityDappInfoIndex(first: 100) {
+    query GetDappList($first: Int = 100, $filters: ZucityDappInfoFiltersInput) {
+  zucityDappInfoIndex(first: $first, filters: $filters) {
     edges {
       node {
         id
@@ -3677,6 +3715,14 @@ export const GetDappListDocument = new TypedDocumentString(`
         appUrl
         websiteUrl
         docsUrl
+        isInstallable
+        appLogoUrl
+        auditLogUrl
+        isSCApp
+        scAddresses {
+          address
+          chain
+        }
         profile {
           author {
             id
@@ -3689,6 +3735,60 @@ export const GetDappListDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetDappListQuery, GetDappListQueryVariables>;
+export const CreateZucityDappMutationDocument = new TypedDocumentString(`
+    mutation CreateZucityDappMutation($input: CreateZucityDappInfoInput!) {
+  createZucityDappInfo(input: $input) {
+    document {
+      id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CreateZucityDappMutationMutation, CreateZucityDappMutationMutationVariables>;
+export const UpdateZucityDappMutationDocument = new TypedDocumentString(`
+    mutation UpdateZucityDappMutation($input: UpdateZucityDappInfoInput!) {
+  updateZucityDappInfo(input: $input) {
+    document {
+      id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateZucityDappMutationMutation, UpdateZucityDappMutationMutationVariables>;
+export const GetDappByIdDocument = new TypedDocumentString(`
+    query GetDappById($id: ID!) {
+  node(id: $id) {
+    ... on ZucityDappInfo {
+      id
+      appName
+      tagline
+      developerName
+      description
+      bannerUrl
+      categories
+      devStatus
+      openSource
+      repositoryUrl
+      appUrl
+      websiteUrl
+      docsUrl
+      isInstallable
+      appLogoUrl
+      auditLogUrl
+      isSCApp
+      scAddresses {
+        address
+        chain
+      }
+      profile {
+        author {
+          id
+        }
+        avatar
+        username
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetDappByIdQuery, GetDappByIdQueryVariables>;
 export const GetAllEventsDocument = new TypedDocumentString(`
     query GetAllEvents($first: Int) {
   zucityEventIndex(first: $first) {
@@ -4183,6 +4283,7 @@ export const GetSpaceInstalledAppsDocument = new TypedDocumentString(`
           devStatus
           developerName
           categories
+          appLogoUrl
         }
         space {
           id

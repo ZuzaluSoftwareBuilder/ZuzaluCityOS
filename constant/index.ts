@@ -385,3 +385,4 @@ export const Categories: { value: string; label: string }[] = [
   { value: 'developer', label: 'Developer' },
   { value: 'permahub', label: 'PermaHub'},
 ];
+export const USER_AVATAR_URL = '/user/avatar_p.png';

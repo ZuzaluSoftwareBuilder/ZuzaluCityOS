@@ -18,6 +18,7 @@ import {
 import { useDAppDetailDrawer } from './DAppDetailDrawer';
 import { useInstalledAppsData } from './InstalledAppsData';
 import { isNativeDApp, NativeDApp } from '../constants';
+import { USER_AVATAR_URL } from '@/constant';
 
 interface Props {
   data: Dapp | NativeDApp;
@@ -35,7 +36,7 @@ const AppItem = (props: Props) => {
     () => isNativeDApp(data) && data.isComingSoon,
     [data],
   );
-  const { appName, categories: _categories = '', profile, bannerUrl } = data;
+  const { appName, categories: _categories = '', profile, appLogoUrl } = data;
 
   // categories pre processing
   const categories = useMemo(() => _categories.split(','), [_categories]);
@@ -102,7 +103,13 @@ const AppItem = (props: Props) => {
     const installedAppIndexId = queryInstalledAppIndexId(idOrNativeAppName);
     if (!installedAppIndexId) return;
     uninstallMutation({ spaceId, installedAppIndexId });
-  }, [data, idOrNativeAppName, queryInstalledAppIndexId, spaceId, uninstallMutation]);
+  }, [
+    data,
+    idOrNativeAppName,
+    queryInstalledAppIndexId,
+    spaceId,
+    uninstallMutation,
+  ]);
 
   const handleInstallOrUninstall = useCallback(() => {
     if (currentIsInstalled) {
@@ -143,7 +150,7 @@ const AppItem = (props: Props) => {
         >
           <Image
             alt={appName}
-            src={bannerUrl}
+            src={appLogoUrl}
             className={clsx([
               'rounded-[10px]',
               'w-[60px] h-[60px]',
@@ -191,7 +198,7 @@ const AppItem = (props: Props) => {
             </span>
             <Image
               alt={profile.username || 'Developer'}
-              src={profile.avatar}
+              src={profile.avatar ?? USER_AVATAR_URL}
               className="rounded-full w-[16px] h-[16px]"
             />
             <span className="opacity-60 text-[13px] leading-[140%] tracking-[0.01em]">

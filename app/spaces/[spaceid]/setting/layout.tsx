@@ -8,7 +8,9 @@ import BackHeader from './components/backHeader';
 import { getSettingSections } from './components/settingSidebar/settingsData';
 import { Backdrop, CircularProgress } from '@mui/material';
 import * as React from 'react';
-import useCheckWalletConnectAndPermission from '@/hooks/useCheckWalletConnectAndPermission';
+import useCheckWalletConnectAndSpacePermission, {
+  PermissionCheckType,
+} from '@/hooks/useCheckWalletConnectAndSpacePermission';
 
 const SettingLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -17,11 +19,14 @@ const SettingLayout = ({ children }: { children: React.ReactNode }) => {
   const spaceId = params?.spaceid?.toString() || '';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const { isAuthenticated, isOwner, isAdmin, isConnected, allChecksComplete } =
-    useCheckWalletConnectAndPermission({
-      spaceId,
-      noPermissionCallback: () => router.push(`/spaces/${spaceId}`),
-    });
+  const {
+    allChecksComplete,
+    hasPermission,
+    details: { isWalletConnected, isAuthenticated },
+  } = useCheckWalletConnectAndSpacePermission({
+    permissionCheck: { type: PermissionCheckType.ROLE },
+    callbacks: { onNoPermission: () => router.push(`/spaces/${spaceId}`) },
+  });
 
   const getCurrentTitle = useMemo(() => {
     const settingSections = getSettingSections(spaceId);
@@ -37,10 +42,10 @@ const SettingLayout = ({ children }: { children: React.ReactNode }) => {
 
   const shouldShowLoading = useMemo(() => {
     if (!allChecksComplete) return true;
-    if (!isConnected) return true;
-    if (isAuthenticated && !isOwner && !isAdmin) return true;
+    if (!isWalletConnected) return true;
+    if (isAuthenticated && !hasPermission) return true;
     return false;
-  }, [allChecksComplete, isAdmin, isAuthenticated, isConnected, isOwner]);
+  }, [allChecksComplete, isAuthenticated, isWalletConnected, hasPermission]);
 
   if (shouldShowLoading) {
     return (
