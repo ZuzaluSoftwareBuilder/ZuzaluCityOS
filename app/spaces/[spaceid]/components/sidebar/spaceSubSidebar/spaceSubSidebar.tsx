@@ -1,5 +1,5 @@
 'use client';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { InstalledApp } from '@/types';
 import { useCallback, useMemo } from 'react';
 import { House, Ticket, CalendarDots } from '@phosphor-icons/react';
@@ -23,7 +23,11 @@ const SpaceSubSidebar = ({
 }: MainSubSidebarProps) => {
   const pathname = usePathname();
   const params = useParams();
+  const query = useSearchParams();
   const spaceId = params.spaceid.toString();
+  const appName = params.appName?.toString();
+  const appId = query.get('id');
+  console.log(appId, appName);
 
   const { isOwner, isAdmin } = useSpacePermissions();
 
@@ -45,13 +49,17 @@ const SpaceSubSidebar = ({
         return true;
       }
 
+      if (appName && appId === route) {
+        return true;
+      }
+
       if (pathname.startsWith(`/spaces/${spaceId}/${route}/`)) {
         return true;
       }
 
       return false;
     },
-    [pathname, spaceId],
+    [pathname, spaceId, appName, appId],
   );
 
   const installedApps = useMemo(() => {
@@ -97,8 +105,8 @@ const SpaceSubSidebar = ({
                 className="rounded-[6px]"
               />
             }
-            href={`/spaces/${spaceId}/app?id=${app.installedAppId}`}
-            isActive={isRouteActive('app')}
+            href={`/spaces/${spaceId}/${app.installedApp?.appName.toLowerCase()}?id=${app.installedAppId}`}
+            isActive={isRouteActive(app.installedAppId ?? '')}
             onClick={onCloseDrawer}
           />
         )) ?? []),
