@@ -3,24 +3,22 @@ type ZucityProfile
     accountRelation: SINGLE
     description: "User Profile for Zuzalu.city beta version"
   )
-  @createIndex(fields: [{ path: "username" }]) {
+  @createIndex(fields: [{ path: "username" }])
+  @createIndex(fields: [{ path: "address" }])
+  @createIndex(fields: [{ path: "email" }]) {
   author: DID! @documentAccount
   username: String! @string(minLength: 1, maxLength: 10000)
   avatar: String @string(minLength: 1, maxLength: 10000)
   customAttributes: [TBD] @list(maxLength: 10000)
-  myEvents: [Event!] @list(maxLength: 10000)
   myScrollPassTickets: [ScrollTicket!] @list(maxLength: 10000)
+  address: String! @string(minLength: 1, maxLength: 10000)
+  email: String @string(minLength: 1, maxLength: 10000)
 }
 
 type TBD {
   tbd: String @string(minLength: 1, maxLength: 10000)
 }
 
-type Event {
-  streamID: String @string(minLength: 1, maxLength: 10000)
-  title: String @string(minLength: 1, maxLength: 10000)
-  imageUrl: String @string(minLength: 1, maxLength: 10000)
-}
 
 type ScrollTicket {
   eventId: String! @string(maxLength: 1000)

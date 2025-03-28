@@ -10,20 +10,12 @@ import {
   StorefrontIcon,
   VideoIcon,
 } from 'components/icons';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { EventData, SpaceData } from '@/types';
-import { useCallback, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { cn, Tab, Tabs, ScrollShadow, Skeleton } from '@heroui/react';
 import { Button } from '@/components/base';
-import { useQuery } from '@tanstack/react-query';
-import { isUserAssociated } from '@/utils/permissions';
-import { getSpacesQuery } from '@/services/space';
-import { EVENTS_QUERY } from '@/graphql/eventQueries';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_USER_ROLES_QUERY } from '@/services/graphql/role';
-import { data } from 'remark';
-
+import useUserSpace from '@/hooks/useUserSpace';
+import useUserEvent from '@/hooks/useUserEvent';
 interface SidebarProps {
   selected: string;
   isMobile?: boolean;
@@ -111,86 +103,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, composeClient, ceramic } = useCeramicContext();
 
   const [selectedTab, setSelectedTab] = useState('events');
 
-  const userDID = ceramic?.did?.parent?.toString();
-
-  const { data: allEvents, isLoading: isEventsLoading } = useQuery({
-    queryKey: ['userEvents'],
-    queryFn: async () => {
-      try {
-        const response: any = await composeClient.executeQuery(EVENTS_QUERY);
-
-        if (response && response.data && 'zucityEventIndex' in response.data) {
-          const eventData: EventData = response.data as EventData;
-          return eventData.zucityEventIndex.edges.map((edge) => edge.node);
-        } else {
-          console.error('Invalid data structure:', response.data);
-          return [];
-        }
-      } catch (error) {
-        console.error('Failed to fetch events:', error);
-        return [];
-      }
-    },
-    enabled: isAuthenticated,
-  });
-
-  const { data: spacesData, isLoading: isSpacesLoading } = useQuery({
-    queryKey: ['spaces'],
-    queryFn: async () => {
-      try {
-        const response: any = await composeClient.executeQuery(getSpacesQuery);
-        if ('zucitySpaceIndex' in response.data) {
-          const spaceData: SpaceData = response.data as SpaceData;
-
-          return spaceData.zucitySpaceIndex.edges.map((edge) => edge.node);
-        } else {
-          console.error('Invalid data structure:', response.data);
-          return [];
-        }
-      } catch (error) {
-        console.error('Failed to fetch spaces:', error);
-        throw error;
-      }
-    },
-    enabled: isAuthenticated,
-  });
-
-  const { data: userRoles } = useGraphQL(
-    ['GET_USER_ROLES_QUERY', userDID],
-    GET_USER_ROLES_QUERY,
-    {
-      userId: userDID,
-    },
-    {
-      select: ({ data }) => {
-        return (
-          data?.zucityUserRolesIndex?.edges?.map(
-            (edge) => edge?.node?.resourceId,
-          ) || []
-        );
-      },
-    },
-  );
-
-  const userEvents = useMemo(() => {
-    if (!allEvents || !userDID) return [];
-
-    return allEvents.filter((event) => isUserAssociated(event, userDID));
-  }, [allEvents, userDID]);
-
-  const userSpaces = useMemo(() => {
-    if (!spacesData || !userDID) return [];
-
-    return spacesData
-      .filter((space) => isUserAssociated(space, userDID))
-      .concat(
-        spacesData.filter((space) => userRoles?.includes(space.id.toString())),
-      );
-  }, [spacesData, userDID, userRoles]);
+  const { userJoinedSpaces, isUserSpaceLoading } = useUserSpace();
+  const { userJoinedEvents, isUserEventLoading } = useUserEvent();
 
   const handleClick = useCallback(
     (item: any) => {
@@ -258,20 +175,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const renderTabContent = useCallback(() => {
     const isEventsTab = selectedTab === 'events';
-    const isLoading = isEventsTab ? isEventsLoading : isSpacesLoading;
-    const items = isEventsTab ? userEvents : userSpaces;
+    const isLoading = isEventsTab ? isUserEventLoading : isUserSpaceLoading;
+    const items = isEventsTab ? userJoinedEvents : userJoinedSpaces;
 
     if (isLoading) {
       return renderLoadingSkeleton();
     }
 
-    return items.map((item) => renderItem(item, isEventsTab));
+    return items?.map((item) => renderItem(item, isEventsTab));
   }, [
     selectedTab,
-    isEventsLoading,
-    isSpacesLoading,
-    userEvents,
-    userSpaces,
+    isUserEventLoading,
+    isUserSpaceLoading,
+    userJoinedEvents,
+    userJoinedSpaces,
     renderLoadingSkeleton,
     renderItem,
   ]);
@@ -393,7 +310,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
         <Button
           variant="light"
-          border
+          color="functional"
           className="text-[13px] leading-[1.4] p-[6px_14px]"
           endContent={<ArrowUpRightIcon size={5} />}
           onPress={() =>

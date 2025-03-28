@@ -15,7 +15,7 @@ import {
   PGFList,
 } from './components';
 import { ZuButton } from 'components/core';
-import { scroll, scrollSepolia } from 'viem/chains';
+import { sepolia, mainnet } from 'viem/chains';
 import { waitForTransactionReceipt, writeContract } from 'wagmi/actions';
 import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
 import { client, config } from '@/context/WalletContext';
@@ -182,7 +182,7 @@ const Ticket = ({ event }: PropTypes) => {
       })) as number;
 
       const createTicketHash = await writeContract(config, {
-        chainId: isDev ? scrollSepolia.id : scroll.id,
+        chainId: isDev ? sepolia.id : mainnet.id,
         address: TICKET_FACTORY_ADDRESS as Address,
         abi: TICKET_FACTORY_ABI,
         functionName: 'createNewTicket',

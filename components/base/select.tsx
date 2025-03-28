@@ -1,54 +1,24 @@
-import React from 'react';
-import { Select as HSelect, SelectItem, SelectProps } from '@heroui/react';
+import {
+  extendVariants,
+  Select as HSelect,
+  SelectItem as HSelectItem,
+} from '@heroui/react';
 
-export interface ISelectOption {
-  key: string;
-  label: string;
-}
+const Select = extendVariants(HSelect, {
+  variants: {
+    select: {
+      default: {
+        trigger: 'bg-white/[0.05] border border-white/[0.1] rounded-[8px]',
+        value: 'text-white/[0.5] text-[14px]',
+        listbox: 'bg-white/[0.05] border border-white/[0.1] rounded-[8px]',
+      },
+    },
+  },
+  defaultVariants: {
+    select: 'default',
+  },
+});
 
-export interface ISelectProps
-  extends Omit<SelectProps, 'children' | 'onSelectionChange'> {
-  options: ISelectOption[];
-  defaultSelectedKey?: string;
-  placeholder?: string;
-  startContent?: React.ReactNode;
-  onSelectionChange?: (key: string) => void;
-}
+const SelectItem = extendVariants(HSelectItem, {});
 
-const Select: React.FC<ISelectProps> = ({
-  options,
-  defaultSelectedKey,
-  placeholder,
-  startContent,
-  onSelectionChange,
-  ...props
-}) => {
-  const handleSelectionChange = (keys: any) => {
-    const selectedKey = Array.from(keys)[0] as string;
-    onSelectionChange?.(selectedKey);
-  };
-
-  return (
-    <HSelect
-      variant="bordered"
-      className="max-w-xs"
-      defaultSelectedKeys={
-        defaultSelectedKey ? [defaultSelectedKey] : undefined
-      }
-      placeholder={placeholder}
-      startContent={startContent}
-      classNames={{
-        trigger: 'border-b-w-10',
-        ...props.classNames,
-      }}
-      onSelectionChange={handleSelectionChange}
-      {...props}
-    >
-      {options.map((option) => (
-        <SelectItem key={option.key}>{option.label}</SelectItem>
-      ))}
-    </HSelect>
-  );
-};
-
-export default Select;
+export { Select, SelectItem };

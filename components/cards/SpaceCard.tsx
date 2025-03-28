@@ -4,20 +4,16 @@ import Link from 'next/link';
 import { Typography, Button, Box, Stack, Skeleton } from '@mui/material';
 import { CheckCircleIcon, PlusCircleIcon, UsersIcon } from '../icons';
 import { SPACE_CATEGORIES } from '@/constant';
-import useUserJoinSpace from '@/hooks/useUserJoin';
 
 export type SpaceCardProps = {
   id?: string;
   bgImage?: string;
   logoImage?: string;
   title?: string;
-  description?: string;
-  joined?: boolean;
-  members?: {
-    id: string;
-  }[];
   categories?: string;
   tagline?: string;
+  isJoined: boolean;
+  isFollowed: boolean;
 };
 
 const SpaceCard: React.FC<SpaceCardProps> = ({
@@ -25,14 +21,11 @@ const SpaceCard: React.FC<SpaceCardProps> = ({
   bgImage = '/5.webp',
   logoImage = '/1.webp',
   title,
-  description,
-  joined = false,
-  members = [],
   categories = '',
   tagline,
+  isJoined,
+  isFollowed,
 }) => {
-
-  const { joined: isUserJoined } = useUserJoinSpace({ spaceId: id as string });
 
   return (
     <Link href={`/spaces/${id}`} style={{ textDecoration: 'none' }}>
@@ -50,11 +43,10 @@ const SpaceCard: React.FC<SpaceCardProps> = ({
         minHeight={252}
         maxHeight={288}
       >
-
-        {isUserJoined && (
+        {isJoined && (
           <div className="flex items-center gap-[5px] px-[10px] py-[5px] rounded-[4px] border border-b-w-10 bg-[rgba(34,34,34,0.60)] backdrop-filter backdrop-blur-[5px] absolute right-[10px] top-[10px] z-10">
             <CheckCircleIcon size={4} />
-            <span className="text-[14px] font-[500]">Joined</span>
+            <span className="text-[14px] font-[500]">{isFollowed ? 'Followed' : 'Joined'}</span>
           </div>
         )}
         <Box

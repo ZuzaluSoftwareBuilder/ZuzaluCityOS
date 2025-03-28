@@ -10,7 +10,6 @@ import {
 import { Button } from '@/components/base';
 import { useRouter } from 'next/navigation';
 import useUserJoinSpace from '@/hooks/useUserJoin';
-import { useMediaQuery } from '@mui/material';
 
 export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
   return (
@@ -56,31 +55,19 @@ const formatMemberCount = (count: number): string => {
 
 interface SpaceCardProps {
   data: Space;
+  isJoined: boolean;
+  isFollowed: boolean;
   autoWidth?: boolean;
 }
 
-export function SpaceCard({ data, autoWidth }: SpaceCardProps) {
-  const {
-    banner,
-    name,
-    tagline,
-    avatar,
-    members,
-    admins,
-    superAdmin,
-    category,
-    id,
-  } = data;
+export function SpaceCard({ data, autoWidth, isJoined, isFollowed }: SpaceCardProps) {
+  const { banner, name, tagline, avatar, tags, userRoles } = data;
   const router = useRouter();
-  const { joined: isUserJoined } = useUserJoinSpace({ spaceId: id });
 
   const formattedMemberCount = useMemo(() => {
-    const totalMembers =
-      (members?.length || 0) +
-      (admins?.length || 0) +
-      (superAdmin?.length || 0);
-    return formatMemberCount(totalMembers);
-  }, [members?.length, admins?.length, superAdmin?.length]);
+    const totalMembers = userRoles?.edges.map((item) => item.node).length ?? 0;
+    return formatMemberCount(totalMembers + 1);
+  }, [userRoles]);
 
   return (
     <div
@@ -90,7 +77,7 @@ export function SpaceCard({ data, autoWidth }: SpaceCardProps) {
       )}
     >
       <div className="relative">
-        {/* 
+        {/*
           xl: width/height = 268/106 = 2.528
           pc: width/height = 285/113 = 2.522
           tablet: width/height = 373/148 = 2.520
@@ -110,10 +97,12 @@ export function SpaceCard({ data, autoWidth }: SpaceCardProps) {
             base: 'absolute left-[11px] w-[60px] h-[60px] bottom-[-21px] z-10 shadow-[0px_0px_0px_1px_rgba(34,34,34,0.10)]',
           }}
         />
-        {isUserJoined && (
+        {isJoined && (
           <div className="flex items-center gap-[5px] px-[10px] py-[5px] rounded-[4px] border border-b-w-10 bg-[rgba(34,34,34,0.60)] backdrop-filter backdrop-blur-[5px] absolute right-[10px] top-[10px] z-10">
             <CheckCircleIcon size={4} />
-            <span className="text-[14px] font-[500]">Joined</span>
+            <span className="text-[14px] font-[500]">
+              {isFollowed ? 'Followed' : 'Joined'}
+            </span>
           </div>
         )}
       </div>
@@ -131,17 +120,17 @@ export function SpaceCard({ data, autoWidth }: SpaceCardProps) {
           {tagline}
         </p>
         <div className="mb-[10px] flex items-center gap-[10px] opacity-40">
-          {category
-            ?.split(',')
-            .slice(0, 2)
-            .map((item) => (
-              <span key={item} className="text-[10px] leading-[1.2] uppercase">
-                {item}
-              </span>
-            ))}
-          {category && category.split(',').length > 2 && (
+          {tags?.slice(0, 2).map((item) => (
+            <span
+              key={item.tag}
+              className="text-[10px] leading-[1.2] uppercase"
+            >
+              {item.tag}
+            </span>
+          ))}
+          {tags && tags.length > 2 && (
             <span className="text-[10px] leading-[1.2]">
-              +{category.split(',').length - 2}
+              +{tags.length - 2}
             </span>
           )}
         </div>

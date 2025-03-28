@@ -5,7 +5,6 @@ import { Box, Skeleton, Stack, Typography } from '@mui/material';
 import { EventCard } from '@/components/cards';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { Event, Space, SpaceEventData } from '@/types';
-import SubSidebar from '@/components/layout/Sidebar/SubSidebar';
 import {
   EventCardMonthGroup,
   EventCardSkeleton,
@@ -22,8 +21,6 @@ const Home = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [isEventsLoading, setIsEventsLoading] = useState<boolean>(true);
   const { composeClient, ceramic } = useCeramicContext();
-
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   const getSpaceByID = async () => {
     setIsEventsLoading(true);
@@ -96,15 +93,6 @@ const Home = () => {
     const fetchData = async () => {
       const space = await getSpaceByID();
       document.title = space?.name + ' - ' + 'Zuzalu City';
-      const admins =
-        space?.admins?.map((admin) => admin.id.toLowerCase()) || [];
-      const superAdmins =
-        space?.superAdmin?.map((superAdmin) => superAdmin.id.toLowerCase()) ||
-        [];
-      const userDID = ceramic?.did?.parent.toString().toLowerCase() || '';
-      if (admins.includes(userDID) || superAdmins.includes(userDID)) {
-        setIsAdmin(true);
-      }
     };
 
     fetchData()
@@ -118,11 +106,6 @@ const Home = () => {
 
   return (
     <Stack direction="row" height="calc(100vh - 50px)" width="100%">
-      {/* <SubSidebar
-        title={space?.name}
-        spaceId={params.spaceid.toString()}
-        isAdmin={isAdmin}
-      /> */}
       <Stack
         flex={1}
         sx={{

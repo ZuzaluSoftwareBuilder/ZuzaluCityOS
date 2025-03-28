@@ -1,7 +1,7 @@
 import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
 import { createPublicClient, createWalletClient, getContract } from 'viem';
 import { http } from 'wagmi';
-import { scrollSepolia } from 'wagmi/chains';
+import { sepolia, mainnet } from 'wagmi/chains';
 import { EdDSAPublicKey } from '@pcd/eddsa-pcd';
 import { EdDSATicketPCDTypeName } from '@pcd/eddsa-ticket-pcd';
 import { PipelineEdDSATicketZuAuthConfig } from '@pcd/passport-interface';
@@ -24,7 +24,7 @@ export const composeClient = new ComposeClient({
 export const dashboardEvent = process.env.NEXT_PUBLIC_EVENT_ID;
 export const resendApiKey = process.env.NEXT_PUBLIC_RESEND_API_KEY;
 export const JWT_SECRET = 'ZuCity';
-export const chainID = isDev ? 534351 : 534352;
+export const chainID = isDev ? 11155111 : 1;
 export const PROVIDER =
   'https://eth-sepolia.g.alchemy.com/v2/dIHWHPAPI_-uPhkXh5mcNrqJV88vkI-2';
 
@@ -51,11 +51,11 @@ export const ticketFactoryContract = {
 } as const;
 
 const read = createPublicClient({
-  chain: scrollSepolia,
+  chain: sepolia,
   transport: http(),
   batch: { multicall: true },
 });
-const write = createWalletClient({ chain: scrollSepolia, transport: http() });
+const write = createWalletClient({ chain: sepolia, transport: http() });
 export const ticketFactoryGetContract = getContract({
   address: TICKET_FACTORY_ADDRESS,
   abi: TICKET_FACTORY_ABI,
@@ -376,3 +376,5 @@ export const apps = [
       'Zupass is a webapp delivering digital identity and community management through zero-knowledge proofs, aiming to revolutionize data privacy and user control in decentralized networks.',
   },
 ];
+
+export const USER_AVATAR_URL = '/user/avatar_p.png';

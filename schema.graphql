@@ -10,6 +10,17 @@ type CeramicAccount implements Node {
   Whether the Ceramic instance is currently authenticated with this account or not
   """
   isViewer: Boolean!
+  zucityAnnouncementList(
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+    """Returns the first n items from the list."""
+    first: Int
+    """Returns the last n items from the list."""
+    last: Int
+  ): ZucityAnnouncementConnection
+  zucityAnnouncementListCount: Int!
   zucityApplicationFormList(
     """Returns the items in the list that come after the specified cursor."""
     after: String
@@ -71,6 +82,19 @@ type CeramicAccount implements Node {
     last: Int
   ): ZucityEventRegistrationAndAccessConnection
   zucityEventRegistrationAndAccessListCount: Int!
+  zucityInstalledAppList(
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+    filters: ZucityInstalledAppFiltersInput
+    """Returns the first n items from the list."""
+    first: Int
+    """Returns the last n items from the list."""
+    last: Int
+    sorting: ZucityInstalledAppSortingInput
+  ): ZucityInstalledAppConnection
+  zucityInstalledAppListCount(filters: ZucityInstalledAppFiltersInput): Int!
   zucityPermissionList(
     """Returns the items in the list that come after the specified cursor."""
     after: String
@@ -124,6 +148,17 @@ type CeramicAccount implements Node {
     sorting: ZucitySessionSortingInput
   ): ZucitySessionConnection
   zucitySessionListCount(filters: ZucitySessionFiltersInput): Int!
+  zucitySpaceGatingList(
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+    """Returns the first n items from the list."""
+    first: Int
+    """Returns the last n items from the list."""
+    last: Int
+  ): ZucitySpaceGatingConnection
+  zucitySpaceGatingListCount: Int!
   zucitySpaceList(
     """Returns the items in the list that come after the specified cursor."""
     after: String
@@ -161,6 +196,24 @@ scalar CeramicStreamID
 input CreateOptionsInput {
   """Inform indexers if they should index this document or not"""
   shouldIndex: Boolean
+}
+
+input CreateZucityAnnouncementInput {
+  clientMutationId: String
+  content: ZucityAnnouncementInput!
+  options: CreateOptionsInput
+}
+
+type CreateZucityAnnouncementPayload {
+  clientMutationId: String
+  document: ZucityAnnouncement!
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+  """Account currently authenticated on the Ceramic instance, if set"""
+  viewer: CeramicAccount
 }
 
 input CreateZucityApplicationFormInput {
@@ -244,6 +297,24 @@ input CreateZucityEventRegistrationAndAccessInput {
 type CreateZucityEventRegistrationAndAccessPayload {
   clientMutationId: String
   document: ZucityEventRegistrationAndAccess!
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+  """Account currently authenticated on the Ceramic instance, if set"""
+  viewer: CeramicAccount
+}
+
+input CreateZucityInstalledAppInput {
+  clientMutationId: String
+  content: ZucityInstalledAppInput!
+  options: CreateOptionsInput
+}
+
+type CreateZucityInstalledAppPayload {
+  clientMutationId: String
+  document: ZucityInstalledApp!
   """Fetches an object given its ID"""
   node(
     """The ID of an object"""
@@ -343,6 +414,24 @@ type CreateZucitySessionPayload {
   viewer: CeramicAccount
 }
 
+input CreateZucitySpaceGatingInput {
+  clientMutationId: String
+  content: ZucitySpaceGatingInput!
+  options: CreateOptionsInput
+}
+
+type CreateZucitySpaceGatingPayload {
+  clientMutationId: String
+  document: ZucitySpaceGating!
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+  """Account currently authenticated on the Ceramic instance, if set"""
+  viewer: CeramicAccount
+}
+
 input CreateZucitySpaceInput {
   clientMutationId: String
   content: ZucitySpaceInput!
@@ -388,6 +477,24 @@ scalar DID
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
+
+input EnableIndexingZucityAnnouncementInput {
+  clientMutationId: String
+  id: ID!
+  shouldIndex: Boolean!
+}
+
+type EnableIndexingZucityAnnouncementPayload {
+  clientMutationId: String
+  document: ZucityAnnouncement
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+  """Account currently authenticated on the Ceramic instance, if set"""
+  viewer: CeramicAccount
+}
 
 input EnableIndexingZucityApplicationFormInput {
   clientMutationId: String
@@ -470,6 +577,24 @@ input EnableIndexingZucityEventRegistrationAndAccessInput {
 type EnableIndexingZucityEventRegistrationAndAccessPayload {
   clientMutationId: String
   document: ZucityEventRegistrationAndAccess
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+  """Account currently authenticated on the Ceramic instance, if set"""
+  viewer: CeramicAccount
+}
+
+input EnableIndexingZucityInstalledAppInput {
+  clientMutationId: String
+  id: ID!
+  shouldIndex: Boolean!
+}
+
+type EnableIndexingZucityInstalledAppPayload {
+  clientMutationId: String
+  document: ZucityInstalledApp
   """Fetches an object given its ID"""
   node(
     """The ID of an object"""
@@ -569,6 +694,24 @@ type EnableIndexingZucitySessionPayload {
   viewer: CeramicAccount
 }
 
+input EnableIndexingZucitySpaceGatingInput {
+  clientMutationId: String
+  id: ID!
+  shouldIndex: Boolean!
+}
+
+type EnableIndexingZucitySpaceGatingPayload {
+  clientMutationId: String
+  document: ZucitySpaceGating
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+  """Account currently authenticated on the Ceramic instance, if set"""
+  viewer: CeramicAccount
+}
+
 input EnableIndexingZucitySpaceInput {
   clientMutationId: String
   id: ID!
@@ -605,55 +748,52 @@ type EnableIndexingZucityUserRolesPayload {
   viewer: CeramicAccount
 }
 
-type Event {
-  imageUrl: String
-  streamID: String
-  title: String
-}
-
-input EventInput {
-  imageUrl: String
-  streamID: String
-  title: String
-}
-
 type Mutation {
+  createZucityAnnouncement(input: CreateZucityAnnouncementInput!): CreateZucityAnnouncementPayload
   createZucityApplicationForm(input: CreateZucityApplicationFormInput!): CreateZucityApplicationFormPayload
   createZucityDappInfo(input: CreateZucityDappInfoInput!): CreateZucityDappInfoPayload
   createZucityEvent(input: CreateZucityEventInput!): CreateZucityEventPayload
   createZucityEventPost(input: CreateZucityEventPostInput!): CreateZucityEventPostPayload
   createZucityEventRegistrationAndAccess(input: CreateZucityEventRegistrationAndAccessInput!): CreateZucityEventRegistrationAndAccessPayload
+  createZucityInstalledApp(input: CreateZucityInstalledAppInput!): CreateZucityInstalledAppPayload
   createZucityPermission(input: CreateZucityPermissionInput!): CreateZucityPermissionPayload
   createZucityProfile(input: CreateZucityProfileInput!): CreateZucityProfilePayload @deprecated(reason: "Replaced by the setZucityProfile mutation, createZucityProfile will be removed in a future version of ComposeDB.")
   createZucityRole(input: CreateZucityRoleInput!): CreateZucityRolePayload
   createZucityRolePermission(input: CreateZucityRolePermissionInput!): CreateZucityRolePermissionPayload
   createZucitySession(input: CreateZucitySessionInput!): CreateZucitySessionPayload
   createZucitySpace(input: CreateZucitySpaceInput!): CreateZucitySpacePayload
+  createZucitySpaceGating(input: CreateZucitySpaceGatingInput!): CreateZucitySpaceGatingPayload
   createZucityUserRoles(input: CreateZucityUserRolesInput!): CreateZucityUserRolesPayload
+  enableIndexingZucityAnnouncement(input: EnableIndexingZucityAnnouncementInput!): EnableIndexingZucityAnnouncementPayload
   enableIndexingZucityApplicationForm(input: EnableIndexingZucityApplicationFormInput!): EnableIndexingZucityApplicationFormPayload
   enableIndexingZucityDappInfo(input: EnableIndexingZucityDappInfoInput!): EnableIndexingZucityDappInfoPayload
   enableIndexingZucityEvent(input: EnableIndexingZucityEventInput!): EnableIndexingZucityEventPayload
   enableIndexingZucityEventPost(input: EnableIndexingZucityEventPostInput!): EnableIndexingZucityEventPostPayload
   enableIndexingZucityEventRegistrationAndAccess(input: EnableIndexingZucityEventRegistrationAndAccessInput!): EnableIndexingZucityEventRegistrationAndAccessPayload
+  enableIndexingZucityInstalledApp(input: EnableIndexingZucityInstalledAppInput!): EnableIndexingZucityInstalledAppPayload
   enableIndexingZucityPermission(input: EnableIndexingZucityPermissionInput!): EnableIndexingZucityPermissionPayload
   enableIndexingZucityProfile(input: EnableIndexingZucityProfileInput!): EnableIndexingZucityProfilePayload
   enableIndexingZucityRole(input: EnableIndexingZucityRoleInput!): EnableIndexingZucityRolePayload
   enableIndexingZucityRolePermission(input: EnableIndexingZucityRolePermissionInput!): EnableIndexingZucityRolePermissionPayload
   enableIndexingZucitySession(input: EnableIndexingZucitySessionInput!): EnableIndexingZucitySessionPayload
   enableIndexingZucitySpace(input: EnableIndexingZucitySpaceInput!): EnableIndexingZucitySpacePayload
+  enableIndexingZucitySpaceGating(input: EnableIndexingZucitySpaceGatingInput!): EnableIndexingZucitySpaceGatingPayload
   enableIndexingZucityUserRoles(input: EnableIndexingZucityUserRolesInput!): EnableIndexingZucityUserRolesPayload
   setZucityProfile(input: SetZucityProfileInput!): SetZucityProfilePayload
+  updateZucityAnnouncement(input: UpdateZucityAnnouncementInput!): UpdateZucityAnnouncementPayload
   updateZucityApplicationForm(input: UpdateZucityApplicationFormInput!): UpdateZucityApplicationFormPayload
   updateZucityDappInfo(input: UpdateZucityDappInfoInput!): UpdateZucityDappInfoPayload
   updateZucityEvent(input: UpdateZucityEventInput!): UpdateZucityEventPayload
   updateZucityEventPost(input: UpdateZucityEventPostInput!): UpdateZucityEventPostPayload
   updateZucityEventRegistrationAndAccess(input: UpdateZucityEventRegistrationAndAccessInput!): UpdateZucityEventRegistrationAndAccessPayload
+  updateZucityInstalledApp(input: UpdateZucityInstalledAppInput!): UpdateZucityInstalledAppPayload
   updateZucityPermission(input: UpdateZucityPermissionInput!): UpdateZucityPermissionPayload
   updateZucityProfile(input: UpdateZucityProfileInput!): UpdateZucityProfilePayload
   updateZucityRole(input: UpdateZucityRoleInput!): UpdateZucityRolePayload
   updateZucityRolePermission(input: UpdateZucityRolePermissionInput!): UpdateZucityRolePermissionPayload
   updateZucitySession(input: UpdateZucitySessionInput!): UpdateZucitySessionPayload
   updateZucitySpace(input: UpdateZucitySpaceInput!): UpdateZucitySpacePayload
+  updateZucitySpaceGating(input: UpdateZucitySpaceGatingInput!): UpdateZucitySpaceGatingPayload
   updateZucityUserRoles(input: UpdateZucityUserRolesInput!): UpdateZucityUserRolesPayload
 }
 
@@ -675,6 +815,18 @@ type PageInfo {
   startCursor: String
 }
 
+input PartialZucityAnnouncementInput {
+  createdAt: DateTime
+  customAttributes: [TBDInput]
+  description: String
+  eventId: CeramicStreamID
+  sourceId: String
+  spaceId: CeramicStreamID
+  tags: [ZucityAnnouncementTagInput]
+  title: String
+  updatedAt: DateTime
+}
+
 input PartialZucityApplicationFormInput {
   answers: String
   approveStatus: String
@@ -684,9 +836,12 @@ input PartialZucityApplicationFormInput {
 }
 
 input PartialZucityDappInfoInput {
+  appLogoUrl: String
   appName: String
   appType: String
   appUrl: String
+  auditLogUrl: String
+  auditStatus: String
   audited: String
   bannerUrl: String
   categories: String
@@ -699,9 +854,13 @@ input PartialZucityDappInfoInput {
   installEnv: String
   installedEvents: [CeramicStreamID]
   installedSpaces: [CeramicStreamID]
+  integrateType: String
+  isInstallable: String
+  isSCApp: String
   openSource: String
   profileId: CeramicStreamID
   repositoryUrl: String
+  scAddresses: [ZucityDappInfoScAddressInput]
   tagline: String
   websiteUrl: String
 }
@@ -769,6 +928,17 @@ input PartialZucityEventRegistrationAndAccessInput {
   zuPassInfo: [ZucityEventRegistrationAndAccessZuPassInput]
 }
 
+input PartialZucityInstalledAppInput {
+  createdAt: DateTime
+  customAttributes: [TBDInput]
+  eventId: CeramicStreamID
+  installedAppId: CeramicStreamID
+  nativeAppName: String
+  sourceId: String
+  spaceId: CeramicStreamID
+  updatedAt: DateTime
+}
+
 input PartialZucityPermissionInput {
   action: String
   created_at: DateTime
@@ -779,9 +949,10 @@ input PartialZucityPermissionInput {
 }
 
 input PartialZucityProfileInput {
+  address: String
   avatar: String
   customAttributes: [TBDInput]
-  myEvents: [EventInput]
+  email: String
   myScrollPassTickets: [ScrollTicketInput]
   username: String
 }
@@ -833,36 +1004,44 @@ input PartialZucitySessionInput {
   videoUrl: String
 }
 
+input PartialZucitySpaceGatingInput {
+  ERC20ContractAddress: String
+  ERC721ContractAddress: String
+  ERC1155ContractAddress: String
+  PoapsId: [ZucitySpaceGatingPoapidInput]
+  customAttributes: [TBDInput]
+  gatingCondition: String
+  gatingStatus: String
+  spaceId: CeramicStreamID
+  zuPassInfo: [ZucitySpaceGatingZuPassInput]
+}
+
 input PartialZucitySpaceInput {
-  admins: [DID]
   avatar: String
   banner: String
   category: String
+  color: String
+  createdAt: DateTime
   customAttributes: [TBDInput]
   customLinks: [ZucitySpaceLinkInput]
   description: String
-  discord: String
-  ens: String
-  gated: String
-  github: String
-  lens: String
-  members: [DID]
   name: String
-  nostr: String
+  owner: DID
   profileId: CeramicStreamID
-  superAdmin: [DID]
+  socialLinks: [ZucitySpaceLinkInput]
   tagline: String
-  telegram: String
-  twitter: String
-  website: String
+  tags: [ZucitySpaceTagInput]
+  updatedAt: DateTime
 }
 
 input PartialZucityUserRolesInput {
   created_at: DateTime
   customAttributes: [TBDInput]
+  eventId: CeramicStreamID
   resourceId: String
   roleId: String
   source: String
+  spaceId: CeramicStreamID
   updated_at: DateTime
   userId: DID
 }
@@ -880,6 +1059,17 @@ type Query {
   ): [Node]!
   """Account currently authenticated on the Ceramic instance, if set"""
   viewer: CeramicAccount
+  zucityAnnouncementCount: Int!
+  zucityAnnouncementIndex(
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+    """Returns the first n items from the list."""
+    first: Int
+    """Returns the last n items from the list."""
+    last: Int
+  ): ZucityAnnouncementConnection
   zucityApplicationFormCount: Int!
   zucityApplicationFormIndex(
     """Returns the items in the list that come after the specified cursor."""
@@ -941,6 +1131,19 @@ type Query {
     """Returns the last n items from the list."""
     last: Int
   ): ZucityEventRegistrationAndAccessConnection
+  zucityInstalledAppCount(filters: ZucityInstalledAppFiltersInput): Int!
+  zucityInstalledAppIndex(
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+    filters: ZucityInstalledAppFiltersInput
+    """Returns the first n items from the list."""
+    first: Int
+    """Returns the last n items from the list."""
+    last: Int
+    sorting: ZucityInstalledAppSortingInput
+  ): ZucityInstalledAppConnection
   zucityPermissionCount(filters: ZucityPermissionFiltersInput): Int!
   zucityPermissionIndex(
     """Returns the items in the list that come after the specified cursor."""
@@ -1007,6 +1210,17 @@ type Query {
     sorting: ZucitySessionSortingInput
   ): ZucitySessionConnection
   zucitySpaceCount(filters: ZucitySpaceFiltersInput): Int!
+  zucitySpaceGatingCount: Int!
+  zucitySpaceGatingIndex(
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+    """Returns the first n items from the list."""
+    first: Int
+    """Returns the last n items from the list."""
+    last: Int
+  ): ZucitySpaceGatingConnection
   zucitySpaceIndex(
     """Returns the items in the list that come after the specified cursor."""
     after: String
@@ -1125,6 +1339,25 @@ input UpdateOptionsInput {
   version: CeramicCommitID
 }
 
+input UpdateZucityAnnouncementInput {
+  clientMutationId: String
+  content: PartialZucityAnnouncementInput!
+  id: ID!
+  options: UpdateOptionsInput
+}
+
+type UpdateZucityAnnouncementPayload {
+  clientMutationId: String
+  document: ZucityAnnouncement!
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+  """Account currently authenticated on the Ceramic instance, if set"""
+  viewer: CeramicAccount
+}
+
 input UpdateZucityApplicationFormInput {
   clientMutationId: String
   content: PartialZucityApplicationFormInput!
@@ -1211,6 +1444,25 @@ input UpdateZucityEventRegistrationAndAccessInput {
 type UpdateZucityEventRegistrationAndAccessPayload {
   clientMutationId: String
   document: ZucityEventRegistrationAndAccess!
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+  """Account currently authenticated on the Ceramic instance, if set"""
+  viewer: CeramicAccount
+}
+
+input UpdateZucityInstalledAppInput {
+  clientMutationId: String
+  content: PartialZucityInstalledAppInput!
+  id: ID!
+  options: UpdateOptionsInput
+}
+
+type UpdateZucityInstalledAppPayload {
+  clientMutationId: String
+  document: ZucityInstalledApp!
   """Fetches an object given its ID"""
   node(
     """The ID of an object"""
@@ -1315,6 +1567,25 @@ type UpdateZucitySessionPayload {
   viewer: CeramicAccount
 }
 
+input UpdateZucitySpaceGatingInput {
+  clientMutationId: String
+  content: PartialZucitySpaceGatingInput!
+  id: ID!
+  options: UpdateOptionsInput
+}
+
+type UpdateZucitySpaceGatingPayload {
+  clientMutationId: String
+  document: ZucitySpaceGating!
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+  """Account currently authenticated on the Ceramic instance, if set"""
+  viewer: CeramicAccount
+}
+
 input UpdateZucitySpaceInput {
   clientMutationId: String
   content: PartialZucitySpaceInput!
@@ -1351,6 +1622,59 @@ type UpdateZucityUserRolesPayload {
   ): Node
   """Account currently authenticated on the Ceramic instance, if set"""
   viewer: CeramicAccount
+}
+
+type ZucityAnnouncement implements Node {
+  """Account controlling the document"""
+  author: CeramicAccount!
+  createdAt: DateTime!
+  customAttributes: [TBD]
+  description: String
+  event: ZucityEvent
+  eventId: CeramicStreamID
+  id: ID!
+  sourceId: String!
+  space: ZucitySpace
+  spaceId: CeramicStreamID
+  tags: [ZucityAnnouncementTag]
+  title: String!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type ZucityAnnouncementConnection {
+  """A list of edges."""
+  edges: [ZucityAnnouncementEdge]
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type ZucityAnnouncementEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+  """The item at the end of the edge"""
+  node: ZucityAnnouncement
+}
+
+input ZucityAnnouncementInput {
+  createdAt: DateTime!
+  customAttributes: [TBDInput]
+  description: String
+  eventId: CeramicStreamID
+  sourceId: String!
+  spaceId: CeramicStreamID
+  tags: [ZucityAnnouncementTagInput]
+  title: String!
+  updatedAt: DateTime!
+}
+
+type ZucityAnnouncementTag {
+  tag: String!
+}
+
+input ZucityAnnouncementTagInput {
+  tag: String!
 }
 
 type ZucityApplicationForm implements Node {
@@ -1391,9 +1715,12 @@ input ZucityApplicationFormInput {
 }
 
 type ZucityDappInfo implements Node {
+  appLogoUrl: String!
   appName: String!
   appType: String!
   appUrl: String
+  auditLogUrl: String
+  auditStatus: String
   audited: String
   """Account controlling the document"""
   author: CeramicAccount!
@@ -1409,10 +1736,14 @@ type ZucityDappInfo implements Node {
   installEnv: String
   installedEvents: [CeramicStreamID]
   installedSpaces: [CeramicStreamID]
+  integrateType: String
+  isInstallable: String!
+  isSCApp: String
   openSource: String!
   profile: ZucityProfile
   profileId: CeramicStreamID!
   repositoryUrl: String
+  scAddresses: [ZucityDappInfoScAddress]
   tagline: String!
   websiteUrl: String
 }
@@ -1441,9 +1772,12 @@ input ZucityDappInfoFiltersInput {
 }
 
 input ZucityDappInfoInput {
+  appLogoUrl: String!
   appName: String!
   appType: String!
   appUrl: String
+  auditLogUrl: String
+  auditStatus: String
   audited: String
   bannerUrl: String!
   categories: String!
@@ -1456,9 +1790,13 @@ input ZucityDappInfoInput {
   installEnv: String
   installedEvents: [CeramicStreamID]
   installedSpaces: [CeramicStreamID]
+  integrateType: String
+  isInstallable: String!
+  isSCApp: String
   openSource: String!
   profileId: CeramicStreamID!
   repositoryUrl: String
+  scAddresses: [ZucityDappInfoScAddressInput]
   tagline: String!
   websiteUrl: String
 }
@@ -1471,7 +1809,19 @@ input ZucityDappInfoObjectFilterInput {
   devStatus: StringValueFilterInput
   developerName: StringValueFilterInput
   installEnv: StringValueFilterInput
+  isInstallable: StringValueFilterInput
+  isSCApp: StringValueFilterInput
   openSource: StringValueFilterInput
+}
+
+type ZucityDappInfoScAddress {
+  address: String
+  chain: String
+}
+
+input ZucityDappInfoScAddressInput {
+  address: String
+  chain: String
 }
 
 input ZucityDappInfoSortingInput {
@@ -1482,11 +1832,25 @@ input ZucityDappInfoSortingInput {
   devStatus: SortOrder
   developerName: SortOrder
   installEnv: SortOrder
+  isInstallable: SortOrder
+  isSCApp: SortOrder
   openSource: SortOrder
 }
 
 type ZucityEvent implements Node {
   admins: [CeramicAccount]
+  announcements(
+    """Returns only documents created by the provided account"""
+    account: ID
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+    """Returns the first n items from the list."""
+    first: Int
+    """Returns the last n items from the list."""
+    last: Int
+  ): ZucityAnnouncementConnection!
   applicationForms(
     """Returns only documents created by the provided account"""
     account: ID
@@ -1510,6 +1874,20 @@ type ZucityEvent implements Node {
   gated: String
   id: ID!
   imageUrl: String
+  installedApps(
+    """Returns only documents created by the provided account"""
+    account: ID
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+    filters: ZucityDappInfoFiltersInput
+    """Returns the first n items from the list."""
+    first: Int
+    """Returns the last n items from the list."""
+    last: Int
+    sorting: ZucityDappInfoSortingInput
+  ): ZucityDappInfoConnection!
   maxParticipant: Int
   meetingUrl: String
   members: [CeramicAccount]
@@ -1570,6 +1948,20 @@ type ZucityEvent implements Node {
   title: String!
   tracks: String
   update: [ZucityEventOrganizerUpdate]
+  userRoles(
+    """Returns only documents created by the provided account"""
+    account: ID
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+    filters: ZucityUserRolesFiltersInput
+    """Returns the first n items from the list."""
+    first: Int
+    """Returns the last n items from the list."""
+    last: Int
+    sorting: ZucityUserRolesSortingInput
+  ): ZucityUserRolesConnection!
   zulottoHash: [ZucityEventMemberZulotto]
   zupassHash: [ZucityEventMemberZupass]
 }
@@ -1876,6 +2268,69 @@ input ZucityEventSortingInput {
   title: SortOrder
 }
 
+type ZucityInstalledApp implements Node {
+  """Account controlling the document"""
+  author: CeramicAccount!
+  createdAt: DateTime!
+  customAttributes: [TBD]
+  event: ZucityEvent
+  eventId: CeramicStreamID
+  id: ID!
+  installedApp: ZucityDappInfo
+  installedAppId: CeramicStreamID
+  nativeAppName: String
+  sourceId: String!
+  space: ZucitySpace
+  spaceId: CeramicStreamID
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type ZucityInstalledAppConnection {
+  """A list of edges."""
+  edges: [ZucityInstalledAppEdge]
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type ZucityInstalledAppEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+  """The item at the end of the edge"""
+  node: ZucityInstalledApp
+}
+
+input ZucityInstalledAppFiltersInput {
+  and: [ZucityInstalledAppFiltersInput!]
+  not: ZucityInstalledAppFiltersInput
+  or: [ZucityInstalledAppFiltersInput!]
+  where: ZucityInstalledAppObjectFilterInput
+}
+
+input ZucityInstalledAppInput {
+  createdAt: DateTime!
+  customAttributes: [TBDInput]
+  eventId: CeramicStreamID
+  installedAppId: CeramicStreamID
+  nativeAppName: String
+  sourceId: String!
+  spaceId: CeramicStreamID
+  updatedAt: DateTime!
+}
+
+input ZucityInstalledAppObjectFilterInput {
+  installedAppId: StringValueFilterInput
+  nativeAppName: StringValueFilterInput
+  sourceId: StringValueFilterInput
+}
+
+input ZucityInstalledAppSortingInput {
+  installedAppId: SortOrder
+  nativeAppName: SortOrder
+  sourceId: SortOrder
+}
+
 type ZucityPermission implements Node {
   action: String!
   """Account controlling the document"""
@@ -1929,6 +2384,7 @@ input ZucityPermissionSortingInput {
 }
 
 type ZucityProfile implements Node {
+  address: String!
   applicationForms(
     """Returns only documents created by the provided account"""
     account: ID
@@ -1959,6 +2415,7 @@ type ZucityProfile implements Node {
     last: Int
     sorting: ZucityDappInfoSortingInput
   ): ZucityDappInfoConnection!
+  email: String
   events(
     """Returns only documents created by the provided account"""
     account: ID
@@ -1974,7 +2431,6 @@ type ZucityProfile implements Node {
     sorting: ZucityEventSortingInput
   ): ZucityEventConnection!
   id: ID!
-  myEvents: [Event]
   myScrollPassTickets: [ScrollTicket]
   spaces(
     """Returns only documents created by the provided account"""
@@ -2017,18 +2473,23 @@ input ZucityProfileFiltersInput {
 }
 
 input ZucityProfileInput {
+  address: String!
   avatar: String
   customAttributes: [TBDInput]
-  myEvents: [EventInput]
+  email: String
   myScrollPassTickets: [ScrollTicketInput]
   username: String!
 }
 
 input ZucityProfileObjectFilterInput {
+  address: StringValueFilterInput
+  email: StringValueFilterInput
   username: StringValueFilterInput
 }
 
 input ZucityProfileSortingInput {
+  address: SortOrder
+  email: SortOrder
   username: SortOrder
 }
 
@@ -2251,17 +2712,28 @@ input ZucitySessionSortingInput {
 }
 
 type ZucitySpace implements Node {
-  admins: [CeramicAccount]
+  announcements(
+    """Returns only documents created by the provided account"""
+    account: ID
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+    """Returns the first n items from the list."""
+    first: Int
+    """Returns the last n items from the list."""
+    last: Int
+  ): ZucityAnnouncementConnection!
   """Account controlling the document"""
   author: CeramicAccount!
   avatar: String
   banner: String
   category: String
+  color: String
+  createdAt: DateTime!
   customAttributes: [TBD]
   customLinks: [ZucitySpaceLink]
   description: String!
-  discord: String
-  ens: String
   events(
     """Returns only documents created by the provided account"""
     account: ID
@@ -2276,20 +2748,55 @@ type ZucitySpace implements Node {
     last: Int
     sorting: ZucityEventSortingInput
   ): ZucityEventConnection!
-  gated: String
-  github: String
   id: ID!
-  lens: String
-  members: [CeramicAccount]
+  installedApps(
+    """Returns only documents created by the provided account"""
+    account: ID
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+    filters: ZucityDappInfoFiltersInput
+    """Returns the first n items from the list."""
+    first: Int
+    """Returns the last n items from the list."""
+    last: Int
+    sorting: ZucityDappInfoSortingInput
+  ): ZucityDappInfoConnection!
   name: String!
-  nostr: String
+  owner: CeramicAccount!
   profile: ZucityProfile
   profileId: CeramicStreamID!
-  superAdmin: [CeramicAccount!]!
+  socialLinks: [ZucitySpaceLink]
+  spaceGating(
+    """Returns only documents created by the provided account"""
+    account: ID
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+    """Returns the first n items from the list."""
+    first: Int
+    """Returns the last n items from the list."""
+    last: Int
+  ): ZucitySpaceGatingConnection!
   tagline: String
-  telegram: String
-  twitter: String
-  website: String
+  tags: [ZucitySpaceTag]
+  updatedAt: DateTime!
+  userRoles(
+    """Returns only documents created by the provided account"""
+    account: ID
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+    filters: ZucityUserRolesFiltersInput
+    """Returns the first n items from the list."""
+    first: Int
+    """Returns the last n items from the list."""
+    last: Int
+    sorting: ZucityUserRolesSortingInput
+  ): ZucityUserRolesConnection!
 }
 
 """A connection to a list of items."""
@@ -2315,28 +2822,88 @@ input ZucitySpaceFiltersInput {
   where: ZucitySpaceObjectFilterInput
 }
 
+type ZucitySpaceGating implements Node {
+  ERC20ContractAddress: String
+  ERC721ContractAddress: String
+  ERC1155ContractAddress: String
+  PoapsId: [ZucitySpaceGatingPoapid]
+  """Account controlling the document"""
+  author: CeramicAccount!
+  customAttributes: [TBD]
+  gatingCondition: String
+  gatingStatus: String
+  id: ID!
+  space: ZucitySpace
+  spaceId: CeramicStreamID!
+  zuPassInfo: [ZucitySpaceGatingZuPass]
+}
+
+"""A connection to a list of items."""
+type ZucitySpaceGatingConnection {
+  """A list of edges."""
+  edges: [ZucitySpaceGatingEdge]
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type ZucitySpaceGatingEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+  """The item at the end of the edge"""
+  node: ZucitySpaceGating
+}
+
+input ZucitySpaceGatingInput {
+  ERC20ContractAddress: String
+  ERC721ContractAddress: String
+  ERC1155ContractAddress: String
+  PoapsId: [ZucitySpaceGatingPoapidInput]
+  customAttributes: [TBDInput]
+  gatingCondition: String
+  gatingStatus: String
+  spaceId: CeramicStreamID!
+  zuPassInfo: [ZucitySpaceGatingZuPassInput]
+}
+
+type ZucitySpaceGatingPoapid {
+  poapId: String
+}
+
+input ZucitySpaceGatingPoapidInput {
+  poapId: String
+}
+
+type ZucitySpaceGatingZuPass {
+  access: String
+  eventId: String
+  eventName: String
+  registration: String
+}
+
+input ZucitySpaceGatingZuPassInput {
+  access: String
+  eventId: String
+  eventName: String
+  registration: String
+}
+
 input ZucitySpaceInput {
-  admins: [DID]
   avatar: String
   banner: String
   category: String
+  color: String
+  createdAt: DateTime!
   customAttributes: [TBDInput]
   customLinks: [ZucitySpaceLinkInput]
   description: String!
-  discord: String
-  ens: String
-  gated: String
-  github: String
-  lens: String
-  members: [DID]
   name: String!
-  nostr: String
+  owner: DID!
   profileId: CeramicStreamID!
-  superAdmin: [DID]!
+  socialLinks: [ZucitySpaceLinkInput]
   tagline: String
-  telegram: String
-  twitter: String
-  website: String
+  tags: [ZucitySpaceTagInput]
+  updatedAt: DateTime!
 }
 
 type ZucitySpaceLink {
@@ -2351,16 +2918,22 @@ input ZucitySpaceLinkInput {
 
 input ZucitySpaceObjectFilterInput {
   category: StringValueFilterInput
-  gated: StringValueFilterInput
   name: StringValueFilterInput
-  tagline: StringValueFilterInput
+  owner: StringValueFilterInput
 }
 
 input ZucitySpaceSortingInput {
   category: SortOrder
-  gated: SortOrder
   name: SortOrder
-  tagline: SortOrder
+  owner: SortOrder
+}
+
+type ZucitySpaceTag {
+  tag: String!
+}
+
+input ZucitySpaceTagInput {
+  tag: String!
 }
 
 type ZucityUserRoles implements Node {
@@ -2368,10 +2941,14 @@ type ZucityUserRoles implements Node {
   author: CeramicAccount!
   created_at: DateTime!
   customAttributes: [TBD]
+  event: ZucityEvent
+  eventId: CeramicStreamID
   id: ID!
   resourceId: String
   roleId: String!
   source: String
+  space: ZucitySpace
+  spaceId: CeramicStreamID
   updated_at: DateTime!
   userId: CeramicAccount!
 }
@@ -2402,9 +2979,11 @@ input ZucityUserRolesFiltersInput {
 input ZucityUserRolesInput {
   created_at: DateTime!
   customAttributes: [TBDInput]
+  eventId: CeramicStreamID
   resourceId: String
   roleId: String!
   source: String
+  spaceId: CeramicStreamID
   updated_at: DateTime!
   userId: DID!
 }

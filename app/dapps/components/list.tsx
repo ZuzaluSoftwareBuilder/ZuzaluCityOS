@@ -13,9 +13,10 @@ import { Stack } from '@mui/material';
 import { useState, useMemo } from 'react';
 import { Item } from '.';
 import Filter from './filter';
-import { useQuery } from '@tanstack/react-query';
 import { Dapp } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
+import { useGraphQL } from '@/hooks/useGraphQL';
 import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
 
 interface ListProps {
@@ -26,51 +27,28 @@ interface ListProps {
 export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { composeClient, ceramic } = useCeramicContext();
+  const { ceramic } = useCeramicContext();
   const userDID = ceramic.did?.parent;
   const [filter, setFilter] = useState<string[]>([]);
   const [searchVal, setSearchVal] = useState<string>('');
 
-  const { data, isLoading } = useQuery<Dapp[]>({
-    queryKey: ['getDappInfoList'],
-    queryFn: async () => {
-      const response: any = await composeClient.executeQuery(`
-      query {
-        zucityDappInfoIndex(first: 100) {
-          edges {
-            node {
-              id
-              appName
-              tagline
-              developerName
-              description
-              bannerUrl
-              categories
-              devStatus
-              openSource
-              repositoryUrl
-              appUrl
-              websiteUrl
-              docsUrl
-              profile {
-                author {
-                  id
-                }
-              }
-            }
-          }
-        }
-      }
-    `);
-
-      if (response && response.data && 'zucityDappInfoIndex' in response.data) {
-        return response.data.zucityDappInfoIndex.edges.map(
-          (edge: any) => edge.node,
-        );
-      }
-      return [];
+  const { data, isLoading } = useGraphQL(
+    ['GET_DAPP_LIST_QUERY'],
+    GET_DAPP_LIST_QUERY,
+    {
+      first: 100,
     },
-  });
+    {
+      select: (data) => {
+        if (data.data.zucityDappInfoIndex?.edges) {
+          return data.data.zucityDappInfoIndex.edges.map(
+            (edge: any) => edge.node,
+          );
+        }
+        return [];
+      },
+    },
+  );
 
   const filterData = useMemo(() => {
     const tags = data?.map((dapp) => dapp.categories.split(','));

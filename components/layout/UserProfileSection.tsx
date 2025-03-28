@@ -28,10 +28,11 @@ interface UserProfileSectionProps {
 
 const UserProfileSection: React.FC<UserProfileSectionProps> = ({
   avatarSize = 28,
-  buttonClassName = "text-[16px] font-[500] leading-[1.2] text-white bg-transparent gap-[6px]",
+  buttonClassName = 'text-[16px] font-[500] leading-[1.2] text-white bg-transparent gap-[6px]',
 }) => {
   const router = useRouter();
-  const { isAuthenticated, showAuthPrompt, logout, username, profile } = useCeramicContext();
+  const { isAuthenticated, showAuthPrompt, logout, username, profile } =
+    useCeramicContext();
   const { litDisconnect } = useLitContext();
   const { disconnect } = useDisconnect();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -72,10 +73,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
       <Profile showModal={showProfile} onClose={() => setShowProfile(false)} />
       {isAuthenticated ? (
         <>
-          <Button
-            className={buttonClassName}
-            onPress={handleMenuClick}
-          >
+          <Button className={buttonClassName} onPress={handleMenuClick}>
             <Image
               src={profile?.avatar ?? '/user/avatar_p.png'}
               alt="avatar"
@@ -238,9 +236,9 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
         </>
       ) : (
         <Button
+          color="functional"
           startContent={<WalletIcon size={5} />}
           onPress={() => showAuthPrompt('connectButton')}
-          border
           className="text-[14px] font-[500] leading-[1.2] text-white rounded-[8px] bg-white/5 h-[30px]"
         >
           Connect
@@ -250,4 +248,4 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
   );
 };
 
-export default UserProfileSection; 
+export default UserProfileSection;

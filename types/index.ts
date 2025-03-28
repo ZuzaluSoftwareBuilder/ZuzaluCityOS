@@ -197,27 +197,17 @@ export interface Space {
   name: string;
   profileId?: string;
   tagline: string;
-  website?: string;
-  twitter?: string;
-  telegram?: string;
-  nostr?: string;
-  lens?: string;
-  github?: string;
-  discord?: string;
-  ens?: string;
   category?: string;
-  members?: {
-    id: string;
+  tags?: {
+    tag: string;
   }[];
-  admins?: {
-    id: string;
-  }[];
-  superAdmin?: {
+  owner: {
     id: string;
     zucityProfile: Profile;
-  }[];
+  };
   customLinks?: Link[];
-  events: {
+  socialLinks?: Link[];
+  events?: {
     edges: {
       node: {
         startTime: string;
@@ -225,7 +215,14 @@ export interface Space {
       };
     }[];
   };
+  userRoles?: {
+    edges: {
+      node: UserRole;
+    }[];
+  };
   customAttributes: TBD[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CalendarConfig {
@@ -595,6 +592,7 @@ export interface Dapp {
   developerName: string;
   description: string;
   bannerUrl: string;
+  appLogoUrl: string;
   categories: string;
   devStatus: string;
   openSource: boolean;
@@ -603,10 +601,19 @@ export interface Dapp {
   websiteUrl: string;
   docsUrl: string;
   tagline: string;
+  isInstallable: string;
+  isSCApp: boolean;
+  scAddresses: {
+    address: string;
+    chain: string;
+  }[];
+  auditLogUrl: string;
   profile: {
     author: {
       id: string;
     };
+    username: string;
+    avatar: string;
   };
 }
 
@@ -661,5 +668,24 @@ export interface UserRoleData {
 export interface IProfile {
   zucityProfileIndex: {
     edges: { node: Profile }[];
-  }
+  };
+}
+
+export interface IUserProfileWithSpaceAndEvent {
+  zucityProfile: {
+    id: string;
+    username: string;
+    spaces: {
+      edges: { node: Space }[];
+    };
+    events: {
+      edges: { node: Event }[];
+    };
+  };
+}
+
+export interface InstalledApp {
+  installedAppId?: string;
+  nativeAppName?: string;
+  installedApp?: Dapp;
 }
