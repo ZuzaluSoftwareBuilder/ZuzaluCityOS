@@ -18,7 +18,7 @@ export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
     )}>
       <div className="relative">
         <Skeleton className="rounded-none">
-          <div className="w-full aspect-[2.528] pc:aspect-[2.522] tablet:aspect-[2.520] mobile:aspect-[2.520]"></div>
+          <div className="w-full aspect-[2.5]"></div>
         </Skeleton>
         <Skeleton className="absolute left-[11px] w-[60px] h-[60px] bottom-[-21px] z-10 rounded-full" />
       </div>
@@ -87,7 +87,7 @@ export function SpaceCard({ data, autoWidth, isJoined, isFollowed }: SpaceCardPr
           alt={name}
           width={'100%'}
           height={'100%'}
-          className="w-full aspect-[2.528] pc:aspect-[2.522] tablet:aspect-[2.520] mobile:aspect-[2.520] object-cover rounded-none"
+          className="w-full aspect-[2.5] object-cover rounded-none"
         />
         <Avatar
           src={avatar}
