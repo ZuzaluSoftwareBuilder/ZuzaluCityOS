@@ -9,6 +9,7 @@ type ZucityInvitation
   @createIndex(fields: [{ path: "isRead" }]) {
   author: DID! @documentAccount
   inviteeId: DID!
+  inviterId: DID!
   resource: String! @string(minLength: 1, maxLength: 100000)
   resourceId: String! @string(minLength: 1, maxLength: 100000)
   roleId: StreamID!
@@ -17,6 +18,8 @@ type ZucityInvitation
   isRead: String! @string(minLength: 1, maxLength: 100000)
   inviteeProfileId: StreamID @documentReference(model: "ZucityProfile")
   inviteeProfile: ZucityProfile @relationDocument(property: "inviteeProfileId")
+  inviterProfileId: StreamID @documentReference(model: "ZucityProfile")
+  inviterProfile: ZucityProfile @relationDocument(property: "inviterProfileId")
   eventId: StreamID @documentReference(model: "ZucityEvent")
   event: ZucityEvent @relationDocument(property: "eventId")
   spaceId: StreamID @documentReference(model: "ZucitySpace")
