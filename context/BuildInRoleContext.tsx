@@ -13,6 +13,7 @@ interface BuildInRoleContextType {
   adminRole: RoleData | undefined;
   ownerRole: RoleData | undefined;
   memberRole: RoleData | undefined;
+  isRoleLoading: boolean;
 }
 
 const BuildInRoleContext = createContext<BuildInRoleContextType>({
@@ -20,10 +21,11 @@ const BuildInRoleContext = createContext<BuildInRoleContextType>({
   adminRole: undefined,
   ownerRole: undefined,
   memberRole: undefined,
+  isRoleLoading: false,
 });
 
 export const BuildInRoleProvider = ({ children }: { children: ReactNode }) => {
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['getAllBuildInRoles'],
     queryFn: () => supabase.from('role').select('*').is('resource_id', null),
     select: (data: any) => {
@@ -54,6 +56,7 @@ export const BuildInRoleProvider = ({ children }: { children: ReactNode }) => {
         adminRole,
         ownerRole,
         memberRole,
+        isRoleLoading: isLoading,
       }}
     >
       {children}

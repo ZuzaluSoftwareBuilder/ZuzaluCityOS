@@ -17,7 +17,7 @@ export default function Communities() {
   const { isMobile } = useMediaQuery();
 
   const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
-  const { adminRole, memberRole } = useBuildInRole();
+  const { adminRole, memberRole, isRoleLoading } = useBuildInRole();
 
   const { data: spacesData, isLoading } = useGraphQL(
     ['GET_ALL_SPACE_AND_MEMBER_QUERY'],
@@ -41,7 +41,6 @@ export default function Communities() {
           (edge) => edge!.node,
         ) as Space[];
       },
-      enabled: !!adminRole && !!memberRole,
     },
   );
 
@@ -53,6 +52,8 @@ export default function Communities() {
       return dayjs(b.createdAt).diff(dayjs(a.createdAt));
     });
   }, [spacesData]);
+
+  console.log(isLoading, '===');
 
   return (
     <div className="flex flex-col gap-[10px] border-b border-b-w-10 pb-[20px]">
@@ -69,7 +70,7 @@ export default function Communities() {
         className="flex-1 overflow-auto"
       >
         <div className="flex gap-[20px] overflow-auto px-[20px]">
-          {isLoading
+          {isLoading || isRoleLoading
             ? Array.from({ length: 5 }).map((_, index) => (
                 <SpaceCardSkeleton key={index} />
               ))
