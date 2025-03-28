@@ -1,19 +1,28 @@
 'use client';
 
-import { Sidebar } from 'components/layout';
+import ExploreHeader from '@/components/layout/explore/exploreHeader';
+import { Shapes, } from '@phosphor-icons/react';
+import { CubeIcon, DIcon, GlobalIcon } from '@/components/icons';
+import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
+
 import { useTheme } from '@mui/material/styles';
-import { Stack, useMediaQuery } from '@mui/material';
-import { Header, List, Nav, DappDetail } from './components';
-import { useCallback, useState } from 'react';
+import { useMediaQuery } from '@mui/material';
+import { List, DappDetail } from './components';
+import React, { useCallback, useState } from 'react';
 import { Drawer, DrawerContent } from '@/components/base';
 import DappForm from '@/components/form/DappForm';
 import { Dapp } from '@/types';
 import OwnedDappList from './components/ownedDappList';
 import { useDisclosure } from '@heroui/react';
 
+const NavItems: INavItem[] = [
+  { label: 'Explore Apps', icon: <GlobalIcon /> },
+  { label: 'Ecosystem Projects', icon: <CubeIcon />, isComingSoon: true },
+];
+
 export default function DappsPage() {
   const theme = useTheme();
-  const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [showOwnedDapps, setShowOwnedDapps] = useState(false);
   const [showEditDapp, setShowEditDapp] = useState(false);
   const [detailData, setDetailData] = useState<Dapp | undefined>(undefined);
@@ -47,83 +56,99 @@ export default function DappsPage() {
     setDetailData(data);
   }, []);
 
+  const handleNavChange = useCallback((item: INavItem, index: number) => {
+    // for session
+    // console.log('handleNavChange', item, index);
+  }, []);
+
   return (
-    <Stack direction="row" sx={{ backgroundColor: '#222222' }}>
-      {!isTablet && <Sidebar selected="dapps" />}
-      <Stack direction="column" flex={1} width="100%">
-        <Header onAdd={onOpenEditDapp} />
-        <Nav />
-        <List
-          onDetailClick={handleDetailClick}
-          onOwnedDappsClick={onOpenOwnedDapps}
-        />
-        <Drawer
-          isOpen={isEditDappOpen}
-          classNames={{
-            base: 'w-[700px] max-w-[700px] mobile:w-[100%] mobile:max-w-[100%]',
+    <>
+      <ExploreHeader
+        icon={
+          <Shapes size={isMobile ? 60 : 80} weight="duotone" format="Stroke" />
+        }
+        bgImage={'/dapps/header.png'}
+        title={'Apps'}
+        titlePrefixIcon={<DIcon />}
+        subTitle={'Zuzalu tools for Communities, Events & More'}
+        versionLabel={'dApps v0.1'}
+        addButtonText={'List Your App'}
+        onAdd={onOpenEditDapp}
+      />
+
+      <ExploreNav navItems={NavItems} onNavChange={handleNavChange} />
+
+      <List
+        onDetailClick={handleDetailClick}
+        onOwnedDappsClick={onOpenOwnedDapps}
+      />
+
+      <Drawer
+        isOpen={isEditDappOpen}
+        classNames={{
+          base: 'w-[700px] max-w-[700px] mobile:w-[100%] mobile:max-w-[100%]',
+        }}
+        onOpenChange={onOpenChangeEditDapp}
+      >
+        <DrawerContent>
+          {(onClose) => {
+            return <DappForm handleClose={onClose} />;
           }}
-          onOpenChange={onOpenChangeEditDapp}
-        >
-          <DrawerContent>
-            {(onClose) => {
-              return <DappForm handleClose={onClose} />;
-            }}
-          </DrawerContent>
-        </Drawer>
-        <Drawer
-          isOpen={isDetailOpen}
-          classNames={{
-            base: 'w-[700px] max-w-[700px] mobile:w-[100%] mobile:max-w-[100%]',
+        </DrawerContent>
+      </Drawer>
+      <Drawer
+        isOpen={isDetailOpen}
+        classNames={{
+          base: 'w-[700px] max-w-[700px] mobile:w-[100%] mobile:max-w-[100%]',
+        }}
+        onOpenChange={onOpenChangeDetail}
+      >
+        <DrawerContent>
+          {(onClose) => {
+            return <DappDetail handleClose={onClose} data={detailData} />;
           }}
-          onOpenChange={onOpenChangeDetail}
-        >
-          <DrawerContent>
-            {(onClose) => {
-              return <DappDetail handleClose={onClose} data={detailData} />;
-            }}
-          </DrawerContent>
-        </Drawer>
-        <Drawer
-          isOpen={isOwnedDappsOpen}
-          classNames={{
-            base: 'w-[700px] max-w-[700px] mobile:w-[100%] mobile:max-w-[100%]',
+        </DrawerContent>
+      </Drawer>
+      <Drawer
+        isOpen={isOwnedDappsOpen}
+        classNames={{
+          base: 'w-[700px] max-w-[700px] mobile:w-[100%] mobile:max-w-[100%]',
+        }}
+        onOpenChange={onOpenChangeOwnedDapps}
+      >
+        <DrawerContent>
+          {(onClose) => {
+            return (
+              <>
+                {isOwnedDappsOpen &&
+                  (showOwnedDapps ? (
+                    <DappDetail
+                      handleClose={() => {
+                        setShowOwnedDapps(false);
+                        setDetailData(undefined);
+                      }}
+                      data={detailData}
+                    />
+                  ) : showEditDapp ? (
+                    <DappForm
+                      handleClose={() => {
+                        setShowEditDapp(false);
+                        setDetailData(undefined);
+                      }}
+                      initialData={detailData}
+                    />
+                  ) : (
+                    <OwnedDappList
+                      onViewDapp={(dapp) => handleDetailClick(dapp, true)}
+                      onEditDapp={handleEditDapp}
+                      handleClose={onClose}
+                    />
+                  ))}
+              </>
+            );
           }}
-          onOpenChange={onOpenChangeOwnedDapps}
-        >
-          <DrawerContent>
-            {(onClose) => {
-              return (
-                <>
-                  {isOwnedDappsOpen &&
-                    (showOwnedDapps ? (
-                      <DappDetail
-                        handleClose={() => {
-                          setShowOwnedDapps(false);
-                          setDetailData(undefined);
-                        }}
-                        data={detailData}
-                      />
-                    ) : showEditDapp ? (
-                      <DappForm
-                        handleClose={() => {
-                          setShowEditDapp(false);
-                          setDetailData(undefined);
-                        }}
-                        initialData={detailData}
-                      />
-                    ) : (
-                      <OwnedDappList
-                        onViewDapp={(dapp) => handleDetailClick(dapp, true)}
-                        onEditDapp={handleEditDapp}
-                        handleClose={onClose}
-                      />
-                    ))}
-                </>
-              );
-            }}
-          </DrawerContent>
-        </Drawer>
-      </Stack>
-    </Stack>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
 }
