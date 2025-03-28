@@ -28,3 +28,34 @@ export const getSpaceAnnouncements = async (spaceId: string) => {
     }
   }
 };
+
+export interface CreateAnnouncementParams {
+  spaceId: string;
+  title: string;
+  description: string;
+  tags?: string[];
+}
+
+export const createSpaceAnnouncement = async (
+  params: CreateAnnouncementParams,
+) => {
+  try {
+    const response = await axiosInstance.post(
+      '/api/space/announcement/create',
+      {
+        ...params,
+        id: params.spaceId,
+        resource: 'space',
+      },
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error.response?.data || error.message;
+    } else {
+      throw new Error(
+        'An unknown error occurred while creating space announcement',
+      );
+    }
+  }
+};
