@@ -699,11 +699,17 @@ export interface InstalledApp {
 export interface Announcement {
   id: string;
   title: string;
+  tags: { tag: string }[];
   description: string;
   createdAt: string;
   updatedAt: string;
   sourceId: string;
   author: {
     id: string;
+    zucityProfile: {
+      // FIXME: can not fetch avatar and username from zucityProfile
+      avatar: string;
+      username: string;
+    };
   };
 }

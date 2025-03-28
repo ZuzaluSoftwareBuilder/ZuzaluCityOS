@@ -57,12 +57,19 @@ export const GET_SPACE_ANNOUNCEMENTS_QUERY = graphql(`
             node {
               id
               title
+              tags {
+                tag
+              }
               description
               createdAt
               updatedAt
               sourceId
               author {
                 id
+                zucityProfile {
+                  avatar
+                  username
+                }
               }
             }
           }
@@ -85,12 +92,19 @@ export const GET_EVENT_ANNOUNCEMENTS_QUERY = graphql(`
             node {
               id
               title
+              tags {
+                tag
+              }
               description
               createdAt
               updatedAt
               sourceId
               author {
                 id
+                zucityProfile {
+                  avatar
+                  username
+                }
               }
             }
           }
