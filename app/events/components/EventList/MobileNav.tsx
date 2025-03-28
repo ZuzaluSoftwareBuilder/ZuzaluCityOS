@@ -245,7 +245,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
                       key={option.key}
                       className={cn(
                         dropdownItemBaseClassName,
-                        `${timeFilter === option.key} ?? bg-[rgba(255,255,255,0.1)]`,
+                        timeFilter === option.key ? 'bg-[rgba(255,255,255,0.1)]' : '',
                       )}
                     >
                       <div className={'flex justify-between items-center'}>
