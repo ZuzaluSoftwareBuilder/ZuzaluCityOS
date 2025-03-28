@@ -1386,6 +1386,8 @@ export type PartialZucityInvitationInput = {
   expiresAt?: InputMaybe<Scalars['DateTime']['input']>;
   inviteeId?: InputMaybe<Scalars['DID']['input']>;
   inviteeProfileId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
+  inviterId?: InputMaybe<Scalars['DID']['input']>;
+  inviterProfileId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
   isRead?: InputMaybe<Scalars['String']['input']>;
   lastSentAt?: InputMaybe<Scalars['DateTime']['input']>;
   message?: InputMaybe<Scalars['String']['input']>;
@@ -1483,6 +1485,7 @@ export type PartialZucitySpaceInput = {
   customAttributes?: InputMaybe<Array<InputMaybe<TbdInput>>>;
   customLinks?: InputMaybe<Array<InputMaybe<ZucitySpaceLinkInput>>>;
   description?: InputMaybe<Scalars['String']['input']>;
+  gated?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   owner?: InputMaybe<Scalars['DID']['input']>;
   profileId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
@@ -2949,6 +2952,9 @@ export type ZucityInvitation = Node & {
   inviteeId: CeramicAccount;
   inviteeProfile?: Maybe<ZucityProfile>;
   inviteeProfileId?: Maybe<Scalars['CeramicStreamID']['output']>;
+  inviterId: CeramicAccount;
+  inviterProfile?: Maybe<ZucityProfile>;
+  inviterProfileId?: Maybe<Scalars['CeramicStreamID']['output']>;
   isRead: Scalars['String']['output'];
   lastSentAt?: Maybe<Scalars['DateTime']['output']>;
   message?: Maybe<Scalars['String']['output']>;
@@ -3002,6 +3008,8 @@ export type ZucityInvitationInput = {
   expiresAt: Scalars['DateTime']['input'];
   inviteeId: Scalars['DID']['input'];
   inviteeProfileId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
+  inviterId: Scalars['DID']['input'];
+  inviterProfileId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
   isRead: Scalars['String']['input'];
   lastSentAt?: InputMaybe<Scalars['DateTime']['input']>;
   message?: InputMaybe<Scalars['String']['input']>;
@@ -3094,7 +3102,8 @@ export type ZucityProfile = Node & {
   email?: Maybe<Scalars['String']['output']>;
   events: ZucityEventConnection;
   id: Scalars['ID']['output'];
-  invitated: ZucityInvitationConnection;
+  invitatee: ZucityInvitationConnection;
+  inviter: ZucityInvitationConnection;
   myScrollPassTickets?: Maybe<Array<Maybe<ScrollTicket>>>;
   spaces: ZucitySpaceConnection;
   username: Scalars['String']['output'];
@@ -3132,7 +3141,18 @@ export type ZucityProfileEventsArgs = {
 };
 
 
-export type ZucityProfileInvitatedArgs = {
+export type ZucityProfileInvitateeArgs = {
+  account?: InputMaybe<Scalars['ID']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filters?: InputMaybe<ZucityInvitationFiltersInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  sorting?: InputMaybe<ZucityInvitationSortingInput>;
+};
+
+
+export type ZucityProfileInviterArgs = {
   account?: InputMaybe<Scalars['ID']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -3440,6 +3460,7 @@ export type ZucitySpace = Node & {
   customLinks?: Maybe<Array<Maybe<ZucitySpaceLink>>>;
   description: Scalars['String']['output'];
   events: ZucityEventConnection;
+  gated?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   installedApps: ZucityInstalledAppConnection;
   name: Scalars['String']['output'];
@@ -3610,6 +3631,7 @@ export type ZucitySpaceInput = {
   customAttributes?: InputMaybe<Array<InputMaybe<TbdInput>>>;
   customLinks?: InputMaybe<Array<InputMaybe<ZucitySpaceLinkInput>>>;
   description: Scalars['String']['input'];
+  gated?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   owner: Scalars['DID']['input'];
   profileId: Scalars['CeramicStreamID']['input'];
@@ -3632,12 +3654,14 @@ export type ZucitySpaceLinkInput = {
 
 export type ZucitySpaceObjectFilterInput = {
   category?: InputMaybe<StringValueFilterInput>;
+  gated?: InputMaybe<StringValueFilterInput>;
   name?: InputMaybe<StringValueFilterInput>;
   owner?: InputMaybe<StringValueFilterInput>;
 };
 
 export type ZucitySpaceSortingInput = {
   category?: InputMaybe<SortOrder>;
+  gated?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
   owner?: InputMaybe<SortOrder>;
 };
@@ -3719,6 +3743,43 @@ export type ZucityUserRolesSortingInput = {
   source?: InputMaybe<SortOrder>;
   userId?: InputMaybe<SortOrder>;
 };
+
+export type CreateZucityAnnouncementMutationMutationVariables = Exact<{
+  input: CreateZucityAnnouncementInput;
+}>;
+
+
+export type CreateZucityAnnouncementMutationMutation = { __typename?: 'Mutation', createZucityAnnouncement?: { __typename?: 'CreateZucityAnnouncementPayload', document: { __typename?: 'ZucityAnnouncement', id: string, title: string, description?: string | null, createdAt: any, updatedAt: any, sourceId: string, spaceId?: any | null, eventId?: any | null, space?: { __typename?: 'ZucitySpace', id: string, name: string } | null, event?: { __typename?: 'ZucityEvent', id: string, title: string } | null } } | null };
+
+export type UpdateZucityAnnouncementMutationMutationVariables = Exact<{
+  input: UpdateZucityAnnouncementInput;
+}>;
+
+
+export type UpdateZucityAnnouncementMutationMutation = { __typename?: 'Mutation', updateZucityAnnouncement?: { __typename?: 'UpdateZucityAnnouncementPayload', document: { __typename?: 'ZucityAnnouncement', id: string, title: string, description?: string | null, updatedAt: any } } | null };
+
+export type DisableZucityAnnouncementIndexingMutationMutationVariables = Exact<{
+  input: EnableIndexingZucityAnnouncementInput;
+}>;
+
+
+export type DisableZucityAnnouncementIndexingMutationMutation = { __typename?: 'Mutation', enableIndexingZucityAnnouncement?: { __typename?: 'EnableIndexingZucityAnnouncementPayload', document?: { __typename?: 'ZucityAnnouncement', id: string } | null } | null };
+
+export type GetSpaceAnnouncementsQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type GetSpaceAnnouncementsQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount' } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityInvitation' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace', announcements: { __typename?: 'ZucityAnnouncementConnection', edges?: Array<{ __typename?: 'ZucityAnnouncementEdge', node?: { __typename?: 'ZucityAnnouncement', id: string, title: string, description?: string | null, createdAt: any, updatedAt: any, sourceId: string, author: { __typename?: 'CeramicAccount', id: string } } | null } | null> | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } } | { __typename?: 'ZucitySpaceGating' } | { __typename?: 'ZucityUserRoles' } | null };
+
+export type GetEventAnnouncementsQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type GetEventAnnouncementsQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount' } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent', announcements: { __typename?: 'ZucityAnnouncementConnection', edges?: Array<{ __typename?: 'ZucityAnnouncementEdge', node?: { __typename?: 'ZucityAnnouncement', id: string, title: string, description?: string | null, createdAt: any, updatedAt: any, sourceId: string, author: { __typename?: 'CeramicAccount', id: string } } | null } | null> | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityInvitation' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace' } | { __typename?: 'ZucitySpaceGating' } | { __typename?: 'ZucityUserRoles' } | null };
 
 export type GetDappListQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -3934,6 +3995,105 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const CreateZucityAnnouncementMutationDocument = new TypedDocumentString(`
+    mutation CreateZucityAnnouncementMutation($input: CreateZucityAnnouncementInput!) {
+  createZucityAnnouncement(input: $input) {
+    document {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      sourceId
+      spaceId
+      eventId
+      space {
+        id
+        name
+      }
+      event {
+        id
+        title
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CreateZucityAnnouncementMutationMutation, CreateZucityAnnouncementMutationMutationVariables>;
+export const UpdateZucityAnnouncementMutationDocument = new TypedDocumentString(`
+    mutation UpdateZucityAnnouncementMutation($input: UpdateZucityAnnouncementInput!) {
+  updateZucityAnnouncement(input: $input) {
+    document {
+      id
+      title
+      description
+      updatedAt
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateZucityAnnouncementMutationMutation, UpdateZucityAnnouncementMutationMutationVariables>;
+export const DisableZucityAnnouncementIndexingMutationDocument = new TypedDocumentString(`
+    mutation DisableZucityAnnouncementIndexingMutation($input: EnableIndexingZucityAnnouncementInput!) {
+  enableIndexingZucityAnnouncement(input: $input) {
+    document {
+      id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<DisableZucityAnnouncementIndexingMutationMutation, DisableZucityAnnouncementIndexingMutationMutationVariables>;
+export const GetSpaceAnnouncementsDocument = new TypedDocumentString(`
+    query GetSpaceAnnouncements($id: ID!, $first: Int = 100) {
+  node(id: $id) {
+    ... on ZucitySpace {
+      announcements(first: $first) {
+        edges {
+          node {
+            id
+            title
+            description
+            createdAt
+            updatedAt
+            sourceId
+            author {
+              id
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetSpaceAnnouncementsQuery, GetSpaceAnnouncementsQueryVariables>;
+export const GetEventAnnouncementsDocument = new TypedDocumentString(`
+    query GetEventAnnouncements($id: ID!, $first: Int = 100) {
+  node(id: $id) {
+    ... on ZucityEvent {
+      announcements(first: $first) {
+        edges {
+          node {
+            id
+            title
+            description
+            createdAt
+            updatedAt
+            sourceId
+            author {
+              id
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetEventAnnouncementsQuery, GetEventAnnouncementsQueryVariables>;
 export const GetDappListDocument = new TypedDocumentString(`
     query GetDappList($first: Int = 100, $filters: ZucityDappInfoFiltersInput) {
   zucityDappInfoIndex(first: $first, filters: $filters) {

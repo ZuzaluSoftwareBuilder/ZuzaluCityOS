@@ -998,6 +998,8 @@ input PartialZucityInvitationInput {
   expiresAt: DateTime
   inviteeId: DID
   inviteeProfileId: CeramicStreamID
+  inviterId: DID
+  inviterProfileId: CeramicStreamID
   isRead: String
   lastSentAt: DateTime
   message: String
@@ -1095,6 +1097,7 @@ input PartialZucitySpaceInput {
   customAttributes: [TBDInput]
   customLinks: [ZucitySpaceLinkInput]
   description: String
+  gated: String
   name: String
   owner: DID
   profileId: CeramicStreamID
@@ -2445,6 +2448,9 @@ type ZucityInvitation implements Node {
   inviteeId: CeramicAccount!
   inviteeProfile: ZucityProfile
   inviteeProfileId: CeramicStreamID
+  inviterId: CeramicAccount!
+  inviterProfile: ZucityProfile
+  inviterProfileId: CeramicStreamID
   isRead: String!
   lastSentAt: DateTime
   message: String
@@ -2495,6 +2501,8 @@ input ZucityInvitationInput {
   expiresAt: DateTime!
   inviteeId: DID!
   inviteeProfileId: CeramicStreamID
+  inviterId: DID!
+  inviterProfileId: CeramicStreamID
   isRead: String!
   lastSentAt: DateTime
   message: String
@@ -2620,7 +2628,21 @@ type ZucityProfile implements Node {
     sorting: ZucityEventSortingInput
   ): ZucityEventConnection!
   id: ID!
-  invitated(
+  invitatee(
+    """Returns only documents created by the provided account"""
+    account: ID
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+    filters: ZucityInvitationFiltersInput
+    """Returns the first n items from the list."""
+    first: Int
+    """Returns the last n items from the list."""
+    last: Int
+    sorting: ZucityInvitationSortingInput
+  ): ZucityInvitationConnection!
+  inviter(
     """Returns only documents created by the provided account"""
     account: ID
     """Returns the items in the list that come after the specified cursor."""
@@ -2951,6 +2973,7 @@ type ZucitySpace implements Node {
     last: Int
     sorting: ZucityEventSortingInput
   ): ZucityEventConnection!
+  gated: String
   id: ID!
   installedApps(
     """Returns only documents created by the provided account"""
@@ -3100,6 +3123,7 @@ input ZucitySpaceInput {
   customAttributes: [TBDInput]
   customLinks: [ZucitySpaceLinkInput]
   description: String!
+  gated: String
   name: String!
   owner: DID!
   profileId: CeramicStreamID!
@@ -3121,12 +3145,14 @@ input ZucitySpaceLinkInput {
 
 input ZucitySpaceObjectFilterInput {
   category: StringValueFilterInput
+  gated: StringValueFilterInput
   name: StringValueFilterInput
   owner: StringValueFilterInput
 }
 
 input ZucitySpaceSortingInput {
   category: SortOrder
+  gated: SortOrder
   name: SortOrder
   owner: SortOrder
 }
