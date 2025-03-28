@@ -1,4 +1,4 @@
-import Select from './Select';
+import CalendarSelect from './CalendarSelect';
 import { MapIcon } from '@/components/icons';
 import { DateValue } from '@heroui/react';
 import React, { FC, useMemo, useState } from 'react';
@@ -250,7 +250,7 @@ const EventListWithCalendar: FC<IEventListWithCalendarProps> = ({
           />
 
           <div className="w-full flex flex-col gap-[10px]">
-            <Select
+            <CalendarSelect
               options={TimeFilterOptions}
               defaultSelectedKey={ITimeEnum.UpComing}
               placeholder="Select time filter"
@@ -263,7 +263,7 @@ const EventListWithCalendar: FC<IEventListWithCalendarProps> = ({
               }}
             />
 
-            <Select
+            <CalendarSelect
               options={locations}
               defaultSelectedKey="anywhere"
               placeholder="Select location"

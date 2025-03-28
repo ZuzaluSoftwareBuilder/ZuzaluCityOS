@@ -28,6 +28,7 @@ import {
   Skeleton,
   Select as HSelect
 } from '@heroui/react';
+import CalendarSelect from '@/app/events/components/EventList/CalendarSelect'
 import { UPCOMING_EVENTS_QUERY } from '@/graphql/eventQueries';
 import { supabase } from '@/utils/supabase/client';
 import { useMediaQuery } from '@/hooks';
@@ -344,7 +345,7 @@ export default function UpcomingEventList() {
           />
 
           <div className='w-full flex flex-col gap-[10px]'>
-            <Select
+            <CalendarSelect
               options={locations}
               defaultSelectedKey="anywhere"
               placeholder="Select location"

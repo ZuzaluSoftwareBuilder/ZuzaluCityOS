@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Button } from '@/components/base';
+import { Calendar, CalendarButton } from '@/components/base';
 import { DateValue } from '@heroui/react';
 import { ArrowsCounterClockwiseIcon } from '@/components/icons';
 import { ArrowsCounterClockwise } from '@phosphor-icons/react';
@@ -39,8 +39,8 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
       isDateUnavailable={isDateUnavailable}
       bottomContent={
         <div className="p-[14px] w-full pt-0">
-          <Button
-            // border
+          <CalendarButton
+            border
             variant="light"
             fullWidth
             className="text-[14px] h-[30px] opacity-80"
@@ -54,7 +54,7 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
             onPress={onReset}
           >
             Reset
-          </Button>
+          </CalendarButton>
         </div>
       }
       onChange={onChange}

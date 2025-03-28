@@ -15,7 +15,7 @@ export interface ISelectProps
   onSelectionChange?: (key: string) => void;
 }
 
-const Select: React.FC<ISelectProps> = ({
+const CalendarSelect: React.FC<ISelectProps> = ({
   options,
   defaultSelectedKey,
   placeholder,
@@ -51,4 +51,4 @@ const Select: React.FC<ISelectProps> = ({
   );
 };
 
-export default Select;
+export default CalendarSelect;
