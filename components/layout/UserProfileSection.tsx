@@ -4,14 +4,14 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Menu, Typography, Stack } from '@mui/material';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useDisconnect } from 'wagmi';
 import { useLitContext } from '@/context/LitContext';
 import Image from 'next/image';
 import { Button } from '@/components/base';
 import Profile from '@/components/profile';
 import { formatUserName } from '@/utils/format';
 import { WalletIcon } from 'components/icons';
-import { PressEvent, Skeleton } from '@heroui/react';
+import { PressEvent } from '@heroui/react';
 
 export function formatAddressString(str?: string, maxLength: number = 10) {
   if (!str) return;
@@ -35,7 +35,6 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
     useCeramicContext();
   const { litDisconnect } = useLitContext();
   const { disconnect } = useDisconnect();
-  const { isConnected } = useAccount();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showProfile, setShowProfile] = useState(false);
 
@@ -235,8 +234,6 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
             </Stack>
           </Menu>
         </>
-      ) : isConnected ? (
-        <Skeleton className="rounded-[8px] h-[30px] w-[100px]" />
       ) : (
         <Button
           color="functional"

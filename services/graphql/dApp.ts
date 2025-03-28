@@ -58,3 +58,40 @@ export const UPDATE_DAPP_MUTATION = graphql(`
     }
   }
 `);
+
+export const GET_DAPP_QUERY = graphql(`
+  query GetDappById($id: ID!) {
+    node(id: $id) {
+      ... on ZucityDappInfo {
+        id
+        appName
+        tagline
+        developerName
+        description
+        bannerUrl
+        categories
+        devStatus
+        openSource
+        repositoryUrl
+        appUrl
+        websiteUrl
+        docsUrl
+        isInstallable
+        appLogoUrl
+        auditLogUrl
+        isSCApp
+        scAddresses {
+          address
+          chain
+        }
+        profile {
+          author {
+            id
+          }
+          avatar
+          username
+        }
+      }
+    }
+  }
+`);

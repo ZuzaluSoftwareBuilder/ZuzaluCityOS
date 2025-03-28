@@ -3505,6 +3505,13 @@ export type UpdateZucityDappMutationMutationVariables = Exact<{
 
 export type UpdateZucityDappMutationMutation = { __typename?: 'Mutation', updateZucityDappInfo?: { __typename?: 'UpdateZucityDappInfoPayload', document: { __typename?: 'ZucityDappInfo', id: string } } | null };
 
+export type GetDappByIdQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetDappByIdQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount' } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo', id: string, appName: string, tagline: string, developerName: string, description: string, bannerUrl: string, categories: string, devStatus: string, openSource: string, repositoryUrl?: string | null, appUrl?: string | null, websiteUrl?: string | null, docsUrl?: string | null, isInstallable: string, appLogoUrl: string, auditLogUrl?: string | null, isSCApp?: string | null, scAddresses?: Array<{ __typename?: 'ZucityDappInfoScAddress', address?: string | null, chain?: string | null } | null> | null, profile?: { __typename?: 'ZucityProfile', avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace' } | { __typename?: 'ZucitySpaceGating' } | { __typename?: 'ZucityUserRoles' } | null };
+
 export type GetAllEventsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
 }>;
@@ -3746,6 +3753,42 @@ export const UpdateZucityDappMutationDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpdateZucityDappMutationMutation, UpdateZucityDappMutationMutationVariables>;
+export const GetDappByIdDocument = new TypedDocumentString(`
+    query GetDappById($id: ID!) {
+  node(id: $id) {
+    ... on ZucityDappInfo {
+      id
+      appName
+      tagline
+      developerName
+      description
+      bannerUrl
+      categories
+      devStatus
+      openSource
+      repositoryUrl
+      appUrl
+      websiteUrl
+      docsUrl
+      isInstallable
+      appLogoUrl
+      auditLogUrl
+      isSCApp
+      scAddresses {
+        address
+        chain
+      }
+      profile {
+        author {
+          id
+        }
+        avatar
+        username
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetDappByIdQuery, GetDappByIdQueryVariables>;
 export const GetAllEventsDocument = new TypedDocumentString(`
     query GetAllEvents($first: Int) {
   zucityEventIndex(first: $first) {

@@ -250,7 +250,8 @@ const Calendar = () => {
             p="10px 20px"
             bgcolor="#2E2E2E"
             borderBottom="1px solid rgba(255, 255, 255, 0.1)"
-            height="60px"
+            height="50px"
+            minHeight="50px"
             justifyContent="center"
           >
             <Typography fontSize={20} fontWeight={700} lineHeight={1.2}>
