@@ -47,14 +47,15 @@ const SpaceList = () => {
   );
 
   const filteredSpacesData = useMemo(() => {
-    if (searchVal === '') {
-      return spaces;
-    }
-    return spaces?.filter((space) =>
-      space.name.toLowerCase().includes(searchVal.toLowerCase()),
-    ).sort((a, b) => {
+    const sortedData = (spaces || []).sort((a, b) => {
       return dayjs(b.createdAt).diff(dayjs(a.createdAt));
     });
+    if (searchVal === '') {
+      return sortedData;
+    }
+    return sortedData?.filter((space) =>
+      space.name.toLowerCase().includes(searchVal.toLowerCase()),
+    )
   }, [spaces, searchVal]);
 
   return (
