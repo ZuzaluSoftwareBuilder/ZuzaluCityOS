@@ -3,12 +3,13 @@ import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_DAPP_QUERY } from '@/services/graphql/dApp';
 import { Dapp } from '@/types';
 import { CircularProgress, cn, Image, Skeleton } from '@heroui/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 export default function AppPage() {
   const searchParams = useSearchParams();
   const appId = searchParams?.get('id');
+  const spaceId = useParams()?.spaceid;
   const router = useRouter();
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -31,9 +32,9 @@ export default function AppPage() {
 
   useEffect(() => {
     if (!appId) {
-      router.push('/');
+      router.replace(`/spaces/${spaceId}`);
     }
-  }, [appId, router]);
+  }, [appId, router, spaceId]);
 
   return (
     <div className="w-full h-full overflow-hidden relative">
