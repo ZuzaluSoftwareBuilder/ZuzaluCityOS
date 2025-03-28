@@ -63,8 +63,8 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
         base: [
           '!bg-transparent',
           'rounded-[14px]',
-          'border-none',
-          inDropdown ? 'mb-[-6px] rounded-[10px]' : '',
+          'border-1 border-[rgba(255,255,255,0.1)] mobile:border-none',
+          inDropdown ? 'mb-[-6px] border-none rounded-[10px]' : '',
         ],
       }}
     />
