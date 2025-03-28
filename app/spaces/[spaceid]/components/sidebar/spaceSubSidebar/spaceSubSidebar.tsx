@@ -1,6 +1,6 @@
 'use client';
 import { useParams, usePathname } from 'next/navigation';
-import { Dapp, InstalledApp, Space } from '@/types';
+import { InstalledApp } from '@/types';
 import { useCallback, useMemo } from 'react';
 import { House, Ticket, CalendarDots } from '@phosphor-icons/react';
 import TabItem from './tabItem';
@@ -8,10 +8,9 @@ import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSid
 import { TableIcon } from '@/components/icons';
 import { cn, Image, Skeleton } from '@heroui/react';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
 import { getInstalledDApps } from '@/services/space/apps';
 import { useQuery } from '@tanstack/react-query';
+import { useSpaceData } from '../../context/spaceData';
 
 interface MainSubSidebarProps {
   needBlur?: boolean;
@@ -28,29 +27,13 @@ const SpaceSubSidebar = ({
 
   const { isOwner, isAdmin } = useSpacePermissions();
 
-  const { data: spaceData, isLoading } = useGraphQL(
-    ['getSpaceByID', spaceId],
-    GET_SPACE_QUERY_BY_ID,
-    { id: spaceId },
-    {
-      select: (data) => data?.data?.node as Space,
-      enabled: !!spaceId,
-    },
-  );
+  const { spaceData, isSpaceDataLoading } = useSpaceData();
 
-  const { data: installedAppsData, isLoading: installedAppsLoading } = useQuery(
-    {
-      queryKey: ['installedApps', spaceId],
-      queryFn: () => getInstalledDApps(spaceId),
-      enabled: !!spaceId,
-      select: (data) => {
-        if (!data?.data?.installedApps) return [];
-        return data.data.installedApps.map(
-          (app: any) => app.node,
-        ) as InstalledApp[];
-      },
-    },
-  );
+  const installedAppsData = useMemo(() => {
+    return spaceData?.installedApps?.edges.map(
+      (edge) => edge.node,
+    ) as InstalledApp[];
+  }, [spaceData]);
 
   const isRouteActive = useCallback(
     (route: string) => {
@@ -131,7 +114,7 @@ const SpaceSubSidebar = ({
     >
       <SidebarHeader
         isAdmin={isOwner || isAdmin}
-        isLoading={isLoading}
+        isLoading={isSpaceDataLoading}
         space={spaceData}
         onCloseDrawer={onCloseDrawer}
       />
@@ -173,7 +156,7 @@ const SpaceSubSidebar = ({
         </div>
 
         <div className="mt-[20px] flex flex-col gap-[5px]">
-          {installedAppsLoading ? (
+          {isSpaceDataLoading ? (
             <div className="flex flex-col gap-[20px]">
               {Array.from({ length: 3 }).map((_, index) => (
                 <Skeleton
