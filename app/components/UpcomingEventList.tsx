@@ -316,13 +316,13 @@ export default function UpcomingEventList() {
             <EventList events={filteredEvents} isLoading={isLoading} />
           )}
         </div>
-        <div className="w-[360px] px-[20px] flex flex-col gap-[20px] tablet:hidden mobile:hidden">
+        <div className="w-[320px] px-[20px] mr-[20px] flex flex-col gap-[20px] tablet:hidden mobile:hidden">
           <p className="py-[20px] px-[10px] text-[18px] font-[700] leading-[1.2] border-b border-b-w-10">
             Sort & Filter Events
           </p>
           <Calendar
             value={selectedDate}
-            calendarWidth="320px"
+            calendarWidth="280px"
             weekdayStyle="short"
             minValue={today(getLocalTimeZone()).add({ days: 1 })}
             isDateUnavailable={isDateUnavailable}

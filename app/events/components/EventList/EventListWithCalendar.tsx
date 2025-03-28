@@ -235,7 +235,7 @@ const EventListWithCalendar: FC<IEventListWithCalendarProps> = ({
       <div className="flex justify-start items-start gap-[20px] mt-[10px]">
         <EventList events={filteredEvents} isLoading={isLoading} />
 
-        <div className="tablet:hidden mobile:hidden w-[360px] px-[20px] flex flex-col gap-[20px] ">
+        <div className="tablet:hidden mobile:hidden w-[320px] px-[20px] flex flex-col gap-[20px] ">
           <p className="py-[20px] px-[10px] text-[18px] font-[700] leading-[1.2] border-b border-b-w-10">
             Sort & Filter Events
           </p>

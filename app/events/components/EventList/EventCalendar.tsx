@@ -24,7 +24,7 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
   minValue,
   maxValue,
   isDateUnavailable,
-  calendarWidth = '320px',
+  calendarWidth = '280px',
   isMobile = false,
   className = '',
   inDropdown = false,
@@ -59,21 +59,14 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
       }
       onChange={onChange}
       className={className}
-      classNames={
-        isMobile
-          ? {
-              base: `border-b-w-10 border-1 rounded-larg shadow-none bg-transparent ${inDropdown ? 'rounded-[10px] mb-[-6px]' : ''}`,
-              headerWrapper: 'bg-transparent',
-              title: 'text-white',
-              gridHeader: 'bg-transparent',
-              gridHeaderRow: 'justify-between pb-0 text-white/80',
-              gridBodyRow: 'justify-between px-[14px]',
-              cellButton: '!no-underline',
-            }
-          : {
-              base: inDropdown ? 'rounded-[10px] mb-[-6px]' : '',
-            }
-      }
+      classNames={{
+        base: [
+          '!bg-transparent',
+          'rounded-[14px]',
+          'border-none',
+          inDropdown ? 'mb-[-6px] rounded-[10px]' : '',
+        ],
+      }}
     />
   );
 };

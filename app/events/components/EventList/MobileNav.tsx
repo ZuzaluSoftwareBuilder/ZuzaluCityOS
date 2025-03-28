@@ -97,7 +97,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
     'border-2 border-[rgba(255,255,255,0.1)]',
     'rounded-[10px]',
   ]
-  const dropdownContentClassNames = ['bg-transparent', 'shadow-none', 'p-0']
+  const dropdownContentClassNames = ['bg-transparent', 'shadow-none', 'p-0', 'rounded-none']
 
   const dropdownClassNames = { 
     base: [
@@ -297,7 +297,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
               >
                 <DropdownItem
                   key="calendar-item"
-                  className="p-0 outline-none bg-transparent"
+                  className="p-0 outline-none bg-transparent rounded-[10px]"
                 >
                   <EventCalendar
                     value={selectedDate}
