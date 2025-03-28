@@ -6,7 +6,7 @@ import ExploreHeader from '@/components/layout/explore/exploreHeader';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { Buildings, Plus } from '@phosphor-icons/react';
+import { Buildings } from '@phosphor-icons/react';
 import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
 import { Globe, CalendarDots } from '@phosphor-icons/react';
 import SpaceList from '@/app/spaces/components/list';

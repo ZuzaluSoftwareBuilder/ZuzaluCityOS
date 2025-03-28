@@ -17,7 +17,7 @@ const SpaceList = () => {
 
   const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
 
-  const { adminRole, memberRole } = useBuildInRole();
+  const { adminRole, memberRole, isRoleLoading } = useBuildInRole();
 
   const { data: spaces, isLoading } = useGraphQL(
     ['GET_ALL_SPACE_AND_MEMBER_QUERY'],
@@ -80,7 +80,7 @@ const SpaceList = () => {
           alignContent: 'flex-start',
         }}
       >
-        {isLoading
+        {isLoading || isRoleLoading
           ? Array.from({ length: 8 }).map((_, index) => (
               <ResponsiveGridItem key={index}>
                 <SpaceCardSkeleton autoWidth={true} key={index} />

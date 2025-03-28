@@ -26,9 +26,9 @@ import {
   DateValue,
   SelectItem,
   Skeleton,
-  Select as HSelect
+  Select as HSelect,
 } from '@heroui/react';
-import CalendarSelect from '@/app/events/components/EventList/CalendarSelect'
+import CalendarSelect from '@/app/events/components/EventList/CalendarSelect';
 import { UPCOMING_EVENTS_QUERY } from '@/graphql/eventQueries';
 import { supabase } from '@/utils/supabase/client';
 import { useMediaQuery } from '@/hooks';
@@ -251,7 +251,6 @@ export default function UpcomingEventList() {
                   key="1"
                   title={
                     <Button
-                      variant="light"
                       endContent={<ArrowCircleRightIcon size={5} />}
                       onPress={() => router.push('/events')}
                       className="h-[34px] mobile:p-[4px] mobile:text-[14px]"
@@ -344,7 +343,7 @@ export default function UpcomingEventList() {
             onChange={setSelectedDate}
           />
 
-          <div className='w-full flex flex-col gap-[10px]'>
+          <div className="w-full flex flex-col gap-[10px]">
             <CalendarSelect
               options={locations}
               defaultSelectedKey="anywhere"

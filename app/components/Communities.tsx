@@ -53,8 +53,6 @@ export default function Communities() {
     });
   }, [spacesData]);
 
-  console.log(isLoading, '===');
-
   return (
     <div className="flex flex-col gap-[10px] border-b border-b-w-10 pb-[20px]">
       <CommonHeader
