@@ -1,8 +1,6 @@
 'use client';
-import { getInstalledDApps } from '@/services/space/apps';
+import { InstalledApp } from '@/types';
 import { NOOP } from '@/utils/function';
-import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
 import {
   createContext,
   PropsWithChildren,
@@ -12,6 +10,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { useSpaceData } from '../../../components/context/spaceData';
 
 type InstalledAppItem = {
   installedAppIndexId: string;
@@ -19,7 +18,6 @@ type InstalledAppItem = {
 };
 
 const InstalledAppsDataContext = createContext<{
-  installedAppIds: InstalledAppItem[];
   loading: boolean;
   addInstalledApp: (item: InstalledAppItem) => void;
   removeInstalledApp: (
@@ -32,7 +30,6 @@ const InstalledAppsDataContext = createContext<{
     item: InstalledAppItem['installedAppIdOrNativeAppName'],
   ) => string | undefined;
 }>({
-  installedAppIds: [],
   loading: false,
   addInstalledApp: NOOP,
   removeInstalledApp: NOOP,
@@ -43,8 +40,6 @@ const InstalledAppsDataContext = createContext<{
 export const useInstalledAppsData = () => useContext(InstalledAppsDataContext);
 
 const InstalledAppsData = ({ children }: PropsWithChildren) => {
-  const params = useParams();
-  const spaceId = params.spaceid as string;
   const [installedAppIds, setInstalledAppIds] = useState<
     {
       installedAppIndexId: string;
@@ -52,41 +47,36 @@ const InstalledAppsData = ({ children }: PropsWithChildren) => {
     }[]
   >([]);
 
-  // Fetch installed apps
-  const { data: installedAppsData, isLoading } = useQuery({
-    queryKey: ['installedApps', spaceId],
-    queryFn: () => getInstalledDApps(spaceId),
-    enabled: !!spaceId,
-  });
+  const { spaceData, isSpaceDataLoading, refreshSpaceData } = useSpaceData();
+
+  const installedAppsData = useMemo(() => {
+    return spaceData?.installedApps?.edges.map(
+      (edge) => edge.node,
+    ) as InstalledApp[];
+  }, [spaceData]);
 
   useEffect(() => {
-    if (!installedAppsData?.data?.installedApps) return;
+    if (installedAppsData.length === 0) return;
     setInstalledAppIds(
-      installedAppsData.data.installedApps.map((app: any) => ({
-        installedAppIndexId: app.node.id,
+      installedAppsData.map((app) => ({
+        installedAppIndexId: app.id ?? '',
         installedAppIdOrNativeAppName:
-          app.node.installedAppId ?? app.node.nativeAppName,
+          app.installedAppId ?? app.nativeAppName ?? '',
       })),
-    );
-  }, [installedAppsData]);
-
-  // Quickly update installedAppIds when installedAppsData is not available
-  const _quicklyInstalledAppIds = useMemo(() => {
-    if (!installedAppsData?.data?.installedApps) return [];
-    return installedAppsData.data.installedApps.map(
-      (app: any) => app.node.installedAppId ?? app.node.nativeAppName,
     );
   }, [installedAppsData]);
 
   // ------------------ Methods ------------------
   const addInstalledApp = useCallback((item: InstalledAppItem) => {
+    refreshSpaceData();
     setInstalledAppIds((prev) => [...prev, item]);
-  }, []);
+  }, [refreshSpaceData]);
 
   const removeInstalledApp = useCallback(
     (
       installedAppIdOrNativeAppName: InstalledAppItem['installedAppIdOrNativeAppName'],
     ) => {
+      refreshSpaceData();
       setInstalledAppIds((prev) =>
         prev.filter(
           (id) =>
@@ -94,7 +84,7 @@ const InstalledAppsData = ({ children }: PropsWithChildren) => {
         ),
       );
     },
-    [],
+    [refreshSpaceData],
   );
 
   const isInstalled = useCallback(
@@ -111,18 +101,18 @@ const InstalledAppsData = ({ children }: PropsWithChildren) => {
   const queryInstalledAppIndexId = useCallback(
     (
       installedAppIdOrNativeAppName: InstalledAppItem['installedAppIdOrNativeAppName'],
-    ) => installedAppIds.find(id => id.installedAppIdOrNativeAppName === installedAppIdOrNativeAppName)?.installedAppIndexId,
+    ) =>
+      installedAppIds.find(
+        (id) =>
+          id.installedAppIdOrNativeAppName === installedAppIdOrNativeAppName,
+      )?.installedAppIndexId,
     [installedAppIds],
   );
 
   return (
     <InstalledAppsDataContext.Provider
       value={{
-        installedAppIds:
-          installedAppIds.length === 0 && _quicklyInstalledAppIds.length > 0
-            ? _quicklyInstalledAppIds
-            : installedAppIds,
-        loading: isLoading,
+        loading: isSpaceDataLoading,
         addInstalledApp,
         removeInstalledApp,
         isInstalled,

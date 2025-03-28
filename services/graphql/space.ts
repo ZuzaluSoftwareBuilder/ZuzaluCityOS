@@ -40,6 +40,33 @@ export const GET_SPACE_QUERY_BY_ID = graphql(`
             username
           }
         }
+        installedApps(first: 100) {
+          edges {
+            node {
+              id
+              sourceId
+              spaceId
+              nativeAppName
+              installedAppId
+              createdAt
+              updatedAt
+              installedApp {
+                id
+                appName
+                appType
+                description
+                tagline
+                bannerUrl
+                appUrl
+                openSource
+                devStatus
+                developerName
+                categories
+                appLogoUrl
+              }
+            }
+          }
+        }
       }
     }
   }

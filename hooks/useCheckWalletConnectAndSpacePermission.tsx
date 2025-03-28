@@ -73,7 +73,8 @@ const useCheckWalletConnectAndSpacePermission = ({
   permissionCheck = { type: PermissionCheckType.ROLE },
   callbacks = {},
 }: ICheckWalletPermissionConfig): IPermissionCheckResult => {
-  const { isAuthenticated } = useCeramicContext();
+  const { isAuthenticated, profile } = useCeramicContext();
+  const userId = profile?.author?.id;
   const { isOwner, isAdmin, isMember, isLoading, checkPermission } =
     useSpacePermissions();
   const { isConnected, isConnecting, status: walletStatus } = useAccount();
@@ -87,8 +88,9 @@ const useCheckWalletConnectAndSpacePermission = ({
 
   const [hasPermission, setHasPermission] = useState(false);
 
-  const allChecksComplete =
-    checkStatus.walletChecked && checkStatus.permissionChecked;
+  const allChecksComplete = useMemo(() => {
+    return checkStatus.walletChecked && checkStatus.permissionChecked;
+  }, [checkStatus])
 
   const currentStatus = useMemo((): PermissionCheckStatus => {
     if (!allChecksComplete) {
@@ -120,7 +122,7 @@ const useCheckWalletConnectAndSpacePermission = ({
   }, [walletStatus, isConnecting, isConnected, checkStatus.walletChecked]);
 
   useEffect(() => {
-    if (!isLoading && !checkStatus.permissionChecked) {
+    if (!isLoading && !!userId && !checkStatus.permissionChecked) {
       switch (permissionCheck.type) {
         case PermissionCheckType.SPECIFIC_PERMISSION:
           if (permissionCheck.permissionName) {
@@ -151,6 +153,7 @@ const useCheckWalletConnectAndSpacePermission = ({
       setCheckStatus((prev) => ({ ...prev, permissionChecked: true }));
     }
   }, [
+    userId,
     isLoading,
     isOwner,
     isAdmin,

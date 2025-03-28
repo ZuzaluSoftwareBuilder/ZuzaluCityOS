@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { CaretLeft, List } from '@phosphor-icons/react';
 import {
   Image,
@@ -14,16 +14,12 @@ import {
 } from '@heroui/react';
 import UserProfileSection from '@/components/layout/UserProfileSection';
 import SpaceSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/spaceSubSidebar';
-import { Space } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
+import { useSpaceData } from './context/spaceData';
 
 const SpaceTopHeader: React.FC = () => {
   const router = useRouter();
   const { isAuthenticated } = useCeramicContext();
-  const params = useParams();
-  const spaceId = params.spaceid.toString();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
@@ -31,15 +27,7 @@ const SpaceTopHeader: React.FC = () => {
     setIsClient(true);
   }, []);
 
-  const { data: spaceData, isLoading } = useGraphQL(
-    ['getSpaceByID', spaceId],
-    GET_SPACE_QUERY_BY_ID,
-    { id: spaceId },
-    {
-      select: (data) => data?.data?.node as Space,
-      enabled: !!spaceId,
-    },
-  );
+  const { spaceData, isSpaceDataLoading } = useSpaceData();
 
   const handleBack = () => {
     router.replace(`/spaces`);
@@ -67,7 +55,7 @@ const SpaceTopHeader: React.FC = () => {
             className="h-[34px] min-w-[auto] bg-[#363636] hover:bg-[#424242] rounded-[10px] flex items-center justify-center p-1 gap-1"
             onPress={() => toggleDrawer(true)}
           >
-            {isLoading ? (
+            {isSpaceDataLoading ? (
               <Skeleton className="w-[30px] h-[30px] rounded-full bg-[rgba(34,34,34,0.8)]"></Skeleton>
             ) : spaceData?.avatar ? (
               <Image
