@@ -1,59 +1,58 @@
-import {
-  Grid,
-  InputAdornment,
-  OutlinedInput,
-  Stack,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
-import { SearchIcon } from '@/components/icons';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { Grid, Stack, useMediaQuery, useTheme } from '@mui/material';
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getSpacesQuery } from '@/services/space';
-import { SpaceData } from '@/types';
+import { Space } from '@/types';
 import { SpaceCard, SpaceCardSkeleton } from '@/app/components/SpaceCard';
-import { Broadcast } from '@phosphor-icons/react';
+
 import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
 import ExploreSearch from '@/components/layout/explore/exploreSearch';
+import useUserSpace from '@/hooks/useUserSpace';
+import { useBuildInRole } from '@/context/BuildInRoleContext';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
 
 const SpaceList = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { composeClient } = useCeramicContext();
   const [searchVal, setSearchVal] = useState<string>('');
 
-  const { data: spacesData, isLoading } = useQuery({
-    queryKey: ['spaces'],
-    queryFn: async () => {
-      try {
-        const response: any = await composeClient.executeQuery(getSpacesQuery);
-        if ('zucitySpaceIndex' in response.data) {
-          const spaceData: SpaceData = response.data as SpaceData;
-          const spaces = spaceData.zucitySpaceIndex.edges.map(
-            (edge) => edge.node,
-          );
+  const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
 
-          return spaces;
-        } else {
-          console.error('Invalid data structure:', response.data);
+  const { adminRole, memberRole } = useBuildInRole();
+
+  const { data: spaces, isLoading } = useGraphQL(
+    ['GET_ALL_SPACE_AND_MEMBER_QUERY'],
+    GET_ALL_SPACE_AND_MEMBER_QUERY,
+    {
+      first: 100,
+      userRolesFilters: {
+        where: {
+          roleId: {
+            in: [adminRole, memberRole].map((role) => role?.id ?? ''),
+          },
+        },
+      },
+    },
+    {
+      select: (data) => {
+        if (!data?.data?.zucitySpaceIndex?.edges) {
           return [];
         }
-      } catch (error) {
-        console.error('Failed to fetch spaces:', error);
-        throw error;
-      }
+        return data.data.zucitySpaceIndex.edges.map(
+          (edge) => edge!.node,
+        ) as Space[];
+      },
+      enabled: !!adminRole && !!memberRole,
     },
-  });
+  );
 
   const filteredSpacesData = useMemo(() => {
     if (searchVal === '') {
-      return spacesData;
+      return spaces;
     }
-    return spacesData?.filter((space) =>
+    return spaces?.filter((space) =>
       space.name.toLowerCase().includes(searchVal.toLowerCase()),
     );
-  }, [spacesData, searchVal]);
+  }, [spaces, searchVal]);
 
   return (
     <Stack
@@ -62,7 +61,6 @@ const SpaceList = () => {
       p={isMobile ? '20px 10px' : '20px'}
       gap={isMobile ? '10px' : '20px'}
     >
-
       <ExploreSearch
         value={searchVal}
         onChange={setSearchVal}
@@ -79,20 +77,26 @@ const SpaceList = () => {
             width: '100%',
             maxWidth: '100%',
           },
-          alignContent: 'flex-start'
+          alignContent: 'flex-start',
         }}
       >
         {isLoading
           ? Array.from({ length: 8 }).map((_, index) => (
-            <ResponsiveGridItem key={index}>
-              <SpaceCardSkeleton autoWidth={true} key={index} />
-            </ResponsiveGridItem>
-          ))
+              <ResponsiveGridItem key={index}>
+                <SpaceCardSkeleton autoWidth={true} key={index} />
+              </ResponsiveGridItem>
+            ))
           : filteredSpacesData?.map((item) => (
-            <ResponsiveGridItem key={item.id}>
-              <SpaceCard key={item.id} data={item} autoWidth={true} />
-            </ResponsiveGridItem>
-          ))}
+              <ResponsiveGridItem key={item.id}>
+                <SpaceCard
+                  key={item.id}
+                  data={item}
+                  autoWidth={true}
+                  isJoined={userJoinedSpaceIds.has(item.id)}
+                  isFollowed={userFollowedSpaceIds.has(item.id)}
+                />
+              </ResponsiveGridItem>
+            ))}
       </Grid>
     </Stack>
   );
