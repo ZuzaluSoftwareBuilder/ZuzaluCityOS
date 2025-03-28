@@ -35,6 +35,8 @@ const Button = extendVariants(HButton, {
       dark: 'bg-[#222222] hover:bg-[#363636] text-white',
       functional:
         'bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)] border border-solid border-[rgba(255,255,255,0.1)] text-white',
+      submit:
+        'bg-[rgba(103,219,255,0.2)] hover:bg-[rgba(103,219,255,0.3)] border border-[rgba(103,219,255,0.1)] text-[#67DBFF]',
     },
     // 根据设计稿定义尺寸变体
     size: {

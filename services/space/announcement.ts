@@ -89,3 +89,33 @@ export const updateSpaceAnnouncement = async (
     }
   }
 };
+
+export interface RemoveAnnouncementParams {
+  spaceId: string;
+
+  announcementId: string;
+}
+
+export const removeSpaceAnnouncement = async (
+  params: RemoveAnnouncementParams,
+) => {
+  try {
+    const response = await axiosInstance.post(
+      '/api/space/announcement/remove',
+      {
+        id: params.spaceId,
+        resource: 'space',
+        announcementId: params.announcementId,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error.response?.data || error.message;
+    } else {
+      throw new Error(
+        'An unknown error occurred while removing space announcement',
+      );
+    }
+  }
+};

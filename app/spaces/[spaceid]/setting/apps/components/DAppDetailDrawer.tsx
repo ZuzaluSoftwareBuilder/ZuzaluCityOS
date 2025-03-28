@@ -69,10 +69,10 @@ export const DAppDetailDrawer = ({ children }: PropsWithChildren) => {
     >
       <Drawer
         isOpen={drawerOpening}
+        onOpenChange={(open) => setDrawerOpening(open)}
         classNames={{
           base: 'w-[700px] max-w-[700px] mobile:w-[100%] mobile:max-w-[100%]',
         }}
-        onOpenChange={(open) => setDrawerOpening(open)}
       >
         <DrawerContent>
           {(onClose) => {
