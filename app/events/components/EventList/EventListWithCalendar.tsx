@@ -1,4 +1,4 @@
-import { Select } from '@/components/base';
+import Select from './Select';
 import { MapIcon } from '@/components/icons';
 import { DateValue } from '@heroui/react';
 import React, { FC, useMemo, useState } from 'react';

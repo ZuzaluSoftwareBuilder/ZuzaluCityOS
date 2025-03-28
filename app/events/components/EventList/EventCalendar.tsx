@@ -40,7 +40,7 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
       bottomContent={
         <div className="p-[14px] w-full pt-0">
           <Button
-            border
+            // border
             variant="light"
             fullWidth
             className="text-[14px] h-[30px] opacity-80"
@@ -62,7 +62,7 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
       classNames={
         isMobile
           ? {
-              base: `border-b-w-10 border-1 rounded-larg shadow-none bg-transparent ${inDropdown ? 'mb-[-5px]' : ''}`,
+              base: `border-b-w-10 border-1 rounded-larg shadow-none bg-transparent ${inDropdown ? 'rounded-[10px] mb-[-6px]' : ''}`,
               headerWrapper: 'bg-transparent',
               title: 'text-white',
               gridHeader: 'bg-transparent',
@@ -71,7 +71,7 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
               cellButton: '!no-underline',
             }
           : {
-              base: inDropdown ? 'mb-[-5px]' : '',
+              base: inDropdown ? 'rounded-[10px] mb-[-6px]' : '',
             }
       }
     />
