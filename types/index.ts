@@ -592,6 +592,7 @@ export interface Dapp {
   developerName: string;
   description: string;
   bannerUrl: string;
+  appLogoUrl: string;
   categories: string;
   devStatus: string;
   openSource: boolean;
@@ -600,6 +601,13 @@ export interface Dapp {
   websiteUrl: string;
   docsUrl: string;
   tagline: string;
+  isInstallable: string;
+  isSCApp: boolean;
+  scAddresses: {
+    address: string;
+    chain: string;
+  }[];
+  auditLogUrl: string;
   profile: {
     author: {
       id: string;
@@ -674,4 +682,10 @@ export interface IUserProfileWithSpaceAndEvent {
       edges: { node: Event }[];
     };
   };
+}
+
+export interface InstalledApp {
+  installedAppId?: string;
+  nativeAppName?: string;
+  installedApp?: Dapp;
 }

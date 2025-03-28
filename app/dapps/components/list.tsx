@@ -13,11 +13,10 @@ import { Stack } from '@mui/material';
 import { useState, useMemo } from 'react';
 import { Item } from '.';
 import Filter from './filter';
-import { useQuery } from '@tanstack/react-query';
 import { Dapp } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
-import { executeQuery } from '@/utils/ceramic';
+import { useGraphQL } from '@/hooks/useGraphQL';
 
 interface ListProps {
   onDetailClick: (data: Dapp) => void;
@@ -32,24 +31,23 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
   const [filter, setFilter] = useState<string[]>([]);
   const [searchVal, setSearchVal] = useState<string>('');
 
-  const { data, isLoading } = useQuery<Dapp[]>({
-    queryKey: ['getDappInfoList'],
-    queryFn: async () => {
-      const response = await executeQuery(GET_DAPP_LIST_QUERY);
-
-      if (
-        response &&
-        response.data &&
-        'zucityDappInfoIndex' in response.data &&
-        response.data.zucityDappInfoIndex?.edges
-      ) {
-        return response.data.zucityDappInfoIndex.edges.map(
-          (edge: any) => edge.node,
-        );
-      }
-      return [];
+  const { data, isLoading } = useGraphQL(
+    ['GET_DAPP_LIST_QUERY'],
+    GET_DAPP_LIST_QUERY,
+    {
+      first: 100,
     },
-  });
+    {
+      select: (data) => {
+        if (data.data.zucityDappInfoIndex?.edges) {
+          return data.data.zucityDappInfoIndex.edges.map(
+            (edge: any) => edge.node,
+          );
+        }
+        return [];
+      },
+    },
+  );
 
   const filterData = useMemo(() => {
     const tags = data?.map((dapp) => dapp.categories.split(','));

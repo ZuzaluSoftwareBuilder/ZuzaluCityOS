@@ -11,4 +11,4 @@ const Divider = extendVariants(HDivider, {
   },
 });
 
-export default Divider;
+export { Divider };

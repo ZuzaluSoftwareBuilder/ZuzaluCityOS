@@ -1,22 +1,17 @@
 'use client';
 import { useParams, usePathname } from 'next/navigation';
-import { Space } from '@/types';
-import { useCallback } from 'react';
-import {
-  House,
-  Ticket,
-  CalendarDots,
-  Chats,
-  GitBranch,
-} from '@phosphor-icons/react';
+import { Dapp, InstalledApp, Space } from '@/types';
+import { useCallback, useMemo } from 'react';
+import { House, Ticket, CalendarDots } from '@phosphor-icons/react';
 import TabItem from './tabItem';
-import SubTabItemContainer from './subTabItemContainer';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/sidebarHeader';
 import { TableIcon } from '@/components/icons';
-import { cn } from '@heroui/react';
+import { cn, Image, Skeleton } from '@heroui/react';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
+import { getInstalledDApps } from '@/services/space/apps';
+import { useQuery } from '@tanstack/react-query';
 
 interface MainSubSidebarProps {
   needBlur?: boolean;
@@ -43,6 +38,20 @@ const SpaceSubSidebar = ({
     },
   );
 
+  const { data: installedAppsData, isLoading: installedAppsLoading } = useQuery(
+    {
+      queryKey: ['installedApps', spaceId],
+      queryFn: () => getInstalledDApps(spaceId),
+      enabled: !!spaceId,
+      select: (data) => {
+        if (!data?.data?.installedApps) return [];
+        return data.data.installedApps.map(
+          (app: any) => app.node,
+        ) as InstalledApp[];
+      },
+    },
+  );
+
   const isRouteActive = useCallback(
     (route: string) => {
       if (pathname === `/spaces/${spaceId}/${route}`) {
@@ -61,6 +70,57 @@ const SpaceSubSidebar = ({
     },
     [pathname, spaceId],
   );
+
+  const installedApps = useMemo(() => {
+    const hasCalendar = installedAppsData?.some(
+      (app) => app.nativeAppName === 'calendar',
+    );
+
+    installedAppsData
+      ?.filter((app) => app.nativeAppName)
+      .map((app) => (
+        <TabItem
+          key={app.installedAppId}
+          label={app.installedApp?.appName ?? ''}
+          icon={<TableIcon size={20} />}
+          href={`/spaces/${spaceId}/app?id=${app.installedAppId}`}
+          isActive={isRouteActive('app')}
+          onClick={onCloseDrawer}
+        />
+      ));
+
+    return [
+      hasCalendar ? (
+        <TabItem
+          label="Calendar"
+          href={`/spaces/${spaceId}/calendar`}
+          icon={<CalendarDots />}
+          isActive={isRouteActive('calendar')}
+          onClick={onCloseDrawer}
+        />
+      ) : null,
+      ...(installedAppsData
+        ?.filter((app) => !app.nativeAppName)
+        .map((app) => (
+          <TabItem
+            key={app.installedAppId}
+            label={app.installedApp?.appName ?? ''}
+            icon={
+              <Image
+                src={app.installedApp?.appLogoUrl}
+                alt={app.installedApp?.appName ?? ''}
+                width={20}
+                height={20}
+                className="rounded-[6px]"
+              />
+            }
+            href={`/spaces/${spaceId}/app?id=${app.installedAppId}`}
+            isActive={isRouteActive('app')}
+            onClick={onCloseDrawer}
+          />
+        )) ?? []),
+    ].filter(Boolean);
+  }, [installedAppsData, isRouteActive, onCloseDrawer, spaceId]);
 
   return (
     <div
@@ -113,58 +173,20 @@ const SpaceSubSidebar = ({
         </div>
 
         <div className="mt-[20px] flex flex-col gap-[5px]">
-          <div>
-            <TabItem
-              label="Calendar"
-              href={`/spaces/${spaceId}/calendar`}
-              icon={<CalendarDots />}
-              isActive={isRouteActive('calendar')}
-              onClick={onCloseDrawer}
-            />
-          </div>
-          <TabItem
-            label="Discussions"
-            icon={<Chats />}
-            isActive={false}
-            locked={true}
-          />
-          <div>
-            <TabItem
-              label="Zu_Builders"
-              icon={<CalendarDots />}
-              isActive={false}
-              locked={true}
-            />
-            <SubTabItemContainer>
-              <TabItem
-                label="Public Activities"
-                icon={<GitBranch />}
-                isActive={false}
-                isSubTab={true}
-                locked={true}
-                hideLockIcon={true}
-              />
-            </SubTabItemContainer>
-          </div>
+          {installedAppsLoading ? (
+            <div className="flex flex-col gap-[20px]">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <Skeleton
+                  key={index}
+                  className="mx-[10px] h-[20px] rounded-[6px]"
+                />
+              ))}
+            </div>
+          ) : (
+            installedApps
+          )}
         </div>
       </div>
-
-      {/* not decide where to push this ui */}
-      {/* {isAdmin && (
-        <div className="absolute bottom-0 left-0 w-[260px] h-[90px] pt-5 px-2.5 border-t border-[rgba(255,255,255,0.1)]">
-          <div className="text-[12px] leading-[14px] text-white px-2.5">
-            ADMINS
-          </div>
-          <div className={'mt-2.5'}>
-            <TabItem
-              label="Space Settings"
-              icon={<Gear />}
-              isActive={false}
-              onClick={() => router.push(`/spaces/${spaceId}/edit`)}
-            />
-          </div>
-        </div>
-      )} */}
     </div>
   );
 };

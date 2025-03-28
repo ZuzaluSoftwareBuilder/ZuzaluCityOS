@@ -860,6 +860,7 @@ input PartialZucityDappInfoInput {
   openSource: String
   profileId: CeramicStreamID
   repositoryUrl: String
+  scAddresses: [ZucityDappInfoScAddressInput]
   tagline: String
   websiteUrl: String
 }
@@ -1742,6 +1743,7 @@ type ZucityDappInfo implements Node {
   profile: ZucityProfile
   profileId: CeramicStreamID!
   repositoryUrl: String
+  scAddresses: [ZucityDappInfoScAddress]
   tagline: String!
   websiteUrl: String
 }
@@ -1794,6 +1796,7 @@ input ZucityDappInfoInput {
   openSource: String!
   profileId: CeramicStreamID!
   repositoryUrl: String
+  scAddresses: [ZucityDappInfoScAddressInput]
   tagline: String!
   websiteUrl: String
 }
@@ -1809,6 +1812,16 @@ input ZucityDappInfoObjectFilterInput {
   isInstallable: StringValueFilterInput
   isSCApp: StringValueFilterInput
   openSource: StringValueFilterInput
+}
+
+type ZucityDappInfoScAddress {
+  address: String
+  chain: String
+}
+
+input ZucityDappInfoScAddressInput {
+  address: String
+  chain: String
 }
 
 input ZucityDappInfoSortingInput {

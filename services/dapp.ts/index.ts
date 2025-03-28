@@ -1,10 +1,16 @@
 import dayjs from 'dayjs';
-import { ComposeClient } from '@composedb/client';
+import { executeQuery } from '@/utils/ceramic';
+import { CREATE_DAPP_MUTATION, UPDATE_DAPP_MUTATION } from '../graphql/dApp';
 
-export const createDapp = async (
-  composeClient: ComposeClient,
-  dappInput: any,
-) => {
+const getValue = (value: any) => {
+  return !value || value === '' ? null : value;
+};
+
+const getBooleanValue = (value: any) => {
+  return value ? '1' : '0';
+};
+
+export const createDapp = async (dappInput: any) => {
   const {
     appName,
     developerName,
@@ -19,66 +25,53 @@ export const createDapp = async (
     appUrl,
     docsUrl,
     profileId,
+    appLogoUrl,
+    isInstallable,
+    isSCApp,
+    scAddresses,
+    auditLogUrl,
   } = dappInput;
 
-  const update: any = await composeClient.executeQuery(
-    `
-      mutation CreateZucityDappMutation($input: CreateZucityDappInfoInput!) {
-        createZucityDappInfo(
-          input: $input
-        ) {
-          document {
-            id
-            appUrl
-            appName
-            appType
-            docsUrl
-            tagline
-            bannerUrl
-            devStatus
-            profileId
-            categories
-            openSource
-            websiteUrl
-            description
-            createdAtTime
-            developerName
-            repositoryUrl
-          }
-        }
-      }
-      `,
-    {
-      input: {
-        content: {
-          profileId,
-          createdAtTime: dayjs().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-          appType: 'beta',
-          appUrl: !appUrl || appUrl === '' ? null : appUrl,
-          appName,
-          developerName,
-          description,
-          tagline,
-          bannerUrl,
-          devStatus: developmentStatus,
-          categories: categories.join(','),
-          openSource: openSource ? '1' : '0',
-          websiteUrl: !websiteUrl || websiteUrl === '' ? null : websiteUrl,
-          repositoryUrl:
-            !repositoryUrl || repositoryUrl === '' ? null : repositoryUrl,
-          docsUrl: !docsUrl || docsUrl === '' ? null : docsUrl,
-        },
+  console.log(dappInput);
+
+  const result = await executeQuery(CREATE_DAPP_MUTATION, {
+    input: {
+      content: {
+        profileId,
+        createdAtTime: dayjs().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+        appType: 'space',
+        appName,
+        developerName,
+        description,
+        tagline,
+        categories: categories.join(','),
+        appLogoUrl,
+        bannerUrl,
+        devStatus: developmentStatus,
+        openSource: getBooleanValue(openSource),
+        repositoryUrl: getValue(repositoryUrl),
+        isSCApp: getBooleanValue(isSCApp),
+        scAddresses:
+          isSCApp && scAddresses
+            ? scAddresses.split(',').map((item: string) => ({
+                address: item,
+              }))
+            : null,
+        isInstallable: getBooleanValue(isInstallable),
+        websiteUrl: getValue(websiteUrl),
+        docsUrl: getValue(docsUrl),
+        auditLogUrl: getValue(auditLogUrl),
+        appUrl: getValue(appUrl),
       },
     },
-  );
+  });
 
-  return update.data.createZucityDappInfo.document.id;
+  console.log(result);
+
+  return result?.data?.createZucityDappInfo?.document?.id;
 };
 
-export const updateDapp = async (
-  composeClient: ComposeClient,
-  dappInput: any,
-) => {
+export const updateDapp = async (dappInput: any) => {
   const {
     appName,
     developerName,
@@ -93,41 +86,42 @@ export const updateDapp = async (
     appUrl,
     docsUrl,
     id,
+    appLogoUrl,
+    isInstallable,
+    isSCApp,
+    scAddresses,
+    auditLogUrl,
   } = dappInput;
 
-  const update: any = await composeClient.executeQuery(
-    `
-      mutation UpdateZucityDappMutation($input: UpdateZucityDappInfoInput!) {
-        updateZucityDappInfo(
-          input: $input
-        ) {
-          document {
-            id
-          }
-        }
-      }
-      `,
-    {
-      input: {
-        id,
-        content: {
-          appUrl: !appUrl || appUrl === '' ? null : appUrl,
-          appName,
-          developerName,
-          description,
-          tagline,
-          bannerUrl,
-          devStatus: developmentStatus,
-          categories: categories.join(','),
-          openSource: openSource ? '1' : '0',
-          websiteUrl: !websiteUrl || websiteUrl === '' ? null : websiteUrl,
-          repositoryUrl:
-            !repositoryUrl || repositoryUrl === '' ? null : repositoryUrl,
-          docsUrl: !docsUrl || docsUrl === '' ? null : docsUrl,
-        },
+  const update: any = await executeQuery(UPDATE_DAPP_MUTATION, {
+    input: {
+      id,
+      content: {
+        appUrl: !appUrl || appUrl === '' ? null : appUrl,
+        appName,
+        appLogoUrl,
+        developerName,
+        description,
+        tagline,
+        bannerUrl,
+        devStatus: developmentStatus,
+        categories: categories.join(','),
+        openSource: getBooleanValue(openSource),
+        websiteUrl: getValue(websiteUrl),
+        repositoryUrl: getValue(repositoryUrl),
+        docsUrl: getValue(docsUrl),
+        isSCApp: getBooleanValue(isSCApp),
+        scAddresses:
+          isSCApp && scAddresses
+            ? scAddresses.split(',').map((item: string) => ({
+                address: item,
+              }))
+            : null,
+        isInstallable: getBooleanValue(isInstallable),
+        auditLogUrl: getValue(auditLogUrl),
       },
     },
-  );
+  });
 
   console.log(update);
 
