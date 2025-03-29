@@ -20,10 +20,10 @@ import {
 } from '@/components/typography/formTypography';
 import SelectCategories from '@/components/select/selectCategories';
 import { useEditorStore } from '@/components/editor/useEditorStore';
-import { ZuInput } from '@/components/core';
 
 import { POST_TAGS } from '@/constant';
 import Yup from '@/utils/yupExtensions';
+import { Input } from '@/components/base';
 
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,
@@ -152,7 +152,7 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
             control={control}
             name="title"
             render={({ field }) => (
-              <ZuInput {...field} placeholder="Type a title" />
+              <Input {...field} placeholder="Type a title" />
             )}
           />
         </div>
