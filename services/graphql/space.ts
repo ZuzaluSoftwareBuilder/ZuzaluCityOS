@@ -40,6 +40,13 @@ export const GET_SPACE_QUERY_BY_ID = graphql(`
             username
           }
         }
+        announcements(first: 100) {
+          edges {
+            node {
+              id
+            }
+          }
+        }
         installedApps(first: 100) {
           edges {
             node {

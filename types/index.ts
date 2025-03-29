@@ -207,6 +207,13 @@ export interface Space {
   };
   customLinks?: Link[];
   socialLinks?: Link[];
+  announcements?: {
+    edges: {
+      node: {
+        id: string;
+      };
+    }[];
+  };
   events?: {
     edges: {
       node: {

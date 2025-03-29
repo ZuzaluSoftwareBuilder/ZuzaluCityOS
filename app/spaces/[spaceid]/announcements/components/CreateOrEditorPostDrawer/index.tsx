@@ -31,6 +31,7 @@ import { useParams } from 'next/navigation';
 import { usePostListData } from '../PostList/PostListDataContext';
 import { Announcement } from '@/types';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
+import { useSpaceData } from '../../../components/context/spaceData';
 
 const CreateOrEditorPostDrawerContext = createContext({
   startCreate: () => {},
@@ -42,6 +43,7 @@ export const useCreateOrEditorPostDrawer = () =>
 
 const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
   const { children } = props;
+  const { refreshSpaceData } = useSpaceData();
   const spaceId = useParams()?.spaceid;
   const { refetch } = usePostListData();
   const { open, setOpen, handleOpen, handleClose } = useOpenDraw();
@@ -94,20 +96,41 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
     onSuccess: () => {
       setShowFinishDialog(true);
       refetch();
+      refreshSpaceData();
+    },
+    onError: (error) => {
+      setShowErrorDialog(true);
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'Failed to create announcement',
+      );
     },
   });
+
   const { mutate: updateAnnouncement, isPending: isUpdating } = useMutation({
-    mutationFn: (data: PostFormResult) =>
-      updateSpaceAnnouncement({
+    mutationFn: (data: PostFormResult) => {
+      if (!defaultAnnouncement?.id) return Promise.resolve();
+      return updateSpaceAnnouncement({
         spaceId: spaceId as string,
         announcementId: defaultAnnouncement?.id as string,
         ...data,
-      }),
+      });
+    },
     onSuccess: () => {
       setShowFinishDialog(true);
       refetch();
     },
+    onError: (error) => {
+      setShowErrorDialog(true);
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'Failed to update announcement',
+      );
+    },
   });
+
   const handleSubmit = useCallback(async () => {
     const result = await formRef.current?.submit();
     if (result) {
@@ -121,6 +144,8 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
 
   const isSubmitting = isCreating || isUpdating;
   const [showFinishDialog, setShowFinishDialog] = useState(false);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   return (
     <CreateOrEditorPostDrawerContext.Provider
@@ -194,6 +219,12 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
         message={`Please wait while the post is being ${
           mode === 'create' ? 'creating...' : 'updating...'
         }`}
+      />
+      <Dialog
+        showModal={showErrorDialog}
+        title="Error"
+        message={errorMessage}
+        onClose={() => setShowErrorDialog(false)}
       />
     </CreateOrEditorPostDrawerContext.Provider>
   );

@@ -149,6 +149,7 @@ const SpaceSubSidebar = ({
           isActive={isRouteActive('announcements')}
           height={36}
           onClick={onCloseDrawer}
+          count={spaceData?.announcements?.edges.length}
         />
         {(isOwner || isAdmin) && (
           <TabItem
