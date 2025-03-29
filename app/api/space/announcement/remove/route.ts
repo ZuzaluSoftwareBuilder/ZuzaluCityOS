@@ -2,7 +2,7 @@ import { withSessionValidation } from '@/utils/authMiddleware';
 import { dayjs } from '@/utils/dayjs';
 import utc from 'dayjs/plugin/utc';
 import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
-import { DISABLE_ANNOUNCEMENT_INDEXING_MUTATION } from '@/services/graphql/announcements';
+import { ENABLE_ANNOUNCEMENT_INDEXING_MUTATION } from '@/services/graphql/announcements';
 import { z } from 'zod';
 import {
   createErrorResponse,
@@ -33,7 +33,12 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     }
     const { id, announcementId } = validationResult.data;
 
-    if (!hasRequiredPermission(sessionData, PermissionName.MANAGE_SPACE_ANNOUNCEMENTS)) {
+    if (
+      !hasRequiredPermission(
+        sessionData,
+        PermissionName.MANAGE_SPACE_ANNOUNCEMENTS,
+      )
+    ) {
       return createErrorResponse('Permission denied', 403);
     }
 
@@ -42,7 +47,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Error getting private key', 500);
     }
 
-    const result = await executeQuery(DISABLE_ANNOUNCEMENT_INDEXING_MUTATION, {
+    const result = await executeQuery(ENABLE_ANNOUNCEMENT_INDEXING_MUTATION, {
       input: {
         id: announcementId,
         shouldIndex: false,

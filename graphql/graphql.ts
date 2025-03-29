@@ -3758,12 +3758,12 @@ export type UpdateZucityAnnouncementMutationMutationVariables = Exact<{
 
 export type UpdateZucityAnnouncementMutationMutation = { __typename?: 'Mutation', updateZucityAnnouncement?: { __typename?: 'UpdateZucityAnnouncementPayload', document: { __typename?: 'ZucityAnnouncement', id: string, title: string, description?: string | null, updatedAt: any } } | null };
 
-export type DisableZucityAnnouncementIndexingMutationMutationVariables = Exact<{
+export type EnableIndexingZucityAnnouncementMutationVariables = Exact<{
   input: EnableIndexingZucityAnnouncementInput;
 }>;
 
 
-export type DisableZucityAnnouncementIndexingMutationMutation = { __typename?: 'Mutation', enableIndexingZucityAnnouncement?: { __typename?: 'EnableIndexingZucityAnnouncementPayload', document?: { __typename?: 'ZucityAnnouncement', id: string } | null } | null };
+export type EnableIndexingZucityAnnouncementMutation = { __typename?: 'Mutation', enableIndexingZucityAnnouncement?: { __typename?: 'EnableIndexingZucityAnnouncementPayload', document?: { __typename?: 'ZucityAnnouncement', id: string } | null } | null };
 
 export type GetSpaceAnnouncementsQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -4031,15 +4031,15 @@ export const UpdateZucityAnnouncementMutationDocument = new TypedDocumentString(
   }
 }
     `) as unknown as TypedDocumentString<UpdateZucityAnnouncementMutationMutation, UpdateZucityAnnouncementMutationMutationVariables>;
-export const DisableZucityAnnouncementIndexingMutationDocument = new TypedDocumentString(`
-    mutation DisableZucityAnnouncementIndexingMutation($input: EnableIndexingZucityAnnouncementInput!) {
+export const EnableIndexingZucityAnnouncementDocument = new TypedDocumentString(`
+    mutation EnableIndexingZucityAnnouncement($input: EnableIndexingZucityAnnouncementInput!) {
   enableIndexingZucityAnnouncement(input: $input) {
     document {
       id
     }
   }
 }
-    `) as unknown as TypedDocumentString<DisableZucityAnnouncementIndexingMutationMutation, DisableZucityAnnouncementIndexingMutationMutationVariables>;
+    `) as unknown as TypedDocumentString<EnableIndexingZucityAnnouncementMutation, EnableIndexingZucityAnnouncementMutationVariables>;
 export const GetSpaceAnnouncementsDocument = new TypedDocumentString(`
     query GetSpaceAnnouncements($id: ID!, $first: Int = 100) {
   node(id: $id) {

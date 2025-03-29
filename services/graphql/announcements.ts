@@ -38,8 +38,8 @@ export const UPDATE_ANNOUNCEMENT_MUTATION = graphql(`
   }
 `);
 
-export const DISABLE_ANNOUNCEMENT_INDEXING_MUTATION = graphql(`
-  mutation DisableZucityAnnouncementIndexingMutation($input: EnableIndexingZucityAnnouncementInput!) {
+export const ENABLE_ANNOUNCEMENT_INDEXING_MUTATION = graphql(`
+  mutation EnableIndexingZucityAnnouncement($input: EnableIndexingZucityAnnouncementInput!) {
     enableIndexingZucityAnnouncement(input: $input) {
       document {
         id
