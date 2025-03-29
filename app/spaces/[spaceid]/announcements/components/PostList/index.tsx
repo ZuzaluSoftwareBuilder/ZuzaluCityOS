@@ -51,7 +51,7 @@ const PostList = () => {
         </div>
       </div>
       <div className="text-[14px] leading-[120%] opacity-80">
-        Announcement post live in the event view under a tab of the same name.
+        Announcement posts live in the space view under a menu of the same name.
       </div>
       {loading ? (
         <PostList.SkeletonList />
