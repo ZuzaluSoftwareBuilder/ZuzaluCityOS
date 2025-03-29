@@ -159,13 +159,9 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
         </div>
         <Dropdown>
           <DropdownTrigger>
-            {isOwner || isAdmin ? (
-              <Button isIconOnly aria-label="More Options" className="px-0">
-                <EllipsisVerticalIcon className="w-5 h-5" />
-              </Button>
-            ) : (
-              <></>
-            )}
+            <Button isIconOnly aria-label="More Options" className="px-0">
+              <EllipsisVerticalIcon className="w-5 h-5" />
+            </Button>
           </DropdownTrigger>
           <DropdownMenu aria-label="Post actions">
             <DropdownItem key="edit" onClick={() => startEdit(post)}>
