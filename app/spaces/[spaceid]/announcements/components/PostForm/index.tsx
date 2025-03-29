@@ -115,18 +115,6 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
       );
       if (errorElement) {
         errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        if ('focus' in errorElement) {
-          (errorElement as HTMLElement).focus();
-        }
-      } else if (firstErrorField === 'description') {
-        const editorElement =
-          formContainerRef.current.querySelector('.ce-block');
-        if (editorElement) {
-          editorElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
-          });
-        }
       }
     }
   }, [errors, setError]);
