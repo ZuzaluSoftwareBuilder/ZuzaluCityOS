@@ -1,18 +1,22 @@
-import Dialog from '@/app/spaces/components/Modal/Dialog';
+import { createContext, useCallback, useContext, useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
+import { Button } from '@heroui/react';
+
+import { Announcement } from '@/types';
+
 import {
   getSpaceAnnouncements,
   removeSpaceAnnouncement,
 } from '@/services/space/announcement';
-import { Announcement } from '@/types';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
+
 import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
+  Modal,
+  ModalContent,
+  ModalBody,
+  ModalFooter,
+  CommonModalHeader,
+} from '@/components/base/modal';
 
 const PostListDataContext = createContext<{
   loading: boolean;
@@ -84,15 +88,33 @@ export const PostListDataProvider = ({
       }}
     >
       {children}
-      <Dialog
-        showModal={deleteDialogOpen}
-        title="Deleting Post"
-        message="Are you sure you want to delete this post?"
-        confirmText="Delete"
+      <Modal
+        isOpen={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
-        isLoading={isDeleting}
-        onConfirm={handleDeleteConfirm}
-      />
+      >
+        <ModalContent>
+          <CommonModalHeader
+            title="Deleting Post"
+            onClose={() => setDeleteDialogOpen(false)}
+            isDisabled={isDeleting}
+          />
+          <ModalBody>
+            <p className="text-white">
+              Are you sure you want to delete this post?
+            </p>
+          </ModalBody>
+          <ModalFooter className="flex justify-end gap-2 py-4">
+            <Button
+              variant="flat"
+              color="danger"
+              onPress={handleDeleteConfirm}
+              isLoading={isDeleting}
+            >
+              Delete
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </PostListDataContext.Provider>
   );
 };
