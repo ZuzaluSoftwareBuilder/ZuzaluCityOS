@@ -639,6 +639,8 @@ export enum PermissionName {
   VIEW_ANALYTICS = 'view_analytics',
   MANAGE_APPS = 'manage_apps',
   VIEW_APPS = 'view_apps',
+  MANAGE_SPACE_ANNOUNCEMENTS = 'manage_space_announcements',
+  VIEW_SPACE_ANNOUNCEMENTS = 'view_space_announcements',
 }
 
 export interface Role {
