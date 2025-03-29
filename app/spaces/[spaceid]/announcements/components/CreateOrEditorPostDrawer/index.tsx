@@ -67,7 +67,7 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
   const startCreate = useCallback(() => {
     setMode('create');
     handleOpen();
-    formRef.current?.reset();
+    setTimeout(() => formRef.current?.reset());
   }, [handleOpen]);
 
   // form control
@@ -76,7 +76,7 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
   const [defaultAnnouncement, setDefaultAnnouncement] =
     useState<Announcement | null>(null);
   const formInitialData = useMemo(() => {
-    if (defaultAnnouncement) {
+    if (mode === 'edit' && defaultAnnouncement) {
       return {
         title: defaultAnnouncement.title,
         tags: defaultAnnouncement.tags.map((tag) => tag.tag),

@@ -17,20 +17,23 @@ import {
   DropdownItem,
   Skeleton,
 } from '@heroui/react';
+import dayjs from 'dayjs';
 import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
 
 import CreateOrEditorPostDrawer, {
   useCreateOrEditorPostDrawer,
 } from '../CreateOrEditorPostDrawer';
 import { Announcement } from '@/types';
-import { PostListDataProvider, usePostListData } from './PostListDataContext';
-import dayjs from 'dayjs';
 import EditorPreview from '@/components/editor/EditorPreview';
-import { ZuButton } from '@/components/core';
+
+import { PostListDataProvider, usePostListData } from './PostListDataContext';
+import { useSpacePermissions } from '../../../components/permission';
 
 const PostList = () => {
   const { startCreate } = useCreateOrEditorPostDrawer();
   const { posts, loading } = usePostListData();
+
+  const { isAdmin, isOwner } = useSpacePermissions();
 
   return (
     <div className="flex flex-col gap-5">
@@ -39,7 +42,7 @@ const PostList = () => {
           <span className="font-bold leading-[140%] text-[20px]">Posts</span>
           <InformationIcon size={5} />
         </div>
-        <div>
+        {(isOwner || isAdmin) && (
           <Button
             color="secondary"
             size="sm"
@@ -48,7 +51,7 @@ const PostList = () => {
           >
             Add a Post
           </Button>
-        </div>
+        )}
       </div>
       <div className="text-[14px] leading-[120%] opacity-80">
         Announcement posts live in the space view under a menu of the same name.
@@ -69,18 +72,21 @@ const PostList = () => {
 
 PostList.Empty = memo(function Empty() {
   const { startCreate } = useCreateOrEditorPostDrawer();
+  const { isAdmin, isOwner } = useSpacePermissions();
   return (
     <div
       onClick={startCreate}
       className="flex flex-col items-center bg-[#2d2d2d] rounded-[8px] p-5 cursor-pointer"
     >
-      <PlusCircleIcon size={15} color="#6c6c6c" />
+      {isAdmin && <PlusCircleIcon size={15} color="#6c6c6c" />}
       <span className="text-normal font-bold leading-[180%] tracking-[0.01em]">
         No Posts
       </span>
-      <span className="text-[14px] leading-[140%] tracking-[0.01em] opacity-50">
-        Add a Post
-      </span>
+      {isAdmin && (
+        <span className="text-[14px] leading-[140%] tracking-[0.01em] opacity-50">
+          Add a Post
+        </span>
+      )}
     </div>
   );
 });
@@ -130,23 +136,21 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
             style={{ opacity: 0.8 }}
           />
           {isCanCollapse && (
-            <ZuButton
-              startIcon={
+            <Button
+              size="sm"
+              color="secondary"
+              startContent={
                 isCollapsed ? (
                   <ChevronDownIcon size={4} />
                 ) : (
                   <ChevronUpIcon size={4} />
                 )
               }
-              sx={{
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                width: '100%',
-                marginTop: 0,
-              }}
+              className="w-full mt-0"
               onClick={() => setIsCollapsed((prev) => !prev)}
             >
               {isCollapsed ? 'Show More' : 'Show Less'}
-            </ZuButton>
+            </Button>
           )}
           <div className="text-[10px] leading-[120%] font-normal opacity-50">
             {dayjs(post.createdAt).format('YYYY-MM-DD')} CREATED |{' '}
@@ -155,9 +159,13 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
         </div>
         <Dropdown>
           <DropdownTrigger>
-            <Button isIconOnly aria-label="More Options" className="px-0">
-              <EllipsisVerticalIcon className="w-5 h-5" />
-            </Button>
+            {isOwner || isAdmin ? (
+              <Button isIconOnly aria-label="More Options" className="px-0">
+                <EllipsisVerticalIcon className="w-5 h-5" />
+              </Button>
+            ) : (
+              <></>
+            )}
           </DropdownTrigger>
           <DropdownMenu aria-label="Post actions">
             <DropdownItem key="edit" onClick={() => startEdit(post)}>
