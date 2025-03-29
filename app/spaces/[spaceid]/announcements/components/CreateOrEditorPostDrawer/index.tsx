@@ -9,6 +9,8 @@ import {
   useRef,
   useState,
 } from 'react';
+import { dayjs } from '@/utils/dayjs';
+import { useParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import {
   Button,
@@ -21,15 +23,15 @@ import FormHeader from '@/components/form/FormHeader';
 import { CloseIcon, PlusCircleIcon } from '@/components/icons';
 import useOpenDraw from '@/hooks/useOpenDraw';
 import { FormTitle } from '@/components/typography/formTypography';
-
-import PostForm, { PostFormHandle, PostFormResult } from '../PostForm';
-import {
-  createSpaceAnnouncement,
-  updateSpaceAnnouncement,
-} from '@/services/space/announcement';
-import { useParams } from 'next/navigation';
-import { usePostListData } from '../PostList/PostListDataContext';
 import { Announcement } from '@/types';
+import { executeQuery } from '@/utils/ceramic';
+import {
+  CREATE_ANNOUNCEMENT_MUTATION,
+  UPDATE_ANNOUNCEMENT_MUTATION,
+} from '@/services/graphql/announcements';
+
+import { usePostListData } from '../PostList/PostListDataContext';
+import PostForm, { PostFormHandle, PostFormResult } from '../PostForm';
 import { useSpaceData } from '../../../components/context/spaceData';
 
 const CreateOrEditorPostDrawerContext = createContext({
@@ -84,28 +86,49 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
       };
     }
     return undefined;
-  }, [defaultAnnouncement]);
+  }, [defaultAnnouncement, mode]);
 
   const { mutate: createAnnouncement, isPending: isCreating } = useMutation({
-    mutationFn: (data: PostFormResult) =>
-      createSpaceAnnouncement({
-        spaceId: spaceId as string,
-        ...data,
-      }),
+    mutationFn: async (data: PostFormResult) => {
+      const response = await executeQuery(CREATE_ANNOUNCEMENT_MUTATION, {
+        input: {
+          content: {
+            title: data.title,
+            sourceId: spaceId as string,
+            spaceId: spaceId as string,
+            description: data.description,
+            tags: data.tags.map((tag) => ({ tag })),
+            createdAt: dayjs().utc().toISOString(),
+            updatedAt: dayjs().utc().toISOString(),
+          },
+        },
+      });
+
+      return response.data;
+    },
     onSuccess: () => {
       refetch();
       refreshSpaceData();
       handleClose();
     },
   });
-
-  const { mutate: updateAnnouncement, isPending: isUpdating } = useMutation({
-    mutationFn: (data: PostFormResult) => {
-      if (!defaultAnnouncement?.id) return Promise.resolve();
-      return updateSpaceAnnouncement({
-        spaceId: spaceId as string,
-        announcementId: defaultAnnouncement?.id as string,
-        ...data,
+  const { mutate: updateAnnouncement, isPending: isUpdating } = useMutation<
+    void,
+    Error,
+    PostFormResult
+  >({
+    mutationFn: async (data: PostFormResult) => {
+      if (!defaultAnnouncement?.id) return;
+      await executeQuery(UPDATE_ANNOUNCEMENT_MUTATION, {
+        input: {
+          id: defaultAnnouncement.id,
+          content: {
+            title: data.title,
+            description: data.description,
+            tags: data.tags.map((tag) => ({ tag })),
+            updatedAt: dayjs().utc().toISOString(),
+          },
+        },
       });
     },
     onSuccess: () => {

@@ -5,8 +5,6 @@ import { Button } from '@heroui/react';
 
 import { Announcement } from '@/types';
 
-import { removeSpaceAnnouncement } from '@/services/space/announcement';
-
 import {
   Modal,
   ModalContent,
@@ -15,7 +13,10 @@ import {
   CommonModalHeader,
 } from '@/components/base/modal';
 import { executeQuery } from '@/utils/ceramic';
-import { GET_SPACE_ANNOUNCEMENTS_QUERY } from '@/services/graphql/announcements';
+import {
+  ENABLE_ANNOUNCEMENT_INDEXING_MUTATION,
+  GET_SPACE_ANNOUNCEMENTS_QUERY,
+} from '@/services/graphql/announcements';
 import { get } from 'lodash';
 
 const PostListDataContext = createContext<{
@@ -63,9 +64,11 @@ export const PostListDataProvider = ({
   );
   const { mutate: removeAnnouncement, isPending: isDeleting } = useMutation({
     mutationFn: (announcementId: string) =>
-      removeSpaceAnnouncement({
-        spaceId: spaceId as string,
-        announcementId,
+      executeQuery(ENABLE_ANNOUNCEMENT_INDEXING_MUTATION, {
+        input: {
+          id: announcementId,
+          shouldIndex: false,
+        },
       }),
     onSuccess: () => {
       setDeleteDialogOpen(false);

@@ -109,7 +109,7 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
       <div className="flex gap-2.5">
         <div className="size-10 rounded-full overflow-hidden ml-6 shrink-0">
           <Image
-            src={post.author.zucityProfile?.avatar}
+            src={post.author.zucityProfile?.avatar ?? '/user/avatar_p.png'}
             alt="avatar"
             className="rounded-full"
             width={40}
