@@ -6,6 +6,7 @@ import {
   forwardRef,
   useImperativeHandle,
   useMemo,
+  useRef,
 } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
@@ -21,6 +22,7 @@ import { POST_TAGS } from '@/constant';
 import { useEditorStore } from '@/components/editor/useEditorStore';
 import { ZuInput } from '@/components/core';
 import { FormHelperText } from '@mui/material';
+import { omit } from 'lodash';
 
 export interface PostFormResult {
   title: string;
@@ -50,6 +52,7 @@ type FormData = Yup.InferType<typeof schema>;
 
 const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
   const { initialData } = props;
+  const formContainerRef = useRef<HTMLDivElement>(null);
 
   const {
     control,
@@ -83,7 +86,6 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
   const submitForm = useCallback(
     async (data: FormData): Promise<PostFormResult | undefined> => {
       const description = descriptionEditorStore.value;
-      console.log(description);
       if (
         !description ||
         !description.blocks ||
@@ -92,6 +94,7 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
         setError('description', {
           message: 'Description is required',
         });
+        onFormError();
         return undefined;
       }
       return {
@@ -104,8 +107,29 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
   );
 
   const onFormError = useCallback(() => {
-    window.alert('Please input all necessary fields.');
-  }, []);
+    if (!formContainerRef.current) return;
+    const firstErrorField = Object.keys(omit(errors, 'root'))[0];
+    if (firstErrorField) {
+      const errorElement = formContainerRef.current.querySelector(
+        `[data-field="${firstErrorField}"]`,
+      );
+      if (errorElement) {
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if ('focus' in errorElement) {
+          (errorElement as HTMLElement).focus();
+        }
+      } else if (firstErrorField === 'description') {
+        const editorElement =
+          formContainerRef.current.querySelector('.ce-block');
+        if (editorElement) {
+          editorElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          });
+        }
+      }
+    }
+  }, [errors, setError]);
 
   useImperativeHandle(
     ref,
@@ -123,17 +147,22 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
   );
 
   return (
-    <div className="flex flex-col gap-5 p-5 bg-[#262626] rounded-lg">
+    <div
+      ref={formContainerRef}
+      className="flex flex-col gap-5 p-5 bg-[#262626] rounded-lg"
+    >
       <FormTitle>Post Details</FormTitle>
       <div className="flex flex-col gap-5">
         <FormLabel>Post Title*</FormLabel>
-        <Controller
-          control={control}
-          name="title"
-          render={({ field }) => (
-            <ZuInput {...field} placeholder="Type a title" />
-          )}
-        />
+        <div data-field="title">
+          <Controller
+            control={control}
+            name="title"
+            render={({ field }) => (
+              <ZuInput {...field} placeholder="Type a title" />
+            )}
+          />
+        </div>
         {errors?.title && (
           <FormHelperText error>{errors?.title.message}</FormHelperText>
         )}
@@ -145,19 +174,21 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
           </FormLabelDesc>
         </div>
 
-        <Controller
-          control={control}
-          name="tags"
-          render={() => (
-            <SelectCategories
-              onChange={(value) => {
-                setValue('tags', value);
-              }}
-              initialValues={initialTags}
-              options={POST_TAGS}
-            />
-          )}
-        />
+        <div data-field="tags">
+          <Controller
+            control={control}
+            name="tags"
+            render={() => (
+              <SelectCategories
+                onChange={(value) => {
+                  setValue('tags', value);
+                }}
+                initialValues={initialTags}
+                options={POST_TAGS}
+              />
+            )}
+          />
+        </div>
 
         {errors?.tags && (
           <FormHelperText error>{errors?.tags.message}</FormHelperText>
@@ -168,18 +199,20 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
           <FormLabelDesc>Write your post here</FormLabelDesc>
         </div>
 
-        <SuperEditor
-          placeholder="Type post content"
-          value={descriptionEditorStore.value}
-          onChange={(val) => {
-            descriptionEditorStore.setValue(val);
-            if (!val || !val.blocks || val.blocks.length == 0) {
-              setError('description', {
-                message: 'Description is required',
-              });
-            }
-          }}
-        />
+        <div data-field="description">
+          <SuperEditor
+            placeholder="Type post content"
+            value={descriptionEditorStore.value}
+            onChange={(val) => {
+              descriptionEditorStore.setValue(val);
+              if (!val || !val.blocks || val.blocks.length == 0) {
+                setError('description', {
+                  message: 'Description is required',
+                });
+              }
+            }}
+          />
+        </div>
         {errors?.description && (
           <FormHelperText error>{errors?.description.message}</FormHelperText>
         )}
