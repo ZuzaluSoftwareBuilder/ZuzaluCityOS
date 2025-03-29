@@ -163,7 +163,7 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
               <EllipsisVerticalIcon className="w-5 h-5" />
             </Button>
           </DropdownTrigger>
-          <DropdownMenu aria-label="Post actions">
+          <DropdownMenu aria-label="Post Actions">
             <DropdownItem key="edit" onClick={() => startEdit(post)}>
               Edit
             </DropdownItem>
