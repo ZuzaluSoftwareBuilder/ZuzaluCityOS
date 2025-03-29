@@ -75,7 +75,11 @@ PostList.Empty = memo(function Empty() {
   const { isAdmin, isOwner } = useSpacePermissions();
   return (
     <div
-      onClick={startCreate}
+      onClick={() => {
+        if (isAdmin || isOwner) {
+          startCreate();
+        }
+      }}
       className="flex flex-col items-center bg-[#2d2d2d] rounded-[8px] p-5 cursor-pointer"
     >
       {isAdmin && <PlusCircleIcon size={15} color="#6c6c6c" />}
