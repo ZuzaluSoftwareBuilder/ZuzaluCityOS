@@ -30,7 +30,6 @@ import {
 import { useParams } from 'next/navigation';
 import { usePostListData } from '../PostList/PostListDataContext';
 import { Announcement } from '@/types';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
 import { useSpaceData } from '../../../components/context/spaceData';
 
 const CreateOrEditorPostDrawerContext = createContext({
@@ -94,17 +93,9 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
         ...data,
       }),
     onSuccess: () => {
-      setShowFinishDialog(true);
       refetch();
       refreshSpaceData();
-    },
-    onError: (error) => {
-      setShowErrorDialog(true);
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : 'Failed to create announcement',
-      );
+      handleClose();
     },
   });
 
@@ -118,16 +109,8 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
       });
     },
     onSuccess: () => {
-      setShowFinishDialog(true);
       refetch();
-    },
-    onError: (error) => {
-      setShowErrorDialog(true);
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : 'Failed to update announcement',
-      );
+      handleClose();
     },
   });
 
@@ -143,9 +126,6 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
   }, [mode, createAnnouncement, updateAnnouncement]);
 
   const isSubmitting = isCreating || isUpdating;
-  const [showFinishDialog, setShowFinishDialog] = useState(false);
-  const [showErrorDialog, setShowErrorDialog] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
   return (
     <CreateOrEditorPostDrawerContext.Provider
@@ -198,34 +178,6 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
           )}
         </DrawerContent>
       </Drawer>
-
-      <Dialog
-        title={mode === 'create' ? 'Post Created' : 'Post Updated'}
-        message="Please view it."
-        showModal={showFinishDialog}
-        onClose={() => {
-          setShowFinishDialog(false);
-          handleClose();
-        }}
-        onConfirm={() => {
-          setShowFinishDialog(false);
-          handleClose();
-        }}
-      />
-      <Dialog
-        showModal={isSubmitting}
-        showActions={false}
-        title={mode === 'create' ? 'Post Creating' : 'Post Updating'}
-        message={`Please wait while the post is being ${
-          mode === 'create' ? 'creating...' : 'updating...'
-        }`}
-      />
-      <Dialog
-        showModal={showErrorDialog}
-        title="Error"
-        message={errorMessage}
-        onClose={() => setShowErrorDialog(false)}
-      />
     </CreateOrEditorPostDrawerContext.Provider>
   );
 };
