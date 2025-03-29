@@ -2,27 +2,32 @@
 
 import {
   useCallback,
-  useEffect,
   forwardRef,
   useImperativeHandle,
   useMemo,
   useRef,
 } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { FormHelperText } from '@mui/material';
+import { omit } from 'lodash';
+import dynamic from 'next/dynamic';
+import { yupResolver } from '@hookform/resolvers/yup';
+
 import {
   FormLabel,
   FormLabelDesc,
   FormTitle,
 } from '@/components/typography/formTypography';
 import SelectCategories from '@/components/select/selectCategories';
-import SuperEditor from '@/components/editor/SuperEditor';
-import { yupResolver } from '@hookform/resolvers/yup';
-import Yup from '@/utils/yupExtensions';
-import { POST_TAGS } from '@/constant';
 import { useEditorStore } from '@/components/editor/useEditorStore';
 import { ZuInput } from '@/components/core';
-import { FormHelperText } from '@mui/material';
-import { omit } from 'lodash';
+
+import { POST_TAGS } from '@/constant';
+import Yup from '@/utils/yupExtensions';
+
+const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
+  ssr: false,
+});
 
 export interface PostFormResult {
   title: string;
