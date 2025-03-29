@@ -4,17 +4,41 @@ import {
   createErrorResponse,
   createSuccessResponse,
 } from '@/utils/service/response';
-import { NextRequest } from 'next/server';
+import { hasRequiredPermission } from '@/utils/service/role';
+import { PermissionName } from '@/types';
+import { withSessionValidation } from '@/utils/authMiddleware';
+import { z } from 'zod';
 
-export const dynamic = 'force-dynamic';
+const querySchema = z.object({
+  id: z.string().min(1, 'Space ID is required'),
+  resource: z.string().min(1, 'Resource is required'),
+});
 
-export const GET = async (request: NextRequest) => {
+export const POST = withSessionValidation(async (request, sessionData) => {
   try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
+    const body = await request.json();
+    const validationResult = querySchema.safeParse(body);
+    if (!validationResult.success) {
+      return createErrorResponse(
+        'Invalid request parameters',
+        400,
+        validationResult.error.format(),
+      );
+    }
+
+    const { id } = validationResult.data;
 
     if (!id) {
       return createErrorResponse('Missing spaceId', 400);
+    }
+
+    if (
+      !hasRequiredPermission(
+        sessionData,
+        PermissionName.VIEW_SPACE_ANNOUNCEMENTS,
+      )
+    ) {
+      return createErrorResponse('Permission denied', 403);
     }
 
     const result = await executeQuery(GET_SPACE_ANNOUNCEMENTS_QUERY, {
@@ -23,14 +47,11 @@ export const GET = async (request: NextRequest) => {
     });
 
     if (result.errors) {
-      return createErrorResponse(
-        'Failed to query space announcements',
-        500,
-      );
+      return createErrorResponse('Failed to query space announcements', 500);
     }
 
     const spaceNode = result.data.node;
-    
+
     if (!spaceNode || !('announcements' in spaceNode)) {
       return createErrorResponse('Space not found', 404);
     }
@@ -43,4 +64,4 @@ export const GET = async (request: NextRequest) => {
     console.error('Error querying space announcements:', error);
     return createErrorResponse('Internal server error', 500);
   }
-};
+});

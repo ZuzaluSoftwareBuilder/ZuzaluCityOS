@@ -12,10 +12,9 @@ export type AnnouncementsWithPagination = {
 
 export const getSpaceAnnouncements = async (spaceId: string) => {
   try {
-    const response = await axiosInstance.get('/api/space/announcement', {
-      params: {
-        id: spaceId,
-      },
+    const response = await axiosInstance.post('/api/space/announcement', {
+      id: spaceId,
+      resource: 'space',
     });
     return response.data;
   } catch (error) {

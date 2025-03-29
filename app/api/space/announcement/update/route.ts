@@ -38,8 +38,7 @@ export const PUT = withSessionValidation(async (request, sessionData) => {
     const { id, announcementId, title, description, tags } =
       validationResult.data;
 
-    // TODO: just admin can update announcement?
-    if (!hasRequiredPermission(sessionData, PermissionName.MANAGE_ADMIN_ROLE)) {
+    if (!hasRequiredPermission(sessionData, PermissionName.MANAGE_SPACE_ANNOUNCEMENTS)) {
       return createErrorResponse('Permission denied', 403);
     }
 

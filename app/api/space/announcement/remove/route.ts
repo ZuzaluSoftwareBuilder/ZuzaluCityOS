@@ -33,7 +33,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     }
     const { id, announcementId } = validationResult.data;
 
-    if (!hasRequiredPermission(sessionData, PermissionName.MANAGE_ADMIN_ROLE)) {
+    if (!hasRequiredPermission(sessionData, PermissionName.MANAGE_SPACE_ANNOUNCEMENTS)) {
       return createErrorResponse('Permission denied', 403);
     }
 

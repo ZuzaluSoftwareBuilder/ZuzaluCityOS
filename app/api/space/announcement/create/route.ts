@@ -37,8 +37,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     const { title, description, spaceId, tags } = validationResult.data;
     const sourceId = spaceId;
 
-    // TODO: just admin can create announcement?
-    if (!hasRequiredPermission(sessionData, PermissionName.MANAGE_ADMIN_ROLE)) {
+    if (!hasRequiredPermission(sessionData, PermissionName.MANAGE_SPACE_ANNOUNCEMENTS)) {
       return createErrorResponse('Permission denied', 403);
     }
 
