@@ -34,21 +34,20 @@ export const PostListDataProvider = ({
   children: React.ReactNode;
 }) => {
   const spaceId = useParams()?.spaceid;
-  const { data, refetch, isLoading } = useQuery({
+  const {
+    data: posts,
+    refetch,
+    isLoading,
+  } = useQuery({
     queryKey: ['getAnnouncements', spaceId],
     queryFn: () => getSpaceAnnouncements(spaceId as string),
+    select: (data) => {
+      if (data.status === 'success' && data.data) {
+        return data.data.announcements;
+      }
+      return [];
+    },
   });
-  const posts = useMemo<{ node: Announcement }[]>(() => {
-    if (
-      data &&
-      data.status === 'success' &&
-      data.data &&
-      data.data.announcements
-    ) {
-      return data.data.announcements;
-    }
-    return [];
-  }, [data]);
 
   // delete dialog
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
