@@ -5,10 +5,7 @@ import { Button } from '@heroui/react';
 
 import { Announcement } from '@/types';
 
-import {
-  getSpaceAnnouncements,
-  removeSpaceAnnouncement,
-} from '@/services/space/announcement';
+import { removeSpaceAnnouncement } from '@/services/space/announcement';
 
 import {
   Modal,
@@ -17,6 +14,9 @@ import {
   ModalFooter,
   CommonModalHeader,
 } from '@/components/base/modal';
+import { executeQuery } from '@/utils/ceramic';
+import { GET_SPACE_ANNOUNCEMENTS_QUERY } from '@/services/graphql/announcements';
+import { get } from 'lodash';
 
 const PostListDataContext = createContext<{
   loading: boolean;
@@ -39,17 +39,20 @@ export const PostListDataProvider = ({
 }) => {
   const spaceId = useParams()?.spaceid;
   const {
-    data: posts,
+    data: posts = [],
     refetch,
     isLoading,
   } = useQuery({
+    enabled: !!spaceId,
     queryKey: ['getAnnouncements', spaceId],
-    queryFn: () => getSpaceAnnouncements(spaceId as string),
+    queryFn: () =>
+      executeQuery(GET_SPACE_ANNOUNCEMENTS_QUERY, {
+        id: spaceId as string,
+      }),
     select: (data) => {
-      if (data.status === 'success' && data.data) {
-        return data.data.announcements;
-      }
-      return [];
+      return get(data, 'data.node.announcements.edges', []) as {
+        node: Announcement;
+      }[];
     },
   });
 

@@ -10,24 +10,6 @@ export type AnnouncementsWithPagination = {
   };
 };
 
-export const getSpaceAnnouncements = async (spaceId: string) => {
-  try {
-    const response = await axiosInstance.post('/api/space/announcement', {
-      id: spaceId,
-      resource: 'space',
-    });
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw error.response?.data || error.message;
-    } else {
-      throw new Error(
-        'An unknown error occurred while fetching space announcements',
-      );
-    }
-  }
-};
-
 export interface CreateAnnouncementParams {
   spaceId: string;
   title: string;
