@@ -5,7 +5,8 @@ type ZucitySpace
   )
   @createIndex(fields: [{ path: "name" }])
   @createIndex(fields: [{ path: "category" }])
-  @createIndex(fields: [{ path: "owner" }]) {
+  @createIndex(fields: [{ path: "owner" }])
+  @createIndex(fields: [{ path: "gated" }]) {
   author: DID! @documentAccount
   name: String! @string(minLength: 1, maxLength: 100000)
   description: String! @string(minLength: 1, maxLength: 100000)
@@ -20,6 +21,7 @@ type ZucitySpace
   tags: [Tag] @list(maxLength: 10)
   owner: DID! 
   color: String @string(minLength: 1, maxLength: 100000)
+  gated: String @string(minLength: 1, maxLength: 100000)
   createdAt: DateTime!
   updatedAt: DateTime!
   customAttributes: [TBD] @list(maxLength: 10000)

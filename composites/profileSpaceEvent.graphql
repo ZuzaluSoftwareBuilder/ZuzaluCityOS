@@ -21,7 +21,8 @@ type ZucityProfile @loadModel(id: "$Profile_ID") {
     @relationFrom(model: "ZucitySpace", property: "profileId")
   applicationForms: [ZucityApplicationForm]
     @relationFrom(model: "ZucityApplicationForm", property: "profileId")
-  invitated: [ZucityInvitation]
+  invitatee: [ZucityInvitation]
     @relationFrom(model: "ZucityInvitation", property: "profileId")
-
+  inviter: [ZucityInvitation]
+    @relationFrom(model: "ZucityInvitation", property: "inviterProfileId")
 }
