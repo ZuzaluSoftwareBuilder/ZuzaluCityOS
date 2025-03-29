@@ -28,6 +28,7 @@ import EditorPreview from '@/components/editor/EditorPreview';
 
 import { PostListDataProvider, usePostListData } from './PostListDataContext';
 import { useSpacePermissions } from '../../../components/permission';
+import { useCeramicContext } from '@/context/CeramicContext';
 
 const PostList = () => {
   const { startCreate } = useCreateOrEditorPostDrawer();
@@ -100,6 +101,8 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
   const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
   const { startEdit } = useCreateOrEditorPostDrawer();
   const { onDelete } = usePostListData();
+  const { ceramic } = useCeramicContext();
+  const userDID = ceramic.did?.parent;
 
   return (
     <Card className="p-2.5">
@@ -163,9 +166,13 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
         </div>
         <Dropdown>
           <DropdownTrigger>
-            <Button isIconOnly aria-label="More Options" className="px-0">
-              <EllipsisVerticalIcon className="w-5 h-5" />
-            </Button>
+            {userDID === post.author.id ? (
+              <Button isIconOnly aria-label="More Options" className="px-0">
+                <EllipsisVerticalIcon className="w-5 h-5" />
+              </Button>
+            ) : (
+              <></>
+            )}
           </DropdownTrigger>
           <DropdownMenu aria-label="Post Actions">
             <DropdownItem key="edit" onClick={() => startEdit(post)}>
