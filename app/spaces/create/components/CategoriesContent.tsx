@@ -186,9 +186,9 @@ const CategoriesContent: React.FC<CategoriesContentProps> = ({
                 </Button>
                 <Button
                     type="submit"
-                    color="primary"
+                    color="submit"
                     size="md"
-                    className="w-[120px] bg-[rgba(103,219,255,0.1)] border border-[rgba(103,219,255,0.2)] text-[#67DBFF]"
+                    className="w-[120px]"
                     endContent={<CaretRight size={20} />}
                     isDisabled={!isValid}
                     onClick={handleSubmit(onSubmit)}

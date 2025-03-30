@@ -1,6 +1,5 @@
 import React from 'react';
 import { cn } from '@heroui/react';
-import { CheckIcon } from '@heroicons/react/16/solid';
 
 export enum TabContentEnum {
   Profile = 'Profile',

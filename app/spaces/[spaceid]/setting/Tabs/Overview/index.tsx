@@ -299,7 +299,7 @@ const EditSpace = () => {
         Discard Changes
       </Button>
       <Button
-        color="primary"
+        color="submit"
         size="md"
         className="mobile:w-full tablet:w-full"
         startContent={!isSubmit && <ArrowLineDown size={20} />}
@@ -334,7 +334,7 @@ const EditSpace = () => {
         </div>
 
         {/* 中间内容区域 */}
-        <div className="w-full max-w-[600px] p-[20px] mobile:p-[10px]">
+        <div className="w-full max-w-[700px] p-[20px] mobile:p-[10px]">
           {( isTablet || isMobile )&& <ButtonGroup className="flex flex-col gap-[10px] mb-[30px] flex-col-reverse" />}
           {renderTabContent()}
           {/* 底部按钮 */}

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { cn } from '@heroui/react';
-import { CheckIcon } from '@heroicons/react/16/solid';
+import { Check } from '@phosphor-icons/react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export enum TabContentEnum {
@@ -33,11 +33,12 @@ const TabItem: React.FC<TabItemProps> = ({ label, onClick, status }) => {
   }[status];
 
   const isClickable = status !== TabStatus.Inactive;
-  const { isMobile } = useMediaQuery();
+  const { isMobile, isPc } = useMediaQuery();
   return (
     <div 
       className={cn(
         "flex justify-between rounded-lg whitespace-nowrap",
+        isPc ? "gap-[5px]" : "",
         isMobile ? "p-0 justify-start gap-[10px]" : "",
         isClickable && "cursor-pointer hover:bg-[#222222]/80",
         status === TabStatus.Active && "bg-[#222222]"
@@ -53,7 +54,7 @@ const TabItem: React.FC<TabItemProps> = ({ label, onClick, status }) => {
       )}>
         {label}
       </div>
-      <CheckIcon className={cn(
+      <Check size={16} className={cn(
         "w-[16px] h-[16px]",
         status === TabStatus.Finished ? "text-[#7DFFD1]" : "text-white/[0.1]"
       )}/>

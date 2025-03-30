@@ -1,19 +1,15 @@
 import React from 'react';
 import {
-  useForm,
   useFieldArray,
   Controller,
   UseFormReturn,
 } from 'react-hook-form';
-import { Card } from '@/components/base/card';
 import { Input, Button, Select, SelectItem } from '@/components/base';
 import { SOCIAL_TYPES } from '@/constant';
 import {
-  XCircleIcon,
-  PlusIcon,
-  XMarkIcon,
-  ChevronLeftIcon,
-} from '@heroicons/react/24/outline';
+  XCircle,
+  Plus,
+} from '@phosphor-icons/react';
 import * as yup from 'yup';
 import { Link } from '@/types';
 
@@ -143,7 +139,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
                     <span className="hidden text-white/50 text-[14px] mobile:block">
                       Remove Link
                     </span>
-                    <XCircleIcon className="h-[30px] w-[30px] opacity-50" />
+                    <XCircle className="h-[30px] w-[30px] opacity-50" />
                   </button>
                 </div>
               </div>
@@ -157,7 +153,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
           className="h-[40px] mt-[10px] w-full bg-transparent opacity-80 py-2 px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
           disabled={isDisabled}
         >
-          <PlusIcon className="h-5 w-5" />
+          <Plus className="h-5 w-5" />
           <div>Add Social Link</div>
         </button>
       </div>
@@ -215,7 +211,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
                     <span className="hidden text-white/50 text-[14px] mobile:block">
                       Remove Link
                     </span>
-                    <XCircleIcon className="h-[30px] w-[30px] opacity-50" />
+                    <XCircle className="h-[30px] w-[30px] opacity-50" />
                   </button>
                 </div>
               </div>
@@ -229,7 +225,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
           className="h-[40px] mt-[10px] w-full bg-transparent opacity-80 py-[8px] px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
           disabled={isDisabled}
         >
-          <PlusIcon className="h-5 w-5" />
+          <Plus className="h-5 w-5" />
           <div>Add Custom Link</div>
         </button>
       </div>

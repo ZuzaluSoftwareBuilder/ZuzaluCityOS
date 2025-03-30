@@ -6,9 +6,8 @@ import * as Yup from 'yup';
 import { Button, Input, Card, CardBody, Avatar } from '@/components/base';
 import { cn } from '@heroui/react';
 import SuperEditor from '@/components/editor/SuperEditor';
-import { XMarkIcon } from '@heroicons/react/20/solid'
+import { X, Image as PhosphorImage } from '@phosphor-icons/react';
 import PhotoUpload from '@/components/form/PhotoUpload';
-import { PhotoIcon } from '@heroicons/react/24/outline'
 import { MarkdownLogo, CaretRight } from '@phosphor-icons/react';
 import { useEditorStore } from '@/components/editor/useEditorStore';
 
@@ -172,7 +171,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                                 >
                                     <Avatar
                                         size="xlg"
-                                        icon={<PhotoIcon className="w-[40px] h-[40px] opacity-30" />}
+                                        icon={<PhosphorImage className="w-[40px] h-[40px] opacity-30" />}
                                         src={field.value}
                                         alt="avatar"
                                         className="bg-transparent border border-dashed border-white/[0.2]"
@@ -220,7 +219,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                                                 'w-full h-full flex flex-col items-center justify-center border border-dashed border-white/[0.2] rounded-[10px] gap-[8px] py-[60px]',
                                                 'mobile:py-[40px]'
                                             )}>
-                                                <PhotoIcon className="w-[32px] h-[32px] opacity-30" />
+                                                <PhosphorImage className="w-[32px] h-[32px] opacity-30" />
                                                 <p className="text-sm text-white/60 text-center mobile:p-[12px]">Recommend min of 730x220. Supported Formats: JPG, PNG</p>
                                             </div>
                                         )
@@ -241,16 +240,16 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                     type="button"
                     size="md"
                     className="w-[120px] bg-white/[0.05]"
-                    startContent={<XMarkIcon className='w-[20px] h-[20px]' />}
+                    startContent={<X size={20} />}
                     onClick={onBack}
                 >
                     Discard
                 </Button>
                 <Button
                     type="submit"
-                    color="primary"
+                    color="submit"
                     size="md"
-                    className="w-[120px] bg-[rgba(103,219,255,0.1)] border border-[rgba(103,219,255,0.2)] text-[#67DBFF]"
+                    className="w-[120px]"
                     endContent={<CaretRight size={20} />}
                     isDisabled={!isValid}
                     onClick={handleSubmit(onSubmitHandler)}

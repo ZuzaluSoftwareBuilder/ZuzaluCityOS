@@ -1,7 +1,7 @@
 import { DoorOpen } from "@phosphor-icons/react";
 import { LockLaminated } from "@phosphor-icons/react";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
-import { CheckIcon } from '@heroicons/react/16/solid';
+import { Check } from '@phosphor-icons/react';
 import { Button } from '@/components/base';
 
 interface AccessRuleProps {
@@ -42,7 +42,7 @@ export default function AccessRule({ onBack, onSubmit, isGated, onGatedChange, i
                                     </div>
                                 </div>
                                 <div>
-                                    {!isGated && <CheckIcon className="text-[#EDDCDC] w-[16px] h-[16px]" />}
+                                    {!isGated && <Check className="text-[#EDDCDC] w-[16px] h-[16px]" />}
                                 </div>
                             </div>
                         </button>
@@ -61,7 +61,7 @@ export default function AccessRule({ onBack, onSubmit, isGated, onGatedChange, i
                                     </div>
                                 </div>
                                 <div>
-                                    {isGated && <CheckIcon className="text-[#EDDCDC] w-[16px] h-[16px]" />}
+                                    {isGated && <Check className="text-[#EDDCDC] w-[16px] h-[16px]" />}
                                 </div>
                             </div>
                         </button>
@@ -85,7 +85,7 @@ export default function AccessRule({ onBack, onSubmit, isGated, onGatedChange, i
                 </Button>
                 <Button
                     onClick={onSubmit}
-                    color="primary"
+                    color="submit"
                     size="md"
                     className="w-[120px] mobile:w-[100px]"
                     endContent={<CaretRight className="w-[20px] h-[20px] mobile:w-[16px] mobile:h-[16px]" />}

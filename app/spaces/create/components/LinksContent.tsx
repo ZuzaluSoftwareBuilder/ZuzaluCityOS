@@ -3,7 +3,7 @@ import { useForm, useFieldArray, Controller, UseFormReturn } from 'react-hook-fo
 import { Card } from '@/components/base/card';
 import { Input, Button, Select, SelectItem } from '@/components/base';
 import { SOCIAL_TYPES } from '@/constant';
-import { XCircleIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { XCircle, Plus } from '@phosphor-icons/react';
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import * as yup from 'yup';
 
@@ -126,11 +126,9 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack }) =
                                         <button
                                             type="button"
                                             onClick={() => removeSocial(index)}
-                                            className='flex items-center gap-[10px] mt-[5px] mobile:mt-[0px] mobile:h-[40px]'
-                                            disabled={socialFields.length === 1}
+                                            className="flex items-center gap-[10px] mt-[5px] mobile:mt-[0px] mobile:h-[40px]"
                                         >
-                                            <span className="hidden text-white/50 text-[14px] mobile:block">Remove Link</span>
-                                            <XCircleIcon className="h-[30px] w-[30px] opacity-50" />
+                                            <XCircle size={30} className="h-[30px] w-[30px] opacity-50" />
                                         </button>
                                     </div>
                                 </div>
@@ -141,9 +139,9 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack }) =
                     <button
                         type="button"
                         onClick={() => appendSocial({ title: '', links: '' })}
-                        className="h-[40px] mt-[16px] w-full bg-transparent opacity-80 py-[8px] px-[14px] font-semibold text-sm justify-start flex items-center gap-[10px]"
+                        className="h-[40px] mt-[10px] w-full bg-transparent opacity-80 py-2 px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
                     >
-                        <PlusIcon className="h-[20px] w-[20px]" />
+                        <Plus size={20} />
                         <div>Add Social Link</div>
                     </button>
                 </div>
@@ -191,7 +189,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack }) =
                                             className="flex items-center gap-[10px] mt-[5px] mobile:mt-0 mobile:h-[40px] mobile:w-full mobile:justify-end"
                                         >
                                             <span className="hidden text-white/50 text-[14px] mobile:block">Remove Link</span>
-                                            <XCircleIcon className="h-[30px] w-[30px] opacity-50" />
+                                            <XCircle size={30} className="h-[30px] w-[30px] opacity-50" />
                                         </button>
                                     </div>
                                 </div>
@@ -204,7 +202,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack }) =
                         onClick={() => appendCustom({ title: '', links: '' })}
                         className="h-[40px] mt-[16px] w-full bg-transparent opacity-80 py-[8px] px-[14px] font-semibold text-sm justify-start flex items-center gap-[10px]"
                     >
-                        <PlusIcon className="h-[20px] w-[20px]" />
+                        <Plus size={20} className="h-[20px] w-[20px]" />
                         <div>Add Custom Link</div>
                     </button>
                 </div>
@@ -223,9 +221,9 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack }) =
                 </Button>
                 <Button
                     type="button"
-                    color="primary"
+                    color="submit"
                     size="md"
-                    className="w-[120px] bg-[rgba(103,219,255,0.1)] border border-[rgba(103,219,255,0.2)] text-[#67DBFF]"
+                    className="w-[120px]text-[#67DBFF]"
                     endContent={<CaretRight size={20} />}
                     isDisabled={!isValid}
                     onClick={handleSubmit(onSubmitHandler)}
