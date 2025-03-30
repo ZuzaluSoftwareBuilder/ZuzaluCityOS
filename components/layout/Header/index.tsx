@@ -1,13 +1,14 @@
 'use client';
 import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useMediaQuery } from '@mui/material';
 import { MenuIcon } from 'components/icons';
 import SidebarDrawer from '../Sidebar/SidebarDrawer';
 import { useAppContext } from '@/context/AppContext';
 import { Button } from '@/components/base';
 import UserProfileSection from '../UserProfileSection';
-import { Skeleton, Image } from '@heroui/react';
+import NextImage from 'next/image'
+
+const GreenBlurDataUrl = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNc/+mZKQAHnQK+h0UQYgAAAABJRU5ErkJggg=='
 
 const Header = () => {
   const { openSidebar, setOpenSidebar } = useAppContext();
@@ -36,26 +37,28 @@ const Header = () => {
           </Button>
         ) : null}
 
-        <Image
-          className="hidden mobile:block"
+        <NextImage
+          className="xl:hidden pc:hidden tablet:hidden"
           src={'/header/logo.png'}
           width={30}
           height={30}
           onClick={() => router.push('/')}
           alt="Logo"
-          disableSkeleton={false}
-          radius="none"
+          placeholder={"blur"}
+          blurDataURL={GreenBlurDataUrl}
+          priority
         />
 
-        <Image
+        <NextImage
           className="mobile:hidden"
           src={'/header/logoWithText.png'}
           width={155}
           height={30}
           onClick={() => router.push('/')}
           alt="Logo"
-          disableSkeleton={false}
-          radius="none"
+          placeholder={"blur"}
+          blurDataURL={GreenBlurDataUrl}
+          priority
         />
 
         <span className="mobile:hidden text-[14px] font-[300] opacity-80 leading-[1.2] italic text-white pl-[10px]">
