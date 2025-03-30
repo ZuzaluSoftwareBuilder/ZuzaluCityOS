@@ -106,7 +106,7 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
   const userDID = ceramic.did?.parent;
 
   return (
-    <Card className="p-2.5">
+    <Card className="p-2.5 bg-[#2d2d2d] border-[rgba(255,255,255,0.06)]">
       <div className="flex gap-2.5">
         <div className="size-10 rounded-full overflow-hidden shrink-0">
           <Image

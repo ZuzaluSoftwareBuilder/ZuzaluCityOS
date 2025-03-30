@@ -22,8 +22,8 @@ export default function Announcements() {
   return (
     <div className="flex flex-col w-full h-[calc(100vh-50px)] overflow-hidden">
       <AnnouncementsHeader />
-      <div className="flex-1 w-full pc:w-[800px] overflow-y-auto">
-        <div className="flex flex-col p-5 gap-5 mx-auto">
+      <div className="flex-1 w-full overflow-y-auto">
+        <div className="flex flex-col p-5 gap-5 mx-auto w-full pc:w-[800px]">
           <div className="flex flex-col pc:flex-row justify-between gap-2.5 pc:items-center">
             <div
               className={clsx([
