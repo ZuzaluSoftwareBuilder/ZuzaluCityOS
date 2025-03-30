@@ -207,6 +207,14 @@ export interface Space {
   };
   customLinks?: Link[];
   socialLinks?: Link[];
+  announcements?: {
+    edges: {
+      node: {
+        id: string;
+        createdAt: string;
+      };
+    }[];
+  };
   events?: {
     edges: {
       node: {
@@ -639,6 +647,8 @@ export enum PermissionName {
   VIEW_ANALYTICS = 'view_analytics',
   MANAGE_APPS = 'manage_apps',
   VIEW_APPS = 'view_apps',
+  MANAGE_SPACE_ANNOUNCEMENTS = 'manage_space_announcements',
+  VIEW_SPACE_ANNOUNCEMENTS = 'view_space_announcements',
 }
 
 export interface Role {
@@ -694,4 +704,22 @@ export interface InstalledApp {
   installedAppId?: string;
   nativeAppName?: string;
   installedApp?: Dapp;
+}
+
+export interface Announcement {
+  id: string;
+  title: string;
+  tags: { tag: string }[];
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  sourceId: string;
+  author: {
+    id: string;
+    zucityProfile: {
+      // FIXME: can not fetch avatar and username from zucityProfile
+      avatar: string;
+      username: string;
+    };
+  };
 }
