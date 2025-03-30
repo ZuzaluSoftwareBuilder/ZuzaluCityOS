@@ -6,11 +6,10 @@ import * as Yup from 'yup';
 import { Input, Avatar } from '@/components/base';
 import SuperEditor from '@/components/editor/SuperEditor';
 import PhotoUpload from '@/components/form/PhotoUpload';
-import { PhotoIcon } from '@heroicons/react/24/outline';
+import { Image as PhotoIcon } from '@phosphor-icons/react';
 import { MarkdownLogo } from '@phosphor-icons/react';
 import { useEditorStore } from '@/components/editor/useEditorStore';
 
-// 定义表单数据类型
 export interface ProfileFormData {
   name: string;
   tagline: string;
@@ -19,7 +18,6 @@ export interface ProfileFormData {
   banner: string;
 }
 
-// 定义验证模式
 export const ProfilValidationSchema = Yup.object().shape({
   name: Yup.string()
     .min(3, 'Name must be at least 3 characters.')
@@ -72,7 +70,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
   
   return (
     <div className="space-y-[30px] mobile:space-y-[20px]">
-      {/* 社区名称 */}
       <div className="space-y-[20px]">
         <label className="block text-base font-medium">Community Name*</label>
         <Controller
@@ -90,7 +87,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
         />
       </div>
 
-      {/* 社区标语 */}
       <div className="space-y-[20px]">
         <label className="block text-base font-medium">
           Community Tagline*
@@ -116,7 +112,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
         </div>
       </div>
 
-      {/* 社区描述 */}
       <div className="space-y-[20px]">
         <div className="space-y-2">
           <label className="block text-base font-medium">
@@ -156,7 +151,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
         </div>
       </div>
 
-      {/* 空间头像 */}
       <div className="space-y-[20px]">
         <div className="space-y-2">
           <label className="block text-base font-medium">Space Avatar*</label>
@@ -193,7 +187,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
         </div>
       </div>
 
-      {/* 空间横幅 */}
       <div className="space-y-[20px]">
         <label className="block text-base font-medium">Space Banner*</label>
         <Controller

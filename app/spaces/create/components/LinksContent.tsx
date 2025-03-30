@@ -7,7 +7,6 @@ import { XCircle, Plus } from '@phosphor-icons/react';
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import * as yup from 'yup';
 
-// 定义表单类型
 export interface LinksFormData {
     socialLinks: Array<{
         title: string;
@@ -19,7 +18,6 @@ export interface LinksFormData {
     }>;
 };
 
-// 定义验证模式
 export const LinksValidationSchema = yup.object({
     socialLinks: yup.array().of(
         yup.object({
@@ -208,7 +206,6 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack }) =
                 </div>
             </Card>
 
-            {/* 底部按钮 */}
             <div className="flex justify-end gap-[10px] mobile:px-[10px]">
                 <Button
                     type="button"

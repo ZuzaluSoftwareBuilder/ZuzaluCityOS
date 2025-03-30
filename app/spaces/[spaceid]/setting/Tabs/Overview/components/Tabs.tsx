@@ -21,7 +21,6 @@ interface TabItemProps {
 }
 
 const TabItem: React.FC<TabItemProps> = ({ label, onClick, status }) => {
-  // 根据状态决定样式
   const textColorClass = {
     [TabStatus.Inactive]: "text-white/50",
     [TabStatus.Active]: "text-white",
@@ -56,9 +55,6 @@ interface EditSpaceTabsProps {
   onTabChange: (key: TabContentEnum) => void;
 }
 
-/**
- * 创建空间的侧边标签导航组件
- */
 const EditSpaceTabs: React.FC<EditSpaceTabsProps> = ({ 
   selectedTab, 
   onTabChange,

@@ -24,7 +24,6 @@ interface TabItemProps {
 }
 
 const TabItem: React.FC<TabItemProps> = ({ label, onClick, status }) => {
-  // 根据状态决定样式
   const textColorClass = {
     [TabStatus.Inactive]: "text-white/50",
     [TabStatus.Active]: "text-white",
@@ -110,7 +109,6 @@ const CreateSpaceTabs: React.FC<CreateSpaceTabsProps> = ({
 
   React.useEffect(() => {
     if (isMobile) {
-      // 根据选中的标签自动滚动
       if (selectedTab === TabContentEnum.Profile) {
         scrollToStart();
       } else if (selectedTab === TabContentEnum.Access) {

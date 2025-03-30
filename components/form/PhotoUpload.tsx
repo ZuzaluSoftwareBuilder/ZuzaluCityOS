@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { useUpload } from '../../hooks/useUpload';
 import { cn } from '@heroui/react';
-import Avatar, { AvatarProps } from '../base/avatar';
 import { Spinner } from '@heroui/react';
 import { PhotoIcon } from '@heroicons/react/24/outline'
 

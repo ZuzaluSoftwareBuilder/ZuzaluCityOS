@@ -13,13 +13,11 @@ import {
 import * as yup from 'yup';
 import { Link } from '@/types';
 
-// 定义表单类型
 export interface LinksFormData {
   socialLinks: Link[];
   customLinks: Link[];
 }
 
-// 定义验证模式
 export const LinksValidationSchema = yup.object({
   socialLinks: yup
     .array()

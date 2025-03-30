@@ -1,17 +1,16 @@
 'use client'
-import React, { useEffect, useState } from 'react';
-import { useForm, Controller, UseFormReturn } from 'react-hook-form';
+import React from 'react';
+import { Controller, UseFormReturn } from 'react-hook-form';
 import { Image } from '@heroui/react';
 import * as Yup from 'yup';
-import { Button, Input, Card, CardBody, Avatar } from '@/components/base';
+import { Button, Input, Card, Avatar } from '@/components/base';
 import { cn } from '@heroui/react';
 import SuperEditor from '@/components/editor/SuperEditor';
-import { X, Image as PhosphorImage } from '@phosphor-icons/react';
+import { Image as PhosphorImage, X } from '@phosphor-icons/react';
 import PhotoUpload from '@/components/form/PhotoUpload';
 import { MarkdownLogo, CaretRight } from '@phosphor-icons/react';
 import { useEditorStore } from '@/components/editor/useEditorStore';
 
-// 定义表单数据类型
 export interface ProfileFormData {
     name: string;
     tagline: string;
@@ -20,7 +19,6 @@ export interface ProfileFormData {
     banner: string;
 }
 
-// 定义验证模式
 export const ProfilValidationSchema = Yup.object().shape({
     name: Yup
         .string()
@@ -34,16 +32,15 @@ export const ProfilValidationSchema = Yup.object().shape({
             'is-valid-blocks',
             'community description is required',
             function (value) {
-                if (!value) return true; // 如果为空字符串，其他验证会处理
+                if (!value) return true;
                 try {
                     const parsed = JSON.parse(value);
-                    // 验证blocks数组长度不为0
                     if (!parsed.blocks || !Array.isArray(parsed.blocks) || parsed.blocks.length === 0) {
                         return false;
                     }
                     return true;
                 } catch (e) {
-                    return false; // JSON解析错误
+                    return false; 
                 }
             }
         ).required(),
@@ -74,7 +71,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
         <div className="space-y-[30px] mobile:space-y-[20px]">
             <div className="space-y-[10px] mobile:px-[10px]">
                 <h2 className="text-[20px] mobile:text-[18px] font-bold">Community Profile</h2>
-                <p className="text-[16px] mobile:text-[14px] text-white opacity-80">Let's begin with the basics for your community</p>
+                <p className="text-[16px] mobile:text-[14px] text-white opacity-80">Let&apos;s begin with the basics for your community</p>
             </div>
             <Card radius="md" className={cn(
                 "p-[20px] space-y-[40px]",
@@ -120,7 +117,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                     </div>
                 </div>
 
-                {/* 社区描述 */}
                 <div className="space-y-[20px]">
                     <div className="space-y-[10px]">
                         <label className="block text-base font-medium">Community Description*</label>
@@ -130,7 +126,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                         <Controller
                             name="description"
                             control={control}
-                            render={({ field: { onChange, value } }) => (
+                            render={({ field: { onChange } }) => (
                                 <SuperEditor
                                     value={descriptionEditorStore.value}
                                     onChange={(value) => {
@@ -152,7 +148,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                     </div>
                 </div>
 
-                {/* 空间头像 */}
                 <div className="space-y-[20px]">
                     <div className="space-y-[10px]">
                         <label className="block text-base font-medium">Space Avatar*</label>
@@ -185,7 +180,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                     </div>
                 </div>
 
-                {/* 空间横幅 */}
                 <div className="space-y-[20px]">
                     <label className="block text-base font-medium">Space Banner*</label>
                     <Controller
@@ -234,7 +228,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                 </div>
             </Card>
 
-            {/* 底部按钮 */}
             <div className="flex justify-end gap-[15px]">
                 <Button
                     type="button"

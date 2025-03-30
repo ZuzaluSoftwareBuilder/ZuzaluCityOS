@@ -1,14 +1,15 @@
 import React from 'react';
 import { Controller, UseFormReturn } from 'react-hook-form';
 import * as yup from 'yup';
-import { Card, CardBody, Chip } from '@/components/base';
+import { Card, CardBody } from '@/components/base';
 import SelectCategories from '@/components/select/selectCategories';
 import { Categories } from '@/app/spaces/create/components/constant';
 
-// 类型定义
+
 interface IconProps {
   size?: number;
   color?: string;
+  weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone';
 }
 
 export interface CategoriesFormData {
@@ -30,7 +31,6 @@ interface CategoriesContentProps {
   isDisabled?: boolean;
 }
 
-// 验证 schema
 export const CategoriesValidationSchema = yup
   .object({
     category: yup.string().required('Please select a category'),
@@ -45,7 +45,6 @@ export const CategoriesValidationSchema = yup
   })
   .required();
 
-// 子组件：分类卡片
 const CategoryCard: React.FC<CategoryCardProps> = ({
   icon,
   title,
@@ -56,7 +55,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
 }) => {
   const iconElement =
     icon && React.isValidElement(icon)
-      ? React.cloneElement(icon, { size: 7, color })
+      ? React.cloneElement(icon, { size: 30, color, weight: 'fill' })
       : null;
 
   return (
@@ -77,7 +76,6 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   );
 };
 
-// 子组件：分类选择区域
 const CategorySelection: React.FC<{
   control: UseFormReturn<CategoriesFormData>['control'];
   category: string;
@@ -106,7 +104,6 @@ const CategorySelection: React.FC<{
               selected={category === type.value}
               onClick={() => {
                 field.onChange(type.value);
-                console.log('category', type.value);
               }}
               isDisabled={isDisabled}
             />
@@ -123,7 +120,7 @@ const CategorySelection: React.FC<{
   </div>
 );
 
-// 主组件
+
 const CategoriesContent: React.FC<CategoriesContentProps> = ({
   form,
   isDisabled = false,
@@ -157,7 +154,7 @@ const CategoriesContent: React.FC<CategoriesContentProps> = ({
             name="tags"
             control={control}
             render={({ field }) => (
-              <SelectCategories onChange={field.onChange} value={field.value ? field.value : []} />
+              <SelectCategories onChange={field.onChange} value={field.value ? field.value : []}  isDisabled={isDisabled}/>
             )}
           />
           {errors.tags && (

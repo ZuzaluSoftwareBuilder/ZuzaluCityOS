@@ -15,7 +15,6 @@ interface AccessRuleProps {
 export default function AccessRule({ onBack, onSubmit, isGated, onGatedChange, isSubmit }: AccessRuleProps) {
     return (
         <div className="flex flex-col justify-center gap-[30px] mobile:gap-[20px]">
-            {/* Header Section */}
             <div className="flex flex-col gap-[10px]">
                 <h2 className="text-white font-bold text-[20px] mobile:text-[18px] leading-[1.4]">Access Rule</h2>
                 <p className="text-white/80 text-[16px] opacity-80 mobile:text-[14px] leading-[1.6]">
@@ -24,11 +23,9 @@ export default function AccessRule({ onBack, onSubmit, isGated, onGatedChange, i
                 <p className="text-white text-[14px] leading-[1.2] opacity-80  text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)]">Note: Space Gating can also be configured later</p>
             </div>
 
-            {/* Selection Section */}
             <div className="flex flex-col justify-center gap-[20px] p-[20px] mobile:gap-[12px] mobile:p-[14px] bg-white/[0.02] border border-white/10 rounded-[10px]">
                 <div className="flex flex-col gap-[20px]">
                     <div className="flex flex-row mobile:flex-col justify-stretch items-stretch gap-[20px] mobile:gap-[10px]">
-                        {/* Open Space Option */}
                         <button
                             onClick={() => onGatedChange(false)}
                             className={`flex-1 flex flex-col justify-center h-[50px] p-[10px] rounded-[10px] transition-all duration-200 ${!isGated ? "bg-white/10 shadow-[0px_5px_10px_0px_rgba(0,0,0,0.15)]" : "bg-white/[0.05]"
@@ -47,7 +44,6 @@ export default function AccessRule({ onBack, onSubmit, isGated, onGatedChange, i
                             </div>
                         </button>
 
-                        {/* Gated Space Option */}
                         <button
                             onClick={() => onGatedChange(true)}
                             className={`flex-1 flex flex-col justify-center h-[50px] p-[10px] rounded-[10px] transition-all duration-200 ${isGated ? "bg-white/10 shadow-[0px_5px_10px_0px_rgba(0,0,0,0.15)]" : "bg-white/[0.05]"
@@ -72,7 +68,6 @@ export default function AccessRule({ onBack, onSubmit, isGated, onGatedChange, i
                 </div>
             </div>
 
-            {/* Navigation Buttons */}
             <div className="flex flex-row justify-end items-center gap-[10px] mt-0">
                 <Button
                     onClick={onBack}
@@ -89,7 +84,7 @@ export default function AccessRule({ onBack, onSubmit, isGated, onGatedChange, i
                     size="md"
                     className="w-[120px] mobile:w-[100px]"
                     endContent={<CaretRight className="w-[20px] h-[20px] mobile:w-[16px] mobile:h-[16px]" />}
-                    isDisabled={isSubmit}
+                    isLoading={isSubmit}
                 >
                     Create
                 </Button>

@@ -1,44 +1,36 @@
 'use client';
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import ProfileContent from './components/ProfileContent';
-import LinksContent from './components/LinksContent';
-import CategoriesContent from './components/CategoriesContent';
-import StepTabs, { TabContentEnum } from './components/Tabs';
+import {
+  ProfileContent,
+  LinksContent,
+  CategoriesContent,
+  StepTabs,
+  TabContentEnum,
+  ProfileFormData,
+  ProfilValidationSchema,
+  CategoriesFormData,
+  CategoriesValidationSchema,
+  LinksFormData,
+  LinksValidationSchema
+} from './components';
 import { cn } from '@heroui/react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  ProfileFormData,
-  ProfilValidationSchema,
-} from './components/ProfileContent';
-import {
-  CategoriesFormData,
-  CategoriesValidationSchema,
-} from './components/CategoriesContent';
-import {
-  LinksFormData,
-  LinksValidationSchema,
-} from './components/LinksContent';
 import { useParams } from 'next/navigation';
 import { covertNameToUrlName } from '@/utils/format';
-import { useCeramicContext } from '@/context/CeramicContext';
 import { useMediaQuery } from '@/hooks';
 import { Button } from '@/components/base';
 import { ArrowLineDown, X as XIcon } from '@phosphor-icons/react';
-import { GET_SPACE_QUERY_BY_ID, UPDATE_SPACE_MUTATION } from '@/services/graphql/space';
-import { useGraphQL } from '@/hooks/useGraphQL';
+import { UPDATE_SPACE_MUTATION } from '@/services/graphql/space';
 import { useEditorStore } from '@/components/editor/useEditorStore';
 import { Space } from '@/types';
 import { executeQuery } from '@/utils/ceramic';
 import { createUrlWhenEdit } from '@/services/url';
-import { useDialog } from '@/components/dialog/DialogContext';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
+import { useSpaceData } from '@/app/spaces/[spaceid]/components/context/spaceData';
+import { Categories } from '@/constant';
+import { addToast } from '@heroui/react';
 
-dayjs.extend(utc);
-
-// 默认值常量
 const DEFAULT_AVATAR =
   'https://nftstorage.link/ipfs/bafybeifcplhgttja4hoj5vx4u3x7ucft34acdpiaf62fsqrobesg5bdsqe';
 const DEFAULT_BANNER =
@@ -48,7 +40,6 @@ const EditSpace = () => {
   const [selectedTab, setSelectedTab] = useState(TabContentEnum.Profile);
   const [isSubmit, setIsSubmit] = useState(false);
   const [isChange, setIsChange] = useState(false);
-  const { showDialog, hideDialog } = useDialog();
   const params = useParams();
   const spaceId = params.spaceid.toString();
   const { isMobile, isPc, isTablet } = useMediaQuery();
@@ -59,23 +50,9 @@ const EditSpace = () => {
   const isProfileChange = useRef<boolean>(false);
   const isCategoriesChange = useRef<boolean>(false);
   const isLinksChange = useRef<boolean>(false);
-  const { ceramic, profile } =
-  useCeramicContext();
-  const adminId = ceramic?.did?.parent || '';
-
-  // 修复类型错误
-  const { data: spaceData, isLoading, refetch } = useGraphQL(
-    ['getSpaceByID', spaceId],
-    GET_SPACE_QUERY_BY_ID,
-    { id: spaceId },
-    {
-      select: (data) => data?.data?.node as Space,
-      enabled: !!spaceId,
-    },
-  );
+  const { spaceData, isSpaceDataLoading, refreshSpaceData } = useSpaceData();
   const { isOwner } = useSpacePermissions();
 
-  // 初始化表单
   const profileForm = useForm<ProfileFormData>({
     resolver: yupResolver(ProfilValidationSchema),
     mode: 'all',
@@ -147,7 +124,6 @@ const EditSpace = () => {
     }
   }, [profileForm, categoriesForm, linksForm]);
 
-  // 设置表单数据
   const setFormData = (data: Space) => {
     if (!data) return;
     profileForm.setValue('name', data.name);
@@ -157,7 +133,7 @@ const EditSpace = () => {
     profileForm.setValue('avatar', data.avatar || '');
     profileForm.setValue('banner', data.banner || '');
     categoriesForm.setValue('tags', data.tags?.map((i) => i.tag) || []);
-    categoriesForm.setValue('category', data.category || '');
+    categoriesForm.setValue('category', data.category || Categories[0].value);
     linksForm.setValue('socialLinks', data.socialLinks || []);
     linksForm.setValue('customLinks', data.customLinks || []);
     setTimeout(() => {
@@ -168,23 +144,19 @@ const EditSpace = () => {
     }, 0);
   };
 
-  // 当spaceData变化时，更新表单数据
   useEffect(() => {
     if (spaceData) {
       setFormData(spaceData);
     }
   }, [spaceData]);
 
-  // Tab切换处理
   const handleTabChange = (key: TabContentEnum) => {
     setSelectedTab(key);
   };
 
-  // 放弃更改处理
   const handleDiscard = () => {
     if (spaceData) {
       const oldData = spaceData;
-      // 自增表单需要特殊处理
       oldData.socialLinks = JSON.parse(oldLinks.current).socialLinks;
       oldData.customLinks = JSON.parse(oldLinks.current).customLinks;
       setFormData(oldData);
@@ -192,7 +164,6 @@ const EditSpace = () => {
     }
   };
 
-  // 优化数据转换函数
   const transformFormData = (): Partial<Space> => {
     const { name, tagline, description, avatar, banner } = profileForm.getValues();
     const { tags, category } = categoriesForm.getValues();
@@ -212,7 +183,6 @@ const EditSpace = () => {
     };
   };
 
-  // 保存处理函数
   const handleSave = async () => {
     try {
       const contentData = transformFormData();
@@ -230,36 +200,29 @@ const EditSpace = () => {
         throw new Error(response.errors[0]?.message || 'unknown error');
       }
 
-      // 如果名称改变，更新URL
       if (contentData.name !== spaceData?.name) {
         const urlName = covertNameToUrlName(contentData.name || '');
         await createUrlWhenEdit(urlName, spaceId, 'spaces');
       }
 
-      await refetch();
-
-      showDialog({
+      await refreshSpaceData();
+      addToast({
         title: 'Succesfully updated',
-        message: 'Your space information has been updated',
-        onConfirm: () => {
-          hideDialog();
-        },
+        description: 'Your space information has been updated',
+        color: 'success',
       });
     } catch (error) {
       console.error('failed to update:', error);
-      showDialog({
-        title: 'Failed to update space',
-        message: `Failed to update: ${error instanceof Error ? error.message : 'unknown error'}`,
-        onConfirm: () => {
-          hideDialog();
-        },
+      addToast({
+        title: 'Failed to update',
+        description: `Failed to update: ${error instanceof Error ? error.message : 'unknown error'}`,
+        color: 'danger',
       });
     } finally {
       setIsSubmit(false);
     }
   };
 
-  // 渲染Tab内容
   const renderTabContent = () => (
     <div className="mobile:space-y-[30px]">
       <div className={cn({ hidden: selectedTab !== TabContentEnum.Profile }, "mobile:block")}>
@@ -284,7 +247,6 @@ const EditSpace = () => {
     </div>
   );
 
-  // 按钮组组件
   const ButtonGroup = ({ className = '' }: { className?: string }) => (
     <div className={className}>
       <Button
@@ -294,7 +256,7 @@ const EditSpace = () => {
         className="bg-white/[0.05] mobile:w-full tablet:w-full"
         startContent={<XIcon size={20} />}
         onClick={handleDiscard}
-        isDisabled={!isChange || isLoading || !isOwner} // 如果没有变更或正在加载，禁用按钮
+        isDisabled={!isChange || isSpaceDataLoading || !isOwner}
       >
         Discard Changes
       </Button>
@@ -303,7 +265,7 @@ const EditSpace = () => {
         size="md"
         className="mobile:w-full tablet:w-full"
         startContent={!isSubmit && <ArrowLineDown size={20} />}
-        isDisabled={!isChange && !isLoading || !isOwner} // 如果没有变更或正在加载，禁用按钮
+        isDisabled={!isChange && !isSpaceDataLoading || !isOwner}
         isLoading={isSubmit}
         onClick={handleSave}
       >
@@ -321,7 +283,6 @@ const EditSpace = () => {
           'mobile:p-[20px] mobile:gap-[0px]',
         )}
       >
-        {/* 左侧 Tabs 列表 */}
         <div
           className={cn(
             'w-[130px] flex justify-end mobile:hidden',
@@ -333,11 +294,9 @@ const EditSpace = () => {
           />
         </div>
 
-        {/* 中间内容区域 */}
         <div className="w-full max-w-[700px] p-[20px] mobile:p-[10px]">
           {( isTablet || isMobile )&& <ButtonGroup className="flex flex-col gap-[10px] mb-[30px] flex-col-reverse" />}
           {renderTabContent()}
-          {/* 底部按钮 */}
           {isPc && (
             <ButtonGroup className="flex justify-end gap-2.5 mt-[30px]" />
           )}

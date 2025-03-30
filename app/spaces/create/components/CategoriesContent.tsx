@@ -1,16 +1,16 @@
 import React from 'react';
 import { Controller, UseFormReturn } from 'react-hook-form';
 import * as yup from 'yup';
-import { Card, CardBody, Chip } from '@/components/base';
+import { Card, CardBody } from '@/components/base';
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import SelectCategories from '@/components/select/selectCategories';
 import { Button } from '@/components/base';
 import { Categories } from './constant';
 
-// 类型定义
 interface IconProps {
     size?: number;
     color?: string;
+    weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone';
 }
 
 export interface CategoriesFormData {
@@ -28,11 +28,10 @@ interface CategoryCardProps {
 
 interface CategoriesContentProps {
     form: UseFormReturn<CategoriesFormData>;
-    onSubmit: (data: CategoriesFormData) => void;
+    onSubmit: () => void;
     onBack: () => void;
 }
 
-// 验证 schema
 export const CategoriesValidationSchema = yup.object({
     category: yup.string()
         .required('Please select a category'),
@@ -43,7 +42,6 @@ export const CategoriesValidationSchema = yup.object({
         .required('Please select tags'),
 }).required();
 
-// 子组件：分类卡片
 const CategoryCard: React.FC<CategoryCardProps> = ({
     icon,
     title,
@@ -52,7 +50,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
     color
 }) => {
     const iconElement = icon && React.isValidElement(icon)
-        ? React.cloneElement(icon, { size: 7, color })
+        ? React.cloneElement(icon, { size: 30, color, weight: 'fill' })
         : null;
 
     return (
@@ -70,7 +68,6 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
     );
 };
 
-// 子组件：分类选择区域
 const CategorySelection: React.FC<{
     control: UseFormReturn<CategoriesFormData>['control'];
     category: string;
@@ -80,7 +77,7 @@ const CategorySelection: React.FC<{
         <div className="space-y-[10px]">
             <h3 className="text-base font-medium">Select Categories*</h3>
             <p className="text-white/80 text-sm">
-                Select the ones that relay your space's focuses
+                Select the ones that relay your space&apos;s focuses
             </p>
         </div>
 
@@ -115,7 +112,6 @@ const CategorySelection: React.FC<{
 );
 
 
-// 主组件
 const CategoriesContent: React.FC<CategoriesContentProps> = ({
     form,
     onSubmit,
@@ -125,7 +121,6 @@ const CategoriesContent: React.FC<CategoriesContentProps> = ({
         control,
         handleSubmit,
         watch,
-        setValue,
         formState: { errors, isValid }
     } = form;
 
@@ -133,15 +128,13 @@ const CategoriesContent: React.FC<CategoriesContentProps> = ({
 
     return (
         <div className="space-y-[30px] mobile:space-y-[20px]">
-            {/* 标题部分 */}
             <div className="space-y-[10px] mobile:px-[10px]">
                 <h2 className="text-[20px] mobile:text-[18px] font-bold">Community Labels</h2>
                 <p className="text-white text-[16px] mobile:text-[14px] opacity-80">
-                    Some informational labels to indicate to users of this community's core focuses and activities
+                    Some informational labels to indicate to users of this community&apos;s core focuses and activities
                 </p>
             </div>
 
-            {/* 分类选择部分 */}
             <div className="bg-white/[0.02] border border-white/[0.06] rounded-[10px]">
                 <div className="p-[20px] mobile:p-[14px] space-y-[40px]">
                     <CategorySelection
@@ -174,7 +167,6 @@ const CategoriesContent: React.FC<CategoriesContentProps> = ({
                 </div>
             </div>
 
-            {/* 底部按钮 */}
             <div className="flex justify-end gap-[10px]">
                 <Button
                     type="button"

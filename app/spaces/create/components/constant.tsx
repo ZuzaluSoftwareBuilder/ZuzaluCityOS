@@ -1,56 +1,57 @@
-import BuildingOfficeIcon from "@/components/icons/BuildingOffice";
-import NewspaperClippingIcon from "@/components/icons/NewspaperClipping";
-import { UsersThreeIcon } from "@/components/icons/UsersThree";
-import { StorefrontIcon } from "@/components/icons/Storefront";
-import { CodeIcon } from "@/components/icons/Code";
-import { AirTrafficControlIcon } from "@/components/icons/AirTrafficControl";
+import React from 'react';
+import {
+    Buildings,
+    Newspaper,
+    UsersThree,
+    Storefront,
+    Code,
+    AirTrafficControl
+} from "@phosphor-icons/react";
 import { Categories as SpaceTypesConstant } from "@/constant";
 
-type SpaceType = {
+export const Categories = SpaceTypesConstant.map((i): {
     value: string;
     label: string;
     icon: JSX.Element;
     color: string;
-};
-
-export const Categories = SpaceTypesConstant.map((i) => {
-    let icon = null
-    let color = null
+} => {
+    let icon = <UsersThree />
+    let color = "#FFB672"
     const value = i.value
     const label = i.label
-    switch(i.value) {
+    switch (i.value) {
         case 'general-group': {
-            icon = <UsersThreeIcon />
+            icon = <UsersThree />
             color = "#FFB672"
             break;
         }
         case 'event-org': {
-            icon = <NewspaperClippingIcon />
+            icon = <Newspaper />
             color = "#FFFA64"
             break;
         }
         case 'venue': {
-            icon = <BuildingOfficeIcon />
+            icon = <Buildings />
             color = "#B1FF68"
             break;
         }
-        case 'shop': {  
-            icon = <StorefrontIcon />
+        case 'shop': {
+            icon = <Storefront />
             color = "#77FAFF"
             break;
         }
         case 'developer': {
-            icon = <CodeIcon />
+            icon = <Code />
             color = "#7388FF"
             break;
         }
         case 'permahub': {
-            icon = <AirTrafficControlIcon />
+            icon = <AirTrafficControl />
             color = "#D364FF"
             break;
         }
         default: {
-            icon = <UsersThreeIcon />
+            icon = <UsersThree />
             color = "#FFB672"
         }
     }
@@ -59,5 +60,5 @@ export const Categories = SpaceTypesConstant.map((i) => {
         label,
         icon,
         color
-    } 
+    }
 })

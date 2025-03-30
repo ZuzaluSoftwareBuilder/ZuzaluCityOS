@@ -1,29 +1,32 @@
 "use client"
 import React, { useState } from 'react';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import ProfileContent from './components/ProfileContent';
-import LinksContent from './components/LinksContent';
-import CategoriesContent from './components/CategoriesContent';
-import CreateSpaceTabs, { TabStatus, TabContentEnum } from './components/CreateSpaceTabs';
-import HSpaceCard from '@/components/cards/HSpaceCard';
-import Header from './components/Header';
-import { cn, input } from '@heroui/react';
+import dayjs from '@/utils/dayjs';
+import {
+  ProfileContent,
+  LinksContent,
+  CategoriesContent,
+  CreateSpaceTabs,
+  Header,
+  AccessRule,
+  TabStatus,
+  TabContentEnum
+} from './components';
+import { SpaceCard } from '@/app/components/SpaceCard';
+import { cn } from '@heroui/react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ProfileFormData, ProfilValidationSchema } from './components/ProfileContent';
 import { CategoriesFormData, CategoriesValidationSchema } from './components/CategoriesContent';
 import { LinksFormData, LinksValidationSchema } from './components/LinksContent';
-import AccessRule from './components/AccessRule';
 import { useRouter } from 'next/navigation';
 import { covertNameToUrlName } from '@/utils/format';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { createUrl } from '@/services/url';
-import { SCREEN_BREAKPOINTS, useMediaQuery } from '@/hooks/useMediaQuery';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { CREATE_SPACE_MUTATION } from '@/services/graphql/space';
 import { executeQuery } from '@/utils/ceramic';
 import { useEditorStore } from '@/components/editor/useEditorStore';
-import { ZucitySpaceInput } from '@/graphql/graphql'
+import { ZucitySpaceInput, ZucitySpace, CreateZucitySpaceMutationMutation, CreateZucitySpaceMutationMutationVariables } from '@/graphql/graphql'
 import { supabase } from '@/utils/supabase/client';
 import { uint8ArrayToBase64 } from '@/utils';
 import { getResolver } from 'key-did-resolver';
@@ -31,11 +34,7 @@ import { Ed25519Provider } from 'key-did-provider-ed25519';
 import { DID } from 'dids';
 import { Categories } from './components/constant';
 import { Mobile, NotMobile } from '@/hooks/useMediaQuery';
-import { Space } from '@/types';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
-
-dayjs.extend(utc);
-
+import { addToast } from '@heroui/react';
 
 const DEFAULT_AVATAR = 'https://nftstorage.link/ipfs/bafybeifcplhgttja4hoj5vx4u3x7ucft34acdpiaf62fsqrobesg5bdsqe';
 const DEFAULT_BANNER = 'https://nftstorage.link/ipfs/bafybeifqan4j2n7gygwkmekcty3dsp7v4rxbjimpo7nrktclwxgxreiyay';
@@ -51,7 +50,6 @@ const Create = () => {
     [TabContentEnum.Access]: TabStatus.Inactive,
   });
   const [isSubmit, setIsSubmit] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const router = useRouter();
   const { isMobile } = useMediaQuery();
   const { ceramic, profile } =
@@ -63,8 +61,6 @@ const Create = () => {
       name: '',
       tagline: '',
       description: '',
-      // avatar: DEFAULT_AVATAR,
-      // banner: DEFAULT_BANNER,
       avatar: '',
       banner: ''
     }
@@ -105,27 +101,23 @@ const Create = () => {
   const spaceAvatar = profileForm.watch('avatar');
   const spaceBanner = profileForm.watch('banner');
   const handleTabChange = (key: TabContentEnum) => {
-    // 如果当前标签是 Inactive 状态，不允许切换
     if (tabStatuses[key] === TabStatus.Inactive) {
       return;
     }
     setSelectedTab(key);
   };
-  // 处理 Profile 标签提交
   const handleProfileSubmit = (data: ProfileFormData) => {
     setTabStatuses(prev => {
       return {
         ...prev,
         [TabContentEnum.Profile]: TabStatus.Finished,
-        // 激活下一个标签，如果是已经完成就保留状态
         [TabContentEnum.Categories]: prev[TabContentEnum.Categories] === TabStatus.Inactive ? TabStatus.Active : prev[TabContentEnum.Categories]
       }
     })
     setSelectedTab(TabContentEnum.Categories);
   }
 
-  // 处理 Categories 标签提交
-  const handleCategoriesSubmit = (data: CategoriesFormData) => {
+  const handleCategoriesSubmit = () => {
     setTabStatuses(prev => {
       return {
         ...prev,
@@ -147,7 +139,6 @@ const Create = () => {
     setSelectedTab(TabContentEnum.Access);
   }
 
-  // 优化表单验证函数
   const validateFormStep = async (
     schema: any,
     form: any,
@@ -169,7 +160,6 @@ const Create = () => {
     }
   };
 
-  // 优化数据转换函数
   const transformFormData = (): ZucitySpaceInput => {
     const { name, tagline, avatar, banner } = profileForm.getValues();
     const { tags, category } = categoriesForm.getValues();
@@ -198,26 +188,34 @@ const Create = () => {
     };
   };
 
-  // 优化创建空间函数
-  const createSpace = async (content: ZucitySpaceInput) => {
+  const createSpace = async (content: ZucitySpaceInput): Promise<string> => {
     try {
-      const result = await executeQuery(CREATE_SPACE_MUTATION, {
+      const result = await executeQuery<CreateZucitySpaceMutationMutation, CreateZucitySpaceMutationMutationVariables>(CREATE_SPACE_MUTATION, {
         input: {
           content
         }
       });
       if (result.errors?.length) {
         console.error('Detailed error info:', result.errors);
+        addToast({
+          title: 'Failed to create space',
+          description: `Error creating space: ${JSON.stringify(result.errors)}`,
+          color: 'danger',
+        });
         throw new Error(
           `Error creating space: ${JSON.stringify(result.errors)}`,
         );
+      }
+      const spaceId = result.data?.createZucitySpace?.document?.id || '';
+      if (!spaceId) {
+        throw new Error('Result data is empty');
       }
       const urlName = covertNameToUrlName(content.name);
       // @ts-ignore
       await createUrl(
         urlName,
         // @ts-ignore
-        result.data?.createZucitySpace?.document?.id,
+        spaceId,
         'spaces',
       );
       let seed = crypto.getRandomValues(new Uint8Array(32));
@@ -231,22 +229,32 @@ const Create = () => {
           agentKey: uint8ArrayToBase64(seed),
           agentDID: did.id,
           // @ts-ignore
-          spaceId: result.data?.createZucitySpace?.document?.id,
+          spaceId: spaceId,
         });
 
       if (spaceError) {
         console.error('Error creating space agent:', spaceError);
+        addToast({
+          title: 'Failed to create space',
+          description: `Error creating space agent: ${spaceError.message}`,
+          color: 'danger',
+        });
         throw new Error('Error creating space agent');
       }
+      return spaceId
     } catch (error) {
       console.error('Error creating space:', error);
+      addToast({
+        title: 'Failed to create space',
+        description: `Error creating space: ${error instanceof Error ? error.message : 'unknown error'}`,
+        color: 'danger',
+      });
       throw new Error('Error creating space');
     }
   };
   const handleAccessRuleSubmit = async () => {
     try {
       setIsSubmit(true);
-      // 验证所有表单
       const validations = await Promise.all([
         validateFormStep(ProfilValidationSchema, profileForm, TabContentEnum.Profile),
         validateFormStep(CategoriesValidationSchema, categoriesForm, TabContentEnum.Categories),
@@ -258,11 +266,23 @@ const Create = () => {
       }
 
       const content = transformFormData();
-      await createSpace(content);
-      setShowModal(true);
+      const spaceId = await createSpace(content);
+      console.log('space', spaceId);
+      if (spaceId) {
+        addToast({
+          title: 'Space created successfully',
+          description: `Space created successfully`,
+          color: 'success',
+        });
+        router.push(`/spaces/${spaceId}`);
+      }
     } catch (error) {
       console.error('Error creating space:', error);
-      // TODO: 添加用户友好的错误提示
+      addToast({
+        title: 'Failed to create space',
+        description: `Error creating space: ${error instanceof Error ? error.message : 'unknown error'}`,
+        color: 'danger',
+      });
     } finally {
       setIsSubmit(false);
     }
@@ -296,7 +316,6 @@ const Create = () => {
         cn("flex justify-center gap-[40px] py-[20px] px-[40px] mx-auto w-full", 
           "mobile:flex-col mobile:p-[10px] mobile:gap-[0px] mobile:mb-[40px] mobile:items-center")
       }>
-        {/* 左侧 Tabs 列表 */}
         <Mobile>
           <div className="w-full justify-center">
             <CreateSpaceTabs
@@ -316,15 +335,12 @@ const Create = () => {
           </div>
         </NotMobile>
 
-        {/* 中间内容区域 */}
         <div className="w-full max-w-[700px] p-[20px] mobile:p-[0px]">
           {renderTabContent()}
         </div>
 
-        {/* 右侧预览卡片 */}
-        <NotMobile>
-          <div className="w-[320px] pt-4">
-            <HSpaceCard
+          <div className="w-[320px] pt-4 tablet:hidden mobile:hidden">
+            <SpaceCard
               data={{
                 id: 'preview',
                 name: spaceName || 'Community Name',
@@ -342,27 +358,19 @@ const Create = () => {
                     username: '',
                   },
                 },
+                userRoles: { edges: [] },
                 customAttributes: [],
                 installedApps: { edges: [] },
                 createdAt: '',
                 updatedAt: '',
               }}
-              size="lg"
+              isJoined={false}
+              isFollowed={false}
+              autoWidth={true}
               showFooter={false}
             />
           </div>
-        </NotMobile>
       </div>
-      <Dialog
-        title="Space Created"
-        message="Create process probably complete after few minute. Please check it in Space List page."
-        showModal={showModal}
-        onClose={() => setShowModal(false)}
-        onConfirm={() => {
-          setShowModal(false);
-          router.push('/spaces');
-        }}
-      />
     </div>
   );
 };
