@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -103,7 +103,7 @@
     "key-did-resolver": "^4.0.0",
     "leaflet": "^1.9.0",
     "lodash": "^4.17.21",
-    "next": "^14.2.13",
+    "next": "^15",
     "next-qrcode": "^2.5.1",
     "node-fetch": "^3.3.2",
     "node-geocoder": "^4.3.0",
