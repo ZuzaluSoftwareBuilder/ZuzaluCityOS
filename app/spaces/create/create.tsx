@@ -63,10 +63,10 @@ const Create = () => {
       name: '',
       tagline: '',
       description: '',
-      avatar: DEFAULT_AVATAR,
-      banner: DEFAULT_BANNER,
-      // avatar: '',
-      // banner: ''
+      // avatar: DEFAULT_AVATAR,
+      // banner: DEFAULT_BANNER,
+      avatar: '',
+      banner: ''
     }
   });
   const descriptionEditorStore = useEditorStore();
