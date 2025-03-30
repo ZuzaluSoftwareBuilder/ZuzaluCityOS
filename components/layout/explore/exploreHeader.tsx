@@ -1,26 +1,33 @@
 import { Stack, Typography, useTheme, useMediaQuery } from '@mui/material';
-import { PlusCircleIcon, DIcon, HourglassHighIcon } from '@/components/icons';
+import { HourglassHighIcon } from '@/components/icons';
 import { ZuButton } from '@/components/core';
 import Image from 'next/image';
-import { useQuery } from '@tanstack/react-query';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
+import { Plus } from '@phosphor-icons/react';
 
-const AddButton = ({
-  isMobile,
-  isDisabled,
-  isAuthenticated,
-  onClick,
-}: {
+export interface IAddButtonProps {
   isMobile: boolean;
   isDisabled: boolean;
   isAuthenticated: boolean;
   onClick: () => void;
-}) => {
+  icon: React.ReactNode;
+  btnText: string;
+}
+
+export const AddButton = ({
+  isMobile,
+  isDisabled,
+  isAuthenticated,
+  onClick,
+  icon,
+  btnText,
+}: IAddButtonProps) => {
   return (
     <ZuButton
       sx={{
         border: '1px solid rgba(255, 255, 255, 0.10)',
+        height: '40px',
         backgroundColor: '#222',
         p: '8px 14px',
         fontSize: '16px',
@@ -38,7 +45,7 @@ const AddButton = ({
           isDisabled ? (
             <HourglassHighIcon />
           ) : (
-            <PlusCircleIcon />
+            icon
           )
         ) : (
           <Image src="/user/wallet.png" alt="wallet" height={24} width={24} />
@@ -49,39 +56,54 @@ const AddButton = ({
       {isAuthenticated
         ? isDisabled
           ? 'Listing Coming Soon'
-          : 'Add Your App'
+          : btnText
         : 'Connect'}
     </ZuButton>
   );
 };
 
-export default function Header({ onAdd }: { onAdd: () => void }) {
+export interface IExploreHeaderProps {
+  icon: React.ReactNode;
+  title: string;
+  subTitle: string;
+  versionLabel: string;
+  onAdd?: () => void;
+  bgImage?: string;
+  addButtonText: string;
+  addButtonIcon?: React.ReactNode;
+  titlePrefixIcon?: React.ReactNode;
+  bgImageWidth?: number;
+  bgImageHeight?: number;
+  bgImageTop?: number;
+}
+
+export default function ExploreHeader({
+  onAdd,
+  icon,
+  title,
+  subTitle,
+  versionLabel,
+  bgImage,
+  addButtonText,
+  addButtonIcon,
+  titlePrefixIcon,
+  bgImageWidth,
+  bgImageHeight,
+  bgImageTop,
+}: IExploreHeaderProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { isAuthenticated, composeClient, ceramic, showAuthPrompt } =
-    useCeramicContext();
+  const { isAuthenticated, showAuthPrompt } = useCeramicContext();
 
-  const { data: hasSpace } = useQuery({
-    queryKey: ['getSpace', ceramic.did?.parent],
-    enabled: isAuthenticated,
-    queryFn: async () => {
-      const response: any = await composeClient.executeQuery(`
-      query MyQuery {
-        viewer {
-          zucitySpaceListCount
-        }
-      }
-    `);
-
-      return response?.data?.viewer?.zucitySpaceListCount > 0;
-    },
-  });
+  const defaultAddButtonIcon = (
+    <Plus size={20} weight={'fill'} format={'Stroke'} />
+  );
 
   const handleClick = useCallback(() => {
     if (!isAuthenticated) {
       showAuthPrompt();
     } else {
-      onAdd();
+      onAdd?.();
     }
   }, [isAuthenticated, onAdd, showAuthPrompt]);
 
@@ -99,7 +121,7 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
             background: 'linear-gradient(272deg, #222 2.52%, #2C2C2C 107.14%)',
           },
         },
-        borderBottom: '1px solid rgba(255, 255, 255, 0.10)'
+        borderBottom: '1px solid rgba(255, 255, 255, 0.10)',
       }}
     >
       <Typography
@@ -113,18 +135,23 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
           color: '#fff',
         }}
       >
-        dApps v0.1
+        {versionLabel}
       </Typography>
       <Image
-        src="/dapps/header.png"
+        src={bgImage || '/dapps/header.png'}
         alt="header"
         width={220}
         height={200}
         style={{
-          width: '220px',
-          height: '200px',
+          width: `${bgImageWidth || 220}px`,
+          height: `${bgImageHeight || 200}px`,
           position: 'absolute',
-          top: isMobile ? '10px' : '20px',
+          top:
+            bgImageTop || bgImageTop === 0
+              ? `${bgImageTop}px`
+              : isMobile
+                ? '10px'
+                : '20px',
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 1,
@@ -138,19 +165,11 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
           zIndex: 2,
         }}
       >
-        <Image
-          src="/dapps/shapes.png"
-          alt="shapes"
-          width={isMobile ? 60 : 80}
-          height={isMobile ? 60 : 80}
-          style={{
-            width: isMobile ? '60px' : '80px',
-            height: isMobile ? '60px' : '80px',
-          }}
-        />
+        {icon}
+
         <Stack direction="column" gap={isMobile ? '5px' : '10px'}>
           <Stack direction="row" alignItems="center">
-            <DIcon />
+            {titlePrefixIcon}
             <Typography
               sx={{
                 color: '#fff',
@@ -159,7 +178,7 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
                 lineHeight: 1.2,
               }}
             >
-              Apps
+              {title}
             </Typography>
           </Stack>
           <Typography
@@ -172,24 +191,28 @@ export default function Header({ onAdd }: { onAdd: () => void }) {
               lineHeight: 1.4,
             }}
           >
-            Zuzalu tools for Communities, Events & More
+            {subTitle}
           </Typography>
-          {!isMobile && (
+          {!!onAdd && !isMobile && (
             <AddButton
               isMobile={isMobile}
               isDisabled={false}
               isAuthenticated={isAuthenticated}
               onClick={handleClick}
+              icon={addButtonIcon ?? defaultAddButtonIcon}
+              btnText={addButtonText}
             />
           )}
         </Stack>
       </Stack>
-      {isMobile && (
+      {!!onAdd && isMobile && (
         <AddButton
           isMobile={isMobile}
           isDisabled={false}
           isAuthenticated={isAuthenticated}
           onClick={handleClick}
+          icon={addButtonIcon ?? defaultAddButtonIcon}
+          btnText={addButtonText}
         />
       )}
     </Stack>
