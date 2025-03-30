@@ -9,9 +9,10 @@ interface AccessRuleProps {
     onSubmit: () => void;
     isGated: boolean;
     onGatedChange: (isGated: boolean) => void;
+    isSubmit: boolean;
 }
 
-export default function AccessRule({ onBack, onSubmit, isGated, onGatedChange }: AccessRuleProps) {
+export default function AccessRule({ onBack, onSubmit, isGated, onGatedChange, isSubmit }: AccessRuleProps) {
     return (
         <div className="flex flex-col justify-center gap-[30px] mobile:gap-[20px]">
             {/* Header Section */}
@@ -88,6 +89,7 @@ export default function AccessRule({ onBack, onSubmit, isGated, onGatedChange }:
                     size="md"
                     className="w-[120px] mobile:w-[100px]"
                     endContent={<CaretRight className="w-[20px] h-[20px] mobile:w-[16px] mobile:h-[16px]" />}
+                    isDisabled={isSubmit}
                 >
                     Create
                 </Button>

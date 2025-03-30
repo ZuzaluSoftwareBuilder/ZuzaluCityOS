@@ -31,6 +31,8 @@ import { Ed25519Provider } from 'key-did-provider-ed25519';
 import { DID } from 'dids';
 import { Categories } from './components/constant';
 import { Mobile, NotMobile } from '@/hooks/useMediaQuery';
+import { Space } from '@/types';
+import Dialog from '@/app/spaces/components/Modal/Dialog';
 
 dayjs.extend(utc);
 
@@ -40,7 +42,7 @@ const DEFAULT_BANNER = 'https://nftstorage.link/ipfs/bafybeifqan4j2n7gygwkmekcty
 
 
 const Create = () => {
-  const [selectedTab, setSelectedTab] = useState(TabContentEnum.Links);
+  const [selectedTab, setSelectedTab] = useState(TabContentEnum.Profile);
   const [isGated, setIsGated] = useState(false);
   const [tabStatuses, setTabStatuses] = useState<Record<string, TabStatus>>({
     [TabContentEnum.Profile]: TabStatus.Active,
@@ -49,9 +51,10 @@ const Create = () => {
     [TabContentEnum.Access]: TabStatus.Inactive,
   });
   const [isSubmit, setIsSubmit] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const router = useRouter();
   const { isMobile } = useMediaQuery();
-  const { ceramic, composeClient, isAuthenticated, profile } =
+  const { ceramic, profile } =
     useCeramicContext();
   const profileForm = useForm<ProfileFormData>({
     resolver: yupResolver(ProfilValidationSchema),
@@ -133,7 +136,7 @@ const Create = () => {
     setSelectedTab(TabContentEnum.Links);
   }
   //
-  const handleLinksSubmit = (data: LinksFormData) => {
+  const handleLinksSubmit = () => {
     setTabStatuses(prev => {
       return {
         ...prev,
@@ -176,9 +179,9 @@ const Create = () => {
     return {
       customLinks,
       socialLinks,
-      name: name,
+      name,
       description: descriptionEditorStore.getValueString(),
-      tagline: tagline,
+      tagline,
       owner: adminId,
       profileId: profileId,
       avatar:
@@ -191,6 +194,7 @@ const Create = () => {
       category: category,
       createdAt: dayjs().utc().toISOString(),
       updatedAt: dayjs().utc().toISOString(),
+      gated: isGated ? '1' : '0',
     };
   };
 
@@ -232,8 +236,8 @@ const Create = () => {
 
       if (spaceError) {
         console.error('Error creating space agent:', spaceError);
+        throw new Error('Error creating space agent');
       }
-      return spaceData
     } catch (error) {
       console.error('Error creating space:', error);
       throw new Error('Error creating space');
@@ -254,13 +258,8 @@ const Create = () => {
       }
 
       const content = transformFormData();
-      const space = await createSpace(content);
-
-      // if (space?.id) {
-      //   const urlName = covertNameToUrlName(input.content.name);
-      //   await createUrl(urlName, space.id, 'spaces');
-      //   router.push('/spaces');
-      // }
+      await createSpace(content);
+      setShowModal(true);
     } catch (error) {
       console.error('Error creating space:', error);
       // TODO: 添加用户友好的错误提示
@@ -285,7 +284,7 @@ const Create = () => {
       <div className={cn({ "hidden": selectedTab !== TabContentEnum.Profile })}><ProfileContent descriptionEditorStore={descriptionEditorStore} onBack={()=> router.push('/spaces')} form={profileForm} onSubmit={handleProfileSubmit} /></div>
       <div className={cn({ "hidden": selectedTab !== TabContentEnum.Categories })}><CategoriesContent onBack={handleCategoriesBack} form={categoriesForm} onSubmit={handleCategoriesSubmit} /></div>
       <div className={cn({ "hidden": selectedTab !== TabContentEnum.Links })}><LinksContent onBack={handleLinksBack} form={linksForm} onSubmit={handleLinksSubmit} /></div>
-      <div className={cn({ "hidden": selectedTab !== TabContentEnum.Access })}><AccessRule onBack={handleAccessRuleBack} onSubmit={handleAccessRuleSubmit} isGated={isGated} onGatedChange={setIsGated} /></div>
+      <div className={cn({ "hidden": selectedTab !== TabContentEnum.Access })}><AccessRule isSubmit={isSubmit} onBack={handleAccessRuleBack} onSubmit={handleAccessRuleSubmit} isGated={isGated} onGatedChange={setIsGated} /></div>
     </>)
   };
 
@@ -354,6 +353,16 @@ const Create = () => {
           </div>
         </NotMobile>
       </div>
+      <Dialog
+        title="Space Created"
+        message="Create process probably complete after few minute. Please check it in Space List page."
+        showModal={showModal}
+        onClose={() => setShowModal(false)}
+        onConfirm={() => {
+          setShowModal(false);
+          router.push('/spaces');
+        }}
+      />
     </div>
   );
 };

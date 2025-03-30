@@ -1,6 +1,6 @@
 // 这里和app/component/SpaceCard.tsx 的组件差不多，
 // 为了不影响原有业务，之后把app/component/SpaceCard.tsx 的组件迁移到这个文件中，成为公共组件
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Image, Skeleton } from '@heroui/react';
 import { Button, Avatar, Chip, Card, CardHeader, CardBody, CardFooter } from '@/components/base';
 import { cn } from '@heroui/react';
@@ -84,6 +84,7 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md', s
         tags,
         id,
         category,
+        userRoles,
     } = data;
     const { profile } = useCeramicContext();
     const router = useRouter();
@@ -91,17 +92,14 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md', s
 
     const currentUserId = profile?.author?.id;
 
-    const isUserJoined = React.useMemo(() => {
-        return currentUserId && isUserAssociated(data, currentUserId);
-    }, [currentUserId, data]);
+    // const isUserJoined = React.useMemo(() => {
+    //     return currentUserId && isUserAssociated(data, currentUserId);
+    // }, [currentUserId, data]);
     // todo: 获取成员数
-    // const formattedMemberCount = React.useMemo(() => {
-    //     const totalMembers =
-    //         (members?.length || 0) +
-    //         (admins?.length || 0) +
-    //         (superAdmin?.length || 0);
-    //     return formatMemberCount(totalMembers);
-    // }, [members?.length, admins?.length, superAdmin?.length]);
+    const formattedMemberCount = useMemo(() => {
+        const totalMembers = userRoles?.edges.map((item) => item.node).length ?? 0;
+        return formatMemberCount(totalMembers + 1);
+      }, [userRoles]);
 
     const SpaceChip = () => {
         const categoryInfo = React.useMemo(() =>
@@ -165,18 +163,18 @@ const HSpaceCard: React.FC<HSpaceCardProps> = ({ data, className, size = 'md', s
                 </div>
 
                 {/* Joined Badge */}
-                {isUserJoined && (
+                {/* {isUserJoined && (
                     <div className="flex items-center gap-[5px] px-[10px] py-[5px] rounded-[4px] border border-b-w-10 bg-[rgba(34,34,34,0.60)] backdrop-filter backdrop-blur-[5px] absolute right-[10px] top-[10px] z-10">
                         <CheckCircleIcon size={4} />
-                        <span className="text-[14px] font-[500]">已加入</span>
+                        <span className="text-[14px] font-[500]">Joined</span>
                     </div>
-                )}
+                )} */}
 
                 {/* Member Count */}
-                {/* <div className="absolute bottom-[-30px] right-[6px] flex items-center gap-[6px] opacity-50">
+                <div className="absolute bottom-[-30px] right-[6px] flex items-center gap-[6px] opacity-50">
                     <UsersIcon size={4} />
                     <span className="text-[13px] leading-[1.4]">{formattedMemberCount}</span>
-                </div> */}
+                </div>
             </CardHeader>
 
             <CardBody className="pt-[30px] px-[10px] pb-0">

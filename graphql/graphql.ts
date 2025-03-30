@@ -1386,6 +1386,8 @@ export type PartialZucityInvitationInput = {
   expiresAt?: InputMaybe<Scalars['DateTime']['input']>;
   inviteeId?: InputMaybe<Scalars['DID']['input']>;
   inviteeProfileId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
+  inviterId?: InputMaybe<Scalars['DID']['input']>;
+  inviterProfileId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
   isRead?: InputMaybe<Scalars['String']['input']>;
   lastSentAt?: InputMaybe<Scalars['DateTime']['input']>;
   message?: InputMaybe<Scalars['String']['input']>;
@@ -1483,6 +1485,7 @@ export type PartialZucitySpaceInput = {
   customAttributes?: InputMaybe<Array<InputMaybe<TbdInput>>>;
   customLinks?: InputMaybe<Array<InputMaybe<ZucitySpaceLinkInput>>>;
   description?: InputMaybe<Scalars['String']['input']>;
+  gated?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   owner?: InputMaybe<Scalars['DID']['input']>;
   profileId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
@@ -2949,6 +2952,9 @@ export type ZucityInvitation = Node & {
   inviteeId: CeramicAccount;
   inviteeProfile?: Maybe<ZucityProfile>;
   inviteeProfileId?: Maybe<Scalars['CeramicStreamID']['output']>;
+  inviterId: CeramicAccount;
+  inviterProfile?: Maybe<ZucityProfile>;
+  inviterProfileId?: Maybe<Scalars['CeramicStreamID']['output']>;
   isRead: Scalars['String']['output'];
   lastSentAt?: Maybe<Scalars['DateTime']['output']>;
   message?: Maybe<Scalars['String']['output']>;
@@ -3002,6 +3008,8 @@ export type ZucityInvitationInput = {
   expiresAt: Scalars['DateTime']['input'];
   inviteeId: Scalars['DID']['input'];
   inviteeProfileId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
+  inviterId: Scalars['DID']['input'];
+  inviterProfileId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
   isRead: Scalars['String']['input'];
   lastSentAt?: InputMaybe<Scalars['DateTime']['input']>;
   message?: InputMaybe<Scalars['String']['input']>;
@@ -3094,7 +3102,8 @@ export type ZucityProfile = Node & {
   email?: Maybe<Scalars['String']['output']>;
   events: ZucityEventConnection;
   id: Scalars['ID']['output'];
-  invitated: ZucityInvitationConnection;
+  invitatee: ZucityInvitationConnection;
+  inviter: ZucityInvitationConnection;
   myScrollPassTickets?: Maybe<Array<Maybe<ScrollTicket>>>;
   spaces: ZucitySpaceConnection;
   username: Scalars['String']['output'];
@@ -3132,7 +3141,18 @@ export type ZucityProfileEventsArgs = {
 };
 
 
-export type ZucityProfileInvitatedArgs = {
+export type ZucityProfileInvitateeArgs = {
+  account?: InputMaybe<Scalars['ID']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filters?: InputMaybe<ZucityInvitationFiltersInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  sorting?: InputMaybe<ZucityInvitationSortingInput>;
+};
+
+
+export type ZucityProfileInviterArgs = {
   account?: InputMaybe<Scalars['ID']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -3440,6 +3460,7 @@ export type ZucitySpace = Node & {
   customLinks?: Maybe<Array<Maybe<ZucitySpaceLink>>>;
   description: Scalars['String']['output'];
   events: ZucityEventConnection;
+  gated?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   installedApps: ZucityInstalledAppConnection;
   name: Scalars['String']['output'];
@@ -3610,6 +3631,7 @@ export type ZucitySpaceInput = {
   customAttributes?: InputMaybe<Array<InputMaybe<TbdInput>>>;
   customLinks?: InputMaybe<Array<InputMaybe<ZucitySpaceLinkInput>>>;
   description: Scalars['String']['input'];
+  gated?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   owner: Scalars['DID']['input'];
   profileId: Scalars['CeramicStreamID']['input'];
@@ -3632,12 +3654,14 @@ export type ZucitySpaceLinkInput = {
 
 export type ZucitySpaceObjectFilterInput = {
   category?: InputMaybe<StringValueFilterInput>;
+  gated?: InputMaybe<StringValueFilterInput>;
   name?: InputMaybe<StringValueFilterInput>;
   owner?: InputMaybe<StringValueFilterInput>;
 };
 
 export type ZucitySpaceSortingInput = {
   category?: InputMaybe<SortOrder>;
+  gated?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
   owner?: InputMaybe<SortOrder>;
 };

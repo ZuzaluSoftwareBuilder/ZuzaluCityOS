@@ -272,17 +272,6 @@ const EditSpace = () => {
   const ButtonGroup = ({ className = '' }: { className?: string }) => (
     <div className={className}>
       <Button
-        color="primary"
-        size="md"
-        className="mobile:w-full tablet:w-full"
-        startContent={!isSubmit && <ArrowLineDown size={20} />}
-        isDisabled={!isChange && !isLoading} // 如果没有变更或正在加载，禁用按钮
-        isLoading={isSubmit}
-        onClick={handleSave}
-      >
-        Save Changed
-      </Button>
-      <Button
         type="button"
         size="md"
         color="default"
@@ -293,6 +282,17 @@ const EditSpace = () => {
       >
         Discard Changes
       </Button>
+      <Button
+        color="primary"
+        size="md"
+        className="mobile:w-full tablet:w-full"
+        startContent={!isSubmit && <ArrowLineDown size={20} />}
+        isDisabled={!isChange && !isLoading} // 如果没有变更或正在加载，禁用按钮
+        isLoading={isSubmit}
+        onClick={handleSave}
+      >
+        Save Changed
+      </Button>
     </div>
   );
 
@@ -300,7 +300,7 @@ const EditSpace = () => {
     <div className="flex flex-col w-full min-h-screen">
       <div
         className={cn(
-          'flex justify-start gap-[40px] py-[20px] px-[40px] mx-auto w-full',
+          'flex justify-center gap-[40px] py-[20px] px-[40px] mx-auto w-full',
           'tablet:py-[0px] tablet:px-[0px] tablet:gap-[0px]',
         )}
       >
@@ -318,7 +318,7 @@ const EditSpace = () => {
 
         {/* 中间内容区域 */}
         <div className="w-full max-w-[600px] p-[20px] mobile:p-[10px]">
-          {isTablet && <ButtonGroup className="flex flex-col gap-[10px] mb-[30px]" />}
+          {isTablet && <ButtonGroup className="flex flex-col gap-[10px] mb-[30px] flex-col-reverse" />}
           {renderTabContent()}
           {/* 底部按钮 */}
           {isPc && (

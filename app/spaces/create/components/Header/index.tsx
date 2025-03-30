@@ -7,7 +7,7 @@ const Header = () => {
   const router = useRouter();
 
   return (
-    <div className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#2C2C2C]/60 px-5 py-1.5 backdrop-blur-2xl">
+    <div className="fixed top-0 left-0 right-0 z-50 w-full border-b border-white/10 bg-[#2C2C2C]/60 px-5 py-1.5 backdrop-blur-2xl">
       <div className="flex items-center gap-2.5">
         <button
           onClick={() => router.push('/spaces')}
