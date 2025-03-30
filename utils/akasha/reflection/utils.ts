@@ -2,7 +2,7 @@ import {
   AkashaReflectEdge,
   BlockLabeledValue,
 } from '@akashaorg/typings/lib/sdk/graphql-types-new';
-import { ZulandReadableReflection } from '../akasha.d';
+import { ZulandReadableReflection } from '@/types/akasha';
 import { getProfileByDid } from '../profile';
 import { convertBlockContentToReadableBlock } from '../block/utils';
 import { AccessControlCondition } from '@/utils/lit/types';

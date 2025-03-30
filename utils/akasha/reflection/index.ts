@@ -17,7 +17,7 @@ import {
   ZulandReadableReflection,
   ZulandReadableReflectionResult,
   ZulandReadableReflectionWithChildren,
-} from '../akasha.d';
+} from '@/types/akasha';
 import {
   extractDecryptedReadableReflections,
   extractReadableReflections,

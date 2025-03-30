@@ -14,7 +14,7 @@ import {
   BeamsByAuthorDid,
   ZulandContentBlockInput,
   ZulandReadableBeam,
-} from '../akasha.d';
+} from '@/types/akasha';
 import {
   extractBeamReadableContent,
   extractDecryptedBeamReadableContent,
