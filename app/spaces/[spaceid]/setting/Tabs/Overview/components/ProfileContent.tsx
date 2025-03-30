@@ -56,11 +56,13 @@ export const ProfilValidationSchema = Yup.object().shape({
 interface ProfileContentProps {
   form: UseFormReturn<ProfileFormData>;
   descriptionEditorStore: ReturnType<typeof useEditorStore>;
+  isDisabled?: boolean;
 }
 
 const ProfileContent: React.FC<ProfileContentProps> = ({
   form,
   descriptionEditorStore,
+  isDisabled = false,
 }) => {
   const {
     control,
@@ -82,6 +84,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
               placeholder="Give your space an awesome name"
               isInvalid={!!errors.name}
               errorMessage={errors.name?.message}
+              isDisabled={isDisabled}
             />
           )}
         />
@@ -103,6 +106,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 isInvalid={!!errors.tagline}
                 errorMessage={errors.tagline?.message}
                 maxLength={100}
+                isDisabled={isDisabled}
               />
             )}
           />
@@ -136,6 +140,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 }}
                 minHeight={190}
                 placeholder="This is a description greeting for new members. You can also update descriptions."
+                isDisabled={isDisabled}
               />
             )}
           />
@@ -170,6 +175,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 onUploadSuccess={field.onChange}
                 api="/api/file/upload"
                 className="rounded-full"
+                isDisabled={isDisabled}
               >
                 <Avatar
                   size="xlg"
@@ -200,6 +206,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
               api="/api/file/upload"
               className="w-full h-[200px] mobile:h-[160px]"
               accept={['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml']}
+              isDisabled={isDisabled}
             >
               <div className="w-full">
                 {value ? (

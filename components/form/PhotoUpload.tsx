@@ -12,6 +12,7 @@ interface AvatarUploadProps {
   api?: string;
   children?: React.ReactNode;
   className?: string;
+  isDisabled?: boolean;
 }
 
 export const AvatarUpload: React.FC<AvatarUploadProps> = ({
@@ -21,6 +22,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
   api = '/api/file/upload',
   children,
   className ='',
+  isDisabled = false,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -84,12 +86,12 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
     }>
       <div
         className="relative cursor-pointer group w-full"
-        onClick={handleClick}
+        onClick={!isDisabled ? handleClick : undefined}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
         {children}
-        {avatarOverlay}
+        {!isDisabled && avatarOverlay}
       </div>
       
       <input
@@ -98,6 +100,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
         className="hidden"
         accept={accept.join(',')}
         onChange={handleFileChange}
+        disabled={isDisabled}
       />
       
       {errorMessage && (

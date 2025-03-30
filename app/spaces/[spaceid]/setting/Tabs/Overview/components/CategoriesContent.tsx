@@ -22,10 +22,12 @@ interface CategoryCardProps {
   color: string;
   selected?: boolean;
   onClick?: () => void;
+  isDisabled?: boolean;
 }
 
 interface CategoriesContentProps {
   form: UseFormReturn<CategoriesFormData>;
+  isDisabled?: boolean;
 }
 
 // 验证 schema
@@ -50,6 +52,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   selected = false,
   onClick,
   color,
+  isDisabled = false,
 }) => {
   const iconElement =
     icon && React.isValidElement(icon)
@@ -61,11 +64,11 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
       className={`cursor-pointer transition-all duration-200 ${selected
           ? 'bg-white/[0.1] border border-white'
           : 'bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05]'
-        } rounded-[10px] h-[50px]`}
+      } rounded-[10px] h-[50px]`}
     >
       <CardBody
         className="flex flex-row gap-[14px] justify-start items-center px-[20px] py-[10px]"
-        onClick={onClick}
+        onClick={!isDisabled ? onClick : undefined}
       >
         {iconElement && <div className="w-6 h-6">{iconElement}</div>}
         <div className="text-base font-semibold leading-[1.4]">{title}</div>
@@ -79,7 +82,8 @@ const CategorySelection: React.FC<{
   control: UseFormReturn<CategoriesFormData>['control'];
   category: string;
   error?: string;
-}> = ({ control, category, error }) => (
+  isDisabled?: boolean;
+}> = ({ control, category, error, isDisabled = false }) => (
   <div className="space-y-[20px]">
     <div className="space-y-[10px]">
       <h3 className="text-base font-medium">Select Categories*</h3>
@@ -104,6 +108,7 @@ const CategorySelection: React.FC<{
                 field.onChange(type.value);
                 console.log('category', type.value);
               }}
+              isDisabled={isDisabled}
             />
           ))}
         </div>
@@ -121,6 +126,7 @@ const CategorySelection: React.FC<{
 // 主组件
 const CategoriesContent: React.FC<CategoriesContentProps> = ({
   form,
+  isDisabled = false,
 }) => {
   const {
     control,
@@ -136,6 +142,7 @@ const CategoriesContent: React.FC<CategoriesContentProps> = ({
         control={control}
         category={category}
         error={errors.category?.message}
+        isDisabled={isDisabled}
       />
       <div className="space-y-[20px]">
         <div className="space-y-2">

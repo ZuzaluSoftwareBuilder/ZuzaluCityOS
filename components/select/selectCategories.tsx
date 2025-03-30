@@ -13,6 +13,7 @@ interface IProps {
   onChange: (value: string[]) => void;
   initialValues?: FilmOptionType[];
   value?: string[];
+  isDisabled?: boolean;
 }
 
 export default function SelectCategories({
@@ -20,6 +21,7 @@ export default function SelectCategories({
   value: outerValue,
   initialValues = [],
   options = SPACE_CATEGORIES,
+  isDisabled = false,
 }: IProps) {
   const [value, setValue] = React.useState<FilmOptionType[]>(initialValues);
   // 添加受控能力
@@ -46,6 +48,7 @@ export default function SelectCategories({
       multiple
       value={value}
       onChange={(event, newValue) => handleChange(newValue)}
+      disabled={isDisabled}
       filterOptions={(options, params) => {
         const filtered = filter(options, params);
 

@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import ProfileContent from './components/ProfileContent';
@@ -58,6 +58,9 @@ const EditSpace = () => {
   const isProfileChange = useRef<boolean>(false);
   const isCategoriesChange = useRef<boolean>(false);
   const isLinksChange = useRef<boolean>(false);
+  const { ceramic, profile } =
+  useCeramicContext();
+  const adminId = ceramic?.did?.parent || '';
 
   // 修复类型错误
   const { data: spaceData, isLoading, refetch } = useGraphQL(
@@ -69,6 +72,7 @@ const EditSpace = () => {
       enabled: !!spaceId,
     },
   );
+  const isAdmin = useMemo(() => adminId === spaceData?.owner?.id, [adminId, spaceData?.owner?.id]);
 
   // 初始化表单
   const profileForm = useForm<ProfileFormData>({
@@ -257,13 +261,20 @@ const EditSpace = () => {
         <ProfileContent
           form={profileForm}
           descriptionEditorStore={descriptionEditorStore}
+          isDisabled={!isAdmin}
         />
       </div>
       <div className={cn({ hidden: selectedTab !== TabContentEnum.Categories })}>
-        <CategoriesContent form={categoriesForm} />
+        <CategoriesContent 
+          form={categoriesForm} 
+          isDisabled={!isAdmin}
+        />
       </div>
       <div className={cn({ hidden: selectedTab !== TabContentEnum.Links })}>
-        <LinksContent form={linksForm} />
+        <LinksContent 
+          form={linksForm} 
+          isDisabled={!isAdmin}
+        />
       </div>
     </>
   );
@@ -278,7 +289,7 @@ const EditSpace = () => {
         className="bg-white/[0.05] mobile:w-full tablet:w-full"
         startContent={<XIcon size={20} />}
         onClick={handleDiscard}
-        isDisabled={!isChange || isLoading} // 如果没有变更或正在加载，禁用按钮
+        isDisabled={!isChange || isLoading || !isAdmin} // 如果没有变更或正在加载，禁用按钮
       >
         Discard Changes
       </Button>
@@ -287,7 +298,7 @@ const EditSpace = () => {
         size="md"
         className="mobile:w-full tablet:w-full"
         startContent={!isSubmit && <ArrowLineDown size={20} />}
-        isDisabled={!isChange && !isLoading} // 如果没有变更或正在加载，禁用按钮
+        isDisabled={!isChange && !isLoading || !isAdmin} // 如果没有变更或正在加载，禁用按钮
         isLoading={isSubmit}
         onClick={handleSave}
       >

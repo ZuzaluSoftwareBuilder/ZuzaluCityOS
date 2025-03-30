@@ -19,6 +19,7 @@ const SuperEditor: React.FC<{
   value?: OutputData;
   placeholder?: string;
   onChange?: (value: OutputData) => void;
+  isDisabled?: boolean;
 }> = (props) => {
   let {
     minHeight = 270,
@@ -26,6 +27,7 @@ const SuperEditor: React.FC<{
     onChange,
     maxLength = 5000,
     placeholder,
+    isDisabled = false,
   } = props;
 
   const [editorValue, setEditorValue] = useState<OutputData | undefined>();
@@ -40,7 +42,9 @@ const SuperEditor: React.FC<{
         tools,
         data: value || editorValue,
         minHeight: minHeight - (24 + 38),
+        readOnly: isDisabled,
         onChange: async (api, event: BlockMutationEvent) => {
+          if (isDisabled) return;
           if (event.type !== 'block-changed') {
             const content = await api.saver.save();
             setEditorValue(content);

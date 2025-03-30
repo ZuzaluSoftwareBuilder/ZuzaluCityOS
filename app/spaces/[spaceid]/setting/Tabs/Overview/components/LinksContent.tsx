@@ -53,10 +53,12 @@ export const LinksValidationSchema = yup.object({
 
 interface LinksContentProps {
   form: UseFormReturn<LinksFormData>;
+  isDisabled?: boolean;
 }
 
 const LinksContent: React.FC<LinksContentProps> = ({
   form,
+  isDisabled = false,
 }) => {
   const {
     control,
@@ -107,6 +109,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
                           errors.socialLinks?.[index]?.title?.message
                         }
                         isInvalid={!!errors.socialLinks?.[index]?.title}
+                        isDisabled={isDisabled}
                       >
                         {SOCIAL_TYPES.map((option) => (
                           <SelectItem key={option.key}>
@@ -127,6 +130,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
                         className="w-full"
                         errorMessage={errors.socialLinks?.[index]?.links?.message}
                         isInvalid={!!errors.socialLinks?.[index]?.links}
+                        isDisabled={isDisabled}
                       />
                     )}
                   />
@@ -134,7 +138,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
                     type="button"
                     onClick={() => removeSocial(index)}
                     className="flex items-center gap-[10px] mt-[5px] mobile:mt-[0px] mobile:h-[40px]"
-                    disabled={socialFields.length === 1}
+                    disabled={socialFields.length === 1 || isDisabled}
                   >
                     <span className="hidden text-white/50 text-[14px] mobile:block">
                       Remove Link
@@ -151,6 +155,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
           type="button"
           onClick={() => appendSocial({ title: '', links: '' })}
           className="h-[40px] mt-[10px] w-full bg-transparent opacity-80 py-2 px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
+          disabled={isDisabled}
         >
           <PlusIcon className="h-5 w-5" />
           <div>Add Social Link</div>
@@ -180,6 +185,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
                           errors.customLinks?.[index]?.title?.message
                         }
                         isInvalid={!!errors.customLinks?.[index]?.title}
+                        isDisabled={isDisabled}
                       />
                     )}
                   />
@@ -196,13 +202,14 @@ const LinksContent: React.FC<LinksContentProps> = ({
                           errors.customLinks?.[index]?.links?.message
                         }
                         isInvalid={!!errors.customLinks?.[index]?.links}
+                        isDisabled={isDisabled}
                       />
                     )}
                   />
                   <button
                     type="button"
                     onClick={() => removeCustom(index)}
-                    disabled={customFields.length === 1}
+                    disabled={customFields.length === 1 || isDisabled}
                     className="flex items-center gap-[10px] mt-[5px] mobile:mt-[0px] mobile:h-[40px]"
                   >
                     <span className="hidden text-white/50 text-[14px] mobile:block">
@@ -220,6 +227,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
           type="button"
           onClick={() => appendCustom({ title: '', links: '' })}
           className="h-[40px] mt-[10px] w-full bg-transparent opacity-80 py-[8px] px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
+          disabled={isDisabled}
         >
           <PlusIcon className="h-5 w-5" />
           <div>Add Custom Link</div>
