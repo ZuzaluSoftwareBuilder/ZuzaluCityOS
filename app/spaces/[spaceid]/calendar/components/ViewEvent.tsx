@@ -1,3 +1,4 @@
+'use client';
 import {
   Cog6Icon,
   LinkIcon,

@@ -1,3 +1,4 @@
+'use client';
 import { Box, FormHelperText, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo } from 'react';
 import FormHeader from './FormHeader';
