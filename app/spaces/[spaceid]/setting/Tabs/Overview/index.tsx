@@ -183,7 +183,11 @@ const EditSpace = () => {
   // 放弃更改处理
   const handleDiscard = () => {
     if (spaceData) {
-      setFormData(spaceData);
+      const oldData = spaceData;
+      // 自增表单需要特殊处理
+      oldData.socialLinks = JSON.parse(oldLinks.current).socialLinks;
+      oldData.customLinks = JSON.parse(oldLinks.current).customLinks;
+      setFormData(oldData);
       setIsChange(false);
     }
   };
