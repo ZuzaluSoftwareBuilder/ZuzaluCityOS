@@ -56,7 +56,7 @@ export default function SpaceDetailPage() {
   );
 
   const eventsData = useMemo(() => {
-    return spaceData?.events?.edges.map((edge) => edge.node) as Event[];
+    return (spaceData?.events?.edges.map((edge) => edge.node) || []) as Event[];
   }, [spaceData]);
 
   const { shareUrl } = useGetShareLink({ id: spaceId, name: spaceData?.name });

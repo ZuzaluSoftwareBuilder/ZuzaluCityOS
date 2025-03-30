@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from 'theme/theme';
 
 import { Header } from 'components/layout';
+import ExploreLayout from '@/components/layout/explore/exploreLayout';
 
 export const metadata: Metadata = {
   title: 'Zuzalu City',
@@ -18,7 +19,7 @@ function EventLayout({
   return (
     <AppRouterCacheProvider>
       <ThemeProvider theme={theme}>
-        <div>{children}</div>
+        <ExploreLayout selected={'Events'}>{children}</ExploreLayout>
       </ThemeProvider>
     </AppRouterCacheProvider>
   );

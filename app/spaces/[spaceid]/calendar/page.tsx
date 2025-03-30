@@ -26,8 +26,7 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { rrulestr } from 'rrule';
 import { useSpacePermissions } from '../components/permission';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
+import { useSpaceData } from '../components/context/spaceData';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -49,22 +48,7 @@ const Calendar = () => {
   } = useSpacePermissions();
 
   const searchParams = useSearchParams();
-
-  const {
-    data: spaceData,
-    refetch: refetchSpace,
-    isLoading: isLoadingSpace,
-  } = useGraphQL(
-    ['getCalendarConfig', spaceId],
-    GET_SPACE_QUERY_BY_ID,
-    { id: spaceId },
-    {
-      select: (data) => {
-        const space = data?.data?.node as Space;
-        return space;
-      },
-    },
-  );
+  const { spaceData, isSpaceDataLoading, refreshSpaceData } = useSpaceData();
 
   const calendarConfig = useMemo(() => {
     if (spaceData && spaceData.customAttributes) {
@@ -210,7 +194,7 @@ const Calendar = () => {
   );
 
   const content = useMemo(() => {
-    if (isLoadingSpace || isLoadingPermissions) {
+    if (isSpaceDataLoading || isLoadingPermissions) {
       return (
         <CircularProgress
           sx={{
@@ -340,7 +324,7 @@ const Calendar = () => {
       />
     );
   }, [
-    isLoadingSpace,
+    isSpaceDataLoading,
     isLoadingPermissions,
     calendarConfig,
     isAdmin,
@@ -450,7 +434,7 @@ const Calendar = () => {
             <CalendarConfigForm
               space={spaceData!}
               handleClose={handleFormClose}
-              refetch={refetchSpace}
+              refetch={refreshSpaceData}
             />
           )}
         </Drawer>

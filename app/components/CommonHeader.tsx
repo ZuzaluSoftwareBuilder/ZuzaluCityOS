@@ -35,7 +35,6 @@ export default function CommonHeader({
         rightContent
       ) : (
         <Button
-          variant="light"
           endContent={<ArrowCircleRightIcon size={5} />}
           onPress={buttonOnPress}
           className="h-[34px] mobile:p-[4px] mobile:text-[14px]"

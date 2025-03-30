@@ -223,6 +223,11 @@ export interface Space {
   customAttributes: TBD[];
   createdAt: string;
   updatedAt: string;
+  installedApps: {
+    edges: {
+      node: InstalledApp;
+    }[];
+  };
 }
 
 export interface CalendarConfig {
@@ -685,6 +690,7 @@ export interface IUserProfileWithSpaceAndEvent {
 }
 
 export interface InstalledApp {
+  id: string;
   installedAppId?: string;
   nativeAppName?: string;
   installedApp?: Dapp;
