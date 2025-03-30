@@ -4,7 +4,6 @@ import { memo, useState } from 'react';
 import {
   ChevronDownIcon,
   ChevronUpIcon,
-  InformationIcon,
   PlusCircleIcon,
   PlusIcon,
 } from '@/components/icons';
@@ -34,12 +33,11 @@ import clsx from 'clsx';
 const PostList = () => {
   const { startCreate } = useCreateOrEditorPostDrawer();
   const { posts, loading } = usePostListData();
-
   const { isAdmin, isOwner } = useSpacePermissions();
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex justify-between items-center">
+    <div className="flex flex-col h-full">
+      <div className="shrink-0 flex justify-between items-center mb-5">
         <div className="flex items-center gap-2.5">
           <span className="font-bold leading-[140%] text-[20px]">Posts</span>
         </div>
@@ -54,19 +52,23 @@ const PostList = () => {
           </Button>
         )}
       </div>
-      <div className="text-[14px] leading-[120%] opacity-80">
+      <div className="shrink-0 text-[14px] leading-[120%] opacity-80 mb-5">
         Announcement posts live in the space view under a menu of the same name.
       </div>
-      {loading ? (
-        <PostList.SkeletonList />
-      ) : (
-        <>
-          {posts.length === 0 && <PostList.Empty />}
-          {posts.map((post) => (
-            <PostList.Post key={post.node.id} post={post.node} />
-          ))}
-        </>
-      )}
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        <div className="flex flex-col gap-5">
+          {loading ? (
+            <PostList.SkeletonList />
+          ) : (
+            <>
+              {posts.length === 0 && <PostList.Empty />}
+              {posts.map((post) => (
+                <PostList.Post key={post.node.id} post={post.node} />
+              ))}
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

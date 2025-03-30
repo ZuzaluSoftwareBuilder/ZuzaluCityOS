@@ -51,9 +51,16 @@ export const PostListDataProvider = ({
         id: spaceId as string,
       }),
     select: (data) => {
-      return get(data, 'data.node.announcements.edges', []) as {
-        node: Announcement;
-      }[];
+      return (
+        get(data, 'data.node.announcements.edges', []) as {
+          node: Announcement;
+        }[]
+      ).sort((a, b) => {
+        return (
+          new Date(b.node.createdAt).getTime() -
+          new Date(a.node.createdAt).getTime()
+        );
+      });
     },
   });
 
