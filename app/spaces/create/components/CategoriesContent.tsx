@@ -6,13 +6,7 @@ import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import SelectCategories from '@/components/select/selectCategories';
 import { Button } from '@/components/base';
 import { Categories } from './constant';
-
-interface IconProps {
-    size?: number;
-    color?: string;
-    weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone';
-}
-
+import { IconProps } from '@phosphor-icons/react';
 export interface CategoriesFormData {
     category: string;
     tags: string[];

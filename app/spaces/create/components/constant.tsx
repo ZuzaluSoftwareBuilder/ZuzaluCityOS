@@ -5,14 +5,15 @@ import {
     UsersThree,
     Storefront,
     Code,
-    AirTrafficControl
+    AirTrafficControl,
+    IconProps
 } from "@phosphor-icons/react";
 import { Categories as SpaceTypesConstant } from "@/constant";
 
 export const Categories = SpaceTypesConstant.map((i): {
     value: string;
     label: string;
-    icon: React.ReactNode;
+    icon: React.ReactElement<IconProps>;
     color: string;
 } => {
     let icon = <UsersThree />

@@ -4,13 +4,9 @@ import * as yup from 'yup';
 import { Card, CardBody } from '@/components/base';
 import SelectCategories from '@/components/select/selectCategories';
 import { Categories } from '@/app/spaces/create/components/constant';
+import { IconProps } from '@phosphor-icons/react';
 
 
-interface IconProps {
-  size?: number;
-  color?: string;
-  weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone';
-}
 
 export interface CategoriesFormData {
   category: string;
