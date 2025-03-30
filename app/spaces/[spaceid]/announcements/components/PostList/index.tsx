@@ -29,6 +29,7 @@ import EditorPreview from '@/components/editor/EditorPreview';
 import { PostListDataProvider, usePostListData } from './PostListDataContext';
 import { useSpacePermissions } from '../../../components/permission';
 import { useCeramicContext } from '@/context/CeramicContext';
+import clsx from 'clsx';
 
 const PostList = () => {
   const { startCreate } = useCreateOrEditorPostDrawer();
@@ -81,13 +82,16 @@ PostList.Empty = memo(function Empty() {
           startCreate();
         }
       }}
-      className="flex flex-col items-center bg-[#2d2d2d] rounded-[8px] p-5 cursor-pointer"
+      className={clsx(
+        'flex flex-col items-center bg-[#2d2d2d] rounded-[8px] p-5',
+        isAdmin || isOwner ? 'cursor-pointer' : '',
+      )}
     >
-      {isAdmin && <PlusCircleIcon size={15} color="#6c6c6c" />}
+      {(isAdmin || isOwner) && <PlusCircleIcon size={15} color="#6c6c6c" />}
       <span className="text-normal font-bold leading-[180%] tracking-[0.01em]">
         No Posts
       </span>
-      {isAdmin && (
+      {(isAdmin || isOwner) && (
         <span className="text-[14px] leading-[140%] tracking-[0.01em] opacity-50">
           Add a Post
         </span>
