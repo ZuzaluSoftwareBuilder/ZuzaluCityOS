@@ -12,7 +12,7 @@ import { Categories as SpaceTypesConstant } from "@/constant";
 export const Categories = SpaceTypesConstant.map((i): {
     value: string;
     label: string;
-    icon: JSX.Element;
+    icon: React.ReactNode;
     color: string;
 } => {
     let icon = <UsersThree />

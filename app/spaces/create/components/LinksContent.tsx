@@ -16,7 +16,7 @@ export interface LinksFormData {
         title: string;
         links: string;
     }>;
-};
+}
 
 export const LinksValidationSchema = yup.object({
     socialLinks: yup.array().of(
