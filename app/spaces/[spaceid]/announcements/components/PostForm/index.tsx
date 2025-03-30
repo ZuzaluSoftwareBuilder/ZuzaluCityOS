@@ -174,7 +174,7 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
         </div>
 
         <div className="flex flex-col gap-2.5">
-          <FormLabel>Post Tags</FormLabel>
+          <FormLabel>Post Tags*</FormLabel>
           <FormLabelDesc>
             Search or create categories related to your post
           </FormLabelDesc>
