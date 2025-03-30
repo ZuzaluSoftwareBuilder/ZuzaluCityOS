@@ -42,7 +42,6 @@ const PostList = () => {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2.5">
           <span className="font-bold leading-[140%] text-[20px]">Posts</span>
-          <InformationIcon size={5} />
         </div>
         {(isOwner || isAdmin) && (
           <Button
@@ -111,7 +110,7 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
   return (
     <Card className="p-2.5">
       <div className="flex gap-2.5">
-        <div className="size-10 rounded-full overflow-hidden ml-6 shrink-0">
+        <div className="size-10 rounded-full overflow-hidden shrink-0">
           <Image
             src={post.author.zucityProfile?.avatar ?? '/user/avatar_p.png'}
             alt="avatar"
@@ -164,14 +163,18 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
             </Button>
           )}
           <div className="text-[10px] leading-[120%] font-normal opacity-50">
-            {dayjs(post.createdAt).format('YYYY-MM-DD')} CREATED |{' '}
+            {dayjs(post.createdAt).format('YYYY-MM-DD')} |{' '}
             {post.tags.map((tag) => `# ${tag.tag}`).join(' ')}
           </div>
         </div>
         <Dropdown>
           <DropdownTrigger>
             {userDID === post.author.id ? (
-              <Button isIconOnly aria-label="More Options" className="px-0">
+              <Button
+                isIconOnly
+                aria-label="More Options"
+                className="px-0 bg-transparent"
+              >
                 <EllipsisVerticalIcon className="w-5 h-5" />
               </Button>
             ) : (
