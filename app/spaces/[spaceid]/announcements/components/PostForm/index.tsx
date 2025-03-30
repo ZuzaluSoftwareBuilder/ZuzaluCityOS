@@ -80,6 +80,18 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
     return POST_TAGS.filter((item) => initialData?.tags.includes(item.value));
   }, [initialData]);
 
+  const validateDescription = useCallback(() => {
+    if (
+      !descriptionEditorStore.value ||
+      !descriptionEditorStore.value.blocks ||
+      descriptionEditorStore.value.blocks.length === 0
+    ) {
+      setError('description', {
+        message: 'Description is required',
+      });
+    }
+  }, [descriptionEditorStore.value, setError]);
+
   const resetForm = useCallback(() => {
     reset({
       title: initialData?.title || '',
@@ -112,6 +124,7 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
   );
 
   const onFormError = useCallback(() => {
+    validateDescription();
     if (!formContainerRef.current) return;
     const firstErrorField = Object.keys(omit(errors, 'root'))[0];
     if (firstErrorField) {
@@ -136,7 +149,7 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
         }),
       reset: resetForm,
     }),
-    [handleSubmit, submitForm, resetForm],
+    [handleSubmit, submitForm, resetForm, validateDescription],
   );
 
   return (
@@ -147,7 +160,7 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
       <FormTitle>Post Details</FormTitle>
       <div className="flex flex-col gap-5">
         <FormLabel>Post Title*</FormLabel>
-        <div data-field="title">
+        <div data-field="title" className="flex flex-col gap-2.5">
           <Controller
             control={control}
             name="title"
@@ -155,10 +168,10 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
               <Input {...field} placeholder="Type a title" />
             )}
           />
+          {errors?.title && (
+            <FormHelperText error>{errors?.title.message}</FormHelperText>
+          )}
         </div>
-        {errors?.title && (
-          <FormHelperText error>{errors?.title.message}</FormHelperText>
-        )}
 
         <div className="flex flex-col gap-2.5">
           <FormLabel>Post Tags</FormLabel>
@@ -167,7 +180,7 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
           </FormLabelDesc>
         </div>
 
-        <div data-field="tags">
+        <div data-field="tags" className="flex flex-col gap-2.5">
           <Controller
             control={control}
             name="tags"
@@ -181,18 +194,17 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
               />
             )}
           />
+          {errors?.tags && (
+            <FormHelperText error>{errors?.tags.message}</FormHelperText>
+          )}  
         </div>
-
-        {errors?.tags && (
-          <FormHelperText error>{errors?.tags.message}</FormHelperText>
-        )}
 
         <div className="flex flex-col gap-2.5">
           <FormLabel>Post Content*</FormLabel>
           <FormLabelDesc>Write your post here</FormLabelDesc>
         </div>
 
-        <div data-field="description">
+        <div data-field="description" className="flex flex-col gap-2.5">
           <SuperEditor
             placeholder="Type post content"
             value={descriptionEditorStore.value}
@@ -205,10 +217,10 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
               }
             }}
           />
+          {errors?.description && (
+            <FormHelperText error>{errors?.description.message}</FormHelperText>
+          )}
         </div>
-        {errors?.description && (
-          <FormHelperText error>{errors?.description.message}</FormHelperText>
-        )}
       </div>
     </div>
   );
