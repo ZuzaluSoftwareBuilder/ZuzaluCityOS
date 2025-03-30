@@ -13,14 +13,6 @@ type SpaceType = {
     color: string;
 };
 
-// export const Categories = [
-//     { id: 1, name: 'General Group', icon: <UsersThreeIcon />, color: "#FFB672" },
-//     { id: 2, name: 'Event Org', icon: <NewspaperClippingIcon />, color: "#FFFA64" },
-//     { id: 3, name: 'Venue', icon: <BuildingOfficeIcon />, color: "#B1FF68" },
-//     { id: 4, name: 'Shop', icon: <StorefrontIcon />, color: "#77FAFF" },
-//     { id: 5, name: 'Developer', icon: <CodeIcon />, color: "#7388FF" },
-//     { id: 6, name: 'PermaHub', icon: <AirTrafficControlIcon />, color: "#D364FF" },
-// ];
 export const Categories = SpaceTypesConstant.map((i) => {
     let icon = null
     let color = null
@@ -34,7 +26,8 @@ export const Categories = SpaceTypesConstant.map((i) => {
         }
         case 'event-org': {
             icon = <NewspaperClippingIcon />
-            color = "FFFA64"
+            color = "#FFFA64"
+            break;
         }
         case 'venue': {
             icon = <BuildingOfficeIcon />
@@ -54,6 +47,7 @@ export const Categories = SpaceTypesConstant.map((i) => {
         case 'permahub': {
             icon = <AirTrafficControlIcon />
             color = "#D364FF"
+            break;
         }
         default: {
             icon = <UsersThreeIcon />

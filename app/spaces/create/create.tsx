@@ -294,7 +294,7 @@ const Create = () => {
       <Header />
       <div className={
         cn("flex justify-center gap-[40px] py-[20px] px-[40px] mx-auto w-full", 
-          "mobile:flex-col mobile:p-[10px] mobile:gap-[0px] mobile:mb-[40px]")
+          "mobile:flex-col mobile:p-[10px] mobile:gap-[0px] mobile:mb-[40px] mobile:items-center")
       }>
         {/* 左侧 Tabs 列表 */}
         <Mobile>

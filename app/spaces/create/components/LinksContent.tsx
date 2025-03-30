@@ -211,7 +211,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack }) =
             </Card>
 
             {/* 底部按钮 */}
-            <div className="flex justify-end gap-[10px] mobile:flex-col tablet:flex-row mobile:px-[10px]">
+            <div className="flex justify-end gap-[10px] mobile:px-[10px]">
                 <Button
                     type="button"
                     size="md"

@@ -73,7 +73,7 @@ export default function AccessRule({ onBack, onSubmit, isGated, onGatedChange, i
             </div>
 
             {/* Navigation Buttons */}
-            <div className="flex flex-row justify-end items-center gap-[10px] mt-0 mobile:mt-[auto]">
+            <div className="flex flex-row justify-end items-center gap-[10px] mt-0">
                 <Button
                     onClick={onBack}
                     color="secondary"

@@ -34,6 +34,7 @@ import { Space } from '@/types';
 import { executeQuery } from '@/utils/ceramic';
 import { createUrlWhenEdit } from '@/services/url';
 import { useDialog } from '@/components/dialog/DialogContext';
+import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 
 dayjs.extend(utc);
 
@@ -72,7 +73,7 @@ const EditSpace = () => {
       enabled: !!spaceId,
     },
   );
-  const isAdmin = useMemo(() => adminId === spaceData?.owner?.id, [adminId, spaceData?.owner?.id]);
+  const { isOwner } = useSpacePermissions();
 
   // 初始化表单
   const profileForm = useForm<ProfileFormData>({
@@ -256,27 +257,27 @@ const EditSpace = () => {
 
   // 渲染Tab内容
   const renderTabContent = () => (
-    <>
-      <div className={cn({ hidden: selectedTab !== TabContentEnum.Profile })}>
+    <div className="mobile:space-y-[30px]">
+      <div className={cn({ hidden: selectedTab !== TabContentEnum.Profile }, "mobile:block")}>
         <ProfileContent
           form={profileForm}
           descriptionEditorStore={descriptionEditorStore}
-          isDisabled={!isAdmin}
+          isDisabled={!isOwner}
         />
       </div>
-      <div className={cn({ hidden: selectedTab !== TabContentEnum.Categories })}>
+      <div className={cn({ hidden: selectedTab !== TabContentEnum.Categories }, "mobile:block")}>
         <CategoriesContent 
           form={categoriesForm} 
-          isDisabled={!isAdmin}
+          isDisabled={!isOwner}
         />
       </div>
-      <div className={cn({ hidden: selectedTab !== TabContentEnum.Links })}>
+      <div className={cn({ hidden: selectedTab !== TabContentEnum.Links }, "mobile:block")}>
         <LinksContent 
           form={linksForm} 
-          isDisabled={!isAdmin}
+          isDisabled={!isOwner}
         />
       </div>
-    </>
+    </div>
   );
 
   // 按钮组组件
@@ -289,7 +290,7 @@ const EditSpace = () => {
         className="bg-white/[0.05] mobile:w-full tablet:w-full"
         startContent={<XIcon size={20} />}
         onClick={handleDiscard}
-        isDisabled={!isChange || isLoading || !isAdmin} // 如果没有变更或正在加载，禁用按钮
+        isDisabled={!isChange || isLoading || !isOwner} // 如果没有变更或正在加载，禁用按钮
       >
         Discard Changes
       </Button>
@@ -298,7 +299,7 @@ const EditSpace = () => {
         size="md"
         className="mobile:w-full tablet:w-full"
         startContent={!isSubmit && <ArrowLineDown size={20} />}
-        isDisabled={!isChange && !isLoading || !isAdmin} // 如果没有变更或正在加载，禁用按钮
+        isDisabled={!isChange && !isLoading || !isOwner} // 如果没有变更或正在加载，禁用按钮
         isLoading={isSubmit}
         onClick={handleSave}
       >
@@ -313,12 +314,13 @@ const EditSpace = () => {
         className={cn(
           'flex justify-center gap-[40px] py-[20px] px-[40px] mx-auto w-full',
           'tablet:py-[0px] tablet:px-[0px] tablet:gap-[0px]',
+          'mobile:p-[20px] mobile:gap-[0px]',
         )}
       >
         {/* 左侧 Tabs 列表 */}
         <div
           className={cn(
-            'w-[130px] flex justify-end mobile:w-full mobile:justify-center',
+            'w-[130px] flex justify-end mobile:hidden',
           )}
         >
           <StepTabs
@@ -329,7 +331,7 @@ const EditSpace = () => {
 
         {/* 中间内容区域 */}
         <div className="w-full max-w-[600px] p-[20px] mobile:p-[10px]">
-          {isTablet && <ButtonGroup className="flex flex-col gap-[10px] mb-[30px] flex-col-reverse" />}
+          {( isTablet || isMobile )&& <ButtonGroup className="flex flex-col gap-[10px] mb-[30px] flex-col-reverse" />}
           {renderTabContent()}
           {/* 底部按钮 */}
           {isPc && (

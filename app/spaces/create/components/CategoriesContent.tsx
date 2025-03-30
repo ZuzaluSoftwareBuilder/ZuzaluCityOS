@@ -175,7 +175,7 @@ const CategoriesContent: React.FC<CategoriesContentProps> = ({
             </div>
 
             {/* 底部按钮 */}
-            <div className="flex justify-end gap-[10px] mobile:flex-col tablet:flex-row">
+            <div className="flex justify-end gap-[10px]">
                 <Button
                     type="button"
                     className="w-[120px] bg-white/[0.05] gap-[10px]"
