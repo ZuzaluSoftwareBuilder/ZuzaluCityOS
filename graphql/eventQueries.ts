@@ -92,6 +92,47 @@ export const ONGOING_EVENTS_QUERY = `
   }
 `;
 
+export const PAST_EVENTS_QUERY = `
+  query PastEvents($endTime: String!) {
+    zucityEventIndex(
+      filters: { 
+        where: { 
+          endTime: { lessThan: $endTime } 
+        } 
+      }
+      first: 100
+    ) {
+      edges {
+        node {
+          createdAt
+          description
+          endTime
+          externalUrl
+          gated
+          id
+          imageUrl
+          meetingUrl
+          profileId
+          spaceId
+          startTime
+          status
+          tagline
+          timezone
+          title
+          profile {
+            username
+            avatar
+          }
+          tracks
+          space {
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
 /**
  * GraphQL query for fetching events
  */

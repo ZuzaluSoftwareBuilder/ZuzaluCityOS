@@ -24,7 +24,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>((props, ref) => {
       classNames?.base,
     ),
     wrapper: cn(
-      'bg-black/40 transition-opacity duration-300',
+      'bg-black/40 transition-opacity duration-300 items-center',
       'z-[1100]',
       classNames?.wrapper,
     ),

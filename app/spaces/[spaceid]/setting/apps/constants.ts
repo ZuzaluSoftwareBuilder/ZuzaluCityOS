@@ -5,7 +5,7 @@ export interface NativeDApp
     Dapp,
     | 'appName'
     | 'categories'
-    | 'bannerUrl'
+    | 'appLogoUrl'
     | 'tagline'
     | 'developerName'
     | 'description'
@@ -39,7 +39,7 @@ export const NATIVE_APPS: NativeDApp[] = [
     openSource: true,
     repositoryUrl: '#',
     appUrl: '#',
-    bannerUrl: '/dapps/calendar.svg',
+    appLogoUrl: '/dapps/calendar.svg',
     profile: {
       avatar: '/user/official.jpg',
       username: 'Zuzalu City',
@@ -58,7 +58,7 @@ export const NATIVE_APPS: NativeDApp[] = [
     openSource: true,
     repositoryUrl: '#',
     appUrl: '#',
-    bannerUrl: '/dapps/zuland.svg',
+    appLogoUrl: '/dapps/zuland.svg',
     profile: {
       avatar: '/user/official.jpg',
       username: 'Urbe.eth',
@@ -77,7 +77,7 @@ export const NATIVE_APPS: NativeDApp[] = [
     openSource: true,
     repositoryUrl: '#',
     appUrl: '#',
-    bannerUrl: '/dapps/announcements.svg',
+    appLogoUrl: '/dapps/announcements.svg',
     profile: {
       avatar: '/user/official.jpg',
       username: 'Zuzalu City',

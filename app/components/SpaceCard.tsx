@@ -1,4 +1,4 @@
-import { Image, Avatar, Skeleton } from '@heroui/react';
+import { Image, Avatar, Skeleton, cn } from '@heroui/react';
 import { useMemo } from 'react';
 
 import { Space } from '@/types';
@@ -10,12 +10,15 @@ import {
 import { Button } from '@/components/base';
 import { useRouter } from 'next/navigation';
 
-export function SpaceCardSkeleton() {
+export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
   return (
-    <div className="w-[276px] flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden">
+    <div className={cn(
+      autoWidth ? 'w-full' : 'w-[276px]',
+      'flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden'
+    )}>
       <div className="relative">
         <Skeleton className="rounded-none">
-          <div className="w-full h-[108px]"></div>
+          <div className="w-full aspect-[2.5]"></div>
         </Skeleton>
         <Skeleton className="absolute left-[11px] w-[60px] h-[60px] bottom-[-21px] z-10 rounded-full" />
       </div>
@@ -53,9 +56,10 @@ interface SpaceCardProps {
   data: Space;
   isJoined: boolean;
   isFollowed: boolean;
+  autoWidth?: boolean;
 }
 
-export function SpaceCard({ data, isJoined, isFollowed }: SpaceCardProps) {
+export function SpaceCard({ data, autoWidth, isJoined, isFollowed }: SpaceCardProps) {
   const { banner, name, tagline, avatar, tags, userRoles } = data;
   const router = useRouter();
 
@@ -65,14 +69,25 @@ export function SpaceCard({ data, isJoined, isFollowed }: SpaceCardProps) {
   }, [userRoles]);
 
   return (
-    <div className="w-[276px] flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden hover:bg-white/5 transition-colors">
+    <div
+      className={cn(
+        autoWidth ? 'w-full' : 'w-[276px]',
+        'flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden hover:bg-white/5 transition-colors',
+      )}
+    >
       <div className="relative">
+        {/*
+          xl: width/height = 268/106 = 2.528
+          pc: width/height = 285/113 = 2.522
+          tablet: width/height = 373/148 = 2.520
+          mobile: width/height = 368/146 = 2.520
+        */}
         <Image
           src={banner}
           alt={name}
-          width="100%"
-          height="108px"
-          className="object-cover rounded-none"
+          width={'100%'}
+          height={'100%'}
+          className="w-full aspect-[2.5] object-cover rounded-none"
         />
         <Avatar
           src={avatar}

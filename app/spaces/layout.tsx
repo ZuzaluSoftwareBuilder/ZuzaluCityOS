@@ -2,15 +2,14 @@ import type { Metadata } from 'next';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from 'theme/theme';
-
-import { Header } from 'components/layout';
+import SpaceHomeLayout from '@/app/spaces/components/spaceHomeLayout';
 
 export const metadata: Metadata = {
   title: 'Zuzalu City',
   description: 'Zuzalu City Powered By Ethereum Community Fund',
 };
 
-function EventLayout({
+function SpaceLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -18,10 +17,10 @@ function EventLayout({
   return (
     <AppRouterCacheProvider>
       <ThemeProvider theme={theme}>
-        <div>{children}</div>
+        <SpaceHomeLayout>{children}</SpaceHomeLayout>
       </ThemeProvider>
     </AppRouterCacheProvider>
   );
 }
 
-export default EventLayout;
+export default SpaceLayout;

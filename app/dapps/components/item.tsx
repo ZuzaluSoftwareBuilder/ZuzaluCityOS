@@ -1,102 +1,76 @@
 import { Dapp } from '@/types';
-import { Divider, Stack, Typography } from '@mui/material';
-
+import { Image } from '@heroui/react';
+import { Divider } from '@/components/base';
+import { BoxArrowDown, Plugs } from '@phosphor-icons/react';
 interface ItemProps {
   data: Dapp;
   onClick: () => void;
 }
 
 export default function Item({ data, onClick }: ItemProps) {
-  const { appName, developerName, tagline, bannerUrl, categories } = data;
+  const {
+    appName,
+    developerName,
+    tagline,
+    bannerUrl,
+    categories,
+    isInstallable,
+  } = data;
   const tags = categories.split(',');
   return (
-    <Stack
-      p="10px"
-      borderRadius="10px"
-      boxSizing="border-box"
-      border="1px solid transparent"
-      sx={{
-        cursor: 'pointer',
-        '&:hover': {
-          border: '1px solid rgba(255, 255, 255, 0.10)',
-          bgcolor: 'rgba(255, 255, 255, 0.05)',
-        },
-      }}
-      gap="10px"
-      justifyContent="space-between"
+    <div
+      className="p-[10px] rounded-[10px] border border-transparent cursor-pointer hover:border-white/10 hover:bg-white/5 gap-[10px] flex flex-col justify-between"
       onClick={onClick}
     >
-      <Stack direction="column" gap="10px">
-        <img
+      <div className="flex flex-col gap-[10px]">
+        <Image
           src={bannerUrl}
           alt="dappsItem"
           width="100%"
-          style={{
-            border: '1px solid rgba(255, 255, 255, 0.10)',
-            borderRadius: '10px',
-            aspectRatio: '620/280',
-          }}
+          className="rounded-[10px] border border-white/10 aspect-[620/280] object-cover"
         />
-        <Stack direction="column" gap="5px">
-          <Typography
-            sx={{
-              color: '#fff',
-              fontSize: '18px',
-              fontWeight: 700,
-              lineHeight: 1.4,
-            }}
-          >
+        {isInstallable === '1' && (
+          <div className="flex gap-[10px] items-center">
+            <div className="w-[24px] h-[24px] rounded-[8px] border border-[#7dffd1]/10 bg-[#7dffd1]/10 flex items-center justify-center">
+              <Plugs size={16} color="#7DFFD1" weight="fill" />
+            </div>
+            <p className="text-[13px] flex items-center gap-[5px] p-[4px_8px] rounded-[8px] bg-white/5">
+              <BoxArrowDown size={16} weight="fill" />
+              Installable
+            </p>
+          </div>
+        )}
+        <div className="flex flex-col gap-[5px]">
+          <p className="text-[#fff] text-[18px] font-[700] leading-[1.4]">
             {appName}
-          </Typography>
-          <Typography
-            fontSize={13}
-            lineHeight={1.4}
-            color="#fff"
-            sx={{
-              opacity: 0.8,
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              height: '36px',
-            }}
-          >
+          </p>
+          <p className="text-[13px] leading-[1.4] text-[#fff] opacity-80 line-clamp-3">
             {tagline}
-          </Typography>
-        </Stack>
-      </Stack>
-      <Stack direction="column" gap="10px">
-        <Stack direction="row" gap="5px" alignItems="center">
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-col gap-[10px]">
+        <div className="flex gap-[5px] items-center">
           {tags.slice(0, 3).map((tag) => (
-            <Typography
-              p="3px 6px"
-              borderRadius="4px"
-              bgcolor="rgba(255, 255, 255, 0.1)"
-              fontSize={10}
-              lineHeight={1.2}
-              color="#fff"
+            <p
+              className="p-[3px_6px] rounded-[4px] bg-white/10 text-[10px] leading-[1.2] text-[#fff]"
               key={tag}
             >
               {tag}
-            </Typography>
+            </p>
           ))}
           {tags.length > 3 && (
-            <Typography fontSize={10} lineHeight={1.2} color="#fff">
+            <p className="text-[10px] leading-[1.2] text-[#fff]">
               +{tags.length - 3}
-            </Typography>
+            </p>
           )}
-        </Stack>
-        <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.10)' }} />
-        <Stack direction="row" gap="5px" alignItems="center" color="#fff">
-          <Typography fontSize={10} lineHeight={1.2} sx={{ opacity: 0.5 }}>
-            Developer:
-          </Typography>
-          <Typography fontSize={10} lineHeight={1.2}>
-            {developerName}
-          </Typography>
-        </Stack>
-      </Stack>
-    </Stack>
+        </div>
+        <Divider />
+        <div className="flex gap-[5px] items-center text-[#fff]">
+          <p className="text-[10px] leading-[1.2] opacity-50">Developer:</p>
+          <p className="text-[10px] leading-[1.2]">{developerName}</p>
+        </div>
+      </div>
+    </div>
   );
 }

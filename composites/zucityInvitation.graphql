@@ -5,31 +5,29 @@ type ZucityInvitation
   )
   @createIndex(fields: [{ path: "resourceId" }])
   @createIndex(fields: [{ path: "status" }]) 
-  @createIndex(fields: [{ path: "inviterId" }])
   @createIndex(fields: [{ path: "inviteeId" }])
-  @createIndex(fields: [{ path: "inviterProfileId" }])
-  @createIndex(fields: [{ path: "inviteeProfileId" }])
   @createIndex(fields: [{ path: "isRead" }]) {
   author: DID! @documentAccount
-  inviterId: DID!
   inviteeId: DID!
-  resource: String! @string(minLength: 1, maxLength: 100)
-  resourceId: String! @string(minLength: 1, maxLength: 1000)
+  inviterId: DID!
+  resource: String! @string(minLength: 1, maxLength: 100000)
+  resourceId: String! @string(minLength: 1, maxLength: 100000)
   roleId: StreamID!
-  status: String! @string(minLength: 1, maxLength: 100)
-  message: String @string(minLength: 1, maxLength: 5000)
-  isRead: Boolean!
-  
-  inviterProfileId: StreamID @documentReference(model: "ZucityProfile")
-  inviterProfile: ZucityProfile @relationDocument(property: "inviterProfileId")
+  status: String! @string(minLength: 1, maxLength: 100000)
+  message: String @string(minLength: 1, maxLength: 100000)
+  isRead: String! @string(minLength: 1, maxLength: 100000)
   inviteeProfileId: StreamID @documentReference(model: "ZucityProfile")
   inviteeProfile: ZucityProfile @relationDocument(property: "inviteeProfileId")
-
+  inviterProfileId: StreamID @documentReference(model: "ZucityProfile")
+  inviterProfile: ZucityProfile @relationDocument(property: "inviterProfileId")
+  eventId: StreamID @documentReference(model: "ZucityEvent")
+  event: ZucityEvent @relationDocument(property: "eventId")
+  spaceId: StreamID @documentReference(model: "ZucitySpace")
+  space: ZucitySpace @relationDocument(property: "spaceId")
   createdAt: DateTime!
   expiresAt: DateTime!
   updatedAt: DateTime
   lastSentAt: DateTime
-
   customAttributes: [CustomAttribute] @list(maxLength: 10000)
 }
 
@@ -39,4 +37,12 @@ type CustomAttribute {
 
 type ZucityProfile @loadModel(id: "$Profile_ID") {
   id: ID!
-} 
+}
+
+type ZucitySpace @loadModel(id: "$Space_ID") {
+  id: ID!
+}
+
+type ZucityEvent @loadModel(id: "$Event_ID") {
+  id: ID!
+}

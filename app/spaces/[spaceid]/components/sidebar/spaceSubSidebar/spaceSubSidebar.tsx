@@ -1,22 +1,19 @@
 'use client';
-import { useParams, usePathname } from 'next/navigation';
-import { Space } from '@/types';
-import { useCallback } from 'react';
-import {
-  House,
-  Ticket,
-  CalendarDots,
-  Chats,
-  GitBranch,
-} from '@phosphor-icons/react';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
+import { InstalledApp } from '@/types';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { House, Ticket, CalendarDots, Megaphone } from '@phosphor-icons/react';
 import TabItem from './tabItem';
-import SubTabItemContainer from './subTabItemContainer';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/sidebarHeader';
 import { TableIcon } from '@/components/icons';
-import { cn } from '@heroui/react';
+import { cn, Image, Skeleton } from '@heroui/react';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
+import { useSpaceData } from '../../context/spaceData';
+import {
+  getSpaceLastViewTime,
+  subscribeSpaceLastViewTime,
+} from '../../../announcements/lastViewTime';
+import { dayjs } from '@/utils/dayjs';
 
 interface MainSubSidebarProps {
   needBlur?: boolean;
@@ -29,19 +26,21 @@ const SpaceSubSidebar = ({
 }: MainSubSidebarProps) => {
   const pathname = usePathname();
   const params = useParams();
+  const query = useSearchParams();
   const spaceId = params.spaceid.toString();
+  const appName = params.appName?.toString();
+  const appId = query.get('id');
+  console.log(appId, appName);
 
   const { isOwner, isAdmin } = useSpacePermissions();
 
-  const { data: spaceData, isLoading } = useGraphQL(
-    ['getSpaceByID', spaceId],
-    GET_SPACE_QUERY_BY_ID,
-    { id: spaceId },
-    {
-      select: (data) => data?.data?.node as Space,
-      enabled: !!spaceId,
-    },
-  );
+  const { spaceData, isSpaceDataLoading } = useSpaceData();
+
+  const installedAppsData = useMemo(() => {
+    return spaceData?.installedApps?.edges.map(
+      (edge) => edge.node,
+    ) as InstalledApp[];
+  }, [spaceData]);
 
   const isRouteActive = useCallback(
     (route: string) => {
@@ -53,14 +52,90 @@ const SpaceSubSidebar = ({
         return true;
       }
 
+      if (appName && appId === route) {
+        return true;
+      }
+
       if (pathname.startsWith(`/spaces/${spaceId}/${route}/`)) {
         return true;
       }
 
       return false;
     },
-    [pathname, spaceId],
+    [pathname, spaceId, appName, appId],
   );
+
+  const installedApps = useMemo(() => {
+    const hasCalendar = installedAppsData?.some(
+      (app) => app.nativeAppName === 'calendar',
+    );
+
+    installedAppsData
+      ?.filter((app) => app.nativeAppName)
+      .map((app) => (
+        <TabItem
+          key={app.installedAppId}
+          label={app.installedApp?.appName ?? ''}
+          icon={<TableIcon size={20} />}
+          href={`/spaces/${spaceId}/app?id=${app.installedAppId}`}
+          isActive={isRouteActive('app')}
+          onClick={onCloseDrawer}
+        />
+      ));
+
+    return [
+      hasCalendar ? (
+        <TabItem
+          label="Calendar"
+          href={`/spaces/${spaceId}/calendar`}
+          icon={<CalendarDots />}
+          isActive={isRouteActive('calendar')}
+          onClick={onCloseDrawer}
+        />
+      ) : null,
+      ...(installedAppsData
+        ?.filter((app) => !app.nativeAppName)
+        .map((app) => (
+          <TabItem
+            key={app.installedAppId}
+            label={app.installedApp?.appName ?? ''}
+            icon={
+              <Image
+                src={app.installedApp?.appLogoUrl}
+                alt={app.installedApp?.appName ?? ''}
+                width={20}
+                height={20}
+                className="rounded-[6px]"
+              />
+            }
+            href={`/spaces/${spaceId}/${app.installedApp?.appName.toLowerCase()}?id=${app.installedAppId}`}
+            isActive={isRouteActive(app.installedAppId ?? '')}
+            onClick={onCloseDrawer}
+          />
+        )) ?? []),
+    ].filter(Boolean);
+  }, [installedAppsData, isRouteActive, onCloseDrawer, spaceId]);
+
+  // uot viewed announcements
+  const [unViewedAnnouncementsCount, setUnViewedAnnouncementsCount] =
+    useState<number>(0);
+  useEffect(() => {
+    const lastViewTime = getSpaceLastViewTime(spaceId as string);
+    if (lastViewTime) {
+      setUnViewedAnnouncementsCount(
+        spaceData?.announcements?.edges.filter((edge) =>
+          dayjs(edge.node.createdAt).isAfter(dayjs(lastViewTime)),
+        ).length ?? 0,
+      );
+    }
+    return subscribeSpaceLastViewTime(spaceId as string, (lastViewTime) => {
+      setUnViewedAnnouncementsCount(
+        spaceData?.announcements?.edges.filter((edge) =>
+          dayjs(edge.node.createdAt).isAfter(dayjs(lastViewTime)),
+        ).length ?? 0,
+      );
+    });
+  }, [spaceData, spaceId]);
 
   return (
     <div
@@ -71,7 +146,7 @@ const SpaceSubSidebar = ({
     >
       <SidebarHeader
         isAdmin={isOwner || isAdmin}
-        isLoading={isLoading}
+        isLoading={isSpaceDataLoading}
         space={spaceData}
         onCloseDrawer={onCloseDrawer}
       />
@@ -93,6 +168,15 @@ const SpaceSubSidebar = ({
           height={36}
           onClick={onCloseDrawer}
         />
+        <TabItem
+          label="Announcements"
+          icon={<Megaphone />}
+          href={`/spaces/${spaceId}/announcements`}
+          isActive={isRouteActive('announcements')}
+          height={36}
+          onClick={onCloseDrawer}
+          count={unViewedAnnouncementsCount}
+        />
         {(isOwner || isAdmin) && (
           <TabItem
             label="Manage Events"
@@ -113,58 +197,20 @@ const SpaceSubSidebar = ({
         </div>
 
         <div className="mt-[20px] flex flex-col gap-[5px]">
-          <div>
-            <TabItem
-              label="Calendar"
-              href={`/spaces/${spaceId}/calendar`}
-              icon={<CalendarDots />}
-              isActive={isRouteActive('calendar')}
-              onClick={onCloseDrawer}
-            />
-          </div>
-          <TabItem
-            label="Discussions"
-            icon={<Chats />}
-            isActive={false}
-            locked={true}
-          />
-          <div>
-            <TabItem
-              label="Zu_Builders"
-              icon={<CalendarDots />}
-              isActive={false}
-              locked={true}
-            />
-            <SubTabItemContainer>
-              <TabItem
-                label="Public Activities"
-                icon={<GitBranch />}
-                isActive={false}
-                isSubTab={true}
-                locked={true}
-                hideLockIcon={true}
-              />
-            </SubTabItemContainer>
-          </div>
+          {isSpaceDataLoading ? (
+            <div className="flex flex-col gap-[20px]">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <Skeleton
+                  key={index}
+                  className="mx-[10px] h-[20px] rounded-[6px]"
+                />
+              ))}
+            </div>
+          ) : (
+            installedApps
+          )}
         </div>
       </div>
-
-      {/* not decide where to push this ui */}
-      {/* {isAdmin && (
-        <div className="absolute bottom-0 left-0 w-[260px] h-[90px] pt-5 px-2.5 border-t border-[rgba(255,255,255,0.1)]">
-          <div className="text-[12px] leading-[14px] text-white px-2.5">
-            ADMINS
-          </div>
-          <div className={'mt-2.5'}>
-            <TabItem
-              label="Space Settings"
-              icon={<Gear />}
-              isActive={false}
-              onClick={() => router.push(`/spaces/${spaceId}/edit`)}
-            />
-          </div>
-        </div>
-      )} */}
     </div>
   );
 };

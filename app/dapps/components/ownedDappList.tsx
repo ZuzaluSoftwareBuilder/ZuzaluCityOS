@@ -1,20 +1,12 @@
 import FormHeader from '@/components/form/FormHeader';
-import {
-  Box,
-  Typography,
-  Stack,
-  Button,
-  useTheme,
-  useMediaQuery,
-} from '@mui/material';
 
 import { Dapp } from '@/types';
 import { useQuery } from '@tanstack/react-query';
-import { EyeIcon } from '@/components/icons/Eye';
-import { PencilIcon } from '@/components/icons/Pencil';
-import { NotePencilIcon } from '@/components/icons/NotePencil';
 import { useMemo } from 'react';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { Image } from '@heroui/react';
+import { Button } from '@/components/base';
+import { Eye, NotePencil } from '@phosphor-icons/react';
 
 interface OwnedDappListProps {
   onViewDapp: (dapp: Dapp) => void;
@@ -27,11 +19,18 @@ export default function OwnedDappList({
   onEditDapp,
   handleClose,
 }: OwnedDappListProps) {
-  const { data: dapps = [] } = useQuery<Dapp[]>({
-    queryKey: ['getDappInfoList'],
+  const { data: dapps } = useQuery({
+    queryKey: ['GET_DAPP_LIST_QUERY'],
+    select: (data: any) => {
+      if (data.data.zucityDappInfoIndex?.edges) {
+        return data.data.zucityDappInfoIndex.edges.map(
+          (edge: any) => edge.node,
+        ) as Dapp[];
+      }
+      return [];
+    },
   });
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const { ceramic } = useCeramicContext();
   const userDID = ceramic.did?.parent;
 
@@ -40,115 +39,61 @@ export default function OwnedDappList({
   }, [dapps, userDID]);
 
   return (
-    <Box>
+    <div>
       <FormHeader title="Manage My Listings" handleClose={handleClose} />
-      <Stack display="flex" flexDirection="column" gap="20px" padding="20px">
-        <Stack direction="column" gap="10px">
-          <Typography fontSize={20} fontWeight={700} lineHeight={1.2}>
+      <div className="flex flex-col gap-5 p-5 mobile:p-2.5">
+        <div className="flex flex-col gap-2">
+          <p className="text-[20px] font-bold leading-[1.2]">
             Your Listed Apps
-          </Typography>
-          <Typography
-            fontSize={14}
-            fontWeight={400}
-            lineHeight={1.6}
-            sx={{ opacity: 0.6 }}
-          >
+          </p>
+          <p className="text-sm leading-[1.6] opacity-60">
             View and edit your app listings
-          </Typography>
-        </Stack>
+          </p>
+        </div>
         {ownedDapps.map((dapp) => (
-          <Stack
+          <div
+            className="flex flex-row justify-between items-center p-[10px] bg-[rgba(255,255,255,0.02)] rounded-[10px]"
             key={dapp.id}
-            direction={isMobile ? 'column' : 'row'}
-            justifyContent="space-between"
-            sx={{
-              p: '10px',
-              bgcolor: 'rgba(255, 255, 255, 0.02)',
-              borderRadius: '10px',
-            }}
           >
-            <Stack direction={isMobile ? 'column' : 'row'} gap="10px">
-              <img
-                src={dapp.bannerUrl || ''}
+            <div className="flex flex-row gap-[10px] items-center">
+              <Image
+                src={dapp.appLogoUrl || ''}
                 alt={dapp.appName}
-                style={{
-                  width: isMobile ? '100%' : '200px',
-                  height: 'auto',
-                  aspectRatio: '620/280',
-                  borderRadius: '10px',
+                className="w-[80px] h-[80px] rounded-[10px] border border-[rgba(255,255,255,0.1)]"
+                classNames={{
+                  wrapper: 'shrink-0',
                 }}
               />
-              <Stack direction="column" gap="5px">
-                <Typography
-                  fontSize={16}
-                  fontWeight={700}
-                  lineHeight={1.2}
-                  sx={{ opacity: 0.8 }}
-                >
+              <div className="flex flex-col gap-[5px]">
+                <p className="text-[16px] font-bold leading-[1.2] opacity-80">
                   {dapp.appName}
-                </Typography>
-                <Typography
-                  fontSize={13}
-                  fontWeight={400}
-                  lineHeight={1.4}
-                  sx={{
-                    opacity: 0.7,
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                  }}
-                >
+                </p>
+                <p className="text-[13px] leading-[1.4] opacity-70 line-clamp-2">
                   {dapp.tagline}
-                </Typography>
-              </Stack>
-            </Stack>
-            <Stack
-              direction={isMobile ? 'row' : 'column'}
-              justifyContent="center"
-              gap="10px"
-              mt={isMobile ? '20px' : '0'}
-            >
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
               <Button
-                onClick={() => onViewDapp(dapp)}
-                startIcon={<EyeIcon color="#fff" size={4.5} />}
-                sx={{
-                  p: '4px 10px',
-                  fontSize: '14px',
-                  fontWeight: 400,
-                  lineHeight: 1.6,
-                  borderRadius: '6px',
-                  bgcolor: 'rgba(255, 255, 255, 0.05)',
-                  color: 'rgba(255, 255, 255, 0.6)',
-                  height: '30px',
-                  textTransform: 'none',
-                  flex: isMobile ? 1 : 'unset',
-                }}
-              >
-                View
-              </Button>
-              <Button
+                className="gap-[5px] p-[4px_10px] h-[30px] opacity-60"
+                radius="sm"
                 onClick={() => onEditDapp(dapp)}
-                startIcon={<NotePencilIcon />}
-                sx={{
-                  p: '4px 10px',
-                  fontSize: '14px',
-                  fontWeight: 400,
-                  lineHeight: 1.6,
-                  borderRadius: '6px',
-                  bgcolor: 'rgba(255, 255, 255, 0.05)',
-                  color: 'rgba(255, 255, 255, 0.6)',
-                  height: '30px',
-                  textTransform: 'none',
-                  flex: isMobile ? 1 : 'unset',
-                }}
+                startContent={<NotePencil size={18} weight="fill" />}
               >
                 Edit
               </Button>
-            </Stack>
-          </Stack>
+              <Button
+                className="gap-[5px] p-[4px_10px] h-[30px] opacity-60"
+                radius="sm"
+                onClick={() => onViewDapp(dapp)}
+                startContent={<Eye size={18} weight="fill" />}
+              >
+                View
+              </Button>
+            </div>
+          </div>
         ))}
-      </Stack>
-    </Box>
+      </div>
+    </div>
   );
 }

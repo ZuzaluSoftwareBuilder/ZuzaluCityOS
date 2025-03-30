@@ -16,7 +16,13 @@ import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { useMutation } from '@tanstack/react-query';
 
 import FormHeader from '@/components/form/FormHeader';
-import { Button, Divider, Drawer, DrawerBody, DrawerContent } from '@/components/base';
+import {
+  Button,
+  Divider,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+} from '@/components/base';
 import { ArrowUpRightIcon } from '@/components/icons';
 import ShowMoreEdit from '@/components/editor/ShowMoreEdit';
 import {
@@ -63,10 +69,10 @@ export const DAppDetailDrawer = ({ children }: PropsWithChildren) => {
     >
       <Drawer
         isOpen={drawerOpening}
+        onOpenChange={(open) => setDrawerOpening(open)}
         classNames={{
           base: 'w-[700px] max-w-[700px] mobile:w-[100%] mobile:max-w-[100%]',
         }}
-        onOpenChange={(open) => setDrawerOpening(open)}
       >
         <DrawerContent>
           {(onClose) => {
@@ -91,7 +97,7 @@ export const DAppDetailDrawer = ({ children }: PropsWithChildren) => {
                   <div className="flex flex-col gap-5">
                     <DAppDetailDrawer.Disclaimer />
                     <DAppDetailDrawer.BasicInfo
-                      bannerUrl={appData?.bannerUrl}
+                      appLogoUrl={appData?.appLogoUrl}
                       appName={appData?.appName}
                       tagline={appData?.tagline}
                     />
@@ -151,15 +157,15 @@ DAppDetailDrawer.Disclaimer = memo(function Disclaimer() {
 });
 
 DAppDetailDrawer.BasicInfo = memo(function BasicInfo(
-  props: { bannerUrl?: string; appName?: string; tagline?: string } = {},
+  props: { appLogoUrl?: string; appName?: string; tagline?: string } = {},
 ) {
-  const { bannerUrl, appName, tagline } = props;
+  const { appLogoUrl, appName, tagline } = props;
   return (
     <div className="flex gap-2.5 items-center">
       <div className={clsx(['rounded-[10px]', 'w-[60px] h-[60px]'])}>
         <Image
           alt={appName}
-          src={bannerUrl}
+          src={appLogoUrl}
           className={clsx([
             'rounded-[10px]',
             'w-[60px] h-[60px] border border-solid border-[rgba(255,255,255,0.1)]',
