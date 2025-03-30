@@ -210,7 +210,7 @@ const PostForm: React.FC<PostFormProps> = ({
           alignItems="center"
           justifyContent="space-between"
         >
-          <FormTitle>Post Announcment</FormTitle>
+          <FormTitle>Post Announcement</FormTitle>
         </Stack>
         <Stack
           direction={'column'}

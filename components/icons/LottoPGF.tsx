@@ -36,7 +36,7 @@ export const LottoPGFIcon: React.FC<IconProps> = ({ size = 6 }) => {
       <path
         d="M11.0723 10.9863L11.0861 11.0184C11.5519 12.0997 13.0921 12.0795 13.5294 10.9863V10.9863"
         stroke="#15A34A"
-        stroke-width="0.546024"
+        strokeWidth="0.546024"
         stroke-linecap="round"
       />
     </svg>
