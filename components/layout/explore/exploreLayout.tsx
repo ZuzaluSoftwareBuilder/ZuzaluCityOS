@@ -3,7 +3,7 @@
 import { PropsWithChildren } from 'react';
 import { Sidebar } from '@/components/layout';
 import * as React from 'react';
-import { Stack, useMediaQuery, useTheme } from '@mui/material';
+import { Stack } from '@mui/material';
 
 export interface IExploreLayoutProps {
   selected: string
@@ -12,15 +12,15 @@ export interface IExploreLayoutProps {
 
 
 const ExploreLayout: React.FC<PropsWithChildren<IExploreLayoutProps>> = ({ children, selected, showSidebar = true }) => {
-  const theme = useTheme();
-  const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
 
   return (
     <Stack
       direction="row"
       sx={{ backgroundColor: '#222222', minHeight: 'calc(100vh - 50px)' }}
     >
-      {!isTablet && showSidebar && <Sidebar selected={selected} />}
+      <div className="block tablet:hidden mobile:hidden">
+        {showSidebar && <Sidebar selected={selected} />}
+      </div>
 
       <Stack direction="column" flex={1} width="100%">
         {children}
