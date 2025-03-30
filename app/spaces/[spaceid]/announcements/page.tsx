@@ -20,25 +20,25 @@ export default function Announcements() {
   );
 
   return (
-    <div className="flex flex-col w-full h-[calc(100vh-50px)]">
+    <div className="flex flex-col w-full h-[calc(100vh-50px)] overflow-hidden">
       <AnnouncementsHeader />
-      <div className="flex-1 min-h-0 flex flex-col p-5 mx-auto w-full pc:w-[800px]">
-        <div className="shrink-0 flex flex-col pc:flex-row justify-between gap-2.5 pc:items-center">
-          <div
-            className={clsx([
-              'font-bold leading-[140%]',
-              'text-[20px] pc:text-[24px]',
-            ])}
-          >
-            Announcements
+      <div className="flex-1 w-full pc:w-[800px] overflow-y-auto">
+        <div className="flex flex-col p-5 gap-5 mx-auto">
+          <div className="flex flex-col pc:flex-row justify-between gap-2.5 pc:items-center">
+            <div
+              className={clsx([
+                'font-bold leading-[140%]',
+                'text-[20px] pc:text-[24px]',
+              ])}
+            >
+              Announcements
+            </div>
+            <div className="flex text-[16px] tablet:leading-[120%] mobile:leading-[120%] tracking-[0.01em]">
+              <span>Today&apos;s Date:&nbsp;</span>
+              <span className="opacity-70">{todayDate}</span>
+            </div>
           </div>
-          <div className="flex text-[16px] tablet:leading-[120%] mobile:leading-[120%] tracking-[0.01em]">
-            <span>Today&apos;s Date:&nbsp;</span>
-            <span className="opacity-70">{todayDate}</span>
-          </div>
-        </div>
-        <Divider orientation="horizontal" className="m-0 shrink-0 my-5" />
-        <div className="flex-1 min-h-0">
+          <Divider orientation="horizontal" className="m-0" />
           <PostList />
         </div>
       </div>

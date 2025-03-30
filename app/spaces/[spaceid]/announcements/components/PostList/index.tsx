@@ -36,8 +36,8 @@ const PostList = () => {
   const { isAdmin, isOwner } = useSpacePermissions();
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="shrink-0 flex justify-between items-center mb-5">
+    <div className="flex flex-1 flex-col gap-5">
+      <div className="flex justify-between items-center">
         <div className="flex items-center gap-2.5">
           <span className="font-bold leading-[140%] text-[20px]">Posts</span>
         </div>
@@ -52,23 +52,19 @@ const PostList = () => {
           </Button>
         )}
       </div>
-      <div className="shrink-0 text-[14px] leading-[120%] opacity-80 mb-5">
+      <div className="text-[14px] leading-[120%] opacity-80">
         Announcement posts live in the space view under a menu of the same name.
       </div>
-      <div className="flex-1 min-h-0 overflow-y-auto">
-        <div className="flex flex-col gap-5">
-          {loading ? (
-            <PostList.SkeletonList />
-          ) : (
-            <>
-              {posts.length === 0 && <PostList.Empty />}
-              {posts.map((post) => (
-                <PostList.Post key={post.node.id} post={post.node} />
-              ))}
-            </>
-          )}
-        </div>
-      </div>
+      {loading ? (
+        <PostList.SkeletonList />
+      ) : (
+        <>
+          {posts.length === 0 && <PostList.Empty />}
+          {posts.map((post) => (
+            <PostList.Post key={post.node.id} post={post.node} />
+          ))}
+        </>
+      )}
     </div>
   );
 };
