@@ -211,6 +211,7 @@ export interface Space {
     edges: {
       node: {
         id: string;
+        createdAt: string;
       };
     }[];
   };

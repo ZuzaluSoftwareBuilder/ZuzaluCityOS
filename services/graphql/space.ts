@@ -44,6 +44,7 @@ export const GET_SPACE_QUERY_BY_ID = graphql(`
           edges {
             node {
               id
+              createdAt
             }
           }
         }

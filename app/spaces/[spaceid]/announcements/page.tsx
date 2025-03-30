@@ -1,9 +1,11 @@
 'use client';
 
 import clsx from 'clsx';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useParams } from 'next/navigation';
 import { Divider } from '@/components/base';
 
+import { setSpaceLastViewTime } from './lastViewTime';
 import AnnouncementsHeader from './components/Header';
 import PostList from './components/PostList';
 
@@ -18,6 +20,11 @@ export default function Announcements() {
       }),
     [],
   );
+
+  const spaceId = useParams().spaceid;
+  useEffect(() => {
+    setSpaceLastViewTime(spaceId as string);
+  }, [spaceId]);
 
   return (
     <div className="flex flex-col w-full h-[calc(100vh-50px)] overflow-hidden">

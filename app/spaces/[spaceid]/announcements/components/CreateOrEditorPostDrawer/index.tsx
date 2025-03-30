@@ -32,7 +32,7 @@ import {
 
 import { usePostListData } from '../PostList/PostListDataContext';
 import PostForm, { PostFormHandle, PostFormResult } from '../PostForm';
-import { useSpaceData } from '../../../components/context/spaceData';
+import { setSpaceLastViewTime } from '../../lastViewTime';
 
 const CreateOrEditorPostDrawerContext = createContext({
   startCreate: () => {},
@@ -44,7 +44,6 @@ export const useCreateOrEditorPostDrawer = () =>
 
 const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
   const { children } = props;
-  const { refreshSpaceData } = useSpaceData();
   const spaceId = useParams()?.spaceid;
   const { refetch } = usePostListData();
   const { open, setOpen, handleOpen, handleClose } = useOpenDraw();
@@ -108,8 +107,8 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
     },
     onSuccess: () => {
       refetch();
-      refreshSpaceData();
       handleClose();
+      setSpaceLastViewTime(spaceId as string);
     },
   });
   const { mutate: updateAnnouncement, isPending: isUpdating } = useMutation<

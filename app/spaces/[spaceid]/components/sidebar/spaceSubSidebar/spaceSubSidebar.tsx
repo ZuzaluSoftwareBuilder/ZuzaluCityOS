@@ -1,7 +1,7 @@
 'use client';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { InstalledApp } from '@/types';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { House, Ticket, CalendarDots, Megaphone } from '@phosphor-icons/react';
 import TabItem from './tabItem';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/sidebarHeader';
@@ -9,6 +9,11 @@ import { TableIcon } from '@/components/icons';
 import { cn, Image, Skeleton } from '@heroui/react';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import { useSpaceData } from '../../context/spaceData';
+import {
+  getSpaceLastViewTime,
+  subscribeSpaceLastViewTime,
+} from '../../../announcements/lastViewTime';
+import { dayjs } from '@/utils/dayjs';
 
 interface MainSubSidebarProps {
   needBlur?: boolean;
@@ -111,6 +116,27 @@ const SpaceSubSidebar = ({
     ].filter(Boolean);
   }, [installedAppsData, isRouteActive, onCloseDrawer, spaceId]);
 
+  // uot viewed announcements
+  const [unViewedAnnouncementsCount, setUnViewedAnnouncementsCount] =
+    useState<number>(0);
+  useEffect(() => {
+    const lastViewTime = getSpaceLastViewTime(spaceId as string);
+    if (lastViewTime) {
+      setUnViewedAnnouncementsCount(
+        spaceData?.announcements?.edges.filter((edge) =>
+          dayjs(edge.node.createdAt).isAfter(dayjs(lastViewTime)),
+        ).length ?? 0,
+      );
+    }
+    return subscribeSpaceLastViewTime(spaceId as string, (lastViewTime) => {
+      setUnViewedAnnouncementsCount(
+        spaceData?.announcements?.edges.filter((edge) =>
+          dayjs(edge.node.createdAt).isAfter(dayjs(lastViewTime)),
+        ).length ?? 0,
+      );
+    });
+  }, [spaceData, spaceId]);
+
   return (
     <div
       className={cn(
@@ -149,7 +175,7 @@ const SpaceSubSidebar = ({
           isActive={isRouteActive('announcements')}
           height={36}
           onClick={onCloseDrawer}
-          count={spaceData?.announcements?.edges.length}
+          count={unViewedAnnouncementsCount}
         />
         {(isOwner || isAdmin) && (
           <TabItem
