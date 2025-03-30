@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { cn } from '@heroui/react';
 import { CheckIcon } from '@heroicons/react/16/solid';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export enum TabContentEnum {
   Profile = 'Profile',
   Categories = 'Categories',
   Links = 'Links',
+  Access = 'Access',
 }
 
 export enum TabStatus {
@@ -27,15 +29,16 @@ const TabItem: React.FC<TabItemProps> = ({ label, onClick, status }) => {
     [TabStatus.Inactive]: "text-white/50",
     [TabStatus.Active]: "text-white",
     [TabStatus.Finished]: "text-[#7DFFD1]",
-    [TabStatus.Error]: "text-red-500",
+    [TabStatus.Error]: "text-error",
   }[status];
 
   const isClickable = status !== TabStatus.Inactive;
+  const { isMobile } = useMediaQuery();
   return (
     <div 
       className={cn(
-        "flex justify-between gap-2.5 rounded-lg whitespace-nowrap",
-        "mobile:p-0",
+        "flex justify-between rounded-lg whitespace-nowrap",
+        isMobile ? "p-0 justify-start gap-[10px]" : "",
         isClickable && "cursor-pointer hover:bg-[#222222]/80",
         status === TabStatus.Active && "bg-[#222222]"
       )}
@@ -72,26 +75,65 @@ const CreateSpaceTabs: React.FC<CreateSpaceTabsProps> = ({
   onTabChange,
   tabStatuses = {}
 }) => {
+  const { isMobile } = useMediaQuery();
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
+
   const tabs = [
     { key: TabContentEnum.Profile, label: '1. Profile' },
     { key: TabContentEnum.Categories, label: '2. Categories' },
     { key: TabContentEnum.Links, label: '3. Links' },
+    { key: TabContentEnum.Access, label: '4. Access' },
   ];
 
-  const getTabStatus = (key: string): TabStatus => {
+  const getTabStatus = (key: TabContentEnum) => {
     return tabStatuses[key] ?? TabStatus.Inactive;
   };
 
+  const scrollToStart = () => {
+    if (tabsContainerRef.current) {
+      tabsContainerRef.current.scrollTo({
+        left: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const scrollToEnd = () => {
+    if (tabsContainerRef.current) {
+      tabsContainerRef.current.scrollTo({
+        left: tabsContainerRef.current.scrollWidth,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  React.useEffect(() => {
+    if (isMobile) {
+      // 根据选中的标签自动滚动
+      if (selectedTab === TabContentEnum.Profile) {
+        scrollToStart();
+      } else if (selectedTab === TabContentEnum.Access) {
+        scrollToEnd();
+      }
+    }
+  }, [selectedTab, isMobile]);
+
   return (
     <div 
-      className="py-4 px-2.5 mobile:py-2.5 mobile:px-2.5"
+      className={cn(
+        "py-[20px] px-[10px]",
+        isMobile ? "p-[20]" : ""
+      )}
       role="tablist"
       aria-label="Create Space Tabs"
     >
-      <div className={cn(
-        "flex flex-col gap-5 w-full",
-        "mobile:flex-row mobile:gap-[20px]"
-      )}>
+      <div 
+        ref={tabsContainerRef}
+        className={cn(
+          "flex flex-col gap-[20px] w-full",
+          isMobile ? "flex-row overflow-x-auto scrollbar-none" : ""
+        )}
+      >
         {tabs.map((tab) => (
           <TabItem
             key={tab.key}

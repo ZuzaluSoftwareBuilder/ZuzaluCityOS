@@ -118,6 +118,7 @@
     "react-hook-form": "^7.52.1",
     "react-leaflet": "^4.2.1",
     "react-qr-scanner": "^1.0.0-alpha.11",
+    "react-responsive": "^10.0.1",
     "react-select": "^5.8.0",
     "react-timezone-select": "^3.2.7",
     "remark": "^13.0.0",

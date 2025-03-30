@@ -2,7 +2,7 @@ import React from 'react';
 import { Controller, UseFormReturn } from 'react-hook-form';
 import * as yup from 'yup';
 import { Card, CardBody, Chip } from '@/components/base';
-import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/20/solid';
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import SelectCategories from '@/components/select/selectCategories';
 import { Button } from '@/components/base';
 import { Categories } from './constant';
@@ -58,12 +58,12 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
     return (
         <Card
             className={`cursor-pointer transition-all duration-200 ${selected
-                    ? 'bg-white/[0.1] border border-white'
-                    : 'bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05]'
+                ? 'bg-white/[0.1] border border-white'
+                : 'bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05]'
                 } rounded-[10px] h-[50px]`}
         >
             <CardBody className="flex flex-row gap-[14px] justify-start items-center px-[20px] py-[10px]" onClick={onClick}>
-                {iconElement && <div className="w-6 h-6">{iconElement}</div>}
+                {iconElement && <div className="w-[30px] h-[30px]">{iconElement}</div>}
                 <div className="text-base font-semibold leading-[1.4]">{title}</div>
             </CardBody>
         </Card>
@@ -134,30 +134,30 @@ const CategoriesContent: React.FC<CategoriesContentProps> = ({
     return (
         <div className="space-y-[30px] mobile:space-y-[20px]">
             {/* 标题部分 */}
-            <div className="space-y-2">
-                <h2 className="text-xl font-bold">Community Labels</h2>
-                <p className="text-white/80 text-base">
+            <div className="space-y-[10px] mobile:px-[10px]">
+                <h2 className="text-[20px] mobile:text-[18px] font-bold">Community Labels</h2>
+                <p className="text-white text-[16px] mobile:text-[14px] opacity-80">
                     Some informational labels to indicate to users of this community's core focuses and activities
                 </p>
             </div>
 
             {/* 分类选择部分 */}
-            <Card>
-                <CardBody className="p-4 space-y-[40px] mobile:p-3">
+            <div className="bg-white/[0.02] border border-white/[0.06] rounded-[10px]">
+                <div className="p-[20px] mobile:p-[14px] space-y-[40px]">
                     <CategorySelection
                         control={control}
                         category={category}
                         error={errors.category?.message}
                     />
                     <div className="space-y-[20px]">
-                        <div className="space-y-2">
+                        <div className="space-y-[10px]">
                             <h3 className="text-base font-medium">Community Tags* (Max: 5)</h3>
                             <p className="text-white/60 text-xs">
                                 Create or search for existing categories related to this community
                             </p>
                         </div>
 
-                        <div className="space-y-[10px]">
+                        <div className="space-y-[10px] ">
                             <Controller
                                 name="tags"
                                 control={control}
@@ -171,15 +171,15 @@ const CategoriesContent: React.FC<CategoriesContentProps> = ({
                             {errors.tags && <p className="text-error text-sm">{errors.tags.message}</p>}
                         </div>
                     </div>
-                </CardBody>
-            </Card>
+                </div>
+            </div>
 
             {/* 底部按钮 */}
-            <div className="flex justify-end gap-2.5">
+            <div className="flex justify-end gap-[10px] mobile:flex-col tablet:flex-row">
                 <Button
                     type="button"
                     className="w-[120px] bg-white/[0.05] gap-[10px]"
-                    startContent={<ChevronLeftIcon className="w-[20px] h-[20px]" />}
+                    startContent={<CaretLeft size={20} />}
                     onClick={onBack}
                 >
                     Back
@@ -189,7 +189,7 @@ const CategoriesContent: React.FC<CategoriesContentProps> = ({
                     color="primary"
                     size="md"
                     className="w-[120px] bg-[rgba(103,219,255,0.1)] border border-[rgba(103,219,255,0.2)] text-[#67DBFF]"
-                    endContent={<ChevronRightIcon className="w-[20px] h-[20px]" />}
+                    endContent={<CaretRight size={20} />}
                     isDisabled={!isValid}
                     onClick={handleSubmit(onSubmit)}
                 >

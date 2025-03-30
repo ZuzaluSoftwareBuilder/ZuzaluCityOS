@@ -6,14 +6,11 @@ import * as Yup from 'yup';
 import { Button, Input, Card, CardBody, Avatar } from '@/components/base';
 import { cn } from '@heroui/react';
 import SuperEditor from '@/components/editor/SuperEditor';
-import { MarkdownIcon } from '@/components/icons/Markdown';
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import PhotoUpload from '@/components/form/PhotoUpload';
 import { PhotoIcon } from '@heroicons/react/24/outline'
-import { MarkdownLogo } from '@phosphor-icons/react';
-import { ChevronRightIcon } from '@heroicons/react/20/solid'
+import { MarkdownLogo, CaretRight } from '@phosphor-icons/react';
 import { useEditorStore } from '@/components/editor/useEditorStore';
-import COMMON_STYLES from '@/style/common';
 
 // 定义表单数据类型
 export interface ProfileFormData {
@@ -76,15 +73,16 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
     };
     return (
         <div className="space-y-[30px] mobile:space-y-[20px]">
-            <div className="space-y-2">
-                <h2 className="text-xl font-bold">Community Profile</h2>
-                <p className="text-base text-white/80">Let's begin with the basics for your community</p>
+            <div className="space-y-[10px] mobile:px-[10px]">
+                <h2 className="text-[20px] mobile:text-[18px] font-bold">Community Profile</h2>
+                <p className="text-[16px] mobile:text-[14px] text-white opacity-80">Let's begin with the basics for your community</p>
             </div>
             <Card radius="md" className={cn(
-                "p-4 space-y-8 mobile:p-3 mobile:space-y-4"
+                "p-[20px] space-y-[40px]",
+                "mobile:p-[14px] mobile:space-y-[20px]"
             )}>
                 {/* 社区名称 */}
-                <div className="space-y-4">
+                <div className="space-y-[20px]">
                     <label className="block text-base font-medium">Community Name*</label>
                     <Controller
                         name="name"
@@ -101,9 +99,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                 </div>
 
                 {/* 社区标语 */}
-                <div className="space-y-4">
+                <div className="space-y-[20px]">
                     <label className="block text-base font-medium">Community Tagline*</label>
-                    <div className="space-y-2">
+                    <div className="space-y-[10px]">
                         <Controller
                             name="tagline"
                             control={control}
@@ -121,16 +119,15 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                             {watch('tagline')?.length || 0}/100 Characters
                         </div>
                     </div>
-
                 </div>
 
                 {/* 社区描述 */}
-                <div className="space-y-4">
-                    <div className="space-y-2">
+                <div className="space-y-[20px]">
+                    <div className="space-y-[10px]">
                         <label className="block text-base font-medium">Community Description*</label>
                         <p className="text-sm text-white/60">This is a description or greeting for new members. You can also update descriptions later.</p>
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-[10px]">
                         <Controller
                             name="description"
                             control={control}
@@ -157,12 +154,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                 </div>
 
                 {/* 空间头像 */}
-                <div className="space-y-4">
-                    <div className="space-y-2">
+                <div className="space-y-[20px]">
+                    <div className="space-y-[10px]">
                         <label className="block text-base font-medium">Space Avatar*</label>
                         <p className="text-sm text-white/60">Recommend min of 200x200px (1:1 Ratio). Supported Formats: JPG, PNG, GIF</p>
                     </div>
-                    <div className="flex items-center gap-5">
+                    <div className="flex items-center gap-[20px]">
                         <Controller
                             name="avatar"
                             control={control}
@@ -175,7 +172,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                                 >
                                     <Avatar
                                         size="xlg"
-                                        icon={<PhotoIcon className="w-8 h-8 opacity-30" />}
+                                        icon={<PhotoIcon className="w-[40px] h-[40px] opacity-30" />}
                                         src={field.value}
                                         alt="avatar"
                                         className="bg-transparent border border-dashed border-white/[0.2]"
@@ -190,7 +187,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                 </div>
 
                 {/* 空间横幅 */}
-                <div className="space-y-4">
+                <div className="space-y-[20px]">
                     <label className="block text-base font-medium">Space Banner*</label>
                     <Controller
                         name="banner"
@@ -200,7 +197,10 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                                 initialUrl={value}
                                 onUploadSuccess={onChange}
                                 api="/api/file/upload"
-                                className="w-full  h-[200px] mobile:h-[160px]"
+                                className={cn(
+                                    "w-full h-[200px]",
+                                    "mobile:h-[160px]"
+                                )}
                                 accept={['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml']}
                             >
                                 <div className='w-full'>
@@ -210,18 +210,22 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                                                 src={value}
                                                 alt="banner"
                                                 width="100%"
-                                                className='object-cover h-[200px] mobile:h-[160px]'
+                                                className={cn(
+                                                    'object-cover h-[200px]',
+                                                    'mobile:h-[160px]'
+                                                )}
                                             />
                                         ) : (
-                                            <div className='w-full h-full flex flex-col items-center justify-center  border border-dashed border-white/[0.2] rounded-[10px] gap-2 py-[60px] mobile:[40px]'>
-                                                <PhotoIcon className="w-8 h-8 opacity-30" />
-                                                <p className="text-sm text-white/60">Recommend min of 730x220. Supported Formats: JPG, PNG</p>
+                                            <div className={cn(
+                                                'w-full h-full flex flex-col items-center justify-center border border-dashed border-white/[0.2] rounded-[10px] gap-[8px] py-[60px]',
+                                                'mobile:py-[40px]'
+                                            )}>
+                                                <PhotoIcon className="w-[32px] h-[32px] opacity-30" />
+                                                <p className="text-sm text-white/60 text-center mobile:p-[12px]">Recommend min of 730x220. Supported Formats: JPG, PNG</p>
                                             </div>
                                         )
                                     }
                                 </div>
-
-
                             </PhotoUpload>
                         )}
                     />
@@ -232,12 +236,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
             </Card>
 
             {/* 底部按钮 */}
-            <div className="flex justify-end gap-2.5">
+            <div className="flex justify-end gap-[15px]">
                 <Button
                     type="button"
                     size="md"
                     className="w-[120px] bg-white/[0.05]"
-                    startContent={<XMarkIcon className='w-4 h-4' />}
+                    startContent={<XMarkIcon className='w-[20px] h-[20px]' />}
                     onClick={onBack}
                 >
                     Discard
@@ -247,7 +251,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ form, onSubmit, onBack,
                     color="primary"
                     size="md"
                     className="w-[120px] bg-[rgba(103,219,255,0.1)] border border-[rgba(103,219,255,0.2)] text-[#67DBFF]"
-                    endContent={<ChevronRightIcon className='w-[20px] h-[20px]' />}
+                    endContent={<CaretRight size={20} />}
                     isDisabled={!isValid}
                     onClick={handleSubmit(onSubmitHandler)}
                 >

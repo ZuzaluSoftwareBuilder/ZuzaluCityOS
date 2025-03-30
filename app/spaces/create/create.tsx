@@ -14,11 +14,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ProfileFormData, ProfilValidationSchema } from './components/ProfileContent';
 import { CategoriesFormData, CategoriesValidationSchema } from './components/CategoriesContent';
 import { LinksFormData, LinksValidationSchema } from './components/LinksContent';
+import AccessRule from './components/AccessRule';
 import { useRouter } from 'next/navigation';
 import { covertNameToUrlName } from '@/utils/format';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { createUrl } from '@/services/url';
-import { useMediaQuery } from '@/hooks';
+import { SCREEN_BREAKPOINTS, useMediaQuery } from '@/hooks/useMediaQuery';
 import { CREATE_SPACE_MUTATION } from '@/services/graphql/space';
 import { executeQuery } from '@/utils/ceramic';
 import { useEditorStore } from '@/components/editor/useEditorStore';
@@ -29,6 +30,7 @@ import { getResolver } from 'key-did-resolver';
 import { Ed25519Provider } from 'key-did-provider-ed25519';
 import { DID } from 'dids';
 import { Categories } from './components/constant';
+import { Mobile, NotMobile } from '@/hooks/useMediaQuery';
 
 dayjs.extend(utc);
 
@@ -38,11 +40,13 @@ const DEFAULT_BANNER = 'https://nftstorage.link/ipfs/bafybeifqan4j2n7gygwkmekcty
 
 
 const Create = () => {
-  const [selectedTab, setSelectedTab] = useState(TabContentEnum.Profile);
+  const [selectedTab, setSelectedTab] = useState(TabContentEnum.Links);
+  const [isGated, setIsGated] = useState(false);
   const [tabStatuses, setTabStatuses] = useState<Record<string, TabStatus>>({
     [TabContentEnum.Profile]: TabStatus.Active,
     [TabContentEnum.Categories]: TabStatus.Inactive,
     [TabContentEnum.Links]: TabStatus.Inactive,
+    [TabContentEnum.Access]: TabStatus.Inactive,
   });
   const [isSubmit, setIsSubmit] = useState(false);
   const router = useRouter();
@@ -56,10 +60,10 @@ const Create = () => {
       name: '',
       tagline: '',
       description: '',
-      // avatar: DEFAULT_AVATAR,
-      // banner: DEFAULT_BANNER,
-      avatar: '',
-      banner: ''
+      avatar: DEFAULT_AVATAR,
+      banner: DEFAULT_BANNER,
+      // avatar: '',
+      // banner: ''
     }
   });
   const descriptionEditorStore = useEditorStore();
@@ -106,7 +110,6 @@ const Create = () => {
   };
   // 处理 Profile 标签提交
   const handleProfileSubmit = (data: ProfileFormData) => {
-    console.log('handleProfileSubmit', data);
     setTabStatuses(prev => {
       return {
         ...prev,
@@ -120,7 +123,6 @@ const Create = () => {
 
   // 处理 Categories 标签提交
   const handleCategoriesSubmit = (data: CategoriesFormData) => {
-    console.log('handleCategoriesSubmit', data);
     setTabStatuses(prev => {
       return {
         ...prev,
@@ -130,6 +132,18 @@ const Create = () => {
     })
     setSelectedTab(TabContentEnum.Links);
   }
+  //
+  const handleLinksSubmit = (data: LinksFormData) => {
+    setTabStatuses(prev => {
+      return {
+        ...prev,
+        [TabContentEnum.Links]: TabStatus.Finished,
+        [TabContentEnum.Access]: prev[TabContentEnum.Access] === TabStatus.Inactive ? TabStatus.Active : prev[TabContentEnum.Access]
+      }
+    })
+    setSelectedTab(TabContentEnum.Access);
+  }
+
   // 优化表单验证函数
   const validateFormStep = async (
     schema: any,
@@ -181,7 +195,7 @@ const Create = () => {
   };
 
   // 优化创建空间函数
-  const createSpace = async (content: ZucitySpaceInput)  => {
+  const createSpace = async (content: ZucitySpaceInput) => {
     try {
       const result = await executeQuery(CREATE_SPACE_MUTATION, {
         input: {
@@ -225,12 +239,9 @@ const Create = () => {
       throw new Error('Error creating space');
     }
   };
-
-  // 优化提交处理函数
-  const handleLinksSubmit = async () => {
+  const handleAccessRuleSubmit = async () => {
     try {
       setIsSubmit(true);
-
       // 验证所有表单
       const validations = await Promise.all([
         validateFormStep(ProfilValidationSchema, profileForm, TabContentEnum.Profile),
@@ -239,7 +250,7 @@ const Create = () => {
       ]);
 
       if (!validations.every(Boolean)) {
-        throw new Error('Form validation failed');
+         return;
       }
 
       const content = transformFormData();
@@ -256,87 +267,92 @@ const Create = () => {
     } finally {
       setIsSubmit(false);
     }
+  }
+
+  const handleBack = (targetTab: TabContentEnum) => {
+    setSelectedTab(targetTab);
+    if (isMobile) {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }
   };
 
-  const handleProfileBack = () => {
-    router.push('/spaces');
-  }
-  const handleCategoriesBack = () => {
-    setSelectedTab(TabContentEnum.Profile);
-    if (isMobile) {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }
-  }
-  const handleLinksBack = () => {
-    setSelectedTab(TabContentEnum.Categories);
-    if (isMobile) {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }
-  }
+  const handleCategoriesBack = () => handleBack(TabContentEnum.Profile);
+  const handleLinksBack = () => handleBack(TabContentEnum.Categories);
+  const handleAccessRuleBack = () => handleBack(TabContentEnum.Links);
 
   const renderTabContent = () => {
     return (<>
-      <div className={cn({ "hidden": selectedTab !== TabContentEnum.Profile })}><ProfileContent descriptionEditorStore={descriptionEditorStore} onBack={handleProfileBack} form={profileForm} onSubmit={handleProfileSubmit} /></div>
+      <div className={cn({ "hidden": selectedTab !== TabContentEnum.Profile })}><ProfileContent descriptionEditorStore={descriptionEditorStore} onBack={()=> router.push('/spaces')} form={profileForm} onSubmit={handleProfileSubmit} /></div>
       <div className={cn({ "hidden": selectedTab !== TabContentEnum.Categories })}><CategoriesContent onBack={handleCategoriesBack} form={categoriesForm} onSubmit={handleCategoriesSubmit} /></div>
-      <div className={cn({ "hidden": selectedTab !== TabContentEnum.Links })}><LinksContent isLoading={isSubmit} onBack={handleLinksBack} form={linksForm} onSubmit={handleLinksSubmit} /></div>
+      <div className={cn({ "hidden": selectedTab !== TabContentEnum.Links })}><LinksContent onBack={handleLinksBack} form={linksForm} onSubmit={handleLinksSubmit} /></div>
+      <div className={cn({ "hidden": selectedTab !== TabContentEnum.Access })}><AccessRule onBack={handleAccessRuleBack} onSubmit={handleAccessRuleSubmit} isGated={isGated} onGatedChange={setIsGated} /></div>
     </>)
   };
 
-
+  
   return (
     <div className="flex flex-col w-full min-h-screen">
-      <Header/>
+      <Header />
       <div className={
-        cn(
-          "flex justify-center gap-[40px] py-[20px] px-[40px] mx-auto w-full",
-          "mobile:flex-col mobile:p-[10px] mobile:gap-[0px] mobile:mb-[40px]"
-        )
+        cn("flex justify-center gap-[40px] py-[20px] px-[40px] mx-auto w-full", 
+          "mobile:flex-col mobile:p-[10px] mobile:gap-[0px] mobile:mb-[40px]")
       }>
         {/* 左侧 Tabs 列表 */}
-        <div className={
-          cn(
-            "w-[130px] flex justify-end mobile:w-full mobile:justify-center",
-          )
-        }>
-          <CreateSpaceTabs
-            selectedTab={selectedTab}
-            onTabChange={handleTabChange}
-            tabStatuses={tabStatuses}
-          />
-        </div>
+        <Mobile>
+          <div className="w-full justify-center">
+            <CreateSpaceTabs
+              selectedTab={selectedTab}
+              onTabChange={handleTabChange}
+              tabStatuses={tabStatuses}
+            />
+          </div>
+        </Mobile>
+        <NotMobile>
+          <div className="w-[130px] flex justify-end">
+            <CreateSpaceTabs
+              selectedTab={selectedTab}
+              onTabChange={handleTabChange}
+              tabStatuses={tabStatuses}
+            />
+          </div>
+        </NotMobile>
 
         {/* 中间内容区域 */}
-        <div className="w-full max-w-[700px] p-4 mobile:p-2">
+        <div className="w-full max-w-[700px] p-[20px] mobile:p-[0px]">
           {renderTabContent()}
         </div>
+
         {/* 右侧预览卡片 */}
-        <div className="w-[320px] pt-4 mobile:hidden">
-          <HSpaceCard
-            data={{
-              id: 'preview',
-              name: spaceName || 'Community Name',
-              tagline: spaceTagline || 'Community tagline',
-              category: category,
-              description: '',
-              tags: tags.map((i) => ({ tag: i })),
-              banner: spaceBanner,
-              avatar: spaceAvatar,
-              owner: {
-                id: '',
-                zucityProfile: {
+        <NotMobile>
+          <div className="w-[320px] pt-4">
+            <HSpaceCard
+              data={{
+                id: 'preview',
+                name: spaceName || 'Community Name',
+                tagline: spaceTagline || 'Community tagline',
+                category: category,
+                description: '',
+                tags: tags.map((i) => ({ tag: i })),
+                banner: spaceBanner,
+                avatar: spaceAvatar,
+                owner: {
                   id: '',
-                  avatar: '',
-                  username: '',
+                  zucityProfile: {
+                    id: '',
+                    avatar: '',
+                    username: '',
+                  },
                 },
-              },
-              customAttributes: [],
-              createdAt: '',
-              updatedAt: '',
-            }}
-            size="lg"
-            showFooter={false}
-          />
-        </div>
+                customAttributes: [],
+                installedApps: { edges: [] },
+                createdAt: '',
+                updatedAt: '',
+              }}
+              size="lg"
+              showFooter={false}
+            />
+          </div>
+        </NotMobile>
       </div>
     </div>
   );

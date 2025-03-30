@@ -3,9 +3,9 @@ import { useForm, useFieldArray, Controller, UseFormReturn } from 'react-hook-fo
 import { Card } from '@/components/base/card';
 import { Input, Button, Select, SelectItem } from '@/components/base';
 import { SOCIAL_TYPES } from '@/constant';
-import { XCircleIcon, PlusIcon, XMarkIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
+import { XCircleIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import * as yup from 'yup';
-import { ChevronRightIcon} from '@heroicons/react/20/solid'
 
 // 定义表单类型
 export interface LinksFormData {
@@ -39,10 +39,9 @@ interface LinksContentProps {
     form: UseFormReturn<LinksFormData>;
     onSubmit: () => void;
     onBack: () => void;
-    isLoading: boolean;
 }
 
-const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isLoading }) => {
+const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack }) => {
     const {
         control,
         formState: { errors, isValid },
@@ -71,22 +70,22 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
         onSubmit();
     };
 
-
     return (
         <div className="space-y-[30px] mobile:space-y-[20px]">
-            <div className="space-y-2">
-                <h2 className="text-xl text-white font-bold">Community Links</h2>
-                <p className="text-white/80 text-base">
+            <div className="space-y-[10px] mobile:px-[10px]">
+                <h2 className="text-[20px] mobile:text-[18px] font-bold">Community Links</h2>
+                <p className="text-[16px] mobile:text-[14px] text-white/80">
                     Include your social and other custom links
                 </p>
             </div>
-            <Card className="p-[20px] space-y-[40px]  mobile:p-[15px] space-y-[20px]">
+            
+            <Card className="p-[20px] mobile:p-[14px] space-y-[40px] mobile:space-y-[20px]">
                 <div className="pb-[20px] border-b border-white/10">
-                    <h3 className="text-sm text-white/50 font-bold mb-4">Social Links</h3>
-                    <div className="space-y-4">
+                    <h3 className="text-[14px] text-white/50 font-bold mb-[16px]">Social Links</h3>
+                    <div className="space-y-[16px]">
                         {socialFields.map((field, index) => (
-                            <div key={field.id} className="flex gap-2.5">
-                                <div className="flex-1 space-y-4">
+                            <div key={field.id} className="flex gap-[10px]">
+                                <div className="flex-1 space-y-[16px]">
                                     <label className="block text-base text-white font-medium">Select Social</label>
                                     <div className='flex gap-[10px] items-start mobile:flex-col mobile:items-end'>
                                         <Controller
@@ -130,11 +129,10 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                                             className='flex items-center gap-[10px] mt-[5px] mobile:mt-[0px] mobile:h-[40px]'
                                             disabled={socialFields.length === 1}
                                         >
-                                            <span className='hidden text-white/50 text-[14px] mobile:block'>Remove Link</span>
+                                            <span className="hidden text-white/50 text-[14px] mobile:block">Remove Link</span>
                                             <XCircleIcon className="h-[30px] w-[30px] opacity-50" />
                                         </button>
                                     </div>
-
                                 </div>
                             </div>
                         ))}
@@ -143,21 +141,21 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                     <button
                         type="button"
                         onClick={() => appendSocial({ title: '', links: '' })}
-                        className="h-[40px] mt-[10px] w-full bg-transparent opacity-80 py-2 px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
+                        className="h-[40px] mt-[16px] w-full bg-transparent opacity-80 py-[8px] px-[14px] font-semibold text-sm justify-start flex items-center gap-[10px]"
                     >
-                        <PlusIcon className="h-5 w-5" />
+                        <PlusIcon className="h-[20px] w-[20px]" />
                         <div>Add Social Link</div>
                     </button>
                 </div>
 
-                <div className="">
-                    <h3 className="text-sm text-white/50 font-bold  mb-4">Custom Links</h3>
-                    <div className="space-y-4">
+                <div className="space-y-[16px]">
+                    <h3 className="text-[14px] text-white/50 font-bold">Custom Links</h3>
+                    <div className="space-y-[16px]">
                         {customFields.map((field, index) => (
-                            <div key={field.id} className="flex gap-2.5">
-                                <div className="flex-1 space-y-4">
-                                    <label className="block text-base text-white font-medium ">Link Title</label>
-                                    <div className='flex gap-[10px] items-start mobile:flex-col mobile:items-end'>
+                            <div key={field.id} className="flex gap-[10px]">
+                                <div className="flex-1 space-y-[16px]">
+                                    <label className="block text-base text-white font-medium">Link Title</label>
+                                    <div className="flex gap-[10px] items-start mobile:flex-col mobile:w-full">
                                         <Controller
                                             name={`customLinks.${index}.title`}
                                             control={control}
@@ -190,36 +188,35 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                                             type="button"
                                             onClick={() => removeCustom(index)}
                                             disabled={customFields.length === 1}
-                                            className='flex items-center gap-[10px] mt-[5px] mobile:mt-[0px] mobile:h-[40px]'
+                                            className="flex items-center gap-[10px] mt-[5px] mobile:mt-0 mobile:h-[40px] mobile:w-full mobile:justify-end"
                                         >
-                                            <span className='hidden text-white/50 text-[14px] mobile:block'>Remove Link</span>
+                                            <span className="hidden text-white/50 text-[14px] mobile:block">Remove Link</span>
                                             <XCircleIcon className="h-[30px] w-[30px] opacity-50" />
                                         </button>
                                     </div>
-
                                 </div>
                             </div>
                         ))}
                     </div>
 
-
                     <button
                         type="button"
                         onClick={() => appendCustom({ title: '', links: '' })}
-                        className="h-[40px] mt-[10px] w-full bg-transparent opacity-80 py-[8px] px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
+                        className="h-[40px] mt-[16px] w-full bg-transparent opacity-80 py-[8px] px-[14px] font-semibold text-sm justify-start flex items-center gap-[10px]"
                     >
-                        <PlusIcon className="h-5 w-5" />
+                        <PlusIcon className="h-[20px] w-[20px]" />
                         <div>Add Custom Link</div>
                     </button>
                 </div>
             </Card>
+
             {/* 底部按钮 */}
-            <div className="flex justify-end gap-2.5">
+            <div className="flex justify-end gap-[10px] mobile:flex-col tablet:flex-row mobile:px-[10px]">
                 <Button
                     type="button"
                     size="md"
-                    className="w-[120px] bg-white/[0.05]"
-                    startContent={<ChevronLeftIcon className='w-4 h-4' />}
+                    className="w-[120px] bg-white/[0.05] gap-[10px]"
+                    startContent={<CaretLeft size={20} />}
                     onClick={onBack}
                 >
                     Back
@@ -229,12 +226,11 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack, isL
                     color="primary"
                     size="md"
                     className="w-[120px] bg-[rgba(103,219,255,0.1)] border border-[rgba(103,219,255,0.2)] text-[#67DBFF]"
-                    endContent={<ChevronRightIcon className='w-4 h-4' />}
+                    endContent={<CaretRight size={20} />}
                     isDisabled={!isValid}
-                    isLoading={isLoading}
                     onClick={handleSubmit(onSubmitHandler)}
                 >
-                    Create
+                    Next
                 </Button>
             </div>
         </div>
