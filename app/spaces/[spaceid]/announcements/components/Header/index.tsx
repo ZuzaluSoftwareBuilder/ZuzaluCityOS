@@ -7,7 +7,7 @@ const AnnouncementsHeader = () => {
   return (
     <div
       className={clsx([
-        'flex items-center border border-b border-[rgba(255,255,255,0.1)] bg-[#2c2c2c]',
+        'flex items-center border-b border-[rgba(255,255,255,0.1)] bg-[#2c2c2c]',
         'p-5',
         'pc:h-[50px] pc:px-5 pc:backdrop-blur-[20px]',
       ])}

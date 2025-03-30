@@ -13,8 +13,10 @@ export interface LastViewTime {
  */
 export const getSpaceLastViewTime = (spaceId: string): number | undefined => {
   const lastViewTime = LocalStorage.get<LastViewTime[]>('lastAnnouncement');
-  return lastViewTime?.find((item) => item.spaceId === spaceId)
-    ?.lastViewTimeStamp;
+  return (
+    lastViewTime?.find((item) => item.spaceId === spaceId)?.lastViewTimeStamp ??
+    dayjs('1990-01-01').valueOf()
+  );
 };
 
 /**
