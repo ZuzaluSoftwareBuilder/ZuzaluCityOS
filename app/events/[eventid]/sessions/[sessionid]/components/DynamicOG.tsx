@@ -5,7 +5,7 @@ function DynamicOG() {
   return (
     <meta
       property="og:image"
-      content={`/api/og?id=${params.sessionid.toString()}`}
+      content={`/api/og?id=${params.sessionid?.toString() ?? ''}`}
     />
   );
 }

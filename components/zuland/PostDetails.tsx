@@ -31,8 +31,8 @@ import {
   encodeSlateToBase64,
   getTopReadableReflectionsByBeamId,
   standardDateFormat,
-  ZulandReadableReflection,
 } from '@/utils/akasha';
+import { ZulandReadableReflection } from '@/types/akasha';
 
 import {
   ChatBubbleIcon,

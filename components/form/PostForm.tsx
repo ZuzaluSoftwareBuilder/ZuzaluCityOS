@@ -59,7 +59,7 @@ const PostForm: React.FC<PostFormProps> = ({
   const descriptionEditorStore = useEditorStore();
   const { profile } = useCeramicContext();
   const params = useParams();
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
 
   const [blockClickModal, setBlockClickModal] = useState(false);
   const [showModal, setShowModal] = useState(false);

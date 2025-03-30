@@ -1,4 +1,4 @@
-import { ZulandReadableBeam, ZulandReadbleBlock } from '@/utils/akasha';
+import { ZulandReadableBeam, ZulandReadbleBlock } from '@/types/akasha';
 import { AkashaProfile } from '@akashaorg/typings/lib/ui';
 import { Descendant } from 'slate';
 

@@ -41,7 +41,7 @@ export default function Form({ onClose, regAndAccess }: FormProps) {
 
   const queryClient = useQueryClient();
   const pathname = useParams();
-  const eventId = pathname.eventid.toString();
+  const eventId = pathname.eventid?.toString() ?? '';
   const updateMutation = useMutation({
     mutationFn: updateRegAndAccess,
     onSuccess: () => {

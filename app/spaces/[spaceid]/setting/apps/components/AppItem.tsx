@@ -26,7 +26,7 @@ interface Props {
 
 const AppItem = (props: Props) => {
   const params = useParams();
-  const spaceId = params.spaceid.toString();
+  const spaceId = params.spaceid?.toString() ?? '';
   const { data } = props;
   const idOrNativeAppName = useMemo(
     () => (isNativeDApp(data) ? data.appIdentifier : data.id),

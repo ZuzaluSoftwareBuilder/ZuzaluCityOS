@@ -75,7 +75,7 @@ const About: React.FC<IAbout> = ({ eventData, setVerify, canEdit }) => {
   const [mintTicket, setMintTicket] = useState<any[]>([]);
   const [isTicket, setIsTicket] = useState<boolean>(false);
   const params = useParams();
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
   const router = useRouter();
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('sm'));

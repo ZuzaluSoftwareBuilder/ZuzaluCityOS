@@ -24,7 +24,7 @@ const Navbar = ({ spaceName = '' }: PropTypes) => {
     >
       <Button
         onClick={() =>
-          router.push(`/spaces/${params.spaceid.toString()}/adminevents`)
+          router.push(`/spaces/${params.spaceid?.toString()}/adminevents`)
         }
         startIcon={<LeftArrowIcon />}
         sx={{

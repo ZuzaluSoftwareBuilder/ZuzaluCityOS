@@ -56,7 +56,7 @@ const days = [
 
 const Home: React.FC<IVenue> = ({ event }) => {
   const params = useParams();
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
 
   const [state, setState] = React.useState({
     top: false,

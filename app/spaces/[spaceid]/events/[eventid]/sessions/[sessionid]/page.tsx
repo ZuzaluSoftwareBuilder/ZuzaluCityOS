@@ -96,8 +96,8 @@ const Home = () => {
     useCeramicContext();
   const [sessionView, setSessionView] = useState<boolean>(false);
   const [verify, setVerify] = useState<boolean>(false);
-  const eventId = params.eventid.toString();
-  const spaceId = params.spaceid.toString();
+  const eventId = params.eventid?.toString() ?? '';
+  const spaceId = params.spaceid?.toString() ?? '';
   const [urlOption, setUrlOption] = useState<string>('');
   const [session, setSession] = useState<Session>();
   const [isRsvped, setIsRsvped] = useState<boolean>(false);
@@ -265,7 +265,7 @@ const Home = () => {
       const { data: sessionData, error: sessionError } = await supabase
         .from('sessions')
         .select('*')
-        .eq('uuid', params.sessionid.toString())
+        .eq('uuid', params.sessionid?.toString() ?? '')
         .single();
       if (sessionData && profile) {
         setSession(sessionData);
@@ -645,7 +645,7 @@ const Home = () => {
 
           return (
             sessionStartDay === selectedDay &&
-            session.uuid !== params.sessionid.toString()
+            session.uuid !== (params.sessionid?.toString() ?? '')
           );
         });
         setBookedSessionsForDay(bookedSessionsDay);
@@ -694,7 +694,7 @@ const Home = () => {
         return (
           sessionStartDay ===
             dayjs(sessionStartTime).utc().format('YYYY-MM-DD') &&
-          session.uuid !== params.sessionid.toString()
+          session.uuid !== (params.sessionid?.toString() ?? '')
         );
       });
       bookedSessionsForDay = bookedSessionsDay;
@@ -785,7 +785,7 @@ const Home = () => {
       organizers: JSON.stringify(sessionOrganizers),
       speakers: JSON.stringify(sessionSpeakers),
       creatorDID: adminId,
-      uuid: params.sessionid.toString(),
+      uuid: params.sessionid?.toString() ?? '',
       liveStreamLink: sessionLiveStreamLink,
     };
     try {
@@ -1855,7 +1855,7 @@ const Home = () => {
         {!isDesktop && <IconSidebar />}
         {!isDesktop && (
           <Sidebar
-            spaceId={params.spaceid.toString()}
+            spaceId={params.spaceid?.toString() ?? ''}
             title={eventData?.space?.name}
             avatar={eventData?.space?.avatar}
             banner={eventData?.space?.banner}
@@ -1873,7 +1873,7 @@ const Home = () => {
         >
           <Header
             name={eventData?.title}
-            spaceId={params.spaceid.toString()}
+            spaceId={params.spaceid?.toString() ?? ''}
             backFun={() => {
               sessionStorage.setItem('tab', 'Sessions');
               router.push(`/spaces/${spaceId}/events/${eventId}`);

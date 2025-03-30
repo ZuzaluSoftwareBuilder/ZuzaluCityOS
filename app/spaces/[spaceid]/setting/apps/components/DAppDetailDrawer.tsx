@@ -50,7 +50,7 @@ export const useDAppDetailDrawer = () =>
 
 export const DAppDetailDrawer = ({ children }: PropsWithChildren) => {
   const params = useParams();
-  const spaceId = params.spaceid.toString();
+  const spaceId = params.spaceid?.toString() ?? '';
   const [appData, setAppData] = useState<Dapp | NativeDApp>();
   const [drawerOpening, setDrawerOpening] = useState(false);
 
