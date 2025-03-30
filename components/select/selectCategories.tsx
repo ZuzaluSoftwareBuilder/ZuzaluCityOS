@@ -24,7 +24,6 @@ export default function SelectCategories({
   isDisabled = false,
 }: IProps) {
   const [value, setValue] = React.useState<FilmOptionType[]>(initialValues);
-  // 添加受控能力
   React.useEffect(() => {
     if (outerValue) {
       setValue(outerValue.map((item) => ({ value: item, label: item, isAdd: false })));
@@ -33,7 +32,6 @@ export default function SelectCategories({
 
   const handleChange = useCallback(
     (value: FilmOptionType[]) => {
-      // 保留自控组件能力
       if (!outerValue) {
         setValue(value);
       }
