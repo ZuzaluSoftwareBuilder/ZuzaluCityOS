@@ -125,7 +125,7 @@ const AppItem = (props: Props) => {
   return (
     <div
       className={clsx([
-        'flex p-[10px] w-full',
+        'flex w-full p-[10px]',
         'flex-row gap-5',
         'mobile:flex-col mobile:gap-[10px]',
       ])}
@@ -144,8 +144,8 @@ const AppItem = (props: Props) => {
         <div
           className={clsx([
             'rounded-[10px]',
-            'w-[60px] h-[60px]',
-            'mobile:w-[40px] mobile:h-[40px]',
+            'size-[60px]',
+            'mobile:size-[40px]',
           ])}
         >
           <Image
@@ -153,8 +153,8 @@ const AppItem = (props: Props) => {
             src={appLogoUrl}
             className={clsx([
               'rounded-[10px]',
-              'w-[60px] h-[60px]',
-              'mobile:w-[40px] mobile:h-[40px]',
+              'size-[60px]',
+              'mobile:size-[40px]',
             ])}
           />
         </div>
@@ -168,7 +168,7 @@ const AppItem = (props: Props) => {
           <div
             className={clsx([
               'flex items-center gap-[5px]',
-              'text-[10px] leading-[120%] tracking-wide font-normal',
+              'text-[10px] font-normal leading-[120%] tracking-wide',
             ])}
           >
             {/* TODO: empty maybe? */}
@@ -176,7 +176,7 @@ const AppItem = (props: Props) => {
               <div
                 key={category}
                 className={clsx([
-                  'rounded px-1.5 py-0.5 bg-[rgba(255,255,255,0.05)]', // container
+                  'rounded bg-[rgba(255,255,255,0.05)] px-1.5 py-0.5', // container
                 ])}
               >
                 {category}
@@ -190,18 +190,18 @@ const AppItem = (props: Props) => {
           <div
             className={clsx([
               'flex items-center gap-[5px]', // container
-              'font-inter font-normal align-middle tabular-nums lining-num', // text
+              'font-inter lining-num align-middle font-normal tabular-nums', // text
             ])}
           >
-            <span className="opacity-50 text-[10px] leading-[120%] tracking-[0.02em]">
+            <span className="text-[10px] leading-[120%] tracking-[0.02em] opacity-50">
               DEVELOPER:
             </span>
             <Image
               alt={profile.username || 'Developer'}
               src={profile.avatar ?? USER_AVATAR_URL}
-              className="rounded-full w-[16px] h-[16px]"
+              className="size-[16px] rounded-full"
             />
-            <span className="opacity-60 text-[13px] leading-[140%] tracking-[0.01em]">
+            <span className="text-[13px] leading-[140%] tracking-[0.01em] opacity-60">
               {profile.username ?? '-'}
             </span>
           </div>
@@ -239,17 +239,14 @@ AppItem.Skeleton = memo(function AppItemSkeleton() {
   return (
     <div className={clsx(['flex p-[10px]', 'gap-5', 'mobile:gap-[10px]'])}>
       <Skeleton
-        className={clsx([
-          'rounded-[10px] w-[60px] h-[60px]',
-          'mobile:w-[40px] mobile:h-[40px]',
-        ])}
+        className={clsx(['size-[60px] rounded-[10px]', 'mobile:size-[40px]'])}
       />
       <div
         className={clsx(['flex flex-col', 'gap-[10px]', 'mobile:gap-[6px]'])}
       >
-        <Skeleton className="rounded-md w-10 h-5" />
-        <Skeleton className="rounded-md w-16 h-4" />
-        <Skeleton className="rounded-md w-32 h-[18px]" />
+        <Skeleton className="h-5 w-10 rounded-md" />
+        <Skeleton className="h-4 w-16 rounded-md" />
+        <Skeleton className="h-[18px] w-32 rounded-md" />
       </div>
     </div>
   );

@@ -38,12 +38,12 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
       maxValue={maxValue}
       isDateUnavailable={isDateUnavailable}
       bottomContent={
-        <div className="p-[14px] w-full pt-0">
+        <div className="w-full p-[14px] pt-0">
           <CalendarButton
             border
             variant="light"
             fullWidth
-            className="text-[14px] h-[30px] opacity-80"
+            className="h-[30px] text-[14px] opacity-80"
             startContent={
               isMobile ? (
                 <ArrowsCounterClockwise size={16} />

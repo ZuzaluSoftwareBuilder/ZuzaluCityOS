@@ -27,16 +27,16 @@ export interface ISidebarHeaderProps {
 export function SidebarHeaderSkeleton() {
   return (
     <div
-      className="w-[259px] h-[55px] relative cursor-default select-none backdrop-filter"
+      className="relative h-[55px] w-[259px] cursor-default select-none"
       style={{
         background: 'linear-gradient(90deg, #7DFFD1 0%, #FFCA7A 100%)',
         transform: 'none',
       }}
     >
-      <div className="w-full h-full flex justify-between items-center px-[14px] py-[10px] bg-[rgba(34,34,34,0.8)]">
-        <div className="flex justify-between items-center gap-2.5">
-          <Skeleton className="w-[35px] h-[35px] rounded-full" />
-          <Skeleton className="w-[156px] h-[21px] rounded-[4px]" />
+      <div className="flex size-full items-center justify-between bg-[rgba(34,34,34,0.8)] px-[14px] py-[10px]">
+        <div className="flex items-center justify-between gap-2.5">
+          <Skeleton className="size-[35px] rounded-full" />
+          <Skeleton className="h-[21px] w-[156px] rounded-[4px]" />
         </div>
         <ChevronDownIcon className="size-5 text-white opacity-50" />
       </div>
@@ -152,26 +152,26 @@ const SidebarHeader = ({
       shouldBlockScroll={false}
       placement="bottom"
     >
-      <DropdownTrigger className="transition-none transform-none">
+      <DropdownTrigger className="transform-none transition-none">
         <div
-          className="w-[259px] h-[55px] relative group cursor-pointer select-none backdrop-filter backdrop-blur-[22px]"
+          className="group relative h-[55px] w-[259px] cursor-pointer select-none backdrop-blur-[22px]"
           style={{
             background: 'linear-gradient(90deg, #7DFFD1 0%, #FFCA7A 100%)',
             transform: 'none',
           }}
         >
-          <div className="w-full h-full flex justify-between items-center px-[14px] py-[10px] border-b border-[rgba(255,255,255,0.1)] bg-[rgba(34,34,34,0.8)] group-hover:bg-[rgba(34,34,34,0.5)] transition-colors">
-            <div className="flex justify-between items-center gap-2.5">
+          <div className="flex size-full items-center justify-between border-b border-[rgba(255,255,255,0.1)] bg-[rgba(34,34,34,0.8)] px-[14px] py-[10px] transition-colors group-hover:bg-[rgba(34,34,34,0.5)]">
+            <div className="flex items-center justify-between gap-2.5">
               {space?.avatar && (
                 <Image
                   src={space?.avatar}
                   alt={space?.name || 'Community'}
                   width={35}
                   height={35}
-                  className="w-[35px] h-[35px] rounded-full object-cover"
+                  className="size-[35px] rounded-full object-cover"
                 />
               )}
-              <span className="w-[156px] text-white font-semibold text-base truncate">
+              <span className="w-[156px] truncate text-base font-semibold text-white">
                 {space?.name || 'Community'}
               </span>
             </div>
@@ -181,7 +181,7 @@ const SidebarHeader = ({
       </DropdownTrigger>
       <DropdownMenu
         aria-label="Space Actions"
-        className="w-[240px] p-[10px] rounded-[10px] bg-transparent flex flex-col gap-2.5 border border-[rgba(255,255,255,0.1)]"
+        className="flex w-[240px] flex-col gap-2.5 rounded-[10px] border border-[rgba(255,255,255,0.1)] bg-transparent p-[10px]"
         style={dropdownStyles}
         disabledKeys={
           isAdmin
@@ -208,10 +208,10 @@ interface IItemProps extends HTMLAttributes<HTMLDivElement> {
 const Item = ({ name, icon, className, ...props }: IItemProps) => {
   return (
     <div
-      className={`flex justify-between items-center w-full ${className}`}
+      className={`flex w-full items-center justify-between ${className}`}
       {...props}
     >
-      <span className="text-white text-[13px] leading-[18px] font-normal tracking-[0.01em] group-hover:font-bold ">
+      <span className="text-[13px] font-normal leading-[18px] tracking-[0.01em] text-white group-hover:font-bold ">
         {name}
       </span>
       {icon}

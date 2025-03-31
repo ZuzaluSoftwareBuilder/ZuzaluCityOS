@@ -19,7 +19,7 @@ export default function Item({ data, onClick }: ItemProps) {
   const tags = categories.split(',');
   return (
     <div
-      className="p-[10px] rounded-[10px] border border-transparent cursor-pointer hover:border-white/10 hover:bg-white/5 gap-[10px] flex flex-col justify-between"
+      className="flex cursor-pointer flex-col justify-between gap-[10px] rounded-[10px] border border-transparent p-[10px] hover:border-white/10 hover:bg-white/5"
       onClick={onClick}
     >
       <div className="flex flex-col gap-[10px]">
@@ -27,46 +27,46 @@ export default function Item({ data, onClick }: ItemProps) {
           src={bannerUrl}
           alt="dappsItem"
           width="100%"
-          className="rounded-[10px] border border-white/10 aspect-[620/280] object-cover"
+          className="aspect-[620/280] rounded-[10px] border border-white/10 object-cover"
         />
         {isInstallable === '1' && (
-          <div className="flex gap-[10px] items-center">
-            <div className="w-[24px] h-[24px] rounded-[8px] border border-[#7dffd1]/10 bg-[#7dffd1]/10 flex items-center justify-center">
+          <div className="flex items-center gap-[10px]">
+            <div className="flex size-[24px] items-center justify-center rounded-[8px] border border-[#7dffd1]/10 bg-[#7dffd1]/10">
               <Plugs size={16} color="#7DFFD1" weight="fill" />
             </div>
-            <p className="text-[13px] flex items-center gap-[5px] p-[4px_8px] rounded-[8px] bg-white/5">
+            <p className="flex items-center gap-[5px] rounded-[8px] bg-white/5 p-[4px_8px] text-[13px]">
               <BoxArrowDown size={16} weight="fill" />
               Installable
             </p>
           </div>
         )}
         <div className="flex flex-col gap-[5px]">
-          <p className="text-[#fff] text-[18px] font-[700] leading-[1.4]">
+          <p className="text-[18px] font-[700] leading-[1.4] text-white">
             {appName}
           </p>
-          <p className="text-[13px] leading-[1.4] text-[#fff] opacity-80 line-clamp-3">
+          <p className="line-clamp-3 text-[13px] leading-[1.4] text-white opacity-80">
             {tagline}
           </p>
         </div>
       </div>
       <div className="flex flex-col gap-[10px]">
-        <div className="flex gap-[5px] items-center">
+        <div className="flex items-center gap-[5px]">
           {tags.slice(0, 3).map((tag) => (
             <p
-              className="p-[3px_6px] rounded-[4px] bg-white/10 text-[10px] leading-[1.2] text-[#fff]"
+              className="rounded-[4px] bg-white/10 p-[3px_6px] text-[10px] leading-[1.2] text-white"
               key={tag}
             >
               {tag}
             </p>
           ))}
           {tags.length > 3 && (
-            <p className="text-[10px] leading-[1.2] text-[#fff]">
+            <p className="text-[10px] leading-[1.2] text-white">
               +{tags.length - 3}
             </p>
           )}
         </div>
         <Divider />
-        <div className="flex gap-[5px] items-center text-[#fff]">
+        <div className="flex items-center gap-[5px] text-white">
           <p className="text-[10px] leading-[1.2] opacity-50">Developer:</p>
           <p className="text-[10px] leading-[1.2]">{developerName}</p>
         </div>

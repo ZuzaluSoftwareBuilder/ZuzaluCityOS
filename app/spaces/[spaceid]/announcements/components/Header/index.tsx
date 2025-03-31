@@ -15,7 +15,7 @@ const AnnouncementsHeader = () => {
       <h1
         className={clsx([
           'shadow-[0px_5px_10px_0px_rgba(0,0,0,0.15)]',
-          'text-[16px] text-white leading-[120%] font-[600]',
+          'text-[16px] font-[600] leading-[120%] text-white',
           'pc:text-[20px] pc:font-bold',
         ])}
       >

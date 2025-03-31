@@ -16,7 +16,7 @@ export default function CalendarView({
   onEventClick,
 }: CalendarProps) {
   return (
-    <div className="h-full w-full">
+    <div className="size-full">
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"

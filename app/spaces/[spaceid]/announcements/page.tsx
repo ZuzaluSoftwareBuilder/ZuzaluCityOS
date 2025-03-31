@@ -27,11 +27,11 @@ export default function Announcements() {
   }, [spaceId]);
 
   return (
-    <div className="flex flex-col w-full h-[calc(100vh-50px)] overflow-hidden">
+    <div className="flex h-[calc(100vh-50px)] w-full flex-col overflow-hidden">
       <AnnouncementsHeader />
-      <div className="flex-1 w-full overflow-y-auto">
-        <div className="flex flex-col p-5 gap-5 mx-auto w-full pc:w-[800px]">
-          <div className="flex flex-col pc:flex-row justify-between gap-2.5 pc:items-center">
+      <div className="w-full flex-1 overflow-y-auto">
+        <div className="mx-auto flex w-full flex-col gap-5 p-5 pc:w-[800px]">
+          <div className="flex flex-col justify-between gap-2.5 pc:flex-row pc:items-center">
             <div
               className={clsx([
                 'font-bold leading-[140%]',
@@ -40,7 +40,7 @@ export default function Announcements() {
             >
               Announcements
             </div>
-            <div className="flex text-[16px] tablet:leading-[120%] mobile:leading-[120%] tracking-[0.01em]">
+            <div className="flex text-[16px] tracking-[0.01em] tablet:leading-[120%] mobile:leading-[120%]">
               <span>Today&apos;s Date:&nbsp;</span>
               <span className="opacity-70">{todayDate}</span>
             </div>

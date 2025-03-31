@@ -53,14 +53,20 @@ const Item = ({ item }: { item: SidebarItem }) => {
         opacity: 0.6,
       }}
     >
-      <Tooltip placement="right" classNames={{
-        base: ['bg-transparent'],
-        content: [
-          'px-2.5 py-1 bg-[rgba(44,44,44,0.8)] border border-[rgba(255,255,255,0.1)] rounded-lg text-white text-sm'
-        ]
-      }}
-        content={item.tooltipName} >
-        <Link href={item.href} className="w-[40px] h-[40px] bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)] rounded-lg flex items-center justify-center cursor-pointer">
+      <Tooltip
+        placement="right"
+        classNames={{
+          base: ['bg-transparent'],
+          content: [
+            'px-2.5 py-1 bg-[rgba(44,44,44,0.8)] border border-[rgba(255,255,255,0.1)] rounded-lg text-white text-sm',
+          ],
+        }}
+        content={item.tooltipName}
+      >
+        <Link
+          href={item.href}
+          className="flex size-[40px] cursor-pointer items-center justify-center rounded-lg bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)]"
+        >
           {item.icon}
         </Link>
       </Tooltip>
@@ -70,8 +76,8 @@ const Item = ({ item }: { item: SidebarItem }) => {
 
 const SpaceSidebar = () => {
   return (
-    <div className="mobile:hidden fixed top-[50px] bottom-0 left-0 w-[62px] h-[calc(100vh-50px)] bg-[#2C2C2C] pt-2.5 pb-2.5 g-2.5 border-r border-[rgba(255,255,255,0.1)] ">
-      <div className="w-full flex flex-col items-center pb-2.5 gap-2.5 border-b border-[rgba(255,255,255,0.1)]">
+    <div className="g-2.5 fixed bottom-0 left-0 top-[50px] h-[calc(100vh-50px)] w-[62px] border-r border-[rgba(255,255,255,0.1)] bg-[#2C2C2C] py-2.5 mobile:hidden ">
+      <div className="flex w-full flex-col items-center gap-2.5 border-b border-[rgba(255,255,255,0.1)] pb-2.5">
         {SidebarList.map((item) => (
           <Item key={item.name} item={item} />
         ))}

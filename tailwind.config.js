@@ -21,11 +21,12 @@ const config = {
     extend: {
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        merriweather: ['Merriweather', 'serif'],
       },
       colors: {
         'custom-green': 'rgba(125, 255, 209, var(--tw-bg-opacity))',
         'inactive-white': 'rgba(255, 255, 255, 0.05)',
-        'error': "#ff5e5e",
+        error: '#ff5e5e',
         b: {
           'w-10': 'rgba(255,255,255,0.10)',
           'w-20': 'rgba(255,255,255,0.20)',

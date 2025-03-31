@@ -11,13 +11,13 @@ import useUserSpace from '@/hooks/useUserSpace';
 const SpaceItemSkeleton = () => {
   return (
     <div
-      className="w-10 h-10 box-content rounded-full flex items-center justify-center relative"
+      className="relative box-content flex size-10 items-center justify-center rounded-full"
       style={{
         background: 'linear-gradient(90deg, #7DFFD1 0%, #FFCA7A 100%)',
         transform: 'none',
       }}
     >
-      <Skeleton className="w-10 h-10 rounded-full bg-[rgba(34,34,34,0.8)]" />
+      <Skeleton className="size-10 rounded-full bg-[rgba(34,34,34,0.8)]" />
     </div>
   );
 };
@@ -27,7 +27,8 @@ const SpaceList = () => {
     useCeramicContext();
   const [isClientReady, setIsClientReady] = useState(false);
 
-  const { userJoinedSpaces, isUserSpaceLoading, isUserSpaceFetched} = useUserSpace()
+  const { userJoinedSpaces, isUserSpaceLoading, isUserSpaceFetched } =
+    useUserSpace();
 
   useEffect(() => {
     setIsClientReady(true);
@@ -39,7 +40,7 @@ const SpaceList = () => {
     !!profile;
 
   return (
-    <div className="pt-2.5 w-full h-full overflow-y-auto flex flex-col items-center gap-2.5">
+    <div className="flex size-full flex-col items-center gap-2.5 overflow-y-auto pt-2.5">
       {shouldShowSkeleton ? (
         <>
           <SpaceItemSkeleton />
@@ -48,7 +49,12 @@ const SpaceList = () => {
         </>
       ) : (
         userJoinedSpaces.length > 0 &&
-        userJoinedSpaces.map((space) => <SpaceItem key={(space as unknown as Space).id} space={space as unknown as Space} />)
+        userJoinedSpaces.map((space) => (
+          <SpaceItem
+            key={(space as unknown as Space).id}
+            space={space as unknown as Space}
+          />
+        ))
       )}
     </div>
   );
@@ -74,8 +80,7 @@ const SpaceItem = ({ space }: { space: Space }) => {
       <Link href={`/spaces/${space.id}`} className="cursor-pointer">
         <div
           className={`
-          w-10 h-10 box-content rounded-full flex items-center justify-center cursor-pointer
-          hover:shadow-[0_0_0_2px_rgba(255,255,255,0.2)]
+          box-content flex size-10 cursor-pointer items-center justify-center rounded-full hover:shadow-[0_0_0_2px_rgba(255,255,255,0.2)]
           ${isActive ? 'border-2 border-[#2C2C2C] shadow-[0_0_0_2px_rgba(255,255,255,0.9)] hover:shadow-[0_0_0_2px_rgba(255,255,255,0.9)]' : 'border-none'}
         `}
         >
@@ -88,7 +93,7 @@ const SpaceItem = ({ space }: { space: Space }) => {
               className="rounded-full object-cover"
             />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-[#363636]" />
+            <div className="size-10 rounded-full bg-[#363636]" />
           )}
         </div>
       </Link>

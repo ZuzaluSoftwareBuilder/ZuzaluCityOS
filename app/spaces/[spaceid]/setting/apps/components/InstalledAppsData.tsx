@@ -67,10 +67,13 @@ const InstalledAppsData = ({ children }: PropsWithChildren) => {
   }, [installedAppsData]);
 
   // ------------------ Methods ------------------
-  const addInstalledApp = useCallback((item: InstalledAppItem) => {
-    refreshSpaceData();
-    setInstalledAppIds((prev) => [...prev, item]);
-  }, [refreshSpaceData]);
+  const addInstalledApp = useCallback(
+    (item: InstalledAppItem) => {
+      refreshSpaceData();
+      setInstalledAppIds((prev) => [...prev, item]);
+    },
+    [refreshSpaceData],
+  );
 
   const removeInstalledApp = useCallback(
     (

@@ -151,7 +151,7 @@ const SpaceSubSidebar = ({
         onCloseDrawer={onCloseDrawer}
       />
 
-      <div className="flex flex-col p-[10px] gap-[5px] border-t border-b border-[rgba(255,255,255,0.1)]">
+      <div className="flex flex-col gap-[5px] border-y border-[rgba(255,255,255,0.1)] p-[10px]">
         <TabItem
           label="Home"
           icon={<House />}
@@ -189,9 +189,9 @@ const SpaceSubSidebar = ({
         )}
       </div>
 
-      <div className="flex-1 pt-5 px-2.5 overflow-y-auto">
-        <div className="h-[20px] flex items-center">
-          <span className="h-[14px] text-[12px] leading-[14px] text-white px-2.5">
+      <div className="flex-1 overflow-y-auto px-2.5 pt-5">
+        <div className="flex h-[20px] items-center">
+          <span className="h-[14px] px-2.5 text-[12px] leading-[14px] text-white">
             Community Apps
           </span>
         </div>

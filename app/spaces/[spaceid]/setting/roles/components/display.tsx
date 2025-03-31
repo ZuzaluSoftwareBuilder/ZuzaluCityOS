@@ -6,12 +6,12 @@ interface DisplayProps {
 
 export default function Display({ roleName }: DisplayProps) {
   return (
-    <div className="flex flex-col gap-5 mt-5">
+    <div className="mt-5 flex flex-col gap-5">
       <div className="flex flex-col gap-2">
-        <label className="text-white text-[16px] font-medium">Role Name</label>
+        <label className="text-[16px] font-medium text-white">Role Name</label>
         <Input
           variant="bordered"
-          className="bg-[rgba(255,255,255,0.05)] rounded-lg"
+          className="rounded-lg bg-[rgba(255,255,255,0.05)]"
           value={roleName}
           isDisabled
         />

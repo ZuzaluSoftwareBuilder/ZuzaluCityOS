@@ -140,7 +140,7 @@ DAppDetailDrawer.Disclaimer = memo(function Disclaimer() {
   return (
     <div
       className={clsx([
-        'bg-[rgba(255,255,255,0.02)] border border-solid border-[rgba(255,255,255,0.1)] rounded-[10px]', // style
+        'rounded-[10px] border border-solid border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)]', // style
         'flex flex-col gap-[5px] p-[10px]', // layout
       ])}
     >
@@ -161,22 +161,22 @@ DAppDetailDrawer.BasicInfo = memo(function BasicInfo(
 ) {
   const { appLogoUrl, appName, tagline } = props;
   return (
-    <div className="flex gap-2.5 items-center">
-      <div className={clsx(['rounded-[10px]', 'w-[60px] h-[60px]'])}>
+    <div className="flex items-center gap-2.5">
+      <div className={clsx(['rounded-[10px]', 'size-[60px]'])}>
         <Image
           alt={appName}
           src={appLogoUrl}
           className={clsx([
             'rounded-[10px]',
-            'w-[60px] h-[60px] border border-solid border-[rgba(255,255,255,0.1)]',
+            'size-[60px] border border-solid border-[rgba(255,255,255,0.1)]',
           ])}
         />
       </div>
-      <div className="flex flex-col gap-[5px] font-inter">
+      <div className="font-inter flex flex-col gap-[5px]">
         <span className="text-lg font-bold leading-[140%]">
           {appName ?? '-'}
         </span>
-        <span className="text-[13px] font-normal leading-[140%] opacity-80 tracking-[0.01em]">
+        <span className="text-[13px] font-normal leading-[140%] tracking-[0.01em] opacity-80">
           {tagline ?? '-'}
         </span>
       </div>
@@ -190,13 +190,13 @@ DAppDetailDrawer.Categories = memo(function Categories(props: {
   const { categories = '' } = props;
   const categoriesArray = categories.split(',');
   return (
-    <div className="flex gap-2.5 flex-wrap items-center font-inter text-[13px] leading-[140%] font-normal tracking-[0.01em]">
+    <div className="font-inter flex flex-wrap items-center gap-2.5 text-[13px] font-normal leading-[140%] tracking-[0.01em]">
       <span className="opacity-50">Categories:</span>
       {categoriesArray.map((category) => (
         <div
           key={category}
           className={clsx([
-            'rounded px-2 py-1 bg-[rgba(255,255,255,0.05)]', // container
+            'rounded bg-[rgba(255,255,255,0.05)] px-2 py-1', // container
           ])}
         >
           {category}
@@ -211,7 +211,7 @@ DAppDetailDrawer.Developer = memo(function Developer(props: {
 }) {
   const { developer = '' } = props;
   return (
-    <div className="flex gap-2.5 items-center font-inter text-[13px] leading-[140%] font-normal tracking-[0.01em]">
+    <div className="font-inter flex items-center gap-2.5 text-[13px] font-normal leading-[140%] tracking-[0.01em]">
       <span className="opacity-50">Developer:</span>
       <span className="opacity-80">{developer}</span>
     </div>
@@ -289,11 +289,11 @@ DAppDetailDrawer.InstallArea = function InstallArea(props: {
   return (
     <div
       className={clsx([
-        'bg-[rgba(255,255,255,0.02)] border border-solid border-[rgba(255,255,255,0.1)] rounded-[10px]', // style
+        'rounded-[10px] border border-solid border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)]', // style
         'flex flex-col gap-5 p-5', // layout
       ])}
     >
-      <span className="font-bold text-[20px] leading-[120%] opacity-70">
+      <span className="text-[20px] font-bold leading-[120%] opacity-70">
         Install on Space
       </span>
       <Button
@@ -316,7 +316,7 @@ DAppDetailDrawer.Description = memo(function Description(props: {
   const { description = '' } = props;
   return (
     <div className="flex flex-col gap-2.5">
-      <span className="font-normal text-[13px] leading-[140%] tracking-[0.01em] opacity-50">
+      <span className="text-[13px] font-normal leading-[140%] tracking-[0.01em] opacity-50">
         App Description
       </span>
       <div className="opacity-80">
@@ -341,7 +341,7 @@ DAppDetailDrawer.Status = memo(function Status(
         <a
           href={props.repositoryUrl}
           target="_blank"
-          className="text-[13px] leading-[140%] opacity-80 underline block break-all"
+          className="block break-all text-[13px] leading-[140%] underline opacity-80"
           style={{ textAlign: 'right' }}
         >
           {props.repositoryUrl}
@@ -352,15 +352,15 @@ DAppDetailDrawer.Status = memo(function Status(
     },
   ];
   return (
-    <div className="flex flex-col w-full gap-2.5">
+    <div className="flex w-full flex-col gap-2.5">
       {items.map((item) => (
         <div
           key={item.label}
-          className="flex justify-between gap-4 font-inter text-[13px] leading-[140%] font-normal tracking-[0.01em]"
+          className="font-inter flex justify-between gap-4 text-[13px] font-normal leading-[140%] tracking-[0.01em]"
         >
-          <span className="opacity-50 whitespace-nowrap">{item.label}:</span>
+          <span className="whitespace-nowrap opacity-50">{item.label}:</span>
           <span
-            className="opacity-80 inline-block flex-1"
+            className="inline-block flex-1 opacity-80"
             style={{ textAlign: 'right' }}
           >
             {item.value}

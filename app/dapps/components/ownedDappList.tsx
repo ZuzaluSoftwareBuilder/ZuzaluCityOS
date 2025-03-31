@@ -52,14 +52,14 @@ export default function OwnedDappList({
         </div>
         {ownedDapps.map((dapp) => (
           <div
-            className="flex flex-row justify-between items-center p-[10px] bg-[rgba(255,255,255,0.02)] rounded-[10px]"
+            className="flex flex-row items-center justify-between rounded-[10px] bg-[rgba(255,255,255,0.02)] p-[10px]"
             key={dapp.id}
           >
-            <div className="flex flex-row gap-[10px] items-center">
+            <div className="flex flex-row items-center gap-[10px]">
               <Image
                 src={dapp.appLogoUrl || ''}
                 alt={dapp.appName}
-                className="w-[80px] h-[80px] rounded-[10px] border border-[rgba(255,255,255,0.1)]"
+                className="size-[80px] rounded-[10px] border border-[rgba(255,255,255,0.1)]"
                 classNames={{
                   wrapper: 'shrink-0',
                 }}
@@ -68,14 +68,14 @@ export default function OwnedDappList({
                 <p className="text-[16px] font-bold leading-[1.2] opacity-80">
                   {dapp.appName}
                 </p>
-                <p className="text-[13px] leading-[1.4] opacity-70 line-clamp-2">
+                <p className="line-clamp-2 text-[13px] leading-[1.4] opacity-70">
                   {dapp.tagline}
                 </p>
               </div>
             </div>
             <div className="flex flex-col gap-2">
               <Button
-                className="gap-[5px] p-[4px_10px] h-[30px] opacity-60"
+                className="h-[30px] gap-[5px] p-[4px_10px] opacity-60"
                 radius="sm"
                 onClick={() => onEditDapp(dapp)}
                 startContent={<NotePencil size={18} weight="fill" />}
@@ -83,7 +83,7 @@ export default function OwnedDappList({
                 Edit
               </Button>
               <Button
-                className="gap-[5px] p-[4px_10px] h-[30px] opacity-60"
+                className="h-[30px] gap-[5px] p-[4px_10px] opacity-60"
                 radius="sm"
                 onClick={() => onViewDapp(dapp)}
                 startContent={<Eye size={18} weight="fill" />}

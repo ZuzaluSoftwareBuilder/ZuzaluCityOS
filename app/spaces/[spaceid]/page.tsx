@@ -119,7 +119,7 @@ export default function SpaceDetailPage() {
                   height: '100%',
                   borderRadius: '10px',
                 }}
-                className="absolute inset-0 object-cover w-full h-full rounded-[10px]"
+                className="absolute inset-0 size-full rounded-[10px] object-cover"
               />
             ) : (
               <Skeleton

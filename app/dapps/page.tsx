@@ -1,7 +1,7 @@
 'use client';
 
 import ExploreHeader from '@/components/layout/explore/exploreHeader';
-import { Shapes, } from '@phosphor-icons/react';
+import { Shapes } from '@phosphor-icons/react';
 import { CubeIcon, DIcon, GlobalIcon } from '@/components/icons';
 import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
 

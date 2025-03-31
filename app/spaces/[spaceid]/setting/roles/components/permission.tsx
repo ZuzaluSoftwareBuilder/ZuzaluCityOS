@@ -16,11 +16,11 @@ interface PermissionItemProps {
 const PermissionItem = ({ title, checked, className }: PermissionItemProps) => {
   return (
     <div
-      className={`flex flex-col justify-center gap-1 w-full pb-2.5 border-b border-white/10 ${className}`}
+      className={`flex w-full flex-col justify-center gap-1 border-b border-white/10 pb-2.5 ${className}`}
     >
-      <div className="flex flex-col justify-center items-center w-full gap-[5px]">
-        <div className="flex flex-row justify-between items-center w-full">
-          <span className="text-white font-semibold text-base leading-[1.4]">
+      <div className="flex w-full flex-col items-center justify-center gap-[5px]">
+        <div className="flex w-full flex-row items-center justify-between">
+          <span className="text-base font-semibold leading-[1.4] text-white">
             {title}
           </span>
           <Switch
@@ -52,20 +52,20 @@ const formatString = (str: string) => {
 
 export const PermissionListSkeleton = () => {
   return (
-    <div className="flex flex-col gap-5 w-full">
-      <Skeleton className="w-32 h-4 rounded-md" />
-      <div className="flex flex-col gap-2.5 w-full">
+    <div className="flex w-full flex-col gap-5">
+      <Skeleton className="h-4 w-32 rounded-md" />
+      <div className="flex w-full flex-col gap-2.5">
         {Array.from({ length: 6 }).map((_, index) => (
           <div
             key={index}
-            className={`flex flex-col justify-center gap-1 w-full pb-2.5 border-b border-white/10 ${
+            className={`flex w-full flex-col justify-center gap-1 border-b border-white/10 pb-2.5 ${
               index === 5 ? 'border-b-0' : ''
             }`}
           >
-            <div className="flex flex-col justify-center items-center w-full gap-[5px]">
-              <div className="flex flex-row justify-between items-center w-full">
-                <Skeleton className="w-48 h-6 rounded-md bg-white/10" />
-                <Skeleton className="w-10 h-5 rounded-md bg-white/10" />
+            <div className="flex w-full flex-col items-center justify-center gap-[5px]">
+              <div className="flex w-full flex-row items-center justify-between">
+                <Skeleton className="h-6 w-48 rounded-md bg-white/10" />
+                <Skeleton className="h-5 w-10 rounded-md bg-white/10" />
               </div>
             </div>
           </div>
@@ -111,18 +111,18 @@ export const PermissionList = ({
   }, [permissionsData?.data, roleData, roleName]);
 
   return (
-    <div className="flex flex-col gap-10 w-full mt-5">
+    <div className="mt-5 flex w-full flex-col gap-10">
       {isLoading || roleDataLoading ? (
         <PermissionListSkeleton />
       ) : groupedPermissions && Object.keys(groupedPermissions).length > 0 ? (
         Object.entries(groupedPermissions).map(([resource, permissions]) => {
           const permissionArray = Array.isArray(permissions) ? permissions : [];
           return (
-            <div key={resource} className="flex flex-col gap-5 w-full">
-              <span className="text-white/60 font-semibold text-sm leading-[1.2em] w-full">
+            <div key={resource} className="flex w-full flex-col gap-5">
+              <span className="w-full text-sm font-semibold leading-[1.2em] text-white/60">
                 {resource}
               </span>
-              <div className="flex flex-col gap-2.5 w-full">
+              <div className="flex w-full flex-col gap-2.5">
                 {permissionArray.map((permission, index) => (
                   <PermissionItem
                     key={permission.id}

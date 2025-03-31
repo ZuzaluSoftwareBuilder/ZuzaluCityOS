@@ -11,17 +11,17 @@ export default function ViewRole({
   members: UserRole[];
 }) {
   return (
-    <div className="w-full pc:w-[560px] pc:box-content p-[20px] mx-auto flex flex-col gap-[40px] mobile:p-0">
-      <h2 className="text-white text-lg font-semibold leading-[1.2]">
+    <div className="mx-auto flex w-full flex-col gap-[40px] p-[20px] pc:box-content pc:w-[560px] mobile:p-0">
+      <h2 className="text-lg font-semibold leading-[1.2] text-white">
         Fixed Roles
       </h2>
 
       <div className="flex flex-col gap-5">
-        <div className="flex items-center w-full gap-[5px]">
-          <span className="flex-1 text-white opacity-60 text-sm font-semibold">
+        <div className="flex w-full items-center gap-[5px]">
+          <span className="flex-1 text-sm font-semibold text-white opacity-60">
             Roles
           </span>
-          <span className="flex-1 text-white opacity-60 text-sm font-semibold mobile:w-[100px] mobile:flex-none">
+          <span className="flex-1 text-sm font-semibold text-white opacity-60 mobile:w-[100px] mobile:flex-none">
             Members
           </span>
         </div>
