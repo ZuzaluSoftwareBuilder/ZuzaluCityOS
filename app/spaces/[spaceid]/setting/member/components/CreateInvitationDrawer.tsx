@@ -118,9 +118,10 @@ export const CreateInvitationDrawer = ({
         inviteeId: selectedUser.did,
         id: selectedResourceId,
         resource: resourceType,
-        // TODO fake
-        roleId: 'kjzl6kcym7w8y7y5fz9tfvb6z91hurzhl6gd7mv46ljgh72o6q2kkzh245quha4',
-        message: message || undefined,
+        // TODO for test, wait for delete
+        // roleId: 'kjzl6kcym7w8y7y5fz9tfvb6z91hurzhl6gd7mv46ljgh72o6q2kkzh245quha4',
+        roleId: selectedRoleId,
+        message: message || '',
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       });
     },
