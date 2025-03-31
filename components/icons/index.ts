@@ -59,6 +59,7 @@ import { ManageEventsIcon } from './ManageEvents';
 import { UserPlusIcon } from './UserPlus';
 import { ShieldIcon } from './Shield';
 import { NotificationIcon } from './Notification';
+import { XCricleIcon } from './XCircle';
 import { Cog6Icon } from './Cog6';
 import { NewspaperIcon } from './Newspaper';
 import { MinusIcon } from './Minus';
@@ -183,6 +184,7 @@ export {
   UserPlusIcon,
   ShieldIcon,
   NotificationIcon,
+  XCricleIcon,
   Cog6Icon,
   NewspaperIcon,
   MinusIcon,
