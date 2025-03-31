@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@mui/material';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material';
 
 export default function SidebarLeft() {
   const { breakpoints } = useTheme();

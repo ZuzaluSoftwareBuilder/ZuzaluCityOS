@@ -4,16 +4,13 @@ import {
   MemberEmpty,
   MemberSkeleton,
 } from '@/app/spaces/[spaceid]/setting/roles/components/members/memberItem';
+import { Button } from '@heroui/react';
 import {
-  Avatar,
-  Button,
-} from '@heroui/react';
-import { 
-  Modal, 
-  ModalContent, 
+  Modal,
+  ModalContent,
   ModalBody,
   ModalFooter,
-  CommonModalHeader 
+  CommonModalHeader,
 } from '@/components/base/modal';
 import { X } from '@phosphor-icons/react';
 import { RolePermission } from '@/types';
@@ -41,10 +38,13 @@ export const MemberList: React.FC<MemberListProps> = ({
     null,
   );
 
-  const handleRemoveClick = useCallback((member: IMemberItem) => {
-    setMemberToRemove(member);
-    handleOpen();
-  }, [handleOpen]);
+  const handleRemoveClick = useCallback(
+    (member: IMemberItem) => {
+      setMemberToRemove(member);
+      handleOpen();
+    },
+    [handleOpen],
+  );
 
   const handleConfirmRemove = useCallback(async () => {
     if (memberToRemove) {
@@ -66,8 +66,8 @@ export const MemberList: React.FC<MemberListProps> = ({
   }, [handleClose, isRemovingMember]);
 
   return (
-    <div className="flex flex-col w-full gap-5">
-      <div className="flex items-center w-full">
+    <div className="flex w-full flex-col gap-5">
+      <div className="flex w-full items-center">
         <span className="flex-1 text-sm font-semibold text-white/60">
           Members with This Role
         </span>
@@ -76,7 +76,7 @@ export const MemberList: React.FC<MemberListProps> = ({
         )}
       </div>
 
-      <div className="flex flex-col w-full">
+      <div className="flex w-full flex-col">
         {isLoading ? (
           Array.from({ length: 3 }).map((_, index) => (
             <MemberSkeleton key={`skeleton-${index}`} />
@@ -85,7 +85,7 @@ export const MemberList: React.FC<MemberListProps> = ({
           members.map((member) => (
             <div
               key={member.id}
-              className="flex items-center justify-between w-full px-2 py-1 h-[48px]"
+              className="flex h-[48px] w-full items-center justify-between px-2 py-1"
             >
               <MemberItem
                 avatarUrl={member.avatar || '/user/avatar_p.png'}
@@ -96,7 +96,7 @@ export const MemberList: React.FC<MemberListProps> = ({
                 <Button
                   isIconOnly
                   variant="light"
-                  className="bg-[rgba(255,255,255,0.05)] w-10 h-10 min-w-0 rounded-full"
+                  className="size-10 min-w-0 rounded-full bg-[rgba(255,255,255,0.05)]"
                   onPress={() => handleRemoveClick(member)}
                 >
                   <X size={16} className="text-white" />
@@ -105,7 +105,11 @@ export const MemberList: React.FC<MemberListProps> = ({
             </div>
           ))
         ) : (
-          <MemberEmpty description={'There are no members with this role yet. Add members to assign this role.'} />
+          <MemberEmpty
+            description={
+              'There are no members with this role yet. Add members to assign this role.'
+            }
+          />
         )}
       </div>
 
@@ -121,12 +125,13 @@ export const MemberList: React.FC<MemberListProps> = ({
             onClose={handleCancelRemove}
             isDisabled={isRemovingMember}
           />
-          <ModalBody className="p-[0_20px] gap-5">
-            <p className="text-white/70 text-sm">
-              Remove following member from <strong>{currentRole?.role.name}</strong>
+          <ModalBody className="gap-5 p-[0_20px]">
+            <p className="text-sm text-white/70">
+              Remove following member from{' '}
+              <strong>{currentRole?.role.name}</strong>
             </p>
             {memberToRemove && (
-              <div className="flex items-center justify-center w-full gap-2.5 py-2.5 border border-[rgba(255,255,255,0.1)] rounded-lg">
+              <div className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-[rgba(255,255,255,0.1)] py-2.5">
                 <MemberItem
                   avatarUrl={memberToRemove.avatar || '/user/avatar_p.png'}
                   name={memberToRemove.name}
@@ -136,9 +141,9 @@ export const MemberList: React.FC<MemberListProps> = ({
             )}
           </ModalBody>
           <ModalFooter className="p-[20px]">
-            <div className="flex justify-between w-full gap-2.5">
+            <div className="flex w-full justify-between gap-2.5">
               <Button
-                className="flex-1 h-[38px] bg-transparent border border-[rgba(255,255,255,0.1)] text-white font-bold"
+                className="h-[38px] flex-1 border border-[rgba(255,255,255,0.1)] bg-transparent font-bold text-white"
                 radius="md"
                 onPress={handleCancelRemove}
                 disabled={isRemovingMember}
@@ -146,7 +151,7 @@ export const MemberList: React.FC<MemberListProps> = ({
                 Cancel
               </Button>
               <Button
-                className="flex-1 h-[38px] bg-[rgba(255,94,94,0.1)] border border-[rgba(255,94,94,0.2)] text-[#FF5E5E] font-bold"
+                className="h-[38px] flex-1 border border-[rgba(255,94,94,0.2)] bg-[rgba(255,94,94,0.1)] font-bold text-[#FF5E5E]"
                 radius="md"
                 onPress={handleConfirmRemove}
                 isLoading={isRemovingMember}

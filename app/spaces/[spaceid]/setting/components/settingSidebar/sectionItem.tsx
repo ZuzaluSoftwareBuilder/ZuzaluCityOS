@@ -12,30 +12,22 @@ export interface SectionItemProps {
   showTooltip?: boolean;
 }
 
-const SectionItem: React.FC<SectionItemProps> = ({ 
-  item, 
-  sectionId, 
+const SectionItem: React.FC<SectionItemProps> = ({
+  item,
+  sectionId,
   onItemClick,
-  showTooltip = false
+  showTooltip = false,
 }) => {
   const itemContent = (
     <div
-      className={`flex justify-between items-center h-[34px] px-2.5 rounded-lg ${
-        item.active
-          ? 'bg-[#363636]'
-          : 'bg-transparent hover:bg-[#2C2C2C]'
-      } ${item.locked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+      className={`flex h-[34px] items-center justify-between rounded-lg px-2.5 ${
+        item.active ? 'bg-[#363636]' : 'bg-transparent hover:bg-[#2C2C2C]'
+      } ${item.locked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
       onClick={() => !item.locked && onItemClick(sectionId, item.id)}
     >
-      <span className="text-white text-[13px] font-medium">
-        {item.label}
-      </span>
+      <span className="text-[13px] font-medium text-white">{item.label}</span>
       {item.locked && (
-        <Barricade
-          size={16}
-          weight="light"
-          className="text-white"
-        />
+        <Barricade size={16} weight="light" className="text-white" />
       )}
     </div>
   );
@@ -60,4 +52,4 @@ const SectionItem: React.FC<SectionItemProps> = ({
   return itemContent;
 };
 
-export default SectionItem; 
+export default SectionItem;

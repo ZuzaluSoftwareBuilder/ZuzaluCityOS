@@ -26,9 +26,9 @@ const BackHeader = ({ spaceId }: IBackHeaderProps) => {
   }, [isTablet, pathname, router, searchParams, spaceId]);
 
   return (
-    <div className="flex items-center gap-[10px] w-full ">
+    <div className="flex w-full items-center gap-[10px] ">
       <Button
-        className="h-[34px] bg-[#363636] hover:bg-[#424242] rounded-lg px-3.5 flex items-center gap-[5px]"
+        className="flex h-[34px] items-center gap-[5px] rounded-lg bg-[#363636] px-3.5 hover:bg-[#424242]"
         onPress={handleBack}
       >
         <CaretLeft
@@ -37,10 +37,10 @@ const BackHeader = ({ spaceId }: IBackHeaderProps) => {
           format={'Stroke'}
           className="text-white"
         />
-        <span className="text-white text-[13px] font-medium">Back</span>
+        <span className="text-[13px] font-medium text-white">Back</span>
       </Button>
 
-      <span className="text-white text-[14px]">Space Settings</span>
+      <span className="text-[14px] text-white">Space Settings</span>
     </div>
   );
 };

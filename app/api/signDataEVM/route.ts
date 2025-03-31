@@ -1,4 +1,3 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { TypedEthereumSigner } from 'arbundles';
 import { NextResponse } from 'next/server';
 

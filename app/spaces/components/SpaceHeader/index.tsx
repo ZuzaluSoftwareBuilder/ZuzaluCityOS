@@ -6,7 +6,6 @@ import { ZuButton } from 'components/core';
 import { SpacePlusIcon } from 'components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
 import Dialog from '../Modal/Dialog';
-import { chainID, isDev } from '@/constant';
 
 const SpaceHeader = () => {
   const [showModal, setShowModal] = React.useState(false);

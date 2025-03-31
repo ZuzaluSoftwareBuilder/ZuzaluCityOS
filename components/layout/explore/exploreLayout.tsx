@@ -6,13 +6,15 @@ import * as React from 'react';
 import { Stack } from '@mui/material';
 
 export interface IExploreLayoutProps {
-  selected: string
-  showSidebar?: boolean
+  selected: string;
+  showSidebar?: boolean;
 }
 
-
-const ExploreLayout: React.FC<PropsWithChildren<IExploreLayoutProps>> = ({ children, selected, showSidebar = true }) => {
-
+const ExploreLayout: React.FC<PropsWithChildren<IExploreLayoutProps>> = ({
+  children,
+  selected,
+  showSidebar = true,
+}) => {
   return (
     <Stack
       direction="row"

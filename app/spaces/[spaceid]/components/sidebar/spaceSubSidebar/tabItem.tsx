@@ -2,7 +2,7 @@
 
 import Link, { LinkProps } from 'next/link';
 import { cn } from '@heroui/react';
-import { Lock, IconContext, DotOutline } from '@phosphor-icons/react';
+import { Lock, IconContext } from '@phosphor-icons/react';
 
 export interface ITabItemProps extends Partial<LinkProps> {
   href?: string;
@@ -62,7 +62,7 @@ const TabItem = ({
       {icon}
       <span
         className={
-          'flex-1 text-[13px] font-medium leading-[18px] text-white truncate'
+          'flex-1 truncate text-[13px] font-medium leading-[18px] text-white'
         }
       >
         {label}
@@ -75,7 +75,7 @@ const TabItem = ({
   );
 
   const countDisplay = !!count && (
-    <span className={'font-medium text-[13px] leading-[18px] text-[#7DFFD1]'}>
+    <span className={'text-[13px] font-medium leading-[18px] text-[#7DFFD1]'}>
       {count}
     </span>
   );

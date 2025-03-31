@@ -229,7 +229,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
   }, [currentRole, checkPermission]);
 
   return (
-    <div className="flex flex-col w-full gap-10">
+    <div className="flex w-full flex-col gap-10">
       <AddMemberSubHeader
         canManageRole={canManageRole}
         onSearch={handleSearch}

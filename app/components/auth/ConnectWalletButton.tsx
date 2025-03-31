@@ -1,7 +1,7 @@
 import { cn, Button } from '@heroui/react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { Wallet } from '@phosphor-icons/react';
-import { useAccount, useConnect } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { useCallback } from 'react';
 
 export interface IConnectWalletButtonProps {
@@ -36,7 +36,7 @@ const ConnectWalletButton: React.FC<IConnectWalletButtonProps> = ({
       console.error('openConnectModal is not available');
     }
   }, [onConnectClick, openConnectModal, showSigningMessage]);
-  
+
   return (
     <Button
       className={cn(
@@ -45,7 +45,11 @@ const ConnectWalletButton: React.FC<IConnectWalletButtonProps> = ({
         'bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)]',
         'text-white text-[14px] leading-[1.2] font-[500]',
       )}
-      startContent={isLoading ? null : <Wallet size={20} weight={'fill'} format={'Stroke'} />}
+      startContent={
+        isLoading ? null : (
+          <Wallet size={20} weight={'fill'} format={'Stroke'} />
+        )
+      }
       onPress={handleConnect}
       isLoading={isLoading}
     >

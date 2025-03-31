@@ -16,7 +16,6 @@ import {
 } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useDisconnect, useWalletClient } from 'wagmi';
-import { ethers } from 'ethers';
 
 interface NewUserPromptModalProps {
   showModal: boolean;

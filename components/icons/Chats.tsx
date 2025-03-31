@@ -5,7 +5,7 @@ export const ChatsIcon = () => {
       viewBox="0 0 24 24"
       fill="currentColor"
       color="rgb(255, 255, 255)"
-      className="w-6 h-6"
+      className="size-6"
     >
       <path
         fillRule="evenodd"

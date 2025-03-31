@@ -55,7 +55,7 @@ const SpaceList = () => {
     }
     return sortedData?.filter((space) =>
       space.name.toLowerCase().includes(searchVal.toLowerCase()),
-    )
+    );
   }, [spaces, searchVal]);
 
   return (

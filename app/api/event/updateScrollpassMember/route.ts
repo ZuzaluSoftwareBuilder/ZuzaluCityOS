@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
-import dayjs from 'dayjs';
 import { supabase } from '@/utils/supabase/client';
 import { Ed25519Provider } from 'key-did-provider-ed25519';
 import { getResolver } from 'key-did-resolver';
 import { DID } from 'dids';
 import { ceramic, composeClient } from '@/constant';
-import { base64ToUint8Array, hashAndEncodeBase58 } from '@/utils';
-import { chainID } from '@/constant';
+import { base64ToUint8Array } from '@/utils';
 interface scrollpass {
   hash: string;
 }

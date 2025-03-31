@@ -26,7 +26,9 @@ export const SpacePermissionProvider: React.FC<{
   const { profile } = useCeramicContext();
   const userId = profile?.author?.id;
 
-  const { owner, roles, members, isLoading } = useGetSpaceMember(spaceId as string);
+  const { owner, roles, members, isLoading } = useGetSpaceMember(
+    spaceId as string,
+  );
 
   const { data: permissionsData } = useQuery({
     queryKey: ['getAllPermission'],

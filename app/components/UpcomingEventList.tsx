@@ -33,7 +33,7 @@ import { UPCOMING_EVENTS_QUERY } from '@/graphql/eventQueries';
 import { supabase } from '@/utils/supabase/client';
 import { useMediaQuery } from '@/hooks';
 import { fromAbsolute, getLocalTimeZone, today } from '@internationalized/date';
-import { Calendar, Button, Select } from '@/components/base';
+import { Calendar, Button } from '@/components/base';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -95,8 +95,8 @@ function EventList({ events, isLoading }: EventListProps) {
   return (
     <div className="flex flex-col gap-[10px] px-[20px] pb-[20px] pc:pr-0">
       {isLoading ? (
-        <div className="flex flex-col gap-[20px] w-full">
-          <Skeleton className="w-full h-[40px] rounded-[40px]">
+        <div className="flex w-full flex-col gap-[20px]">
+          <Skeleton className="h-[40px] w-full rounded-[40px]">
             <div className="h-[38px] w-full"></div>
           </Skeleton>
           {Array.from({ length: 5 }).map((_, index) => (
@@ -114,7 +114,7 @@ function EventList({ events, isLoading }: EventListProps) {
               ([month, eventsList]) => {
                 return (
                   <div key={month} className="flex flex-col gap-[20px]">
-                    <div className="py-[8px] px-[14px] text-[18px] leading-[1.2] font-[500] text-center rounded-[40px] border border-b-w-10 backdrop-blur-[10px] bg-[rgba(34,34,34,0.8)] sticky top-[60px] z-[1000]">
+                    <div className="sticky top-[60px] z-[1000] rounded-[40px] border border-b-w-10 bg-[rgba(34,34,34,0.8)] px-[14px] py-[8px] text-center text-[18px] font-[500] leading-[1.2] backdrop-blur-[10px]">
                       {month}
                     </div>
                     {(eventsList as Event[]).map((event: Event) => (
@@ -245,7 +245,7 @@ export default function UpcomingEventList() {
         description=""
         rightContent={
           isMobile ? (
-            <div className="flex items-center justify-between w-full">
+            <div className="flex w-full items-center justify-between">
               <Accordion fullWidth>
                 <AccordionItem
                   key="1"
@@ -305,7 +305,7 @@ export default function UpcomingEventList() {
         }
       />
       <div className="flex flex-row gap-[20px]">
-        <div className="flex-1 w-full">
+        <div className="w-full flex-1">
           {isLoading ? (
             <div className="flex gap-[20px] overflow-auto px-[20px]">
               {Array.from({ length: 6 }).map((_, index) => (
@@ -316,8 +316,8 @@ export default function UpcomingEventList() {
             <EventList events={filteredEvents} isLoading={isLoading} />
           )}
         </div>
-        <div className="w-[320px] px-[20px] mr-[20px] flex flex-col gap-[20px] tablet:hidden mobile:hidden">
-          <p className="py-[20px] px-[10px] text-[18px] font-[700] leading-[1.2] border-b border-b-w-10">
+        <div className="mr-[20px] flex w-[320px] flex-col gap-[20px] px-[20px] tablet:hidden mobile:hidden">
+          <p className="border-b border-b-w-10 px-[10px] py-[20px] text-[18px] font-[700] leading-[1.2]">
             Sort & Filter Events
           </p>
           <Calendar
@@ -327,12 +327,12 @@ export default function UpcomingEventList() {
             minValue={today(getLocalTimeZone()).add({ days: 1 })}
             isDateUnavailable={isDateUnavailable}
             bottomContent={
-              <div className="p-[14px] w-full pt-0">
+              <div className="w-full p-[14px] pt-0">
                 <Button
                   color="functional"
                   variant="light"
                   fullWidth
-                  className="text-[14px] h-[30px] opacity-80"
+                  className="h-[30px] text-[14px] opacity-80"
                   startContent={<ArrowsCounterClockwiseIcon />}
                   onPress={() => setSelectedDate(null)}
                 >
@@ -343,7 +343,7 @@ export default function UpcomingEventList() {
             onChange={setSelectedDate}
           />
 
-          <div className="w-full flex flex-col gap-[10px]">
+          <div className="flex w-full flex-col gap-[10px]">
             <CalendarSelect
               options={locations}
               defaultSelectedKey="anywhere"

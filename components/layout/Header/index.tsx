@@ -6,9 +6,10 @@ import SidebarDrawer from '../Sidebar/SidebarDrawer';
 import { useAppContext } from '@/context/AppContext';
 import { Button } from '@/components/base';
 import UserProfileSection from '../UserProfileSection';
-import NextImage from 'next/image'
+import NextImage from 'next/image';
 
-const GreenBlurDataUrl = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNc/+mZKQAHnQK+h0UQYgAAAABJRU5ErkJggg=='
+const GreenBlurDataUrl =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNc/+mZKQAHnQK+h0UQYgAAAABJRU5ErkJggg==';
 
 const Header = () => {
   const { openSidebar, setOpenSidebar } = useAppContext();
@@ -19,10 +20,10 @@ const Header = () => {
     pathName?.split('/')[1] === 'spaces' && pathName?.split('/').length > 2;
 
   return (
-    <div className="h-[50px] bg-[rgba(44,44,44,0.8)] flex items-center justify-between px-[10px] py-[8px] border-b border-[rgba(255,255,255,0.1)] z-[1000] sticky top-0 backdrop-blur-[20px]">
-      <div className="flex items-center cursor-pointer">
+    <div className="sticky top-0 z-[1000] flex h-[50px] items-center justify-between border-b border-[rgba(255,255,255,0.1)] bg-[rgba(44,44,44,0.8)] px-[10px] py-[8px] backdrop-blur-[20px]">
+      <div className="flex cursor-pointer items-center">
         <Button
-          className="hidden tablet:block mobile:block w-[40px] min-w-[40px] p-[10px] bg-transparent"
+          className="hidden w-[40px] min-w-[40px] bg-transparent p-[10px] tablet:block mobile:block"
           onPress={() => setOpenSidebar(true)}
         >
           <MenuIcon />
@@ -30,7 +31,7 @@ const Header = () => {
 
         {isSpacePath ? (
           <Button
-            className="tablet:hidden mobile:hidden w-[40px] min-w-[40px] p-[10px] bg-transparent"
+            className="w-[40px] min-w-[40px] bg-transparent p-[10px] tablet:hidden mobile:hidden"
             onPress={() => setOpenSidebar(true)}
           >
             <MenuIcon />
@@ -44,7 +45,7 @@ const Header = () => {
           height={30}
           onClick={() => router.push('/')}
           alt="Logo"
-          placeholder={"blur"}
+          placeholder={'blur'}
           blurDataURL={GreenBlurDataUrl}
           priority
         />
@@ -56,12 +57,12 @@ const Header = () => {
           height={30}
           onClick={() => router.push('/')}
           alt="Logo"
-          placeholder={"blur"}
+          placeholder={'blur'}
           blurDataURL={GreenBlurDataUrl}
           priority
         />
 
-        <span className="mobile:hidden text-[14px] font-[300] opacity-80 leading-[1.2] italic text-white pl-[10px]">
+        <span className="pl-[10px] text-[14px] font-[300] italic leading-[1.2] text-white opacity-80 mobile:hidden">
           beta
         </span>
       </div>

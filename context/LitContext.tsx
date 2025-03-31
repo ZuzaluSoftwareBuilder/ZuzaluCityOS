@@ -4,11 +4,9 @@ import {
   encryptString,
   decryptToString,
   disconnectWeb3,
-  checkAndSignAuthMessage,
 } from '@lit-protocol/lit-node-client';
 import { LitNetwork } from '@lit-protocol/constants';
 import {
-  createSiweMessage,
   generateAuthSig,
   LitAbility,
   LitAccessControlConditionResource,
@@ -16,7 +14,6 @@ import {
   LitActionResource,
 } from '@lit-protocol/auth-helpers';
 import { createSiweMessageWithRecaps } from '@lit-protocol/auth-helpers';
-import * as ethers from 'ethers';
 import { addLitUser } from '@/services/lit/addUser';
 
 interface LitContextType {

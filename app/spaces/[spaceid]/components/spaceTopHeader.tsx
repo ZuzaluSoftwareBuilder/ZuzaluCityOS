@@ -52,11 +52,11 @@ const SpaceTopHeader: React.FC = () => {
           )}
         >
           <Button
-            className="h-[34px] min-w-[auto] bg-[#363636] hover:bg-[#424242] rounded-[10px] flex items-center justify-center p-1 gap-1"
+            className="flex h-[34px] min-w-[auto] items-center justify-center gap-1 rounded-[10px] bg-[#363636] p-1 hover:bg-[#424242]"
             onPress={() => toggleDrawer(true)}
           >
             {isSpaceDataLoading ? (
-              <Skeleton className="w-[30px] h-[30px] rounded-full bg-[rgba(34,34,34,0.8)]"></Skeleton>
+              <Skeleton className="size-[30px] rounded-full bg-[rgba(34,34,34,0.8)]"></Skeleton>
             ) : spaceData?.avatar ? (
               <Image
                 src={spaceData.avatar}
@@ -86,11 +86,11 @@ const SpaceTopHeader: React.FC = () => {
             body: 'bg-transparent',
           }}
         >
-          <DrawerContent className="w-[260px] h-[calc(100vh)] border-r border-[rgba(255,255,255,0.1)] rounded-none bg-[rgba(34,34,34,0.8)] backdrop-filter backdrop-blur-[12px]">
-            <DrawerBody className="p-0 flex flex-col h-full gap-0">
-              <div className="flex items-center h-[50px] px-[10px] bg-[#2C2C2C]">
+          <DrawerContent className="h-[calc(100vh)] w-[260px] rounded-none border-r border-[rgba(255,255,255,0.1)] bg-[rgba(34,34,34,0.8)] backdrop-blur-md">
+            <DrawerBody className="flex h-full flex-col gap-0 p-0">
+              <div className="flex h-[50px] items-center bg-[#2C2C2C] px-[10px]">
                 <div
-                  className="h-full bg-[#363636] bg-transparent flex items-center gap-[5px] cursor-pointer"
+                  className="flex h-full cursor-pointer items-center gap-[5px] bg-transparent"
                   onClick={handleBack}
                 >
                   <CaretLeft
@@ -99,7 +99,7 @@ const SpaceTopHeader: React.FC = () => {
                     format={'Stroke'}
                     className="text-[#EDDCDC]"
                   />
-                  <span className="text-white text-[13px] font-medium">
+                  <span className="text-[13px] font-medium text-white">
                     Exit Space
                   </span>
                 </div>

@@ -11,11 +11,11 @@ interface SmallEventCardProps {
 
 export function SmallEventCardSkeleton() {
   return (
-    <div className="border-1 border-b-w-10 rounded-[10px] flex gap-[14px] p-[10px] hover:bg-white/5">
-      <Skeleton className="rounded-[10px] w-[100px] h-[100px] mobile:w-[60px] mobile:h-[60px]">
+    <div className="flex gap-[14px] rounded-[10px] border-1 border-b-w-10 p-[10px] hover:bg-white/5">
+      <Skeleton className="size-[100px] rounded-[10px] mobile:size-[60px]">
         <div className="flex-0"></div>
       </Skeleton>
-      <div className="flex flex-col gap-[10px] w-[250px]">
+      <div className="flex w-[250px] flex-col gap-[10px]">
         <Skeleton className="rounded-[4px]">
           <div className="h-[22px]">By:</div>
         </Skeleton>
@@ -42,7 +42,7 @@ export function SmallEventCard({ data }: SmallEventCardProps) {
 
   return (
     <div
-      className="border-1 border-b-w-10 rounded-[10px] flex gap-[14px] p-[10px] hover:bg-white/5 transition-colors cursor-pointer"
+      className="flex cursor-pointer gap-[14px] rounded-[10px] border-1 border-b-w-10 p-[10px] transition-colors hover:bg-white/5"
       onClick={handleNavigation}
     >
       <Avatar
@@ -55,8 +55,8 @@ export function SmallEventCard({ data }: SmallEventCardProps) {
         }}
       />
       <div className="flex flex-col gap-[10px]">
-        <div className="flex gap-[10px] items-center mobile:gap-[5px]">
-          <div className="flex gap-[6px] items-center">
+        <div className="flex items-center gap-[10px] mobile:gap-[5px]">
+          <div className="flex items-center gap-[6px]">
             <span className="text-[10px] leading-[1.2] opacity-60">By:</span>
             <Avatar
               src={
@@ -67,19 +67,19 @@ export function SmallEventCard({ data }: SmallEventCardProps) {
                 base: 'w-[18px] h-[18px]',
               }}
             />
-            <span className="text-[13px] leading-[1.4] opacity-60 whitespace-nowrap">
+            <span className="whitespace-nowrap text-[13px] leading-[1.4] opacity-60">
               {space?.name}
             </span>
           </div>
-          <span className="text-[14px] leading-[1.6] opacity-60 whitespace-nowrap">
+          <span className="whitespace-nowrap text-[14px] leading-[1.6] opacity-60">
             {dayjs(startTime).utc().format('MMM D')} -{' '}
             {dayjs(endTime).utc().format('MMM D')}
           </span>
         </div>
-        <p className="text-[20px] font-bold leading-[1.2] truncate">{title}</p>
-        <div className="flex gap-[6px] items-center opacity-50">
+        <p className="truncate text-[20px] font-bold leading-[1.2]">{title}</p>
+        <div className="flex items-center gap-[6px] opacity-50">
           <MapIcon size={4} />
-          <span className="text-[10px] leading-[1.2] uppercase">
+          <span className="text-[10px] uppercase leading-[1.2]">
             {eventLocation}
           </span>
         </div>

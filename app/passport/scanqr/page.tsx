@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Stack, Typography, Box, useMediaQuery, useTheme } from '@mui/material';
+import { Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { LeftArrowIcon } from '@/components/icons';
 import { ZuButton } from '@/components/core';
 import { useRouter } from 'next/navigation';

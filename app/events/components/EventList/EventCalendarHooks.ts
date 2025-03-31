@@ -8,10 +8,7 @@ import { ITimeEnum } from './EventListWithCalendar';
 
 dayjs.extend(minMax);
 
-export function useCalendarConstraints(
-  timeFilter: ITimeEnum,
-  events: Event[],
-) {
+export function useCalendarConstraints(timeFilter: ITimeEnum, events: Event[]) {
   return useMemo(() => {
     switch (timeFilter) {
       case ITimeEnum.UpComing:

@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material';
 import { EditIcon } from 'components/icons';
 import Image from 'next/image';
 

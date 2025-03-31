@@ -168,7 +168,7 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
           {(onClose) => (
             <>
               <FormHeader title={title} handleClose={onClose} />
-              <DrawerBody className="p-5 flex flex-col gap-5">
+              <DrawerBody className="flex flex-col gap-5 p-5">
                 <FormTitle>Post Announcement</FormTitle>
                 <PostForm ref={formRef} initialData={formInitialData} />
               </DrawerBody>

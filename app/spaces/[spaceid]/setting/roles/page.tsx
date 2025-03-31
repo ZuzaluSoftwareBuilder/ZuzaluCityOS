@@ -14,7 +14,7 @@ export default function RolesPage() {
   );
 
   return (
-    <div className="w-full pc:p-[20px_40px_0] flex flex-col gap-10 p-[20px]">
+    <div className="flex w-full flex-col gap-10 p-[20px] pc:p-[20px_40px_0]">
       {roleParam ? (
         <RoleDetail
           roleData={roles?.data || []}

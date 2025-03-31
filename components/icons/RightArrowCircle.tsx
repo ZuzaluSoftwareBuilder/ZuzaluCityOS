@@ -10,7 +10,7 @@ export const RightArrowCircleIcon: React.FC<IconProps> = ({
       viewBox="0 0 24 24"
       fill="currentColor"
       color={color}
-      className="w-6 h-6"
+      className="size-6"
     >
       <path
         fillRule="evenodd"

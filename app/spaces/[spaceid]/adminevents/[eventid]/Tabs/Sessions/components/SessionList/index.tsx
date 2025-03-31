@@ -1,16 +1,8 @@
 import * as React from 'react';
 import { Divider, Stack, Typography } from '@mui/material';
-import {
-  InformationIcon,
-  ListIcon,
-  PlusIcon,
-  TableIcon,
-  PlusCircleIcon,
-} from 'components/icons';
-import { ZuButton } from 'components/core';
-import SessionCard from './SessionCard';
+import { InformationIcon, PlusCircleIcon } from 'components/icons';
 
-import { Session, SessionData } from '@/types';
+import { Session } from '@/types';
 
 type SessionsListProps = {
   sessions?: Session[];

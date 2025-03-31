@@ -12,18 +12,31 @@ interface IProps {
   options?: FilmOptionType[];
   onChange: (value: string[]) => void;
   initialValues?: FilmOptionType[];
+  value?: string[];
+  isDisabled?: boolean;
 }
 
 export default function SelectCategories({
   onChange,
+  value: outerValue,
   initialValues = [],
   options = SPACE_CATEGORIES,
+  isDisabled = false,
 }: IProps) {
   const [value, setValue] = React.useState<FilmOptionType[]>(initialValues);
+  React.useEffect(() => {
+    if (outerValue) {
+      setValue(
+        outerValue.map((item) => ({ value: item, label: item, isAdd: false })),
+      );
+    }
+  }, [outerValue]);
 
   const handleChange = useCallback(
     (value: FilmOptionType[]) => {
-      setValue(value);
+      if (!outerValue) {
+        setValue(value);
+      }
       onChange(value.map((item) => item.value) || []);
     },
     [onChange],
@@ -35,6 +48,7 @@ export default function SelectCategories({
       multiple
       value={value}
       onChange={(event, newValue) => handleChange(newValue)}
+      disabled={isDisabled}
       filterOptions={(options, params) => {
         const filtered = filter(options, params);
 

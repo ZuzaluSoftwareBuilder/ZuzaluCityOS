@@ -1,5 +1,5 @@
 import { CubeIcon, GlobalIcon } from '@/components/icons';
-import { Stack, Box, Button, styled, Chip, Typography } from '@mui/material';
+import { Stack, Box, Button, styled, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
 
 const NavButton = styled(Button)(

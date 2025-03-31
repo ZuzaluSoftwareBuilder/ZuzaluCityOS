@@ -155,7 +155,7 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
   return (
     <div
       ref={formContainerRef}
-      className="flex flex-col gap-5 p-5 bg-[#262626] rounded-lg"
+      className="flex flex-col gap-5 rounded-lg bg-[#262626] p-5"
     >
       <FormTitle>Post Details</FormTitle>
       <div className="flex flex-col gap-5">
@@ -196,7 +196,7 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
           />
           {errors?.tags && (
             <FormHelperText error>{errors?.tags.message}</FormHelperText>
-          )}  
+          )}
         </div>
 
         <div className="flex flex-col gap-2.5">

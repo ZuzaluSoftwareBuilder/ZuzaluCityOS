@@ -1,5 +1,3 @@
-import { NEXT_PUBLIC_API_BASE_URL } from '@/constant';
-
 export const createVenue = async (venuePayload: any) => {
   // try {
   const res = await fetch(`/api/admin/createVenue`, {

@@ -37,12 +37,12 @@ export default function AppPage() {
   }, [appId, router, spaceId]);
 
   return (
-    <div className="w-full h-full overflow-hidden relative">
-      <div className="pc:flex h-[50px] border-[#2C2C2C] border-b border-[rgba(255,255,255,0.1)] flex items-center px-5 backdrop-blur-[20px] bg-[#2c2c2c] gap-[10px]">
+    <div className="relative size-full overflow-hidden">
+      <div className="flex h-[50px] items-center gap-[10px] border-b border-[rgba(255,255,255,0.1)] bg-[#2c2c2c] px-5 backdrop-blur-[20px] pc:flex">
         {isLoading ? (
           <>
-            <Skeleton className="w-[20px] h-[20px] rounded-full" />
-            <Skeleton className="w-[100px] h-[20px] rounded-md" />
+            <Skeleton className="size-[20px] rounded-full" />
+            <Skeleton className="h-[20px] w-[100px] rounded-md" />
           </>
         ) : (
           <>

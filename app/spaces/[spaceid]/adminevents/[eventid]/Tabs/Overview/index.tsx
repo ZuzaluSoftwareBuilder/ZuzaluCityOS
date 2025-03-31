@@ -13,17 +13,9 @@ import {
   Typography,
 } from '@mui/material';
 import { OverviewHeader, OverviewDetail, OverviewInvite } from './components';
-import { CreateEventRequest, Event, UpdateEventRequest } from '@/types';
-import {
-  ChangeEvent,
-  KeyboardEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { Event, UpdateEventRequest } from '@/types';
+import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useEditorStore } from '@/components/editor/useEditorStore';
-import { SelectedFile, Uploader3 } from '@lxdao/uploader3';
 import { useUploaderPreview } from '@/components/PreviewFile/useUploaderPreview';
 import {
   allTimezones,
@@ -31,7 +23,6 @@ import {
   useTimezoneSelect,
 } from 'react-timezone-select';
 import dayjs, { Dayjs } from 'dayjs';
-import { createEventKeySupa } from '@/services/event/createEvent';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
@@ -42,7 +33,6 @@ import {
   FormLabelDesc,
   FormTitle,
 } from '@/components/typography/formTypography';
-import { PreviewFile } from '@/components';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimezoneSelector } from '@/components/select/TimezoneSelector';
 import BpCheckbox from '@/components/event/Checkbox';

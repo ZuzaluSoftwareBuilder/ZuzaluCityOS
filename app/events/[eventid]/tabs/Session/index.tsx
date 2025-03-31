@@ -32,17 +32,7 @@ import {
 } from '@/components/typography/formTypography';
 import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { supaCreateSession } from '@/services/session';
-import {
-  Anchor,
-  Event,
-  Profile,
-  ProfileEdge,
-  Session,
-  SessionSupabaseData,
-  Venue,
-  ZucityCeramicSession,
-} from '@/types';
+import { Anchor, Event, Profile, ProfileEdge, Session, Venue } from '@/types';
 import dayjs, { Dayjs } from '@/utils/dayjs';
 import formatDateAgo from '@/utils/formatDateAgo';
 import { supabase } from '@/utils/supabase/client';
@@ -74,13 +64,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { FilterSessionPop } from './FilterSessionPop';
 import { download } from 'utils/download';
 import { decodeOutputData } from '@/components/editor/useEditorStore';
 import dynamic from 'next/dynamic';
 import { formatUserName } from '@/utils/format';
-import { StreamID } from '@ceramicnetwork/streamid';
 import { useLitContext } from '@/context/LitContext';
 
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {

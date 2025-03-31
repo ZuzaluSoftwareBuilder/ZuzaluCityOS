@@ -1,15 +1,10 @@
 'use client';
-import { InformationIcon, PlusIcon } from 'components/icons';
 import { AddAdminRequest, Event, AddMemberRequest } from '@/types';
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Stack, Typography, Box } from '@mui/material';
 import { ZuButton, ZuInput } from '@/components/core';
-import { PlusCircleIcon, XCricleIcon } from '@/components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { Space, SpaceData } from '@/types';
-import { DID } from 'dids';
-import { chainID } from '@/constant';
 import { updateAdmin } from '@/services/event/addAdmin';
 import { updateMember } from '@/services/event/addMember';
 import Dialog from '@/app/spaces/components/Modal/Dialog';

@@ -19,7 +19,7 @@ export const MemberItem: React.FC<MemberProps> = ({
       <Avatar
         src={avatarUrl || '/user/avatar_p.png'}
         alt={name}
-        className="w-8 h-8"
+        className="size-8"
       />
       <span
         className={`text-[14px] font-semibold ${color ? `text-[${color}]` : 'text-white'}`}
@@ -35,8 +35,8 @@ export const MemberItem: React.FC<MemberProps> = ({
 
 export const MemberSkeleton = () => {
   return (
-    <div className="flex items-center gap-2.5 p-[4px_8px] h-[48px]">
-      <Skeleton className="rounded-full w-8 h-8" />
+    <div className="flex h-[48px] items-center gap-2.5 p-[4px_8px]">
+      <Skeleton className="size-8 rounded-full" />
       <Skeleton className="h-[22px] w-24 rounded-md" />
       <Skeleton className="h-[22px] w-20 rounded-md" />
     </div>
@@ -49,8 +49,8 @@ interface IMemberEmptyProps {
 
 export const MemberEmpty = (props: IMemberEmptyProps) => {
   return (
-    <div className="flex flex-col items-center justify-center w-full py-10 gap-2">
-      <div className="w-16 h-16 bg-[rgba(255,255,255,0.05)] rounded-full flex items-center justify-center mb-2">
+    <div className="flex w-full flex-col items-center justify-center gap-2 py-10">
+      <div className="mb-2 flex size-16 items-center justify-center rounded-full bg-[rgba(255,255,255,0.05)]">
         <svg
           width="24"
           height="24"
@@ -92,9 +92,9 @@ export const MemberEmpty = (props: IMemberEmptyProps) => {
           />
         </svg>
       </div>
-      <p className="text-white/60 text-base font-medium">No members found</p>
+      <p className="text-base font-medium text-white/60">No members found</p>
       {props.description && (
-        <p className="text-white/40 text-sm text-center max-w-xs">
+        <p className="max-w-xs text-center text-sm text-white/40">
           {props.description}
         </p>
       )}

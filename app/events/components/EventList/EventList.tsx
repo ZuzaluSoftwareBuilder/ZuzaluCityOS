@@ -59,10 +59,10 @@ function EventList({ events, isLoading }: EventListProps) {
   }, [events]);
 
   return (
-    <div className="flex-1 flex flex-col gap-[10px] pb-[20px] pc:pr-0">
+    <div className="flex flex-1 flex-col gap-[10px] pb-[20px] pc:pr-0">
       {isLoading ? (
-        <div className="flex flex-col gap-[20px] w-full">
-          <Skeleton className="w-full h-[40px] rounded-[40px]">
+        <div className="flex w-full flex-col gap-[20px]">
+          <Skeleton className="h-[40px] w-full rounded-[40px]">
             <div className="h-[38px] w-full"></div>
           </Skeleton>
           {Array.from({ length: 5 }).map((_, index) => (
@@ -80,7 +80,7 @@ function EventList({ events, isLoading }: EventListProps) {
               ([month, eventsList]) => {
                 return (
                   <div key={month} className="flex flex-col gap-[10px]">
-                    <div className="py-[8px] px-[14px] text-[18px] leading-[1.2] font-[500] text-center rounded-[40px] border border-b-w-10 backdrop-blur-[10px] bg-[rgba(34,34,34,0.8)]">
+                    <div className="rounded-[40px] border border-b-w-10 bg-[rgba(34,34,34,0.8)] px-[14px] py-[8px] text-center text-[18px] font-[500] leading-[1.2] backdrop-blur-[10px]">
                       {month}
                     </div>
                     {(eventsList as Event[]).map((event: Event) => (

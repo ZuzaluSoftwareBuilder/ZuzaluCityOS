@@ -1,7 +1,7 @@
 'use client';
 
 import { Stack, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material';
 
 interface SidebarProps {
   tabName: string;

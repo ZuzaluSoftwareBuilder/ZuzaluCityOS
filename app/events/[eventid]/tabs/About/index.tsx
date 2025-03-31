@@ -1,11 +1,5 @@
 'use client';
-import React, {
-  useState,
-  useEffect,
-  Dispatch,
-  SetStateAction,
-  useRef,
-} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import {
   Stack,
@@ -15,15 +9,7 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import {
-  EventName,
-  EventDetail,
-  EventAbout,
-  Initial,
-  Disclaimer,
-  Email,
-  Payment,
-} from 'components/event';
+import { EventName, EventDetail, EventAbout } from 'components/event';
 import EventRegister from '@/components/event/EventRegister';
 import {
   Verify,
@@ -42,15 +28,13 @@ import {
 import { ZuButton } from '@/components/core';
 import { ArrowUpLeftIcon, XMarkIcon } from '@/components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { CeramicResponseType, EventEdge, Event } from '@/types';
+import { Event } from '@/types';
 import { supabase } from '@/utils/supabase/client';
-import { SpaceCard } from '@/components/cards';
 import { Anchor, Contract } from '@/types';
 import { LatLngLiteral } from 'leaflet';
 import getLatLngFromAddress from '@/utils/osm';
 import LotteryCard from '@/components/cards/LotteryCard';
 import { ApplicationForm } from '@/components/event/EventApplication/ApplicationForm';
-import { ApplicationSubmit } from '@/components/event/EventApplication/ApplicationSubmit';
 import { useRouter } from 'next/navigation';
 interface IAbout {
   eventData: Event | undefined;

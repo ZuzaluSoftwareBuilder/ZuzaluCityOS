@@ -1,8 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
-import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '@/constant';
-import { supabase } from '@/utils/supabase/client';
-
 export async function POST(request: Request) {
   const formData = await request.formData();
   const name = formData.get('name');

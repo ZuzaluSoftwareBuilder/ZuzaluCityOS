@@ -25,8 +25,8 @@ interface RoleItemProps {
 
 export const RoleItemSkeleton = () => {
   return (
-    <div className="flex items-center w-full border-b border-[rgba(255,255,255,0.1)] pb-[10px] h-[40px] box-content gap-[5px]">
-      <div className="flex items-center gap-[5px] flex-1">
+    <div className="box-content flex h-[40px] w-full items-center gap-[5px] border-b border-[rgba(255,255,255,0.1)] pb-[10px]">
+      <div className="flex flex-1 items-center gap-[5px]">
         <IdentificationBadge
           size={24}
           weight="fill"
@@ -35,13 +35,13 @@ export const RoleItemSkeleton = () => {
         <Skeleton className="h-5 w-32 rounded" />
       </div>
 
-      <div className="flex justify-between flex-1 mobile:w-[100px] mobile:flex-none mobile:shrink-0">
-        <div className="flex items-center gap-1.5 w-24">
+      <div className="flex flex-1 justify-between mobile:w-[100px] mobile:flex-none mobile:shrink-0">
+        <div className="flex w-24 items-center gap-1.5">
           <Skeleton className="h-4 w-7 rounded" />
           <User size={24} weight="fill" className="text-white opacity-20" />
         </div>
 
-        <Skeleton className="w-10 h-10 rounded-full mobile:hidden" />
+        <Skeleton className="size-10 rounded-full mobile:hidden" />
       </div>
     </div>
   );
@@ -73,23 +73,23 @@ export const RoleItem = ({ item, members }: RoleItemProps) => {
 
   return (
     <div
-      className="flex items-center w-full border-b border-[rgba(255,255,255,0.1)] pb-[10px] h-[40px] box-content gap-[5px] cursor-pointer"
+      className="box-content flex h-[40px] w-full cursor-pointer items-center gap-[5px] border-b border-[rgba(255,255,255,0.1)] pb-[10px]"
       onClick={() => handleRoleClick(item.role)}
     >
-      <div className="flex items-center gap-[5px] flex-1">
+      <div className="flex flex-1 items-center gap-[5px]">
         <IdentificationBadge
           size={24}
           weight="fill"
           className="text-white opacity-40"
         />
-        <span className="text-white text-base font-medium mobile:w-[50vw] truncate">
+        <span className="truncate text-base font-medium text-white mobile:w-[50vw]">
           {item.role.name}
         </span>
       </div>
 
-      <div className="flex justify-between flex-1 mobile:w-[100px] mobile:flex-none mobile:shrink-0">
-        <div className="flex items-center gap-1.5 w-24">
-          <span className="text-white text-[13px]">{roleCount}</span>
+      <div className="flex flex-1 justify-between mobile:w-[100px] mobile:flex-none mobile:shrink-0">
+        <div className="flex w-24 items-center gap-1.5">
+          <span className="text-[13px] text-white">{roleCount}</span>
           <User size={24} weight="fill" className="text-white opacity-40" />
         </div>
 
@@ -98,7 +98,7 @@ export const RoleItem = ({ item, members }: RoleItemProps) => {
             <Button
               isIconOnly
               radius="full"
-              className="w-10 h-10 bg-[rgba(255,255,255,0.05)] mobile:hidden"
+              className="size-10 bg-[rgba(255,255,255,0.05)] mobile:hidden"
               variant="flat"
             >
               <DotsThreeVertical size={16} className="text-white" />

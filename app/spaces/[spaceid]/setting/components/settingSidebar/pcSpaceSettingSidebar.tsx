@@ -69,8 +69,8 @@ const PcSpaceSettingSidebar: React.FC<SettingSubSidebarProps> = ({
   );
 
   return (
-    <div className="w-[260px] h-[calc(100vh-50px)] tablet:hidden mobile:hidden bg-[#222222] border-r border-[rgba(255,255,255,0.1)] flex flex-col justify-between">
-      <div className="flex flex-col gap-[20px] p-[20px] overflow-y-auto">
+    <div className="flex h-[calc(100vh-50px)] w-[260px] flex-col justify-between border-r border-[rgba(255,255,255,0.1)] bg-[#222222] tablet:hidden mobile:hidden">
+      <div className="flex flex-col gap-[20px] overflow-y-auto p-[20px]">
         <div className="flex flex-col gap-[20px]">
           <BackHeader spaceId={spaceId} />
 
@@ -88,22 +88,22 @@ const PcSpaceSettingSidebar: React.FC<SettingSubSidebarProps> = ({
       </div>
 
       {hasChanges && (
-        <div className="flex flex-col items-center gap-[20px] p-[20px] border-t border-[rgba(255,255,255,0.1)]">
+        <div className="flex flex-col items-center gap-[20px] border-t border-[rgba(255,255,255,0.1)] p-[20px]">
           <Button
-            className="w-full bg-[rgba(103,219,255,0.1)] hover:bg-[rgba(103,219,255,0.2)] rounded-lg py-2 px-3.5 flex justify-center items-center gap-[10px]"
+            className="flex w-full items-center justify-center gap-[10px] rounded-lg bg-[rgba(103,219,255,0.1)] px-3.5 py-2 hover:bg-[rgba(103,219,255,0.2)]"
             onPress={onSave}
           >
             <ArrowLineDown size={20} weight="bold" className="text-[#67DBFF]" />
-            <span className="text-[#67DBFF] text-[13px] font-medium">
+            <span className="text-[13px] font-medium text-[#67DBFF]">
               Save Changes
             </span>
           </Button>
           <Button
-            className="w-full bg-[#363636] hover:bg-[#424242] opacity-60 rounded-lg py-2 px-3.5 flex justify-center items-center gap-[10px]"
+            className="flex w-full items-center justify-center gap-[10px] rounded-lg bg-[#363636] px-3.5 py-2 opacity-60 hover:bg-[#424242]"
             onPress={onDiscard}
           >
             <X size={20} weight="bold" className="text-white" />
-            <span className="text-white text-[13px] font-medium">
+            <span className="text-[13px] font-medium text-white">
               Discard Changes
             </span>
           </Button>

@@ -37,9 +37,9 @@ const PostList = () => {
 
   return (
     <div className="flex flex-1 flex-col gap-5">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <span className="font-bold leading-[140%] text-[20px]">Posts</span>
+          <span className="text-[20px] font-bold leading-[140%]">Posts</span>
         </div>
         {(isOwner || isAdmin) && (
           <Button
@@ -80,7 +80,7 @@ PostList.Empty = memo(function Empty() {
         }
       }}
       className={clsx(
-        'flex flex-col items-center bg-[#2d2d2d] rounded-[8px] p-5',
+        'flex flex-col items-center rounded-[8px] bg-[#2d2d2d] p-5',
         isAdmin || isOwner ? 'cursor-pointer' : '',
       )}
     >
@@ -106,9 +106,9 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
   const userDID = ceramic.did?.parent;
 
   return (
-    <Card className="p-2.5 bg-[#2d2d2d] border-[rgba(255,255,255,0.06)]">
+    <Card className="border-[rgba(255,255,255,0.06)] bg-[#2d2d2d] p-2.5">
       <div className="flex gap-2.5">
-        <div className="size-10 rounded-full overflow-hidden shrink-0">
+        <div className="size-10 shrink-0 overflow-hidden rounded-full">
           <Image
             src={post.author.zucityProfile?.avatar ?? '/user/avatar_p.png'}
             alt="avatar"
@@ -117,16 +117,16 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
             height={40}
           />
         </div>
-        <div className="flex flex-col gap-2.5 flex-1 min-w-0">
+        <div className="flex min-w-0 flex-1 flex-col gap-2.5">
           {/* author */}
           <div className="truncate">
-            <span className="text-[14px] leading-[160%] font-bold opacity-60">
+            <span className="text-[14px] font-bold leading-[160%] opacity-60">
               {post.author.zucityProfile?.username || 'Anonymous'}
             </span>
           </div>
           {/* title */}
           <div className="truncate">
-            <span className="text-[16px] leading-[120%] font-bold tracking-[0.02em]">
+            <span className="text-[16px] font-bold leading-[120%] tracking-[0.02em]">
               {post.title}
             </span>
           </div>
@@ -154,13 +154,13 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
                   <ChevronUpIcon size={4} />
                 )
               }
-              className="w-full mt-0"
+              className="mt-0 w-full"
               onClick={() => setIsCollapsed((prev) => !prev)}
             >
               {isCollapsed ? 'Show More' : 'Show Less'}
             </Button>
           )}
-          <div className="text-[10px] leading-[120%] font-normal opacity-50">
+          <div className="text-[10px] font-normal leading-[120%] opacity-50">
             {dayjs(post.createdAt).format('YYYY-MM-DD')} |{' '}
             {post.tags.map((tag) => `# ${tag.tag}`).join(' ')}
           </div>
@@ -171,9 +171,9 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
               <Button
                 isIconOnly
                 aria-label="More Options"
-                className="px-0 bg-transparent"
+                className="bg-transparent px-0"
               >
-                <EllipsisVerticalIcon className="w-5 h-5" />
+                <EllipsisVerticalIcon className="size-5" />
               </Button>
             ) : (
               <></>
@@ -199,7 +199,7 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
 
 PostList.SkeletonList = memo(function SkeletonList() {
   return Array.from({ length: 3 }).map((_, index) => (
-    <Skeleton className="rounded-[10px] w-full h-[130px]" key={index} />
+    <Skeleton className="h-[130px] w-full rounded-[10px]" key={index} />
   ));
 });
 

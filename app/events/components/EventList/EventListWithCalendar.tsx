@@ -198,7 +198,10 @@ const EventListWithCalendar: FC<IEventListWithCalendarProps> = ({
     });
   }, [currentEvents, searchVal, selectedDate, selectedLocation]);
 
-  const calendarDateConstraints = useCalendarConstraints(timeFilter, currentEvents);
+  const calendarDateConstraints = useCalendarConstraints(
+    timeFilter,
+    currentEvents,
+  );
 
   const isDateUnavailable = useDateAvailability(
     currentEvents,
@@ -208,9 +211,9 @@ const EventListWithCalendar: FC<IEventListWithCalendarProps> = ({
   return (
     <>
       {/* pc/tablet navigation */}
-      <div className="tablet:hidden mobile:hidden flex items-center gap-[10px] bg-[rgba(34,34,34,0.90)] backdrop-blur-[10px] py-[10px] ">
+      <div className="flex items-center gap-[10px] bg-[rgba(34,34,34,0.90)] py-[10px] backdrop-blur-[10px] tablet:hidden mobile:hidden ">
         <Ticket size={24} weight="fill" format="Stroke" />
-        <p className="text-[25px] tablet:text-[20px] font-bold text-white leading-[1.2] shadow-[0px_5px_10px_rgba(0,0,0,0.15)]">
+        <p className="text-[25px] font-bold leading-[1.2] text-white shadow-[0px_5px_10px_rgba(0,0,0,0.15)] tablet:text-[20px]">
           Events
         </p>
       </div>
@@ -232,11 +235,11 @@ const EventListWithCalendar: FC<IEventListWithCalendarProps> = ({
         }}
       />
 
-      <div className="flex justify-start items-start gap-[20px] mt-[10px]">
+      <div className="mt-[10px] flex items-start justify-start gap-[20px]">
         <EventList events={filteredEvents} isLoading={isLoading} />
 
-        <div className="tablet:hidden mobile:hidden w-[320px] px-[20px] flex flex-col gap-[20px] ">
-          <p className="py-[20px] px-[10px] text-[18px] font-[700] leading-[1.2] border-b border-b-w-10">
+        <div className="flex w-[320px] flex-col gap-[20px] px-[20px] tablet:hidden mobile:hidden ">
+          <p className="border-b border-b-w-10 px-[10px] py-[20px] text-[18px] font-[700] leading-[1.2]">
             Sort & Filter Events
           </p>
 
@@ -249,7 +252,7 @@ const EventListWithCalendar: FC<IEventListWithCalendarProps> = ({
             isDateUnavailable={isDateUnavailable}
           />
 
-          <div className="w-full flex flex-col gap-[10px]">
+          <div className="flex w-full flex-col gap-[10px]">
             <CalendarSelect
               options={TimeFilterOptions}
               defaultSelectedKey={ITimeEnum.UpComing}

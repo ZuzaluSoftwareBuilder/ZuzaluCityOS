@@ -17,7 +17,6 @@ import { Event } from '@/types';
 import { SearchIcon } from '@/components/icons';
 import EventHeader from './components/EventHeader';
 import { supabase } from '@/utils/supabase/client';
-import dayjs from 'dayjs';
 import EventList from '@/components/event/EventList';
 
 const EventsPage: React.FC = () => {

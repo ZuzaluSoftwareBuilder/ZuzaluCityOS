@@ -1,7 +1,6 @@
 import FormHeader from '@/components/form/FormHeader';
 import { GlobeAltIcon, WindowIcon } from '@/components/icons';
 import { Box, Typography, Stack, Divider } from '@mui/material';
-import Link from 'next/link';
 
 import ShowMoreEdit from '@/components/editor/ShowMoreEdit';
 import { Dapp } from '@/types';
@@ -44,25 +43,25 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
         <Image
           src={bannerUrl}
           alt="dapp-detail"
-          className="w-full h-auto aspect-[620/280] rounded-[10px] object-cover"
+          className="aspect-[620/280] h-auto w-full rounded-[10px] object-cover"
         />
         {isInstallable === '1' && (
-          <div className="flex gap-[10px] items-center">
-            <div className="p-[4px_8px] gap-[5px] rounded-[8px] border border-[#7dffd1]/10 bg-[#7dffd1]/10 flex items-center justify-center text-[13px] text-[#7DFFD1]">
+          <div className="flex items-center gap-[10px]">
+            <div className="flex items-center justify-center gap-[5px] rounded-[8px] border border-[#7dffd1]/10 bg-[#7dffd1]/10 p-[4px_8px] text-[13px] text-[#7DFFD1]">
               <Plugs size={16} color="#7DFFD1" weight="fill" />
               Integrated App
             </div>
-            <p className="text-[13px] flex items-center gap-[5px] p-[4px_8px] rounded-[8px] bg-white/5">
+            <p className="flex items-center gap-[5px] rounded-[8px] bg-white/5 p-[4px_8px] text-[13px]">
               <BoxArrowDown size={16} weight="fill" />
               Installable to Space
             </p>
           </div>
         )}
-        <div className="flex flex-row gap-[10px] items-center">
+        <div className="flex flex-row items-center gap-[10px]">
           <Image
             src={appLogoUrl || ''}
             alt={appName}
-            className="w-[60px] h-[60px] rounded-[10px] border border-[rgba(255,255,255,0.1)]"
+            className="size-[60px] rounded-[10px] border border-[rgba(255,255,255,0.1)]"
             classNames={{
               wrapper: 'shrink-0',
             }}

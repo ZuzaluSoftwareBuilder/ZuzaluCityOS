@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Stack,
   SwipeableDrawer,
@@ -11,13 +11,10 @@ import {
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { TimeStepOptions } from '@mui/x-date-pickers/models';
 import { PreviewFile } from '@/components';
-import { createConnector } from '@lxdao/uploader3-connector';
-import { Uploader3, SelectedFile } from '@lxdao/uploader3';
+import { Uploader3 } from '@lxdao/uploader3';
 // import { VenueHeader, VenueList } from './components';
 import {
   XMarkIcon,
@@ -28,7 +25,6 @@ import {
   MinusIcon,
 } from '@/components/icons';
 import BpCheckbox from '@/components/event/Checkbox';
-import { MOCK_DATA } from '@/mock';
 import { ZuButton, ZuInput } from '@/components/core';
 import { useUploaderPreview } from '@/components/PreviewFile/useUploaderPreview';
 

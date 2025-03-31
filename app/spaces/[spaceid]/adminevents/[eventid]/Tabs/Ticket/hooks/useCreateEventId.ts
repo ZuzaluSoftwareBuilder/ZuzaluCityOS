@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import { isDev, TICKET_FACTORY_ADDRESS } from '@/constant';
 import { config } from '@/context/WalletContext';
-import { updateContractID } from '@/services/event/addContractID';
 import { Event } from '@/types';
 import { convertDateToEpoch } from '@/utils/format';
 import { Address } from 'viem';
