@@ -15,17 +15,17 @@ export const NotificationBadge: React.FC<NotificationBadgeProps> = ({
   const { profile } = useCeramicContext();
   const userId = profile?.author?.id || '';
 
-  useEffect(() => {
-    // 如果用户已登录，则获取未读邀请数量
-    if (userId) {
-      fetchUnreadCount();
-
-      // 设置定时器，每30秒刷新一次未读数量
-      const intervalId = setInterval(fetchUnreadCount, 30000);
-
-      return () => clearInterval(intervalId);
-    }
-  }, [userId]);
+  // useEffect(() => {
+  //   // 如果用户已登录，则获取未读邀请数量
+  //   if (userId) {
+  //     fetchUnreadCount();
+  //
+  //     // 设置定时器，每30秒刷新一次未读数量
+  //     const intervalId = setInterval(fetchUnreadCount, 30000);
+  //
+  //     return () => clearInterval(intervalId);
+  //   }
+  // }, [userId]);
 
   const fetchUnreadCount = async () => {
     if (!userId) return;
