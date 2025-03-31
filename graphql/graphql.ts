@@ -3824,6 +3824,13 @@ export type GetEventByIdsQueryVariables = Exact<{
 
 export type GetEventByIdsQuery = { __typename?: 'Query', nodes: Array<{ __typename?: 'CeramicAccount' } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent', id: string, description?: string | null, profileId: any, tagline?: string | null, gated?: string | null, createdAt: any, endTime: any, externalUrl?: string | null, imageUrl?: string | null, participantCount?: number | null, spaceId: any, startTime: any, status?: string | null, supportChain?: string | null, timezone?: string | null, title: string, tracks?: string | null, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, superAdmin: Array<{ __typename?: 'CeramicAccount', id: string }>, admins?: Array<{ __typename?: 'CeramicAccount', id: string } | null> | null, author: { __typename?: 'CeramicAccount', id: string }, customLinks?: Array<{ __typename?: 'ZucityEventLink', links: string, title: string } | null> | null, members?: Array<{ __typename?: 'CeramicAccount', id: string } | null> | null } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityInvitation' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace' } | { __typename?: 'ZucitySpaceGating' } | { __typename?: 'ZucityUserRoles' } | null> };
 
+export type GetInvitationQueryVariables = Exact<{
+  resourceId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetInvitationQuery = { __typename?: 'Query', zucityInvitationIndex?: { __typename?: 'ZucityInvitationConnection', edges?: Array<{ __typename?: 'ZucityInvitationEdge', node?: { __typename?: 'ZucityInvitation', id: string, resource: string, resourceId: string, isRead: string, lastSentAt?: any | null, message?: string | null, roleId: any, spaceId?: any | null, status: string, updatedAt?: any | null, inviteeProfileId?: any | null, createdAt: any, eventId?: any | null, expiresAt: any, inviterProfileId?: any | null, inviterId: { __typename?: 'CeramicAccount', id: string }, inviterProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, inviteeProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, author: { __typename?: 'CeramicAccount', id: string }, customAttributes?: Array<{ __typename?: 'ZucityInvitationCustomAttribute', tbd?: string | null } | null> | null } | null } | null> | null } | null };
+
 export type SearchProfileByExactUsernameQueryVariables = Exact<{
   username: Scalars['String']['input'];
 }>;
@@ -3908,6 +3915,13 @@ export type GetUserRolesQueryVariables = Exact<{
 
 
 export type GetUserRolesQuery = { __typename?: 'Query', zucityUserRolesIndex?: { __typename?: 'ZucityUserRolesConnection', edges?: Array<{ __typename?: 'ZucityUserRolesEdge', node?: { __typename?: 'ZucityUserRoles', roleId: string, resourceId?: string | null, source?: string | null, userId: { __typename?: 'CeramicAccount', id: string } } | null } | null> | null } | null };
+
+export type GetRolesFromCeramicQueryVariables = Exact<{
+  resourceId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetRolesFromCeramicQuery = { __typename?: 'Query', zucityRolePermissionIndex?: { __typename?: 'ZucityRolePermissionConnection', edges?: Array<{ __typename?: 'ZucityRolePermissionEdge', node?: { __typename?: 'ZucityRolePermission', id: string, roleId: any, permissionIds?: Array<any | null> | null, resourceId?: string | null, source?: string | null, level: string, created_at: any, updated_at: any } | null } | null> | null } | null };
 
 export type GetSpaceQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -4290,6 +4304,55 @@ export const GetEventByIdsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetEventByIdsQuery, GetEventByIdsQueryVariables>;
+export const GetInvitationDocument = new TypedDocumentString(`
+    query GetInvitation($resourceId: String) {
+  zucityInvitationIndex(
+    first: 100
+    filters: {where: {resourceId: {equalTo: $resourceId}}}
+  ) {
+    edges {
+      node {
+        id
+        resource
+        resourceId
+        inviterId {
+          id
+        }
+        inviterProfile {
+          id
+          username
+          address
+          avatar
+        }
+        inviteeProfile {
+          id
+          username
+          address
+          avatar
+        }
+        isRead
+        lastSentAt
+        message
+        roleId
+        spaceId
+        status
+        updatedAt
+        inviteeProfileId
+        author {
+          id
+        }
+        createdAt
+        eventId
+        expiresAt
+        inviterProfileId
+        customAttributes {
+          tbd
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetInvitationQuery, GetInvitationQueryVariables>;
 export const SearchProfileByExactUsernameDocument = new TypedDocumentString(`
     query SearchProfileByExactUsername($username: String!) {
   zucityProfileIndex(
@@ -4563,6 +4626,27 @@ export const GetUserRolesDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetUserRolesQuery, GetUserRolesQueryVariables>;
+export const GetRolesFromCeramicDocument = new TypedDocumentString(`
+    query GetRolesFromCeramic($resourceId: String) {
+  zucityRolePermissionIndex(
+    first: 1000
+    filters: {where: {resourceId: {equalTo: $resourceId}}}
+  ) {
+    edges {
+      node {
+        id
+        roleId
+        permissionIds
+        resourceId
+        source
+        level
+        created_at
+        updated_at
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetRolesFromCeramicQuery, GetRolesFromCeramicQueryVariables>;
 export const GetSpaceDocument = new TypedDocumentString(`
     query GetSpace($id: ID!) {
   node(id: $id) {

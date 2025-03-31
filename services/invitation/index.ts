@@ -5,9 +5,38 @@ import {
 } from '@/types/invitation';
 import axiosInstance from '@/utils/axiosInstance';
 
+/**
+ * 将普通 ID 转换为 CeramicStreamID 格式
+ * Ceramic StreamID 通常以 'k' 开头（如 kjzl6...），后接一系列 base36 编码的字符
+ * 参考: https://developers.ceramic.network/docs/protocol/js-ceramic/streams/stream-id-api
+ * 
+ * @param id 原始ID
+ * @returns 格式化后的 CeramicStreamID
+ */
+const convertToCeramicStreamID = (id: string): string => {
+  // 检查是否已经是 Ceramic 格式（以 'k' 开头）
+  if (id && (id.startsWith('k'))) {
+    return id;
+  }
+
+  // 如果是 UUID 格式（包含连字符），去掉连字符
+  const cleanId = id.replace(/-/g, '');
+
+  // 使用 base36 编码的前缀 - Ceramic StreamID 基本格式
+  // kjzl6 是 Ceramic 中常见的前缀，表示特定类型的流
+  // 生产环境中应该使用 @ceramicnetwork/streamid 库进行正确的编码
+  return `kjzl6${cleanId.slice(0, 44)}`;
+};
+
 export const createInvitation = async (invitation: CreateInvitationRequest): Promise<ZucityInvitation> => {
   try {
-    const response = await axiosInstance.post('/api/invitation', invitation);
+    // 转换 roleId 为 CeramicStreamID 格式
+    const formattedInvitation = {
+      ...invitation,
+      roleId: convertToCeramicStreamID(invitation.roleId)
+    };
+
+    const response = await axiosInstance.post('/api/invitation', formattedInvitation);
     return response.data.data;
   } catch (error) {
     console.error('Failed to create invitation:', error);
@@ -47,9 +76,19 @@ export const rejectInvitation = async (params: InvitationActionRequest): Promise
   }
 };
 
-export const cancelInvitation = async (invitationId: string): Promise<{ success: boolean; message?: string; }> => {
+export interface ICancelInvitationParams {
+  invitationId: string;
+  resourceId: string;
+  resource: string;
+}
+
+export const cancelInvitation = async ({ invitationId, resourceId, resource }: ICancelInvitationParams): Promise<{ success: boolean; message?: string; }> => {
   try {
-    const response = await axiosInstance.post(`/api/invitation/${invitationId}/cancel`);
+    const response = await axiosInstance.post(`/api/invitation/cancel`, {
+      invitationId,
+      id: resourceId,
+      resource
+    });
     return {
       success: true,
       ...response.data

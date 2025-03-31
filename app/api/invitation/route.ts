@@ -16,8 +16,8 @@ export const dynamic = 'force-dynamic';
 
 const createInvitationSchema = z.object({
   inviteeId: z.string().min(1, 'Invitee ID is required'),
-  resourceId: z.string().min(1, 'Resource ID is required'),
-  resourceType: z.string().min(1, 'Resource type is required'),
+  id: z.string().min(1, 'Resource ID is required'),
+  resource: z.string().min(1, 'Resource type is required'),
   roleId: z.string().min(1, 'Role ID is required'),
   message: z.string().optional(),
   expiresAt: z.string().optional(),
@@ -36,7 +36,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       );
     }
 
-    const { inviteeId, resourceId, resourceType, roleId, message, expiresAt } = validationResult.data;
+    const { inviteeId, id, resource, roleId, message, expiresAt } = validationResult.data;
 
     // Verify permissions
     if (!hasRequiredPermission(sessionData, PermissionName.INVITE_USERS)) {
@@ -77,7 +77,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     const inviteeProfileId = await getProfileIdByDid(inviteeId);
 
     // Use ceramic client
-    const error = await authenticateWithSpaceId(resourceId);
+    const error = await authenticateWithSpaceId(id);
     if (error) {
       return createErrorResponse('Failed to get private key', 500);
     }
@@ -86,12 +86,12 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     const newInvitation = {
       inviterId: sessionData.operatorId,
       inviteeId,
-      resource: resourceType,
-      resourceId,
+      resource,
+      resourceId: id,
       roleId,
       status: InvitationStatus.PENDING,
       message: message || '',
-      isRead: false,
+      isRead: 'false',
       inviterProfileId,
       inviteeProfileId,
       createdAt: dayjs().toISOString(),
@@ -107,8 +107,12 @@ export const POST = withSessionValidation(async (request, sessionData) => {
             author {
               id
             }
-            inviterId
-            inviteeId
+            inviterId {
+              id
+            }
+            inviteeId {
+              id
+            }
             resource
             resourceId
             roleId

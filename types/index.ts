@@ -538,14 +538,14 @@ export interface CreateRegAndAccessRequest {
 export interface UpdateRegAndAccessRequest
   extends Partial<CreateRegAndAccessRequest> {
   type:
-    | 'question'
-    | 'method'
-    | 'switch'
-    | 'whitelist'
-    | 'zuPass'
-    | 'scrollpass'
-    | 'zuLotto'
-    | 'scannedList';
+  | 'question'
+  | 'method'
+  | 'switch'
+  | 'whitelist'
+  | 'zuPass'
+  | 'scrollpass'
+  | 'zuLotto'
+  | 'scannedList';
   id: string;
   applicationForm?: string;
   checkinOpen?: string;
@@ -663,6 +663,17 @@ export interface RolePermission {
   id: string;
   role: Role;
   permission_ids: string[];
+}
+
+export interface RolePermissionFromCeramic {
+  id: string;
+  roleId: string;
+  permissionIds: string[];
+  resourceId: string;
+  source: string;
+  level: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface UserRole {

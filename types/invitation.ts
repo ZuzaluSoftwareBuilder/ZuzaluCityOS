@@ -10,7 +10,7 @@ export interface ZucityInvitation {
   roleId: string;
   status: InvitationStatus;
   message?: string;
-  isRead: boolean;
+  isRead: string;
 
   createdAt: string;
   expiresAt: string;
@@ -18,9 +18,14 @@ export interface ZucityInvitation {
   lastSentAt?: string;
 
   customAttributes?: Array<{ tbd?: string }>;
-  
+
   inviterProfile?: ProfileInfo | null;
   inviteeProfile?: ProfileInfo | null;
+
+  eventId?: string;
+  event?: any;
+  spaceId?: string;
+  space?: any;
 }
 
 export enum InvitationStatus {
@@ -48,8 +53,8 @@ export interface InvitationResponse {
 
 export interface CreateInvitationRequest {
   inviteeId: string;
-  resourceId: string;
-  resourceType: string;
+  id: string;
+  resource: string;
   roleId: string;
   message?: string;
   expiresAt?: string;
