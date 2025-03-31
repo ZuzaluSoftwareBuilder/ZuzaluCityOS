@@ -3831,6 +3831,13 @@ export type GetInvitationQueryVariables = Exact<{
 
 export type GetInvitationQuery = { __typename?: 'Query', zucityInvitationIndex?: { __typename?: 'ZucityInvitationConnection', edges?: Array<{ __typename?: 'ZucityInvitationEdge', node?: { __typename?: 'ZucityInvitation', id: string, resource: string, resourceId: string, isRead: string, lastSentAt?: any | null, message?: string | null, roleId: any, spaceId?: any | null, status: string, updatedAt?: any | null, inviteeProfileId?: any | null, createdAt: any, eventId?: any | null, expiresAt: any, inviterProfileId?: any | null, inviterId: { __typename?: 'CeramicAccount', id: string }, inviterProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, inviteeProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, author: { __typename?: 'CeramicAccount', id: string }, customAttributes?: Array<{ __typename?: 'ZucityInvitationCustomAttribute', tbd?: string | null } | null> | null } | null } | null> | null } | null };
 
+export type GetUserInvitationQueryVariables = Exact<{
+  userDid?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetUserInvitationQuery = { __typename?: 'Query', zucityInvitationIndex?: { __typename?: 'ZucityInvitationConnection', edges?: Array<{ __typename?: 'ZucityInvitationEdge', node?: { __typename?: 'ZucityInvitation', id: string, resource: string, resourceId: string, isRead: string, lastSentAt?: any | null, message?: string | null, roleId: any, spaceId?: any | null, status: string, updatedAt?: any | null, inviteeProfileId?: any | null, createdAt: any, eventId?: any | null, expiresAt: any, inviterProfileId?: any | null, inviterId: { __typename?: 'CeramicAccount', id: string }, inviteeId: { __typename?: 'CeramicAccount', id: string }, inviterProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, inviteeProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, author: { __typename?: 'CeramicAccount', id: string }, customAttributes?: Array<{ __typename?: 'ZucityInvitationCustomAttribute', tbd?: string | null } | null> | null } | null } | null> | null } | null };
+
 export type SearchProfileByExactUsernameQueryVariables = Exact<{
   username: Scalars['String']['input'];
 }>;
@@ -4353,6 +4360,58 @@ export const GetInvitationDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetInvitationQuery, GetInvitationQueryVariables>;
+export const GetUserInvitationDocument = new TypedDocumentString(`
+    query GetUserInvitation($userDid: String) {
+  zucityInvitationIndex(
+    first: 100
+    filters: {where: {inviteeId: {equalTo: $userDid}}}
+  ) {
+    edges {
+      node {
+        id
+        resource
+        resourceId
+        inviterId {
+          id
+        }
+        inviteeId {
+          id
+        }
+        inviterProfile {
+          id
+          username
+          address
+          avatar
+        }
+        inviteeProfile {
+          id
+          username
+          address
+          avatar
+        }
+        isRead
+        lastSentAt
+        message
+        roleId
+        spaceId
+        status
+        updatedAt
+        inviteeProfileId
+        author {
+          id
+        }
+        createdAt
+        eventId
+        expiresAt
+        inviterProfileId
+        customAttributes {
+          tbd
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetUserInvitationQuery, GetUserInvitationQueryVariables>;
 export const SearchProfileByExactUsernameDocument = new TypedDocumentString(`
     query SearchProfileByExactUsername($username: String!) {
   zucityProfileIndex(

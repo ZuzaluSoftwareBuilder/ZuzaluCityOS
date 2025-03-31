@@ -12,6 +12,7 @@ import Profile from '@/components/profile';
 import { formatUserName } from '@/utils/format';
 import { WalletIcon } from 'components/icons';
 import { PressEvent } from '@heroui/react';
+import { NotificationBadge } from '@/components/Notification/NotificationBadge';
 
 export function formatAddressString(str?: string, maxLength: number = 10) {
   if (!str) return;
@@ -73,15 +74,18 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
       <Profile showModal={showProfile} onClose={() => setShowProfile(false)} />
       {isAuthenticated ? (
         <>
-          <Button className={buttonClassName} onPress={handleMenuClick}>
-            <Image
-              src={profile?.avatar ?? '/user/avatar_p.png'}
-              alt="avatar"
-              height={avatarSize}
-              width={avatarSize}
-            />
-            {formattedName}
-          </Button>
+          <div className="flex items-center gap-3">
+            <NotificationBadge className="cursor-pointer" />
+            <Button className={buttonClassName} onPress={handleMenuClick}>
+              <Image
+                src={profile?.avatar ?? '/user/avatar_p.png'}
+                alt="avatar"
+                height={avatarSize}
+                width={avatarSize}
+              />
+              {formattedName}
+            </Button>
+          </div>
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}

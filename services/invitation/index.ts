@@ -134,24 +134,158 @@ export const getPendingInvitationsForUser = async (userId: string): Promise<Zuci
   }
 };
 
-export const markInvitationAsRead = async (invitationId: string): Promise<boolean> => {
+export const getUnreadInvitationCount = async (userId: string): Promise<{ success: boolean, count?: number, error?: string }> => {
   try {
-    const response = await axiosInstance.post(`/api/invitation/${invitationId}/read`);
-    return response.data.success;
-  } catch (error) {
-    console.error('Failed to mark invitation as read:', error);
-    throw error;
+    if (!userId) {
+      return {
+        success: false,
+        error: 'User ID is required',
+        count: 0
+      };
+    }
+
+    const response = await fetch(`/api/invitation/unread-count?userId=${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        success: false,
+        error: errorData.message || 'Failed to get unread invitation count',
+        count: 0
+      };
+    }
+
+    const data = await response.json();
+    return {
+      success: true,
+      count: data.count,
+    };
+  } catch (error: any) {
+    console.error('Error getting unread invitation count:', error);
+    return {
+      success: false,
+      error: error.message || 'Unknown error occurred',
+      count: 0,
+    };
   }
 };
 
-export const getUnreadInvitationCount = async (userId: string): Promise<number> => {
+/**
+ * 获取用户的所有待处理邀请
+ * @param userId 用户ID
+ */
+export const getPendingInvitations = async (userId: string): Promise<{ success: boolean, data?: any[], count?: number, error?: string }> => {
   try {
-    const response = await axiosInstance.get('/api/invitation/unread-count', {
-      params: { userId }
+    const response = await fetch(`/api/invitation/pending?userId=${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
-    return response.data.count || 0;
-  } catch (error) {
-    console.error('Failed to get unread invitation count:', error);
-    return 0;
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        success: false,
+        error: errorData.message || 'Failed to get pending invitations',
+      };
+    }
+
+    const data = await response.json();
+    return {
+      success: true,
+      data: data.data,
+      count: data.count,
+    };
+  } catch (error: any) {
+    console.error('Error getting pending invitations:', error);
+    return {
+      success: false,
+      error: error.message || 'Unknown error occurred',
+    };
+  }
+};
+
+/**
+ * 标记邀请为已读
+ * @param invitationId 邀请ID
+ */
+export const markInvitationAsRead = async (invitationId: string): Promise<{ success: boolean, data?: any, error?: string }> => {
+  try {
+    if (!invitationId) {
+      return {
+        success: false,
+        error: 'Invitation ID is required',
+      };
+    }
+
+    const response = await fetch('/api/invitation/mark-read', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ invitationId }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        success: false,
+        error: errorData.message || 'Failed to mark invitation as read',
+      };
+    }
+
+    const data = await response.json();
+    return {
+      success: true,
+      data: data.data,
+    };
+  } catch (error: any) {
+    console.error('Error marking invitation as read:', error);
+    return {
+      success: false,
+      error: error.message || 'Unknown error occurred',
+    };
+  }
+};
+
+/**
+ * 获取用户的所有邀请（不限制状态）
+ * @param userId 用户ID
+ */
+export const getAllUserInvitations = async (userId: string): Promise<{ success: boolean, data?: any[], count?: number, error?: string }> => {
+  try {
+    const response = await fetch(`/api/invitation/list?userId=${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        success: false,
+        error: errorData.message || 'Failed to get all user invitations',
+      };
+    }
+
+    const data = await response.json();
+    return {
+      success: true,
+      data: data.data,
+      count: data.count,
+    };
+  } catch (error: any) {
+    console.error('Error getting all user invitations:', error);
+    return {
+      success: false,
+      error: error.message || 'Unknown error occurred',
+    };
   }
 }; 
