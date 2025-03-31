@@ -61,9 +61,9 @@ const Button = extendVariants(HButton, {
   },
 
   defaultVariants: {
-    color: 'primary',
+    color: 'secondary',
     size: 'md',
-    radius: 'md',
+    radius: 'sm',
     // state: "active",
   },
 });

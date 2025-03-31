@@ -403,3 +403,18 @@ export const GET_ALL_SPACE_AND_MEMBER_QUERY = graphql(`
     }
   }
 `);
+
+export const UPDATE_SPACE_MUTATION = graphql(`
+  mutation UpdateZucitySpace($input: UpdateZucitySpaceInput!) {
+    updateZucitySpace(input: $input) {
+      document {
+        id
+        name
+        description
+        avatar
+        banner
+        category
+      }
+    }
+  }
+`);

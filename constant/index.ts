@@ -377,4 +377,12 @@ export const apps = [
   },
 ];
 
+export const Categories: { value: string; label: string }[] = [
+  { value: 'general-group', label: 'General Group'},
+  { value: 'event-org', label: 'Event Org'},
+  { value: 'venue', label: 'Venue'},
+  { value: 'shop', label: 'Shop'},
+  { value: 'developer', label: 'Developer' },
+  { value: 'permahub', label: 'PermaHub'},
+];
 export const USER_AVATAR_URL = '/user/avatar_p.png';

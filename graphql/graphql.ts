@@ -3976,6 +3976,13 @@ export type GetSpacesAndMembersQueryVariables = Exact<{
 
 export type GetSpacesAndMembersQuery = { __typename?: 'Query', zucitySpaceIndex?: { __typename?: 'ZucitySpaceConnection', edges?: Array<{ __typename?: 'ZucitySpaceEdge', node?: { __typename?: 'ZucitySpace', id: string, avatar?: string | null, banner?: string | null, description: string, name: string, profileId: any, tagline?: string | null, category?: string | null, color?: string | null, createdAt: any, updatedAt: any, tags?: Array<{ __typename?: 'ZucitySpaceTag', tag: string } | null> | null, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, socialLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, customLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, owner: { __typename?: 'CeramicAccount', id: string, zucityProfile?: { __typename?: 'ZucityProfile', id: string, avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null }, userRoles: { __typename?: 'ZucityUserRolesConnection', edges?: Array<{ __typename?: 'ZucityUserRolesEdge', node?: { __typename?: 'ZucityUserRoles', roleId: string } | null } | null> | null } } | null } | null> | null } | null };
 
+export type UpdateZucitySpaceMutationVariables = Exact<{
+  input: UpdateZucitySpaceInput;
+}>;
+
+
+export type UpdateZucitySpaceMutation = { __typename?: 'Mutation', updateZucitySpace?: { __typename?: 'UpdateZucitySpacePayload', document: { __typename?: 'ZucitySpace', id: string, name: string, description: string, avatar?: string | null, banner?: string | null, category?: string | null } } | null };
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -4948,3 +4955,17 @@ export const GetSpacesAndMembersDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetSpacesAndMembersQuery, GetSpacesAndMembersQueryVariables>;
+export const UpdateZucitySpaceDocument = new TypedDocumentString(`
+    mutation UpdateZucitySpace($input: UpdateZucitySpaceInput!) {
+  updateZucitySpace(input: $input) {
+    document {
+      id
+      name
+      description
+      avatar
+      banner
+      category
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateZucitySpaceMutation, UpdateZucitySpaceMutationVariables>;

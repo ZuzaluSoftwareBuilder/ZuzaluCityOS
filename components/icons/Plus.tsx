@@ -1,21 +1,31 @@
-import React from 'react';
+import * as React from 'react';
 import { IconProps } from 'types';
 
-export const PlusIcon: React.FC<IconProps> = ({ size = 6 }) => {
+export const PlusIcon: React.FC<IconProps> = ({
+  size = 6,
+  color = 'white',
+}) => {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
       width={`${size * 4}px`}
       height={`${size * 4}px`}
+      viewBox="0 0 21 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
     >
       <path
+        d="M3.625 10H17.375"
+        stroke={color}
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        d="M12 4.5v15m7.5-7.5h-15"
+      />
+      <path
+        d="M10.5 3.125V16.875"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
