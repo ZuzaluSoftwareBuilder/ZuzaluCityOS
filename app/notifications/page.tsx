@@ -62,7 +62,7 @@ const NotificationsPage: React.FC = () => {
   } = useGraphQL(
     ['GET_USER_INVITATION_QUERY', userDid],
     GET_USER_INVITATION_QUERY,
-    { userDid },
+    { inviteeId: userDid },
     {
       enabled: !!userDid,
       select: (data) =>
@@ -122,6 +122,8 @@ const NotificationsPage: React.FC = () => {
       const result = await acceptInvitation({
         invitationId: invitation.id,
         userId: userId,
+        id: invitation.resourceId,
+        resource: invitation.resource,
       });
 
       if (result.success) {

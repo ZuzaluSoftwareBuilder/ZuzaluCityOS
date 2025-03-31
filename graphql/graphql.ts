@@ -3938,7 +3938,7 @@ export type CreateZucityUserRolesMutationVariables = Exact<{
 }>;
 
 
-export type CreateZucityUserRolesMutation = { __typename?: 'Mutation', createZucityUserRoles?: { __typename?: 'CreateZucityUserRolesPayload', document: { __typename?: 'ZucityUserRoles', created_at: any, updated_at: any, resourceId?: string | null, source?: string | null, roleId: string, userId: { __typename?: 'CeramicAccount', id: string } } } | null };
+export type CreateZucityUserRolesMutation = { __typename?: 'Mutation', createZucityUserRoles?: { __typename?: 'CreateZucityUserRolesPayload', document: { __typename?: 'ZucityUserRoles', id: string, created_at: any, updated_at: any, resourceId?: string | null, source?: string | null, roleId: string, userId: { __typename?: 'CeramicAccount', id: string } } } | null };
 
 export type EnableIndexingZucityUserRolesMutationVariables = Exact<{
   input: EnableIndexingZucityUserRolesInput;
@@ -4836,6 +4836,7 @@ export const CreateZucityUserRolesDocument = new TypedDocumentString(`
     mutation CreateZucityUserRoles($input: CreateZucityUserRolesInput!) {
   createZucityUserRoles(input: $input) {
     document {
+      id
       userId {
         id
       }

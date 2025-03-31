@@ -69,6 +69,8 @@ export interface GetAssignableRolesRequest {
 export interface InvitationActionRequest {
   invitationId: string;
   userId: string;
+  id: string;
+  resource: string;
 }
 
 export interface InvitationQueryParams {

@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { withSessionValidation } from '@/utils/authMiddleware';
+import { withBasicSessionValidation } from '@/utils/authMiddleware';
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -9,6 +9,7 @@ import { dayjs } from '@/utils/dayjs';
 import { authenticateWithSpaceId } from '@/utils/ceramic';
 import { InvitationStatus } from '@/types/invitation';
 import { composeClient } from '@/constant';
+import { GET_INVITATION_BY_ID_QUERY, UPDATE_INVITATION_MUTATION } from '@/services/graphql/invitation';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +17,7 @@ const rejectInvitationSchema = z.object({
   invitationId: z.string().min(1, 'Invitation ID is required'),
 });
 
-export const POST = withSessionValidation(async (request, sessionData) => {
+export const POST = withBasicSessionValidation(async (request, sessionData) => {
   try {
     const body = await request.json();
     const validationResult = rejectInvitationSchema.safeParse(body);
@@ -36,98 +37,40 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Failed to get user information', 401);
     }
 
-    const query = `
-      query GetInvitation($id: ID!) {
-        node(id: $id) {
-          ... on ZucityInvitation {
-            id
-            inviterId
-            inviteeId
-            resource
-            resourceId
-            roleId
-            status
-            createdAt
-            expiresAt
-          }
-        }
-      }
-    `;
+    // 1. 获取并验证邀请信息
+    const invitationResult = await composeClient.executeQuery(GET_INVITATION_BY_ID_QUERY, {
+      id: invitationId
+    });
 
-    const result = await composeClient.executeQuery(query, { id: invitationId });
-
-    if (result.errors) {
-      throw new Error(result.errors.map((e: any) => e.message).join(', '));
+    if (invitationResult.errors) {
+      throw new Error(invitationResult.errors.map((e: any) => e.message).join(', '));
     }
 
-    const invitation = result.data?.node;
+    const invitation = invitationResult.data?.node;
 
     if (!invitation) {
       return createErrorResponse('Invitation not found', 404);
     }
 
-    // Validate the invitation is expired
+    // 2. 基本验证
+    // 验证邀请是否过期
     const expiresAt = dayjs(invitation.expiresAt);
     if (expiresAt.isBefore(dayjs())) {
       return createErrorResponse('Invitation has expired', 400);
     }
 
-    // Validate the invitation status
+    // 验证邀请状态
     if (invitation.status !== InvitationStatus.PENDING) {
       return createErrorResponse('Invalid invitation status, cannot be rejected', 400);
     }
 
-    // Validate the invitee is the current user
-    if (invitation.inviteeId !== operatorId) {
+    // 验证接收者身份
+    if (invitation.inviteeId.id !== operatorId) {
       return createErrorResponse('You do not have permission to reject this invitation', 403);
     }
 
-    // Update invitation status
-    const updateMutation = `
-      mutation UpdateInvitation($input: UpdateZucityInvitationInput!) {
-        updateZucityInvitation(input: $input) {
-          document {
-            id
-            author {
-              id
-            }
-            inviterId
-            inviteeId
-            resource
-            resourceId
-            roleId
-            status
-            message
-            isRead
-            inviterProfileId
-            inviterProfile {
-              id
-              username
-              avatar
-            }
-            inviteeProfileId
-            inviteeProfile {
-              id
-              username
-              avatar
-            }
-            createdAt
-            expiresAt
-            updatedAt
-            lastSentAt
-          }
-        }
-      }
-    `;
-
-    // Authenticate with resource ID
-    const error = await authenticateWithSpaceId(invitation.resourceId);
-    if (error) {
-      return createErrorResponse('Failed to get private key', 500);
-    }
-
-    // Update invitation status to rejected
-    const updateResult = await composeClient.executeQuery(updateMutation, {
+    // 3. 更新邀请状态
+    const updateResult = await composeClient.executeQuery(UPDATE_INVITATION_MUTATION, {
       input: {
         id: invitationId,
         content: {
