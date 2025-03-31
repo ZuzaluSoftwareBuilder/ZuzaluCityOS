@@ -116,7 +116,7 @@ const MemberListPage = () => {
           </div>
         ) : (
           <div className="flex justify-center items-center p-8 text-white/60">
-            没有找到成员
+            No members found
           </div>
         )}
       </div>

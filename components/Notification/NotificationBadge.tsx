@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { getUnreadInvitationCount } from '@/services/invitation';
 import Link from 'next/link';
 import { NotificationIcon } from '@/components/icons/Notification';
 import { useCeramicContext } from '@/context/CeramicContext';
@@ -15,34 +14,11 @@ export const NotificationBadge: React.FC<NotificationBadgeProps> = ({
   const { profile } = useCeramicContext();
   const userId = profile?.author?.id || '';
 
-  // useEffect(() => {
-  //   // 如果用户已登录，则获取未读邀请数量
-  //   if (userId) {
-  //     fetchUnreadCount();
-  //
-  //     // 设置定时器，每30秒刷新一次未读数量
-  //     const intervalId = setInterval(fetchUnreadCount, 30000);
-  //
-  //     return () => clearInterval(intervalId);
-  //   }
-  // }, [userId]);
-
-  const fetchUnreadCount = async () => {
-    if (!userId) return;
-
-    try {
-      const result = await getUnreadInvitationCount(userId);
-      if (result.success) {
-        setUnreadCount(result.count || 0);
-      }
-    } catch (error) {
-      console.error('Failed to fetch unread invitation count:', error);
-    }
-  };
+  // TODO fetch unread count
 
   if (unreadCount === 0) {
     return (
-      <Link href="/notifications" className={`relative ${className}`}>
+      <Link href="/profile/invitations" className={`relative ${className}`}>
         <NotificationIcon className="w-5 h-5 text-gray-600 hover:text-blue-500" />
       </Link>
     );

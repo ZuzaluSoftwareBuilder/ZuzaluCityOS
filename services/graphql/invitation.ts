@@ -1,6 +1,5 @@
 import { graphql } from '@/graphql/gql';
 
-// 获取空间邀请列表的查询
 export const GET_INVITATIONS_QUERY = graphql(`
   query GetSpaceInvitations($resourceId: String) {
     zucityInvitationIndex(
@@ -93,7 +92,6 @@ const GET_INVITATION_QUERY_BY_ID = graphql(`
   }
 `);
 
-// 获取用户收到的邀请列表的查询
 export const GET_USER_INVITATION_QUERY = graphql(`
   query GetUserInvitations($inviteeId: String!) {
     zucityInvitationIndex(
@@ -128,6 +126,10 @@ export const GET_USER_INVITATION_QUERY = graphql(`
           message
           roleId
           spaceId
+          space {
+            id
+            name
+          }
           status
           updatedAt
           inviteeProfileId
@@ -147,7 +149,6 @@ export const GET_USER_INVITATION_QUERY = graphql(`
   }
 `);
 
-// 根据ID获取邀请详情的查询
 export const GET_INVITATION_BY_ID_QUERY = graphql(`
   query GetInvitationById($id: ID!) {
     node(id: $id) {
@@ -190,7 +191,6 @@ export const GET_INVITATION_BY_ID_QUERY = graphql(`
   }
 `);
 
-// 验证角色的查询
 export const VALIDATE_ROLE_QUERY = graphql(`
   query ValidateRoleById($roleId: ID!, $resourceId: String!) {
     zucityRoleIndex(
@@ -211,9 +211,12 @@ export const VALIDATE_ROLE_QUERY = graphql(`
   }
 `);
 
-// 验证资源访问权限的查询
 export const VALIDATE_RESOURCE_ACCESS = graphql(`
-  query ValidateUserResourceAccess($userId: String!, $resourceId: String!, $source: String!) {
+  query ValidateUserResourceAccess(
+    $userId: String!
+    $resourceId: String!
+    $source: String!
+  ) {
     zucityUserRolesIndex(
       first: 1
       filters: {
@@ -237,7 +240,6 @@ export const VALIDATE_RESOURCE_ACCESS = graphql(`
   }
 `);
 
-// 创建邀请的mutation
 export const CREATE_INVITATION_MUTATION = graphql(`
   mutation CreateZucityInvitation($input: CreateZucityInvitationInput!) {
     createZucityInvitation(input: $input) {
@@ -283,7 +285,6 @@ export const CREATE_INVITATION_MUTATION = graphql(`
   }
 `);
 
-// 更新邀请的mutation
 export const UPDATE_INVITATION_MUTATION = graphql(`
   mutation UpdateZucityInvitation($input: UpdateZucityInvitationInput!) {
     updateZucityInvitation(input: $input) {
@@ -320,6 +321,29 @@ export const UPDATE_INVITATION_MUTATION = graphql(`
         expiresAt
         updatedAt
         lastSentAt
+      }
+    }
+  }
+`);
+
+export const GET_UN_READ_INVITATION_COUNT = graphql(`
+  query GetUnreadInvitationsCount($userId: String!) {
+    zucityInvitationCount(
+      filters: {
+        where: { isRead: { equalTo: "false" }, inviteeId: { equalTo: $userId } }
+      }
+    )
+  }
+`);
+
+export const MARK_INVITATION_READ = graphql(`
+  mutation MarkInvitationAsRead($invitationId: ID!) {
+    updateZucityInvitation(
+      input: { id: $invitationId, content: { isRead: "true" } }
+    ) {
+      document {
+        id
+        isRead
       }
     }
   }

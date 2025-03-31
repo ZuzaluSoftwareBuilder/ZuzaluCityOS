@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import React, { useState } from 'react';
+import { useParams } from 'next/navigation';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_INVITATIONS_QUERY } from '@/services/graphql/invitation';
 import {
@@ -12,13 +12,20 @@ import {
   Spinner,
   useDisclosure,
 } from '@heroui/react';
-import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@/components/base'
+import {
+  Button,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from '@/components/base';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { cancelInvitation } from '@/services/invitation';
 import { format } from 'date-fns';
 import { X } from '@phosphor-icons/react';
+import { InvitationStatus } from '@/types/invitation';
 
-// 定义完整的类型用于类型安全
 interface InvitationProfile {
   id?: string;
   username?: string;
@@ -29,7 +36,7 @@ interface InvitationProfile {
 
 interface Invitation {
   id: string;
-  status: string;
+  status: InvitationStatus;
   message?: string | null;
   createdAt: string;
   expiresAt: string;
@@ -66,7 +73,7 @@ const InvitationsPage = () => {
     },
     {
       select: (data) =>
-        data.data?.zucityInvitationIndex?.edges?.map((item) => item?.node) ||
+        data.data?.zucityInvitationIndex?.edges?.map((item) => item?.node).filter(Boolean) ||
         [],
       enabled: !!spaceId,
     },
@@ -80,18 +87,18 @@ const InvitationsPage = () => {
       const { id, resourceId, resource } = selectedInvitation;
       const result = await cancelInvitation({
         invitationId: id,
-        resourceId: resourceId as string,
-        resource: resource as string
+        id: resourceId as string,
+        resource: resource as string,
       });
       if (result.success) {
-        console.log('邀请已成功取消:', result);
+        console.log('Invitation has been successfully cancelled:', result);
         refetch();
         onClose();
       } else {
-        console.error('取消邀请失败:', result.message);
+        console.error('Failed to cancel invitation:', result.message);
       }
     } catch (error) {
-      console.error('取消邀请出错:', error);
+      console.error('Failed to cancel invitation:', error);
     } finally {
       setIsLoading(false);
     }
@@ -102,42 +109,30 @@ const InvitationsPage = () => {
     onOpen();
   };
 
-  const getStatusColor = (status: string | undefined) => {
+  const getStatusColor = (status: InvitationStatus) => {
     if (!status) return 'default';
-
-    switch (status) {
-      case 'pending':
-        return 'warning';
-      case 'accepted':
-        return 'success';
-      case 'rejected':
-        return 'danger';
-      case 'cancelled':
-        return 'default';
-      default:
-        return 'default';
-    }
+    const statusColorMap: Record<InvitationStatus, string> = {
+      [InvitationStatus.PENDING]: 'warning',
+      [InvitationStatus.ACCEPTED]: 'success',
+      [InvitationStatus.REJECTED]: 'danger',
+      [InvitationStatus.CANCELLED]: 'default',
+    };
+    return statusColorMap[status] || 'default';
   };
 
-  const getStatusText = (status: string | undefined) => {
-    if (!status) return '未知状态';
-
-    switch (status) {
-      case 'pending':
-        return 'Pending';
-      case 'accepted':
-        return 'Accepted';
-      case 'rejected':
-        return 'Rejected';
-      case 'cancelled':
-        return 'Cancelled';
-      default:
-        return status;
-    }
+  const getStatusText = (status: InvitationStatus) => {
+    if (!status) return 'Unknown Status';
+    const statusTextMap: Record<InvitationStatus, string> = {
+      [InvitationStatus.PENDING]: 'Pending',
+      [InvitationStatus.ACCEPTED]: 'Accepted',
+      [InvitationStatus.REJECTED]: 'Rejected',
+      [InvitationStatus.CANCELLED]: 'Cancelled',
+    };
+    return statusTextMap[status] || 'Unknown Status';
   };
 
   const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return '未知时间';
+    if (!dateString) return 'Unknown Date';
 
     try {
       return format(new Date(dateString), 'yyyy-MM-dd HH:mm');
@@ -155,7 +150,7 @@ const InvitationsPage = () => {
       ) : !invitations || invitations.length === 0 ? (
         <Card className="bg-white/[0.02] border border-white/10">
           <CardBody className="p-6 text-center text-white/60">
-            <p>暂无邀请记录</p>
+            <p>No invitations found</p>
           </CardBody>
         </Card>
       ) : (
@@ -180,15 +175,16 @@ const InvitationsPage = () => {
                       />
                       <div>
                         <p className="text-white font-medium">
-                          {invitation.inviteeProfile?.username || 'Unknown User'}
+                          {invitation.inviteeProfile?.username ||
+                            'Unknown User'}
                         </p>
                         <Chip
-                          color={getStatusColor(invitation.status)}
+                          color={getStatusColor(invitation.status as InvitationStatus) as any}
                           variant="flat"
                           size="sm"
                           className="mt-1"
                         >
-                          {getStatusText(invitation.status)}
+                          {getStatusText(invitation.status as InvitationStatus)}
                         </Chip>
                       </div>
                     </div>
@@ -200,7 +196,6 @@ const InvitationsPage = () => {
                       <p className="text-white/60 text-sm">
                         Expired Time: {formatDate(invitation.expiresAt)}
                       </p>
-
                     </div>
                   </div>
 
@@ -239,12 +234,17 @@ const InvitationsPage = () => {
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
-          <ModalHeader className="text-white p-[20px]">Cancel Invitation Confirm</ModalHeader>
+          <ModalHeader className="text-white p-[20px]">
+            Cancel Invitation Confirm
+          </ModalHeader>
           <ModalBody className="text-white/80">
             <p>
-              Are you sure you want to cancel the invitation sent to {selectedInvitation?.inviteeProfile?.username || '此用户'}{' '}?
+              Are you sure you want to cancel the invitation sent to{' '}
+              {selectedInvitation?.inviteeProfile?.username || 'the user'} ?
             </p>
-            <p className="text-white/60 mt-2 text-sm">This operation cannot be revoked.</p>
+            <p className="text-white/60 mt-2 text-sm">
+              This operation cannot be revoked.
+            </p>
           </ModalBody>
           <ModalFooter>
             <Button

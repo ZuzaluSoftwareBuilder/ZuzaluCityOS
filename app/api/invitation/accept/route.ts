@@ -83,7 +83,7 @@ export const POST = withBasicSessionValidation(async (request, sessionData) => {
       );
     }
 
-    const existingRoleResult = await executeQuery(
+    const existingRoleResult = await composeClient.executeQuery(
       CHECK_EXISTING_ROLE_QUERY.toString(),
       {
         userId: operatorId,
@@ -107,22 +107,24 @@ export const POST = withBasicSessionValidation(async (request, sessionData) => {
         return createErrorResponse('Failed to get private key', 500);
       }
 
-      const createRoleResult = await executeQuery(CREATE_ROLE_QUERY, {
-        input: {
-          content: {
-            userId: operatorId,
-            roleId: invitation.roleId,
-            resourceId: invitation.resourceId,
-            source: invitation.resource,
-            created_at: dayjs().utc().toISOString(),
-            updated_at: dayjs().utc().toISOString(),
-            ...(invitation.resource === 'space' && {
-              spaceId: invitation.resourceId,
-            }),
+      const createRoleResult = await composeClient.executeQuery(
+        CREATE_ROLE_QUERY.toString(),
+        {
+          input: {
+            content: {
+              userId: operatorId,
+              roleId: invitation.roleId,
+              resourceId: invitation.resourceId,
+              source: invitation.resource,
+              created_at: dayjs().utc().toISOString(),
+              updated_at: dayjs().utc().toISOString(),
+              ...(invitation.resource === 'space' && {
+                spaceId: invitation.resourceId,
+              }),
+            },
           },
         },
-      });
-
+      );
 
       if (createRoleResult.errors) {
         throw new Error(
