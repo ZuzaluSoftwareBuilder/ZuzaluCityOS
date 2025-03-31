@@ -86,12 +86,7 @@ const Create = () => {
           links: ''
         },
       ],
-      customLinks: [
-        {
-          title: '',
-          links: ''
-        },
-      ],
+      customLinks: [],
     }
   });
   const spaceName = profileForm.watch('name');
@@ -267,7 +262,6 @@ const Create = () => {
 
       const content = transformFormData();
       const spaceId = await createSpace(content);
-      console.log('space', spaceId);
       if (spaceId) {
         addToast({
           title: 'Space created successfully',

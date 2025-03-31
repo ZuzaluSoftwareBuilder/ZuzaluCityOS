@@ -4,7 +4,7 @@ import {
   Controller,
   UseFormReturn,
 } from 'react-hook-form';
-import { Input, Button, Select, SelectItem } from '@/components/base';
+import { Input, Select, SelectItem } from '@/components/base';
 import { SOCIAL_TYPES } from '@/constant';
 import {
   XCircle,
@@ -42,7 +42,8 @@ export const LinksValidationSchema = yup.object({
           .required('Please enter URL'),
       }),
     )
-    .required(),
+    .default([])
+    .optional(),
 });
 
 interface LinksContentProps {
@@ -80,7 +81,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
   return (
     <div className="space-y-[30px] mobile:space-y-[20px]">
       <div className="pb-[20px] border-b border-white/10">
-        <h3 className="text-sm text-white/50 font-bold mb-4">Social Links</h3>
+        <h3 className="text-sm text-white/50 font-bold mb-4">Social Links*</h3>
         <div className="space-y-4">
           {socialFields.map((field, index) => (
             <div key={field.id} className="flex gap-2.5">
@@ -148,7 +149,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
         <button
           type="button"
           onClick={() => appendSocial({ title: '', links: '' })}
-          className="h-[40px] mt-[10px] w-full bg-transparent opacity-80 py-2 px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
+          className="h-[40px] mt-[10px] bg-transparent opacity-80 py-2 px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
           disabled={isDisabled}
         >
           <Plus className="h-5 w-5" />
@@ -203,7 +204,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
                   <button
                     type="button"
                     onClick={() => removeCustom(index)}
-                    disabled={customFields.length === 1 || isDisabled}
+                    disabled={isDisabled}
                     className="flex items-center gap-[10px] mt-[5px] mobile:mt-[0px] mobile:h-[40px]"
                   >
                     <span className="hidden text-white/50 text-[14px] mobile:block">
@@ -220,7 +221,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
         <button
           type="button"
           onClick={() => appendCustom({ title: '', links: '' })}
-          className="h-[40px] mt-[10px] w-full bg-transparent opacity-80 py-[8px] px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
+          className="h-[40px] mt-[10px] bg-transparent opacity-80 py-[8px] px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
           disabled={isDisabled}
         >
           <Plus className="h-5 w-5" />

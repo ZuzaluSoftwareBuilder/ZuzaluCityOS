@@ -5,17 +5,12 @@ import { Input, Button, Select, SelectItem } from '@/components/base';
 import { SOCIAL_TYPES } from '@/constant';
 import { XCircle, Plus } from '@phosphor-icons/react';
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { Link } from '@/types';
 import * as yup from 'yup';
 
 export interface LinksFormData {
-    socialLinks: Array<{
-        title: string;
-        links: string;
-    }>;
-    customLinks: Array<{
-        title: string;
-        links: string;
-    }>;
+    socialLinks: Link[];
+    customLinks: Link[];
 }
 
 export const LinksValidationSchema = yup.object({
@@ -30,7 +25,9 @@ export const LinksValidationSchema = yup.object({
             title: yup.string().required('Please enter link title'),
             links: yup.string().url('Please enter a valid URL').required('Please enter URL'),
         })
-    ).required(),
+    )
+    .default([])
+    .optional(),
 });
 
 interface LinksContentProps {
@@ -79,7 +76,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack }) =
             
             <Card className="p-[20px] mobile:p-[14px] space-y-[40px] mobile:space-y-[20px]">
                 <div className="pb-[20px] border-b border-white/10">
-                    <h3 className="text-[14px] text-white/50 font-bold mb-[16px]">Social Links</h3>
+                    <h3 className="text-[14px] text-white/50 font-bold mb-[16px]">Social Links*</h3>
                     <div className="space-y-[16px]">
                         {socialFields.map((field, index) => (
                             <div key={field.id} className="flex gap-[10px]">
@@ -137,7 +134,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack }) =
                     <button
                         type="button"
                         onClick={() => appendSocial({ title: '', links: '' })}
-                        className="h-[40px] mt-[10px] w-full bg-transparent opacity-80 py-2 px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
+                        className="h-[40px] mt-[10px] bg-transparent opacity-80 py-2 px-[14px] font-semibold text-sm justify-start flex items-center gap-2"
                     >
                         <Plus size={20} />
                         <div>Add Social Link</div>
@@ -183,7 +180,6 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack }) =
                                         <button
                                             type="button"
                                             onClick={() => removeCustom(index)}
-                                            disabled={customFields.length === 1}
                                             className="flex items-center gap-[10px] mt-[5px] mobile:mt-0 mobile:h-[40px] mobile:w-full mobile:justify-end"
                                         >
                                             <span className="hidden text-white/50 text-[14px] mobile:block">Remove Link</span>
@@ -198,7 +194,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack }) =
                     <button
                         type="button"
                         onClick={() => appendCustom({ title: '', links: '' })}
-                        className="h-[40px] mt-[16px] w-full bg-transparent opacity-80 py-[8px] px-[14px] font-semibold text-sm justify-start flex items-center gap-[10px]"
+                        className="h-[40px] mt-[16px] bg-transparent opacity-80 py-[8px] px-[14px] font-semibold text-sm justify-start flex items-center gap-[10px]"
                     >
                         <Plus size={20} className="h-[20px] w-[20px]" />
                         <div>Add Custom Link</div>
@@ -220,7 +216,7 @@ const LinksContent: React.FC<LinksContentProps> = ({ form, onSubmit, onBack }) =
                     type="button"
                     color="submit"
                     size="md"
-                    className="w-[120px]text-[#67DBFF]"
+                    className="w-[120px]"
                     endContent={<CaretRight size={20} />}
                     isDisabled={!isValid}
                     onClick={handleSubmit(onSubmitHandler)}

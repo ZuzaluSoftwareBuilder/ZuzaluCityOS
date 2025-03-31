@@ -84,12 +84,7 @@ const EditSpace = () => {
           links: '',
         },
       ],
-      customLinks: [
-        {
-          title: '',
-          links: '',
-        },
-      ],
+      customLinks: [],
     },
   });
 
