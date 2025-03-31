@@ -146,7 +146,10 @@ const Home = () => {
         />
       )}
       <Stack color="white">
-        <Header name={eventData?.title} spaceId={params.spaceid?.toString() ?? ''} />
+        <Header
+          name={eventData?.title}
+          spaceId={params.spaceid?.toString() ?? ''}
+        />
         <Thumb
           tabName={tabName}
           setTabName={setTabName}
