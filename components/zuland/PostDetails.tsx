@@ -79,7 +79,6 @@ const PostDetails: React.FC<PostDetailsProps> = ({
     hasNextPage: hasMoreReflections,
     isLoading: isLoadingReflections,
     isFetching: isFetchingReflections,
-    error,
   } = useInfiniteQuery({
     queryKey: ['reflections', postId],
     queryFn: async ({ pageParam }) => {
