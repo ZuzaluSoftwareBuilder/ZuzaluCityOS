@@ -63,7 +63,6 @@
     "@lxdao/uploader3-connector": "1.2.0",
     "@mui/icons-material": "^5.16.14",
     "@mui/material": "^5.15.16",
-    "@mui/material-nextjs": "^5.15.11",
     "@mui/x-date-pickers": "^7.10.0",
     "@mui/x-date-pickers-pro": "^7.10.0",
     "@pcd/eddsa-ticket-pcd": "^0.10.0",
@@ -180,6 +179,11 @@
     "rimraf": "^5.0.5",
     "storybook": "^8.0.8",
     "typescript": "^5.8.2"
+  },
+  "overrides": {
+    "@storybook/nextjs": {
+      "next": "^15"
+    }
   },
   "lint-staged": {
     "*.{ts,tsx}": [
