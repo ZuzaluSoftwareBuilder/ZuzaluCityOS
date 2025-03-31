@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
+    "build:analyze": "ANALYZE=true next build",
     "start": "next start",
     "lint": "next lint",
     "prettier": "prettier --write .",
@@ -63,6 +64,7 @@
     "@mui/material": "^5.15.16",
     "@mui/x-date-pickers": "^7.10.0",
     "@mui/x-date-pickers-pro": "^7.10.0",
+    "@next/bundle-analyzer": "^15.2.4",
     "@pcd/eddsa-ticket-pcd": "^0.10.0",
     "@pcd/zuauth": "^1.4.5",
     "@phosphor-icons/react": "^2.1.7",
