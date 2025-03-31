@@ -7,7 +7,7 @@ function Calendar({ classNames, ...props }: CalendarProps) {
     <HCalendar
       className="text-decoration-line-none"
       classNames={{
-        base: 'border-b-w-10 border-1 rounded-larg shadow-none bg-transparent',
+        base: 'border-b-w-10 border-1 border-[rgba(255,255,255,0.1)] rounded-[14px] shadow-none !bg-transparent',
         headerWrapper: 'bg-transparent',
         title: 'text-white',
         gridHeader: 'bg-transparent',

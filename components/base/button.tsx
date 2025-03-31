@@ -1,40 +1,44 @@
 import { ButtonProps, extendVariants } from '@heroui/react';
 
 import { Button as HButton, cn } from '@heroui/react';
+import COMMON_STYLES from '@/style/common';
 
-// interface IButtonProps extends ButtonProps {
-//   border?: boolean;
-// }
+interface IButtonProps extends ButtonProps {
+  border?: boolean;
+}
 
-// export default function Button({
-//   children,
-//   className,
-//   ...props
-// }: IButtonProps) {
-//   return (
-//     <HButton
-//       className={cn(
-//         'p-[10px] text-[16px] leading-[1.2] text-white rounded-[10px] gap-[10px]',
-//         props.border && COMMON_STYLES.border,
-//         className,
-//       )}
-//       {...props}
-//     >
-//       {children}
-//     </HButton>
-//   );
-// }
+export default function CalendarButton({
+  children,
+  className,
+  ...props
+}: IButtonProps) {
+  return (
+    <HButton
+      className={cn(
+        'p-[10px] text-[16px] leading-[1.2] text-white rounded-[10px] gap-[10px]',
+        props.border && COMMON_STYLES.border,
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </HButton>
+  );
+}
 
 const Button = extendVariants(HButton, {
   variants: {
     // 根据设计稿定义颜色变体
     color: {
-      primary: 'bg-[#363636] hover:bg-[#404040] text-white',
+      primary:
+        'bg-[#363636] hover:bg-[#404040] text-white disabled:hover:bg-[#363636]',
       secondary:
-        'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.05)] text-white',
+        'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.05)] text-white disabled:hover:bg-[rgba(255,255,255,0.1)]',
       dark: 'bg-[#222222] hover:bg-[#363636] text-white',
       functional:
-        'bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)] border border-solid border-[rgba(255,255,255,0.1)] text-white',
+        'bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)] border border-solid border-[rgba(255,255,255,0.1)] text-white disabled:hover:bg-[rgba(255,255,255,0.05)]',
+      submit:
+        'bg-[rgba(103,219,255,0.2)] hover:bg-[rgba(103,219,255,0.3)] border border-[rgba(103,219,255,0.1)] text-[#67DBFF] disabled:hover:bg-[rgba(103,219,255,0.2)]',
     },
     // 根据设计稿定义尺寸变体
     size: {
@@ -64,4 +68,4 @@ const Button = extendVariants(HButton, {
   },
 });
 
-export { Button };
+export { Button, CalendarButton };
