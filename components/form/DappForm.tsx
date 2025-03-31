@@ -28,7 +28,7 @@ import SelectCategories from '../select/selectCategories';
 import dynamic from 'next/dynamic';
 import FormUploader from './FormUploader';
 import SelectCheckItem from '../select/selectCheckItem';
-import { createDapp, updateDapp } from '@/services/dapp.ts';
+import { createDapp, updateDapp } from '@/services/dapp';
 import { Button, Select, SelectItem } from '../base';
 import { Check } from '@phosphor-icons/react';
 import { isAddress } from 'viem';
