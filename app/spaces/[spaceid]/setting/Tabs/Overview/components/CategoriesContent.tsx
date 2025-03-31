@@ -82,7 +82,7 @@ const CategorySelection: React.FC<{
     <div className="space-y-[10px]">
       <h3 className="text-base font-medium">Select Categories*</h3>
       <p className="text-white/80 text-sm">
-        Select the ones that relay your space's focuses
+        Select the ones that relay your space&apos;s focuses
       </p>
     </div>
 
