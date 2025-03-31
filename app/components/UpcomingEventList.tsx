@@ -294,7 +294,6 @@ export default function UpcomingEventList() {
             </div>
           ) : (
             <Button
-              variant="light"
               endContent={<ArrowCircleRightIcon size={5} />}
               onPress={() => router.push('/events')}
               className="h-[34px] mobile:p-[4px] mobile:text-[14px]"
