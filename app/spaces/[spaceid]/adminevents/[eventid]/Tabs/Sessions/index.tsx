@@ -11,9 +11,7 @@ import {
   SwipeableDrawer,
   OutlinedInput,
   Select,
-  Chip,
   MenuItem,
-  Radio,
   useTheme,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -44,16 +42,14 @@ import {
   Venue,
   SessionSupabaseData,
 } from '@/types';
-import { EXPREIENCE_LEVEL_TYPES, SPACE_CATEGORIES } from '@/constant';
+import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
 import { supabase } from '@/utils/supabase/client';
 import {
   FormLabel,
   FormLabelDesc,
   FormTitle,
 } from '@/components/typography/formTypography';
-import SelectCheckItem from '@/components/select/selectCheckItem';
 import SelectCategories from '@/components/select/selectCategories';
-import ZuAutoCompleteInput from '@/components/input/ZuAutocompleteInput';
 import SelectSearchUser from '@/components/select/selectSearchUser';
 import { supaCreateSession } from '@/services/session';
 import { useEditorStore } from '@/components/editor/useEditorStore';

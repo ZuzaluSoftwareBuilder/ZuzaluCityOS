@@ -1,7 +1,7 @@
 import FormHeader from '@/components/form/FormHeader';
 import { Box, Stack, TextField, Typography } from '@mui/material';
 import { CommonWrapper, ButtonGroup } from '../Common';
-import { ArrowUpRightIcon, LottoPGFIcon, ZuPassIcon } from '@/components/icons';
+import { ArrowUpRightIcon, LottoPGFIcon } from '@/components/icons';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';

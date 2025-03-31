@@ -1,14 +1,11 @@
 'use client';
 import * as React from 'react';
-import { Box, Stack } from '@mui/material';
-import { ZuButton } from 'components/core';
+import { Stack } from '@mui/material';
 import {
-  BoltIcon,
   CalendarIcon,
   HomeIcon,
   SpaceIcon,
   SpacePlusIcon,
-  StreamIcon,
 } from 'components/icons';
 import { useRouter } from 'next/navigation';
 

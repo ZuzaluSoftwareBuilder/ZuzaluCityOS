@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState, useEffect, useRef } from 'react';
+import { useMemo, useState } from 'react';
 import { usePathname, useParams, useRouter } from 'next/navigation';
 import { CaretUpDown } from '@phosphor-icons/react';
 import PcSpaceSettingSidebar from './components/settingSidebar/pcSpaceSettingSidebar';
@@ -68,20 +68,20 @@ const SettingLayout = ({ children }: { children: React.ReactNode }) => {
         currentPath={pathname as string}
       />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex flex-1 flex-col">
         {/* PC */}
-        <div className="pc:flex tablet:hidden mobile:hidden h-[50px] border-[#2C2C2C] border-b border-[rgba(255,255,255,0.1)] flex items-center px-5 backdrop-blur-[20px] bg-[#2c2c2c]">
+        <div className="flex h-[50px] items-center border-b border-[rgba(255,255,255,0.1)] bg-[#2c2c2c] px-5 backdrop-blur-[20px] pc:flex tablet:hidden mobile:hidden">
           <h1 className="text-[18px] font-bold text-white">
             {getCurrentTitle}
           </h1>
         </div>
 
         {/* Mobile */}
-        <div className="pc:hidden p-5 border-b border-[rgba(255,255,255,0.1)] bg-[#2c2c2c]">
+        <div className="border-b border-[rgba(255,255,255,0.1)] bg-[#2c2c2c] p-5 pc:hidden">
           <BackHeader spaceId={spaceId} />
-          <div className="pc:hidden mt-5 h-[28px] flex items-center px-2 hover:bg-[#363636] rounded-lg">
+          <div className="mt-5 flex h-[28px] items-center rounded-lg px-2 hover:bg-[#363636] pc:hidden">
             <div
-              className="flex justify-between items-center w-full cursor-pointer"
+              className="flex w-full cursor-pointer items-center justify-between"
               onClick={() => setIsMobileMenuOpen(true)}
             >
               <h1 className="text-[16px] font-bold text-white shadow-[0px_5px_10px_0px_rgba(0,0,0,0.15)]">

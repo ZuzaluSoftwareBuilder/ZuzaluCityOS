@@ -13,7 +13,6 @@ import {
   Info,
   IdentificationBadge,
   CaretUpDown,
-  X,
 } from '@phosphor-icons/react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import Display from './display';
@@ -43,14 +42,14 @@ const RoleList: React.FC<RoleListProps> = ({
             .map((_, index) => (
               <div
                 key={index}
-                className="flex items-center w-full gap-[5px] p-[5px_10px] rounded-lg"
+                className="flex w-full items-center gap-[5px] rounded-lg p-[5px_10px]"
               >
                 <IdentificationBadge
                   size={20}
                   weight="fill"
                   className="text-white opacity-40"
                 />
-                <Skeleton className="w-24 h-5 rounded" />
+                <Skeleton className="h-5 w-24 rounded" />
               </div>
             ))
         : roleData.map((item) => (
@@ -69,7 +68,7 @@ const RoleList: React.FC<RoleListProps> = ({
                 weight="fill"
                 className="text-white opacity-40"
               />
-              <span className="text-white text-[13px] font-medium">
+              <span className="text-[13px] font-medium text-white">
                 {item.role.name}
               </span>
             </div>
@@ -133,10 +132,10 @@ export default function RoleDetail({
   }, [currentRoleData, router, pathname, roleData]);
 
   return (
-    <div className="flex gap-10 relative">
-      <div className="hidden flex-col gap-5 w-[180px] p-[10px] absolute top-0 left-0 pc:flex">
+    <div className="relative flex gap-10">
+      <div className="absolute left-0 top-0 hidden w-[180px] flex-col gap-5 p-[10px] pc:flex">
         <Button
-          className="bg-[#2C2C2C] text-white py-2 px-3.5 flex items-center gap-[5px] rounded-lg text-[13px] font-medium w-[82px] h-[30px]"
+          className="flex h-[30px] w-[82px] items-center gap-[5px] rounded-lg bg-[#2C2C2C] px-3.5 py-2 text-[13px] font-medium text-white"
           startContent={<CaretLeft size={18} weight="light" />}
           onPress={handleBack}
         >
@@ -175,12 +174,12 @@ export default function RoleDetail({
         </Drawer>
       </div>
 
-      <div className="flex flex-col gap-[30px] w-full pc:w-[600px] p-5 ml-[220px] xl:mx-auto mobile:p-0 mobile:ml-0 tablet:ml-0">
-        <div className="w-full flex flex-col gap-5">
+      <div className="ml-[220px] flex w-full flex-col gap-[30px] p-5 xl:mx-auto pc:w-[600px] tablet:ml-0 mobile:ml-0 mobile:p-0">
+        <div className="flex w-full flex-col gap-5">
           <div className="flex flex-col gap-5">
-            <div className="flex justify-between items-center w-full">
+            <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-5">
-                <h2 className="text-white text-[18px] font-semibold">
+                <h2 className="text-[18px] font-semibold text-white">
                   Edit Fixed Role:
                 </h2>
                 <div className="flex items-center gap-[5px] rounded">
@@ -189,7 +188,7 @@ export default function RoleDetail({
                     weight="fill"
                     className="text-white opacity-40"
                   />
-                  <span className="text-white text-[16px] font-semibold">
+                  <span className="text-[16px] font-semibold text-white">
                     {currentRole}
                   </span>
                 </div>
@@ -197,7 +196,7 @@ export default function RoleDetail({
               <Button
                 isIconOnly
                 variant="light"
-                className="xl:hidden pc:hidden min-w-0 px-0"
+                className="min-w-0 px-0 xl:hidden pc:hidden"
                 onPress={handleOpen}
               >
                 <CaretUpDown size={24} weight="light" className="text-white" />
@@ -221,14 +220,14 @@ export default function RoleDetail({
               </Tabs>
             </div>
             {currentTab !== 'members' && (
-              <div className="flex items-center gap-2.5 bg-[rgba(255,156,102,0.1)] border border-[rgba(255,156,102,0.1)] rounded-lg p-2.5">
+              <div className="flex items-center gap-2.5 rounded-lg border border-[rgba(255,156,102,0.1)] bg-[rgba(255,156,102,0.1)] p-2.5">
                 <Info
                   size={20}
                   className="text-[#FF9C66]"
                   weight="light"
                   format="stroke"
                 />
-                <span className="text-[#FF9C66] text-[14px]">
+                <span className="text-[14px] text-[#FF9C66]">
                   Fixed roles cannot be configured as they are hard-coded into
                   the structure
                 </span>

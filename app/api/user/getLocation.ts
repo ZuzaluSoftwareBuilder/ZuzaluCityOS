@@ -1,4 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
 import jwt from 'jsonwebtoken';
 import { ethers } from 'ethers';
 import { JWT_SECRET, PROVIDER, CONTRACT_ADDRESS } from '@/constant';

@@ -1,5 +1,5 @@
 import { ZuButton } from '@/components/core';
-import { Collapse, Divider, Stack, Typography } from '@mui/material';
+import { Collapse, Stack, Typography } from '@mui/material';
 import { ChevronDownIcon, ChevronUpIcon, WrenchIcon } from '@/components/icons';
 import { useMemo, useState } from 'react';
 import { RoundCheckbox, useStatusContext } from '../Common';

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Stack, Box, Typography } from '@mui/material';
+import { Stack, Box } from '@mui/material';
 import {
   TicketHeader,
-  InitialSetup,
   TicketSetup,
   CreateTicket,
   TicketCreationSummary,
@@ -14,7 +13,6 @@ import {
   ScrollPassList,
   PGFList,
 } from './components';
-import { ZuButton } from 'components/core';
 import { sepolia, mainnet } from 'viem/chains';
 import { waitForTransactionReceipt, writeContract } from 'wagmi/actions';
 import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
@@ -34,7 +32,6 @@ import { TICKET_WITH_WHITELIST_ABI } from '@/utils/ticket_with_whitelist_abi';
 import { useEffect } from 'react';
 import { Event } from '@/types';
 import { Abi, AbiItem } from 'viem';
-import { TicketType } from './components/CreateTicket';
 import { SelectedFile } from '@lxdao/uploader3';
 import { updateTicketContract } from '@/services/event/addTicketContract';
 import Dialog from '@/app/spaces/components/Modal/Dialog';

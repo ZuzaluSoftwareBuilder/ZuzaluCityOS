@@ -1,11 +1,6 @@
 'use client';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import {
-  useRouter,
-  useParams,
-  usePathname,
-  useSearchParams,
-} from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import {
   Stack,
   Typography,

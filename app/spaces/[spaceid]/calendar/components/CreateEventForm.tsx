@@ -9,9 +9,6 @@ import {
   FormHelperText,
   Select,
   MenuItem,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -52,7 +49,7 @@ import { supabase } from '@/utils/supabase/client';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
-import { RRule, Weekday } from 'rrule';
+import { RRule } from 'rrule';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

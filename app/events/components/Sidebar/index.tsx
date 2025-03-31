@@ -1,16 +1,7 @@
-import { ZuCalendar, ZuSelect } from '@/components/core';
 import { SearchIcon } from '@/components/icons';
-import {
-  Box,
-  Button,
-  InputAdornment,
-  OutlinedInput,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { InputAdornment, OutlinedInput, Stack } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React from 'react';
-import dayjs from 'dayjs';
 
 interface SidebarLeftProps {
   onSearch: () => void;

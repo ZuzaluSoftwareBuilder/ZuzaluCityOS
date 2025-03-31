@@ -5,14 +5,11 @@ import {
   Box,
   Modal,
   Button,
-  Select,
-  MenuItem,
   Stack,
   CircularProgress,
   useTheme,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { ZuSelect } from 'components/core';
 import dayjs from 'dayjs';
 import { client } from '@/context/WalletContext';
 import { CeramicResponseType } from '@/types';

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { Avatar, Button, Checkbox, Input, cn, Skeleton } from '@heroui/react';
+import { Button, Checkbox, Input, cn, Skeleton } from '@heroui/react';
 import {
   Drawer,
   DrawerHeader,
@@ -73,23 +73,22 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
 
   useEffect(() => {
     if (!searchQuery) {
-      const selectedMembersItems = selectedMembers
-        .map((memberId) => {
-          const existingMember = existingMembers.find((m) => m.did === memberId);
-          if (existingMember) return existingMember;
+      const selectedMembersItems = selectedMembers.map((memberId) => {
+        const existingMember = existingMembers.find((m) => m.did === memberId);
+        if (existingMember) return existingMember;
 
-          const historyMember = searchHistoryRef.current.get(memberId);
-          if (historyMember) return historyMember;
+        const historyMember = searchHistoryRef.current.get(memberId);
+        if (historyMember) return historyMember;
 
-          return {
-            id: memberId,
-            name: 'User',
-            avatar: '/user/avatar_p.png',
-            address: '',
-            roleId: null,
-            did: memberId,
-          } as IMemberItem;
-        });
+        return {
+          id: memberId,
+          name: 'User',
+          avatar: '/user/avatar_p.png',
+          address: '',
+          roleId: null,
+          did: memberId,
+        } as IMemberItem;
+      });
 
       setDisplayedMembers(selectedMembersItems);
       return;
@@ -134,7 +133,13 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
     );
 
     setDisplayedMembers(uniqueMembers);
-  }, [searchQuery, searchedMembersItems, searchIsLoading, selectedMembers, existingMembers]);
+  }, [
+    searchQuery,
+    searchedMembersItems,
+    searchIsLoading,
+    selectedMembers,
+    existingMembers,
+  ]);
 
   const handleSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,16 +199,16 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
           <DrawerHeader className={'justify-start gap-[14px]'}>
             <Button
               variant="light"
-              className="rounded-[8px] px-[10px] min-w-[auto] h-[34px] flex gap-[10px]"
+              className="flex h-[34px] min-w-[auto] gap-[10px] rounded-[8px] px-[10px]"
               onPress={onClose}
               isDisabled={isAddingMember}
             >
               <X size={20} className="text-white opacity-50" />
-              <span className="text-[14px] font-semibold text-white leading-[1.6]">
+              <span className="text-[14px] font-semibold leading-[1.6] text-white">
                 Close
               </span>
             </Button>
-            <h2 className="text-[18px] font-bold text-white leading-[1.4]">
+            <h2 className="text-[18px] font-bold leading-[1.4] text-white">
               Add Members to Role
             </h2>
           </DrawerHeader>
@@ -215,7 +220,7 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
             isMobile ? 'p-[16px] pb-[24px]' : 'p-[20px]',
           )}
         >
-          <div className="w-full relative">
+          <div className="relative w-full">
             <Input
               variant="bordered"
               classNames={{
@@ -226,7 +231,7 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
               radius="md"
               value={searchQuery}
               startContent={
-                <MagnifyingGlassIcon className="w-[20px] h-[20px] text-white opacity-50" />
+                <MagnifyingGlassIcon className="size-[20px] text-white opacity-50" />
               }
               onChange={handleSearch}
               isDisabled={isAddingMember}
@@ -252,7 +257,7 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
                 return (
                   <div
                     key={member.id}
-                    className={`flex items-center w-full px-[8px] py-[4px] rounded-[8px] ${
+                    className={`flex w-full items-center rounded-[8px] px-[8px] py-[4px] ${
                       isSelected ? 'bg-[rgba(255,255,255,0.05)]' : ''
                     }`}
                   >
@@ -323,9 +328,9 @@ export const AddMemberDrawer: React.FC<IAddMemberDrawerProps> = ({
 
 export const MemberSkeletonWithCheckbox = () => {
   return (
-    <div className="flex items-center gap-[10px] p-[4px_8px] h-[40px]">
-      <Skeleton className="w-[20px] h-[20px] rounded-[4px] mr-[10px]" />
-      <Skeleton className="rounded-full w-8 h-8" />
+    <div className="flex h-[40px] items-center gap-[10px] p-[4px_8px]">
+      <Skeleton className="mr-[10px] size-[20px] rounded-[4px]" />
+      <Skeleton className="size-8 rounded-full" />
       <Skeleton className="h-[22px] w-24 rounded-md" />
       <Skeleton className="h-[22px] w-20 rounded-md" />
     </div>

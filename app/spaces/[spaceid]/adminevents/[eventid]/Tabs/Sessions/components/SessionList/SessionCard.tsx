@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import {
   Stack,
@@ -7,12 +7,7 @@ import {
   Tooltip,
   CircularProgress,
 } from '@mui/material';
-import {
-  EditIcon,
-  MapIcon,
-  SessionIcon,
-  UserCircleIcon,
-} from 'components/icons';
+import { MapIcon, SessionIcon, UserCircleIcon } from 'components/icons';
 import { Profile, Session } from '@/types';
 import { supabase } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';

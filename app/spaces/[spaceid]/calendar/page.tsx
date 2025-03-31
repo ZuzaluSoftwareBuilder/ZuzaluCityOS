@@ -9,9 +9,8 @@ import React, {
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { CalendarConfig, Space } from '@/types';
+import { CalendarConfig } from '@/types';
 import Drawer from '@/components/drawer';
-import { getSpaceEventsQuery } from '@/services/space';
 import { useQuery } from '@tanstack/react-query';
 import ViewEvent from './components/ViewEvent';
 import CreateEventForm from './components/CreateEventForm';

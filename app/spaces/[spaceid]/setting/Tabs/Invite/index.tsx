@@ -5,7 +5,6 @@ import { Stack, Typography, Box } from '@mui/material';
 import { ZuButton, ZuInput } from '@/components/core';
 import { PlusCircleIcon, XCricleIcon } from '@/components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { Space, SpaceData } from '@/types';
 
 interface IMember {
   id: string;
