@@ -3824,19 +3824,57 @@ export type GetEventByIdsQueryVariables = Exact<{
 
 export type GetEventByIdsQuery = { __typename?: 'Query', nodes: Array<{ __typename?: 'CeramicAccount' } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent', id: string, description?: string | null, profileId: any, tagline?: string | null, gated?: string | null, createdAt: any, endTime: any, externalUrl?: string | null, imageUrl?: string | null, participantCount?: number | null, spaceId: any, startTime: any, status?: string | null, supportChain?: string | null, timezone?: string | null, title: string, tracks?: string | null, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, superAdmin: Array<{ __typename?: 'CeramicAccount', id: string }>, admins?: Array<{ __typename?: 'CeramicAccount', id: string } | null> | null, author: { __typename?: 'CeramicAccount', id: string }, customLinks?: Array<{ __typename?: 'ZucityEventLink', links: string, title: string } | null> | null, members?: Array<{ __typename?: 'CeramicAccount', id: string } | null> | null } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityInvitation' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace' } | { __typename?: 'ZucitySpaceGating' } | { __typename?: 'ZucityUserRoles' } | null> };
 
-export type GetInvitationQueryVariables = Exact<{
+export type GetSpaceInvitationsQueryVariables = Exact<{
   resourceId?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetInvitationQuery = { __typename?: 'Query', zucityInvitationIndex?: { __typename?: 'ZucityInvitationConnection', edges?: Array<{ __typename?: 'ZucityInvitationEdge', node?: { __typename?: 'ZucityInvitation', id: string, resource: string, resourceId: string, isRead: string, lastSentAt?: any | null, message?: string | null, roleId: any, spaceId?: any | null, status: string, updatedAt?: any | null, inviteeProfileId?: any | null, createdAt: any, eventId?: any | null, expiresAt: any, inviterProfileId?: any | null, inviterId: { __typename?: 'CeramicAccount', id: string }, inviterProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, inviteeProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, author: { __typename?: 'CeramicAccount', id: string }, customAttributes?: Array<{ __typename?: 'ZucityInvitationCustomAttribute', tbd?: string | null } | null> | null } | null } | null> | null } | null };
+export type GetSpaceInvitationsQuery = { __typename?: 'Query', zucityInvitationIndex?: { __typename?: 'ZucityInvitationConnection', edges?: Array<{ __typename?: 'ZucityInvitationEdge', node?: { __typename?: 'ZucityInvitation', id: string, resource: string, resourceId: string, isRead: string, lastSentAt?: any | null, message?: string | null, roleId: any, spaceId?: any | null, status: string, updatedAt?: any | null, inviteeProfileId?: any | null, createdAt: any, eventId?: any | null, expiresAt: any, inviterProfileId?: any | null, inviterId: { __typename?: 'CeramicAccount', id: string }, inviterProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, inviteeProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, author: { __typename?: 'CeramicAccount', id: string }, customAttributes?: Array<{ __typename?: 'ZucityInvitationCustomAttribute', tbd?: string | null } | null> | null } | null } | null> | null } | null };
 
-export type GetUserInvitationQueryVariables = Exact<{
-  userDid?: InputMaybe<Scalars['String']['input']>;
+export type GetInvitationByIdQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
 }>;
 
 
-export type GetUserInvitationQuery = { __typename?: 'Query', zucityInvitationIndex?: { __typename?: 'ZucityInvitationConnection', edges?: Array<{ __typename?: 'ZucityInvitationEdge', node?: { __typename?: 'ZucityInvitation', id: string, resource: string, resourceId: string, isRead: string, lastSentAt?: any | null, message?: string | null, roleId: any, spaceId?: any | null, status: string, updatedAt?: any | null, inviteeProfileId?: any | null, createdAt: any, eventId?: any | null, expiresAt: any, inviterProfileId?: any | null, inviterId: { __typename?: 'CeramicAccount', id: string }, inviteeId: { __typename?: 'CeramicAccount', id: string }, inviterProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, inviteeProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, author: { __typename?: 'CeramicAccount', id: string }, customAttributes?: Array<{ __typename?: 'ZucityInvitationCustomAttribute', tbd?: string | null } | null> | null } | null } | null> | null } | null };
+export type GetInvitationByIdQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount' } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityInvitation', id: string, resource: string, resourceId: string, roleId: any, status: string, message?: string | null, isRead: string, inviteeProfileId?: any | null, inviterProfileId?: any | null, eventId?: any | null, spaceId?: any | null, createdAt: any, expiresAt: any, updatedAt?: any | null, lastSentAt?: any | null, inviterId: { __typename?: 'CeramicAccount', id: string }, inviteeId: { __typename?: 'CeramicAccount', id: string }, inviterProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, inviteeProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace' } | { __typename?: 'ZucitySpaceGating' } | { __typename?: 'ZucityUserRoles' } | null };
+
+export type GetUserInvitationsQueryVariables = Exact<{
+  inviteeId: Scalars['String']['input'];
+}>;
+
+
+export type GetUserInvitationsQuery = { __typename?: 'Query', zucityInvitationIndex?: { __typename?: 'ZucityInvitationConnection', edges?: Array<{ __typename?: 'ZucityInvitationEdge', node?: { __typename?: 'ZucityInvitation', id: string, resource: string, resourceId: string, isRead: string, lastSentAt?: any | null, message?: string | null, roleId: any, spaceId?: any | null, status: string, updatedAt?: any | null, inviteeProfileId?: any | null, createdAt: any, eventId?: any | null, expiresAt: any, inviterProfileId?: any | null, inviterId: { __typename?: 'CeramicAccount', id: string }, inviteeId: { __typename?: 'CeramicAccount', id: string }, inviterProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, inviteeProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, author: { __typename?: 'CeramicAccount', id: string }, customAttributes?: Array<{ __typename?: 'ZucityInvitationCustomAttribute', tbd?: string | null } | null> | null } | null } | null> | null } | null };
+
+export type ValidateRoleByIdQueryVariables = Exact<{
+  roleId: Scalars['ID']['input'];
+  resourceId: Scalars['String']['input'];
+}>;
+
+
+export type ValidateRoleByIdQuery = { __typename?: 'Query', zucityRoleIndex?: { __typename?: 'ZucityRoleConnection', edges?: Array<{ __typename?: 'ZucityRoleEdge', node?: { __typename?: 'ZucityRole', id: string, name: string, source?: string | null, color: string, created_at: any, updated_at: any } | null } | null> | null } | null };
+
+export type ValidateUserResourceAccessQueryVariables = Exact<{
+  userId: Scalars['String']['input'];
+  resourceId: Scalars['String']['input'];
+  source: Scalars['String']['input'];
+}>;
+
+
+export type ValidateUserResourceAccessQuery = { __typename?: 'Query', zucityUserRolesIndex?: { __typename?: 'ZucityUserRolesConnection', edges?: Array<{ __typename?: 'ZucityUserRolesEdge', node?: { __typename?: 'ZucityUserRoles', id: string, roleId: string, userId: { __typename?: 'CeramicAccount', id: string } } | null } | null> | null } | null };
+
+export type CreateZucityInvitationMutationVariables = Exact<{
+  input: CreateZucityInvitationInput;
+}>;
+
+
+export type CreateZucityInvitationMutation = { __typename?: 'Mutation', createZucityInvitation?: { __typename?: 'CreateZucityInvitationPayload', document: { __typename?: 'ZucityInvitation', id: string, resource: string, resourceId: string, isRead: string, lastSentAt?: any | null, message?: string | null, roleId: any, spaceId?: any | null, status: string, updatedAt?: any | null, inviteeProfileId?: any | null, createdAt: any, eventId?: any | null, expiresAt: any, inviterProfileId?: any | null, inviterId: { __typename?: 'CeramicAccount', id: string }, inviterProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, inviteeProfile?: { __typename?: 'ZucityProfile', id: string, username: string, address: string, avatar?: string | null } | null, author: { __typename?: 'CeramicAccount', id: string }, customAttributes?: Array<{ __typename?: 'ZucityInvitationCustomAttribute', tbd?: string | null } | null> | null } } | null };
+
+export type UpdateZucityInvitationMutationVariables = Exact<{
+  input: UpdateZucityInvitationInput;
+}>;
+
+
+export type UpdateZucityInvitationMutation = { __typename?: 'Mutation', updateZucityInvitation?: { __typename?: 'UpdateZucityInvitationPayload', document: { __typename?: 'ZucityInvitation', id: string, resource: string, resourceId: string, roleId: any, status: string, message?: string | null, isRead: string, inviterProfileId?: any | null, inviteeProfileId?: any | null, createdAt: any, expiresAt: any, updatedAt?: any | null, lastSentAt?: any | null, author: { __typename?: 'CeramicAccount', id: string }, inviterId: { __typename?: 'CeramicAccount', id: string }, inviteeId: { __typename?: 'CeramicAccount', id: string }, inviterProfile?: { __typename?: 'ZucityProfile', id: string, username: string, avatar?: string | null } | null, inviteeProfile?: { __typename?: 'ZucityProfile', id: string, username: string, avatar?: string | null } | null } } | null };
 
 export type SearchProfileByExactUsernameQueryVariables = Exact<{
   username: Scalars['String']['input'];
@@ -4311,8 +4349,8 @@ export const GetEventByIdsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetEventByIdsQuery, GetEventByIdsQueryVariables>;
-export const GetInvitationDocument = new TypedDocumentString(`
-    query GetInvitation($resourceId: String) {
+export const GetSpaceInvitationsDocument = new TypedDocumentString(`
+    query GetSpaceInvitations($resourceId: String) {
   zucityInvitationIndex(
     first: 100
     filters: {where: {resourceId: {equalTo: $resourceId}}}
@@ -4359,12 +4397,53 @@ export const GetInvitationDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<GetInvitationQuery, GetInvitationQueryVariables>;
-export const GetUserInvitationDocument = new TypedDocumentString(`
-    query GetUserInvitation($userDid: String) {
+    `) as unknown as TypedDocumentString<GetSpaceInvitationsQuery, GetSpaceInvitationsQueryVariables>;
+export const GetInvitationByIdDocument = new TypedDocumentString(`
+    query GetInvitationById($id: ID!) {
+  node(id: $id) {
+    ... on ZucityInvitation {
+      id
+      inviterId {
+        id
+      }
+      inviteeId {
+        id
+      }
+      resource
+      resourceId
+      roleId
+      status
+      message
+      isRead
+      inviteeProfileId
+      inviterProfileId
+      eventId
+      spaceId
+      createdAt
+      expiresAt
+      updatedAt
+      lastSentAt
+      inviterProfile {
+        id
+        username
+        address
+        avatar
+      }
+      inviteeProfile {
+        id
+        username
+        address
+        avatar
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetInvitationByIdQuery, GetInvitationByIdQueryVariables>;
+export const GetUserInvitationsDocument = new TypedDocumentString(`
+    query GetUserInvitations($inviteeId: String!) {
   zucityInvitationIndex(
     first: 100
-    filters: {where: {inviteeId: {equalTo: $userDid}}}
+    filters: {where: {inviteeId: {equalTo: $inviteeId}}}
   ) {
     edges {
       node {
@@ -4411,7 +4490,128 @@ export const GetUserInvitationDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<GetUserInvitationQuery, GetUserInvitationQueryVariables>;
+    `) as unknown as TypedDocumentString<GetUserInvitationsQuery, GetUserInvitationsQueryVariables>;
+export const ValidateRoleByIdDocument = new TypedDocumentString(`
+    query ValidateRoleById($roleId: ID!, $resourceId: String!) {
+  zucityRoleIndex(
+    first: 1
+    filters: {where: {resourceId: {equalTo: $resourceId}}}
+  ) {
+    edges {
+      node {
+        id
+        name
+        source
+        color
+        created_at
+        updated_at
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<ValidateRoleByIdQuery, ValidateRoleByIdQueryVariables>;
+export const ValidateUserResourceAccessDocument = new TypedDocumentString(`
+    query ValidateUserResourceAccess($userId: String!, $resourceId: String!, $source: String!) {
+  zucityUserRolesIndex(
+    first: 1
+    filters: {where: {userId: {equalTo: $userId}, resourceId: {equalTo: $resourceId}, source: {equalTo: $source}}}
+  ) {
+    edges {
+      node {
+        id
+        roleId
+        userId {
+          id
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<ValidateUserResourceAccessQuery, ValidateUserResourceAccessQueryVariables>;
+export const CreateZucityInvitationDocument = new TypedDocumentString(`
+    mutation CreateZucityInvitation($input: CreateZucityInvitationInput!) {
+  createZucityInvitation(input: $input) {
+    document {
+      id
+      resource
+      resourceId
+      inviterId {
+        id
+      }
+      inviterProfile {
+        id
+        username
+        address
+        avatar
+      }
+      inviteeProfile {
+        id
+        username
+        address
+        avatar
+      }
+      isRead
+      lastSentAt
+      message
+      roleId
+      spaceId
+      status
+      updatedAt
+      inviteeProfileId
+      author {
+        id
+      }
+      createdAt
+      eventId
+      expiresAt
+      inviterProfileId
+      customAttributes {
+        tbd
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CreateZucityInvitationMutation, CreateZucityInvitationMutationVariables>;
+export const UpdateZucityInvitationDocument = new TypedDocumentString(`
+    mutation UpdateZucityInvitation($input: UpdateZucityInvitationInput!) {
+  updateZucityInvitation(input: $input) {
+    document {
+      id
+      author {
+        id
+      }
+      inviterId {
+        id
+      }
+      inviteeId {
+        id
+      }
+      resource
+      resourceId
+      roleId
+      status
+      message
+      isRead
+      inviterProfileId
+      inviterProfile {
+        id
+        username
+        avatar
+      }
+      inviteeProfileId
+      inviteeProfile {
+        id
+        username
+        avatar
+      }
+      createdAt
+      expiresAt
+      updatedAt
+      lastSentAt
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateZucityInvitationMutation, UpdateZucityInvitationMutationVariables>;
 export const SearchProfileByExactUsernameDocument = new TypedDocumentString(`
     query SearchProfileByExactUsername($username: String!) {
   zucityProfileIndex(
