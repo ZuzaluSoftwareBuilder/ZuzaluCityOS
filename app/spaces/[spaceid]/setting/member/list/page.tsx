@@ -11,7 +11,7 @@ import useOpenDraw from '@/hooks/useOpenDraw';
 const MemberListPage = () => {
   const params = useParams<{ spaceid: string }>();
   const spaceId = params?.spaceid || '';
-  const { members, owner, isLoading, refetchMembers } = useGetSpaceMember(spaceId);
+  const { members, owner, isLoading, refetchMembers, roles } = useGetSpaceMember(spaceId);
   const { open, handleOpen, handleClose } = useOpenDraw();
 
   // 为了UI展示，构造更完整的成员数据
@@ -24,7 +24,7 @@ const MemberListPage = () => {
         id: owner.id,
         name: owner.username || 'Unknown',
         avatar: owner.avatar || '/user/avatar_p.png',
-        address: '0x123...789', // 应该使用真实地址
+        address: '',
         role: 'Owner',
         did: owner?.author?.id || '',
       });
@@ -38,12 +38,15 @@ const MemberListPage = () => {
           // 跳过已经添加的创建者
           if (profile.id === owner?.id) return;
 
+          // 查找对应的角色名称
+          const roleName = roles?.data?.find(role => role.role.id === member.roleId)?.role.name || 'Member';
+
           allMembers.push({
             id: profile.id,
             name: profile.username || 'Unknown',
             avatar: profile.avatar || '/user/avatar_p.png',
-            address: '0x456...012', // 应该使用真实地址
-            role: 'Member',
+            address: '', // 暂时不显示地址
+            role: roleName,
             did: profile?.author?.id || '',
           });
         }
@@ -51,7 +54,7 @@ const MemberListPage = () => {
     }
 
     return allMembers;
-  }, [members, owner]);
+  }, [members, owner, roles]);
 
   return (
     <div className="flex flex-col w-full gap-6">
