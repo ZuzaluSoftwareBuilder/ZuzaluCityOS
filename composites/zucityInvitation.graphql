@@ -12,7 +12,7 @@ type ZucityInvitation
   inviterId: DID!
   resource: String! @string(minLength: 1, maxLength: 100000)
   resourceId: String! @string(minLength: 1, maxLength: 100000)
-  roleId: StreamID!
+  roleId: String! @string(minLength: 1, maxLength: 100000)
   status: String! @string(minLength: 1, maxLength: 100000)
   message: String @string(minLength: 1, maxLength: 100000)
   isRead: String! @string(minLength: 1, maxLength: 100000)
