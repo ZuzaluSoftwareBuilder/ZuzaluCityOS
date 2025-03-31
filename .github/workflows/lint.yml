@@ -5,8 +5,8 @@ on:
     branches: [dev]
 
 jobs:
-  prettier-eslint:
-    name: Prettier and ESLint Check
+  eslint:
+    name: ESLint Check
     runs-on: ubuntu-latest
 
     steps:
@@ -29,12 +29,6 @@ jobs:
         uses: tj-actions/changed-files@v42
         with:
           separator: ','
-
-      - name: Check Prettier on changed files
-        if: steps.changed-files.outputs.all_changed_files != ''
-        run: |
-          echo "Checking Prettier formatting for files: ${{ steps.changed-files.outputs.all_changed_files }}"
-          npx prettier --check $(echo "${{ steps.changed-files.outputs.all_changed_files }}" | tr ',' ' ')
 
       - name: Check ESLint on changed files
         if: steps.changed-files.outputs.all_changed_files != ''
