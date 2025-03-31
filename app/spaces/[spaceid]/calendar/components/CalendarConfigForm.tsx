@@ -198,7 +198,11 @@ export default function CalendarConfigForm({
                     control={control}
                     render={({ field, fieldState: { error } }) => (
                       <>
-                        <SelectCategories options={[]} {...field} />
+                        <SelectCategories
+                          options={[]}
+                          {...field}
+                          value={(field.value as string[]) || []}
+                        />
                         {error && (
                           <FormHelperText error>{error.message}</FormHelperText>
                         )}

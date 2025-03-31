@@ -1,5 +1,3 @@
-import axiosInstance from '@/utils/axiosInstance';
-import axios from 'axios';
 export const addLitUser = async (addresses: string[]) => {
   const response = await fetch('/api/lit/addUser', {
     method: 'POST',

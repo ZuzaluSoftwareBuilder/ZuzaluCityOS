@@ -1,6 +1,6 @@
 'use client';
 import { useParams } from 'next/navigation';
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material';
 import {
   Box,
   Snackbar,

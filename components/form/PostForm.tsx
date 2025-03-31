@@ -1,10 +1,6 @@
 import {
   Box,
-  Chip,
   FormHelperText,
-  MenuItem,
-  OutlinedInput,
-  Select,
   Stack,
   Typography,
   useTheme,
@@ -17,7 +13,6 @@ import {
   FormTitle,
 } from '../typography/formTypography';
 import { ZuInput } from '../core';
-import SelectCheckItem from '../select/selectCheckItem';
 import FormFooter from './FormFooter';
 import { useEditorStore } from '../editor/useEditorStore';
 import Yup from '@/utils/yupExtensions';

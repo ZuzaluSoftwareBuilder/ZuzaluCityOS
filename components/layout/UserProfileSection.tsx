@@ -239,7 +239,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
           color="functional"
           startContent={<WalletIcon size={5} />}
           onPress={() => showAuthPrompt('connectButton')}
-          className="text-[14px] font-[500] leading-[1.2] text-white rounded-[8px] bg-white/5 h-[30px]"
+          className="h-[30px] rounded-[8px] bg-white/5 text-[14px] font-[500] leading-[1.2] text-white"
         >
           Connect
         </Button>

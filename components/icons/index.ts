@@ -245,5 +245,5 @@ export {
   ArrowCircleRightFillIcon,
   CaretDoubleRightIcon,
   StorefrontIcon,
-  VideoIcon
+  VideoIcon,
 };

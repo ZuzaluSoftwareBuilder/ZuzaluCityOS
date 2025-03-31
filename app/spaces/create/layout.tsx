@@ -1,7 +1,5 @@
 import type { Metadata } from 'next';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
-import { ThemeProvider } from '@mui/material/styles';
-import theme from 'theme/theme';
 
 export const metadata: Metadata = {
   title: 'Zuzalu City',
@@ -15,9 +13,9 @@ function EventLayout({
 }>) {
   return (
     <AppRouterCacheProvider>
-      <ThemeProvider theme={theme}>
-        <div>{children}</div>
-      </ThemeProvider>
+      {/* <ThemeProvider theme={theme}> */}
+      <div>{children}</div>
+      {/* </ThemeProvider> */}
     </AppRouterCacheProvider>
   );
 }

@@ -1,8 +1,8 @@
 'use client';
 import * as React from 'react';
 import Link from 'next/link';
-import { Typography, Button, Box, Stack, Skeleton } from '@mui/material';
-import { CheckCircleIcon, PlusCircleIcon, UsersIcon } from '../icons';
+import { Typography, Box, Stack, Skeleton } from '@mui/material';
+import { CheckCircleIcon } from '../icons';
 import { SPACE_CATEGORIES } from '@/constant';
 
 export type SpaceCardProps = {
@@ -26,7 +26,6 @@ const SpaceCard: React.FC<SpaceCardProps> = ({
   isJoined,
   isFollowed,
 }) => {
-
   return (
     <Link href={`/spaces/${id}`} style={{ textDecoration: 'none' }}>
       <Stack
@@ -44,9 +43,11 @@ const SpaceCard: React.FC<SpaceCardProps> = ({
         maxHeight={288}
       >
         {isJoined && (
-          <div className="flex items-center gap-[5px] px-[10px] py-[5px] rounded-[4px] border border-b-w-10 bg-[rgba(34,34,34,0.60)] backdrop-filter backdrop-blur-[5px] absolute right-[10px] top-[10px] z-10">
+          <div className="absolute right-[10px] top-[10px] z-10 flex items-center gap-[5px] rounded-[4px] border border-b-w-10 bg-[rgba(34,34,34,0.60)] px-[10px] py-[5px] backdrop-blur-[5px]">
             <CheckCircleIcon size={4} />
-            <span className="text-[14px] font-[500]">{isFollowed ? 'Followed' : 'Joined'}</span>
+            <span className="text-[14px] font-[500]">
+              {isFollowed ? 'Followed' : 'Joined'}
+            </span>
           </div>
         )}
         <Box

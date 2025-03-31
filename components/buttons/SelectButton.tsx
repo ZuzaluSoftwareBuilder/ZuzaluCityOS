@@ -1,11 +1,8 @@
 'use client';
 import * as React from 'react';
-import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { Box, Typography } from '@mui/material';
-import { useTheme, useMediaQuery } from '@mui/material';
+import { useState, useCallback } from 'react';
+import { Box } from '@mui/material';
 import { ChevronDownIcon } from '../icons';
-import * as util from '../../utils/index';
 
 type SelectButtonProps = {
   onOpened: () => void;

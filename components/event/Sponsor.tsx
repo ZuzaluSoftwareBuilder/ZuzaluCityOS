@@ -7,31 +7,23 @@ import {
   ChevronUpIcon,
   HeartIcon,
 } from '@/components/icons';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
 import { client, config } from '@/context/WalletContext';
 import { useAccount } from 'wagmi';
-import {
-  TICKET_FACTORY_ADDRESS,
-  mUSDC_TOKEN,
-  mUSDT_TOKEN,
-  ticketFactoryGetContract,
-} from '@/constant';
+import { TICKET_FACTORY_ADDRESS } from '@/constant';
 import { Address } from 'viem';
-import dayjs, { Dayjs } from 'dayjs';
-import { convertDateToEpoch } from '@/utils/format';
 import { TICKET_ABI } from '@/utils/ticket_abi';
 import { TICKET_WITH_WHITELIST_ABI } from '@/utils/ticket_with_whitelist_abi';
 import { Abi, AbiItem } from 'viem';
 import { ERC20_ABI } from '@/utils/erc20_abi';
 import { sepolia } from 'viem/chains';
 import { writeContract, waitForTransactionReceipt } from 'wagmi/actions';
-import { ZuButton, ZuInput } from '@/components/core';
+import { ZuButton } from '@/components/core';
 import gaslessFundAndUpload from '@/utils/gaslessFundAndUpload';
 import { generateNFTMetadata } from '@/utils/generateNFTMetadata';
 import { createFileFromJSON } from '@/utils/generateNFTMetadata';
-import { fetchEmailJsConfig } from '@/utils/emailService';
-import { Event, IProps, Contract } from '@/types';
+import { IProps, Contract } from '@/types';
 
 export const SponsorAgree: React.FC<IProps> = ({
   setIsAgree,

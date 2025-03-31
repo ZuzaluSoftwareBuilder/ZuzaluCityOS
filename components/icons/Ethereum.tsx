@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { IconProps } from 'types';
 
 export const EthereumIcon: React.FC = () => {
   return (

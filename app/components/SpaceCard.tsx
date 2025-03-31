@@ -1,6 +1,6 @@
-import { Image, Avatar, Skeleton, cn } from '@heroui/react';
+import { Image, Avatar, Skeleton, cn, Chip } from '@heroui/react';
 import { useMemo } from 'react';
-
+import React from 'react';
 import { Space } from '@/types';
 import {
   ArrowSquareRightIcon,
@@ -9,6 +9,7 @@ import {
 } from '@/components/icons';
 import { Button } from '@/components/base';
 import { useRouter } from 'next/navigation';
+import { Categories } from '@/app/spaces/create/components/constant';
 
 export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
   return (
@@ -59,6 +60,7 @@ interface SpaceCardProps {
   isJoined: boolean;
   isFollowed: boolean;
   autoWidth?: boolean;
+  showFooter?: boolean;
 }
 
 export function SpaceCard({
@@ -66,14 +68,40 @@ export function SpaceCard({
   autoWidth,
   isJoined,
   isFollowed,
+  showFooter = true,
 }: SpaceCardProps) {
-  const { banner, name, tagline, avatar, tags, userRoles } = data;
+  const { banner, name, tagline, avatar, tags, userRoles, category } = data;
   const router = useRouter();
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers = userRoles?.edges.map((item) => item.node).length ?? 0;
     return formatMemberCount(totalMembers + 1);
   }, [userRoles]);
+
+  const SpaceChip = () => {
+    const categoryInfo = useMemo(
+      () => Categories.find((c) => c.value === category),
+      [category],
+    );
+    const chipClass =
+      'bg-white/[0.05] rounded-[4px] text-[10px] px-[4px] py-[8px] gap-[5px]';
+    if (categoryInfo) {
+      const Icon = React.cloneElement(categoryInfo.icon, {
+        size: 16,
+        weight: 'fill',
+      });
+      return (
+        <Chip startContent={Icon} size="sm" className={chipClass}>
+          {categoryInfo.label}
+        </Chip>
+      );
+    }
+    return (
+      <Chip startContent={Categories[0].icon} size="sm" className={chipClass}>
+        {Categories[0].label}
+      </Chip>
+    );
+  };
 
   return (
     <div
@@ -99,6 +127,7 @@ export function SpaceCard({
         <Avatar
           src={avatar}
           alt={name}
+          icon={null}
           classNames={{
             base: 'absolute left-[11px] w-[60px] h-[60px] bottom-[-21px] z-10 shadow-[0px_0px_0px_1px_rgba(34,34,34,0.10)]',
           }}
@@ -118,6 +147,9 @@ export function SpaceCard({
           <span className="text-[13px] leading-[1.4]">
             {formattedMemberCount}
           </span>
+        </div>
+        <div className="mb-[6px]">
+          <SpaceChip />
         </div>
         <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] mb-[6px] truncate text-[18px] font-bold leading-[1.2]">
           {name}
@@ -140,13 +172,21 @@ export function SpaceCard({
             </span>
           )}
         </div>
-        <Button
-          startContent={<ArrowSquareRightIcon />}
-          className="w-full bg-[#363636] py-[6px] text-[14px]"
-          onPress={() => router.push(`/spaces/${data.id}`)}
-        >
-          View Community
-        </Button>
+
+        {showFooter && (
+          <Button
+            startContent={<ArrowSquareRightIcon />}
+            className="w-full bg-[#363636] py-[6px] text-[14px]"
+            onPress={() => router.push(`/spaces/${data.id}`)}
+          >
+            View Community
+          </Button>
+        )}
+        {!showFooter && (
+          <div className="flex h-[34px] w-full items-center gap-[10px] rounded-[8px] bg-[#363636]">
+            {' '}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,14 +1,7 @@
-import React, { SetStateAction, Dispatch, useEffect } from 'react';
-import {
-  Stack,
-  Typography,
-  IconButton,
-  CircularProgress,
-  Box,
-} from '@mui/material';
+import React, { SetStateAction, Dispatch } from 'react';
+import { Stack, Typography, IconButton } from '@mui/material';
 import { ZuButton } from 'components/core';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import Image from 'next/image';
 import CheckinConnectButton from '@/components/checkin/CheckinConnectButton';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 interface LinkAddressProps {

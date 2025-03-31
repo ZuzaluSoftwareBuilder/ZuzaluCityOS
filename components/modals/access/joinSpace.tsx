@@ -45,7 +45,7 @@ const JoinSpaceNoGate = () => {
       <ModalContent>
         {(onClose) => (
           <>
-            <div className="flex flex-row justify-between p-[20px] h-[62px] w-full items-center">
+            <div className="flex h-[62px] w-full flex-row items-center justify-between p-[20px]">
               <p className={COMMON_TEXT.title}>Verify to Join</p>
               <Button
                 isIconOnly
@@ -57,7 +57,7 @@ const JoinSpaceNoGate = () => {
               </Button>
             </div>
             <Divider />
-            <div className="flex flex-col p-[20px] gap-[20px]">
+            <div className="flex flex-col gap-[20px] p-[20px]">
               <p className={COMMON_TEXT.subtitle}>Join this community?</p>
               <div className="flex items-center gap-[10px] rounded-[10px] border border-b-w-10 p-[8px]">
                 <Avatar
@@ -107,7 +107,7 @@ const JoinSpaceWithGate = () => {
       <ModalContent>
         {(onClose) => (
           <>
-            <div className="flex flex-row justify-between p-[20px] h-[62px] w-full items-center">
+            <div className="flex h-[62px] w-full flex-row items-center justify-between p-[20px]">
               <p className={COMMON_TEXT.title}>Verify to Join</p>
               <Button
                 isIconOnly
@@ -119,7 +119,7 @@ const JoinSpaceWithGate = () => {
               </Button>
             </div>
             <Divider />
-            <div className="flex flex-col p-[20px] gap-[20px]">
+            <div className="flex flex-col gap-[20px] p-[20px]">
               <div className="flex items-center gap-[10px] rounded-[10px] border border-b-w-10 p-[8px]">
                 <Avatar
                   name="Junior"
@@ -135,12 +135,12 @@ const JoinSpaceWithGate = () => {
                   </span>
                 </div>
               </div>
-              <p className="text-[14px] font-semibold leading-[1.2] text-center opacity-80">
+              <p className="text-center text-[14px] font-semibold leading-[1.2] opacity-80">
                 Following credentials are required to join:
               </p>
               <Accordion
                 variant="splitted"
-                className="p-0 gap-[10px]"
+                className="gap-[10px] p-0"
                 itemClasses={{
                   base: 'bg-transparent rounded-[10px] border border-white/10 bg-white/5 px-[8px]',
                   title: 'text-[14px] font-semibold leading-[1.2] opacity-80',
@@ -162,7 +162,7 @@ const JoinSpaceWithGate = () => {
                   }
                 >
                   <Divider className="mb-[10px]" />
-                  <span className="px-[10px] py-[5px] text-[13px] leading-[1.4] rounded-[60px] bg-b-w-10 text-white">
+                  <span className="rounded-[60px] bg-b-w-10 px-[10px] py-[5px] text-[13px] leading-[1.4] text-white">
                     DevCon3
                   </span>
                 </AccordionItem>
@@ -183,7 +183,7 @@ const JoinSpaceWithGate = () => {
                   className="border border-[rgba(125,255,209,0.4)] bg-[rgba(125,255,209,0.05)]"
                 >
                   <Divider className="mb-[10px]" />
-                  <span className="px-[10px] py-[5px] text-[13px] leading-[1.4] rounded-[60px] bg-b-w-10 text-white">
+                  <span className="rounded-[60px] bg-b-w-10 px-[10px] py-[5px] text-[13px] leading-[1.4] text-white">
                     DevCon3
                   </span>
                 </AccordionItem>

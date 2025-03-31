@@ -1,200 +1,237 @@
 'use client';
-import React, { useState, useRef } from 'react';
-import {
-  Stack,
-  Box,
-  Typography,
-  Button,
-  Select,
-  MenuItem,
-  TextField,
-} from '@mui/material';
-import * as yup from 'yup';
-import { ZuInput } from '@/components/core';
-import { Header } from './components';
-import { XMarkIcon, SpacePlusIcon } from '@/components/icons';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { SOCIAL_TYPES } from '@/constant';
-import CancelIcon from '@mui/icons-material/Cancel';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { useRouter } from 'next/navigation';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
-import SelectCategories from '@/components/select/selectCategories';
-import { useEditorStore } from '@/components/editor/useEditorStore';
-import { covertNameToUrlName } from '@/utils/format';
-import { createUrl } from '@/services/url';
-
-import dynamic from 'next/dynamic';
-import FormUploader from '@/components/form/FormUploader';
+import React, { useState } from 'react';
 import dayjs from '@/utils/dayjs';
+import {
+  ProfileContent,
+  LinksContent,
+  CategoriesContent,
+  CreateSpaceTabs,
+  Header,
+  AccessRule,
+  TabStatus,
+  TabContentEnum,
+} from './components';
+import { SpaceCard } from '@/app/components/SpaceCard';
+import { cn } from '@heroui/react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import {
+  ProfileFormData,
+  ProfilValidationSchema,
+} from './components/ProfileContent';
+import {
+  CategoriesFormData,
+  CategoriesValidationSchema,
+} from './components/CategoriesContent';
+import {
+  LinksFormData,
+  LinksValidationSchema,
+} from './components/LinksContent';
+import { useRouter } from 'next/navigation';
+import { covertNameToUrlName } from '@/utils/format';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { createUrl } from '@/services/url';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { CREATE_SPACE_MUTATION } from '@/services/graphql/space';
+import { executeQuery } from '@/utils/ceramic';
+import { useEditorStore } from '@/components/editor/useEditorStore';
+import {
+  ZucitySpaceInput,
+  CreateZucitySpaceMutationMutation,
+  CreateZucitySpaceMutationMutationVariables,
+} from '@/graphql/graphql';
 import { supabase } from '@/utils/supabase/client';
 import { uint8ArrayToBase64 } from '@/utils';
 import { getResolver } from 'key-did-resolver';
 import { Ed25519Provider } from 'key-did-provider-ed25519';
 import { DID } from 'dids';
-import { CREATE_SPACE_MUTATION } from '@/services/graphql/space';
-import { executeQuery } from '@/utils/ceramic';
+import { Categories } from './components/constant';
+import { Mobile, NotMobile } from '@/hooks/useMediaQuery';
+import { addToast } from '@heroui/react';
 
-const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
-  ssr: false,
-});
-
-const validationSchema = yup.object({
-  name: yup
-    .string()
-    .min(3, 'Name must be at least 3 characters.')
-    .required('Name is required.'),
-  tagline: yup
-    .string()
-    .min(3, 'Tagline must be at least 3 characters.')
-    .required('Tagline is required.'),
-  categories: yup
-    .array()
-    .min(1, 'Categories are required.')
-    .max(30, 'Categories select up to 30 items.')
-    .required('Categories are required.'),
-});
-
-type Link = {
-  links: string;
-  title: string;
-};
+const DEFAULT_AVATAR =
+  'https://nftstorage.link/ipfs/bafybeifcplhgttja4hoj5vx4u3x7ucft34acdpiaf62fsqrobesg5bdsqe';
+const DEFAULT_BANNER =
+  'https://nftstorage.link/ipfs/bafybeifqan4j2n7gygwkmekcty3dsp7v4rxbjimpo7nrktclwxgxreiyay';
 
 const Create = () => {
+  const [selectedTab, setSelectedTab] = useState(TabContentEnum.Profile);
+  const [isGated, setIsGated] = useState(false);
+  const [tabStatuses, setTabStatuses] = useState<Record<string, TabStatus>>({
+    [TabContentEnum.Profile]: TabStatus.Active,
+    [TabContentEnum.Categories]: TabStatus.Inactive,
+    [TabContentEnum.Links]: TabStatus.Inactive,
+    [TabContentEnum.Access]: TabStatus.Inactive,
+  });
+  const [isSubmit, setIsSubmit] = useState(false);
   const router = useRouter();
-  const [showModal, setShowModal] = useState(false);
-  const [name, setName] = useState<string>('');
-  const [tagline, setTagline] = useState<string>('');
-  const [avatar, setAvatar] = useState('');
-  const [banner, setBanner] = useState('');
+  const { isMobile } = useMediaQuery();
+  const { ceramic, profile } = useCeramicContext();
+  const profileForm = useForm<ProfileFormData>({
+    resolver: yupResolver(ProfilValidationSchema),
+    mode: 'all',
+    defaultValues: {
+      name: '',
+      tagline: '',
+      description: '',
+      avatar: '',
+      banner: '',
+    },
+  });
   const descriptionEditorStore = useEditorStore();
-  const [error, setError] = useState('');
-  const [categories, setCategories] = useState<string[]>([]);
-  const [socialLinks, setSocialLinks] = useState<number[]>([0]);
-  const [customLinks, setCustomLinks] = useState<number[]>([0]);
-  const [submitting, setSubmitting] = useState(false);
 
-  const { ceramic, composeClient, isAuthenticated, profile } =
-    useCeramicContext();
+  const categoriesForm = useForm<CategoriesFormData>({
+    resolver: yupResolver(CategoriesValidationSchema),
+    mode: 'all',
+    defaultValues: {
+      category: Categories[0].value,
+      tags: [],
+    },
+  });
 
-  const profileId = profile?.id || '';
-  const adminId = ceramic?.did?.parent || '';
-  const socialLinksRef = useRef<HTMLDivElement>(null);
-  const customLinksRef = useRef<HTMLDivElement>(null);
-
-  const createSpace = async () => {
-    const descriptionOutputData = descriptionEditorStore.value;
-
-    if (
-      !descriptionOutputData ||
-      !descriptionOutputData.blocks ||
-      descriptionOutputData.blocks.length == 0
-    ) {
-      setError('Description is required.');
+  const linksForm = useForm<LinksFormData>({
+    resolver: yupResolver(LinksValidationSchema),
+    mode: 'all',
+    defaultValues: {
+      socialLinks: [
+        {
+          title: '',
+          links: '',
+        },
+      ],
+      customLinks: [],
+    },
+  });
+  const spaceName = profileForm.watch('name');
+  const spaceTagline = profileForm.watch('tagline');
+  const tags = categoriesForm.watch('tags');
+  const category = categoriesForm.watch('category');
+  const spaceAvatar = profileForm.watch('avatar');
+  const spaceBanner = profileForm.watch('banner');
+  const handleTabChange = (key: TabContentEnum) => {
+    if (tabStatuses[key] === TabStatus.Inactive) {
       return;
     }
+    setSelectedTab(key);
+  };
+  const handleProfileSubmit = (data: ProfileFormData) => {
+    setTabStatuses((prev) => {
+      return {
+        ...prev,
+        [TabContentEnum.Profile]: TabStatus.Finished,
+        [TabContentEnum.Categories]:
+          prev[TabContentEnum.Categories] === TabStatus.Inactive
+            ? TabStatus.Active
+            : prev[TabContentEnum.Categories],
+      };
+    });
+    setSelectedTab(TabContentEnum.Categories);
+  };
 
-    let socialLinks = [] as Link[];
-    let customLinks = [] as Link[];
-    if (
-      socialLinksRef &&
-      socialLinksRef.current &&
-      socialLinksRef.current.children.length > 1
-    ) {
-      for (let i = 0; i < socialLinksRef.current.children.length - 1; i++) {
-        const firstChild = socialLinksRef.current.children[i].children[0];
-        const secondChild = socialLinksRef.current.children[i].children[1];
+  const handleCategoriesSubmit = () => {
+    setTabStatuses((prev) => {
+      return {
+        ...prev,
+        [TabContentEnum.Categories]: TabStatus.Finished,
+        [TabContentEnum.Links]:
+          prev[TabContentEnum.Links] === TabStatus.Inactive
+            ? TabStatus.Active
+            : prev[TabContentEnum.Links],
+      };
+    });
+    setSelectedTab(TabContentEnum.Links);
+  };
+  //
+  const handleLinksSubmit = () => {
+    setTabStatuses((prev) => {
+      return {
+        ...prev,
+        [TabContentEnum.Links]: TabStatus.Finished,
+        [TabContentEnum.Access]:
+          prev[TabContentEnum.Access] === TabStatus.Inactive
+            ? TabStatus.Active
+            : prev[TabContentEnum.Access],
+      };
+    });
+    setSelectedTab(TabContentEnum.Access);
+  };
 
-        if (firstChild && secondChild) {
-          const key =
-            socialLinksRef.current.children[i].children[0].querySelector(
-              'input',
-            )?.value;
-          const value =
-            socialLinksRef.current.children[i].children[1].querySelector(
-              'input',
-            )?.value;
-          if (key) {
-            socialLinks.push({
-              links: value || '',
-              title: key,
-            });
-          }
-        }
-      }
-    }
-
-    if (
-      customLinksRef &&
-      customLinksRef.current &&
-      customLinksRef.current.children.length > 1
-    ) {
-      for (let i = 0; i < customLinksRef.current.children.length - 1; i++) {
-        const firstChild = customLinksRef.current.children[i].children[0];
-        const secondChild = customLinksRef.current.children[i].children[1];
-
-        if (firstChild && secondChild) {
-          const key =
-            customLinksRef.current.children[i].children[0].querySelector(
-              'input',
-            )?.value;
-          const value =
-            customLinksRef.current.children[i].children[1].querySelector(
-              'input',
-            )?.value;
-          if (key) {
-            customLinks.push({
-              links: value || '',
-              title: key || '',
-            });
-          }
-        }
-      }
-    }
-
-    if (!isAuthenticated) return;
-
+  const validateFormStep = async (
+    schema: any,
+    form: any,
+    tab: TabContentEnum,
+  ): Promise<boolean> => {
     try {
-      setSubmitting(true);
-      await validationSchema.validate({
-        name: name,
-        tagline: tagline,
-        categories: categories,
-      });
-      const result = await executeQuery(CREATE_SPACE_MUTATION, {
+      const isValid = await schema.isValid(form.getValues());
+      if (!isValid) {
+        setTabStatuses((prev) => ({
+          ...prev,
+          [tab]: TabStatus.Active,
+        }));
+        setSelectedTab(tab);
+      }
+      return isValid;
+    } catch (error) {
+      console.error(`Validation error for ${tab}:`, error);
+      return false;
+    }
+  };
+
+  const transformFormData = (): ZucitySpaceInput => {
+    const { name, tagline, avatar, banner } = profileForm.getValues();
+    const { tags, category } = categoriesForm.getValues();
+    const { socialLinks, customLinks } = linksForm.getValues();
+    const adminId = ceramic?.did?.parent || '';
+    const profileId = profile?.id || '';
+    return {
+      customLinks,
+      socialLinks,
+      name,
+      description: descriptionEditorStore.getValueString(),
+      tagline,
+      owner: adminId,
+      profileId: profileId,
+      avatar: avatar || DEFAULT_AVATAR,
+      banner: banner || DEFAULT_BANNER,
+      tags: tags.map((i) => ({ tag: i })),
+      category: category,
+      createdAt: dayjs().utc().toISOString(),
+      updatedAt: dayjs().utc().toISOString(),
+      gated: isGated ? '1' : '0',
+    };
+  };
+
+  const createSpace = async (content: ZucitySpaceInput): Promise<string> => {
+    try {
+      const result = await executeQuery<
+        CreateZucitySpaceMutationMutation,
+        CreateZucitySpaceMutationMutationVariables
+      >(CREATE_SPACE_MUTATION, {
         input: {
-          content: {
-            customLinks,
-            socialLinks,
-            name: name,
-            description: descriptionEditorStore.getValueString(),
-            tagline: tagline,
-            owner: adminId,
-            profileId: profileId,
-            avatar:
-              avatar ||
-              'https://nftstorage.link/ipfs/bafybeifcplhgttja4hoj5vx4u3x7ucft34acdpiaf62fsqrobesg5bdsqe',
-            banner:
-              banner ||
-              'https://nftstorage.link/ipfs/bafybeifqan4j2n7gygwkmekcty3dsp7v4rxbjimpo7nrktclwxgxreiyay',
-            tags: categories.map((category) => ({ tag: category })),
-            createdAt: dayjs().utc().toISOString(),
-            updatedAt: dayjs().utc().toISOString(),
-          },
+          content,
         },
       });
       if (result.errors?.length) {
         console.error('Detailed error info:', result.errors);
+        addToast({
+          title: 'Failed to create space',
+          description: `Error creating space: ${JSON.stringify(result.errors)}`,
+          color: 'danger',
+        });
         throw new Error(
           `Error creating space: ${JSON.stringify(result.errors)}`,
         );
       }
-      const urlName = covertNameToUrlName(name);
+      const spaceId = result.data?.createZucitySpace?.document?.id || '';
+      if (!spaceId) {
+        throw new Error('Result data is empty');
+      }
+      const urlName = covertNameToUrlName(content.name);
       // @ts-ignore
       await createUrl(
         urlName,
         // @ts-ignore
-        result.data?.createZucitySpace?.document?.id,
+        spaceId,
         'spaces',
       );
       let seed = crypto.getRandomValues(new Uint8Array(32));
@@ -208,471 +245,192 @@ const Create = () => {
           agentKey: uint8ArrayToBase64(seed),
           agentDID: did.id,
           // @ts-ignore
-          spaceId: result.data?.createZucitySpace?.document?.id,
+          spaceId: spaceId,
         });
 
       if (spaceError) {
         console.error('Error creating space agent:', spaceError);
+        addToast({
+          title: 'Failed to create space',
+          description: `Error creating space agent: ${spaceError.message}`,
+          color: 'danger',
+        });
+        throw new Error('Error creating space agent');
       }
-      setShowModal(true);
-    } catch (err: any) {
-      console.log(err);
-      if (err.message) {
-        setError(err.message);
+      return spaceId;
+    } catch (error) {
+      console.error('Error creating space:', error);
+      addToast({
+        title: 'Failed to create space',
+        description: `Error creating space: ${error instanceof Error ? error.message : 'unknown error'}`,
+        color: 'danger',
+      });
+      throw new Error('Error creating space');
+    }
+  };
+  const handleAccessRuleSubmit = async () => {
+    try {
+      setIsSubmit(true);
+      const validations = await Promise.all([
+        validateFormStep(
+          ProfilValidationSchema,
+          profileForm,
+          TabContentEnum.Profile,
+        ),
+        validateFormStep(
+          CategoriesValidationSchema,
+          categoriesForm,
+          TabContentEnum.Categories,
+        ),
+        validateFormStep(
+          LinksValidationSchema,
+          linksForm,
+          TabContentEnum.Links,
+        ),
+      ]);
+
+      if (!validations.every(Boolean)) {
+        return;
       }
+
+      const content = transformFormData();
+      const spaceId = await createSpace(content);
+      if (spaceId) {
+        addToast({
+          title: 'Space created successfully',
+          description: `Space created successfully`,
+          color: 'success',
+        });
+        router.push(`/spaces/${spaceId}`);
+      }
+    } catch (error) {
+      console.error('Error creating space:', error);
+      addToast({
+        title: 'Failed to create space',
+        description: `Error creating space: ${error instanceof Error ? error.message : 'unknown error'}`,
+        color: 'danger',
+      });
     } finally {
-      setSubmitting(false);
+      setIsSubmit(false);
     }
   };
 
-  const handleChange = (value: string[]) => {
-    setCategories(value);
-  };
-
-  const handleAddSocialLink = () => {
-    if (socialLinks.length === 0) {
-      setSocialLinks([0]);
-      return;
+  const handleBack = (targetTab: TabContentEnum) => {
+    setSelectedTab(targetTab);
+    if (isMobile) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
-    const nextItem = Math.max(...socialLinks);
-    const temp = [...socialLinks, nextItem + 1];
-    setSocialLinks(temp);
   };
 
-  const handleRemoveSociaLink = (index: number) => {
-    const temp = socialLinks.filter((item) => item !== index);
-    setSocialLinks(temp);
-  };
+  const handleCategoriesBack = () => handleBack(TabContentEnum.Profile);
+  const handleLinksBack = () => handleBack(TabContentEnum.Categories);
+  const handleAccessRuleBack = () => handleBack(TabContentEnum.Links);
 
-  const handleAddCustomLink = () => {
-    if (customLinks.length === 0) {
-      setCustomLinks([0]);
-      return;
-    }
-    const nextItem = Math.max(...customLinks);
-    const temp = [...customLinks, nextItem + 1];
-    setCustomLinks(temp);
-  };
-
-  const handleRemoveCustomLink = (index: number) => {
-    const temp = customLinks.filter((item) => item !== index);
-    setCustomLinks(temp);
+  const renderTabContent = () => {
+    return (
+      <>
+        <div className={cn({ hidden: selectedTab !== TabContentEnum.Profile })}>
+          <ProfileContent
+            descriptionEditorStore={descriptionEditorStore}
+            onBack={() => router.push('/spaces')}
+            form={profileForm}
+            onSubmit={handleProfileSubmit}
+          />
+        </div>
+        <div
+          className={cn({ hidden: selectedTab !== TabContentEnum.Categories })}
+        >
+          <CategoriesContent
+            onBack={handleCategoriesBack}
+            form={categoriesForm}
+            onSubmit={handleCategoriesSubmit}
+          />
+        </div>
+        <div className={cn({ hidden: selectedTab !== TabContentEnum.Links })}>
+          <LinksContent
+            onBack={handleLinksBack}
+            form={linksForm}
+            onSubmit={handleLinksSubmit}
+          />
+        </div>
+        <div className={cn({ hidden: selectedTab !== TabContentEnum.Access })}>
+          <AccessRule
+            isSubmit={isSubmit}
+            onBack={handleAccessRuleBack}
+            onSubmit={handleAccessRuleSubmit}
+            isGated={isGated}
+            onGatedChange={setIsGated}
+          />
+        </div>
+      </>
+    );
   };
 
   return (
-    <Stack>
-      <Dialog
-        title="Space Created"
-        message="Create process probably complete after few minute. Please check it in Space List page."
-        showModal={showModal}
-        onClose={() => setShowModal(false)}
-        onConfirm={() => {
-          setShowModal(false);
-          router.push('/spaces');
-        }}
-      />
+    <div className="flex min-h-screen w-full flex-col">
       <Header />
-      <Stack direction="row" justifyContent="center">
-        <Box
-          display="flex"
-          flexDirection="column"
-          gap="20px"
-          padding={'24px'}
-          width="762px"
-        >
-          <Box bgcolor="#2d2d2d" borderRadius="10px">
-            <Box padding="20px" display="flex" justifyContent="space-between">
-              <Typography variant="subtitleMB" color="text.secondary">
-                Space Profile
-              </Typography>
-            </Box>
-            <Box
-              padding="20px"
-              display="flex"
-              flexDirection="column"
-              gap="30px"
-            >
-              <Box display={'flex'} flexDirection={'column'} gap={'10px'}>
-                <Typography variant="subtitle2" color="white">
-                  Space Name*
-                </Typography>
-                <ZuInput
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Type an awesome name"
-                />
-              </Box>
-              <Box display={'flex'} flexDirection={'column'} gap={'10px'}>
-                <Typography variant="subtitle2" color="white">
-                  Space Tagline*
-                </Typography>
-                <ZuInput
-                  onChange={(e) => setTagline(e.target.value)}
-                  placeholder="Write a short, one-sentence tagline for your event"
-                />
-              </Box>
-              <Stack spacing="10px">
-                <Typography variant="subtitle2" color="white">
-                  Space Description*
-                </Typography>
-                <SuperEditor
-                  placeholder={
-                    'This is a description greeting for new members. You can also update descriptions.'
-                  }
-                  value={descriptionEditorStore.value}
-                  onChange={(val) => {
-                    descriptionEditorStore.setValue(val);
-                  }}
-                />
-                <Stack direction="row" justifyContent="flex-end">
-                  <Typography variant="caption" color="white">
-                    {5000 - descriptionEditorStore.length} Characters Left
-                  </Typography>
-                </Stack>
-              </Stack>
-              <Box display={'flex'} flexDirection={'column'} gap={'20px'}>
-                <Box>
-                  <Typography variant="subtitle2" color="white">
-                    Community Tags (Max: 30)*
-                  </Typography>
-                  <Typography color="text.secondary" variant="body2">
-                    Search or create categories related to your space
-                  </Typography>
-                </Box>
-                <Box>
-                  <SelectCategories onChange={handleChange} />
-                </Box>
-              </Box>
-            </Box>
-          </Box>
-          <Box bgcolor="#2d2d2d" borderRadius="10px">
-            <Box padding="20px" display="flex" justifyContent="space-between">
-              <Typography variant="subtitleMB" color="text.secondary">
-                Space Avatar & Banner
-              </Typography>
-            </Box>
-            <Stack spacing="10px" padding="20px">
-              <Typography variant="subtitle2" color="white">
-                Space Avatar
-              </Typography>
-              <Typography color="text.secondary" variant="body2">
-                Recommend min of 200x200px (1:1 Ratio)
-              </Typography>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '10px',
-                }}
-              >
-                <FormUploader
-                  value={avatar}
-                  onChange={setAvatar}
-                  previewStyle={{
-                    width: '150px',
-                    height: '150px',
-                    borderRadius: '50%',
-                  }}
-                />
-              </Box>
-            </Stack>
-            <Stack spacing="10px" padding="20px">
-              <Typography variant="subtitle2" color="white">
-                Space Banner
-              </Typography>
-              <Typography color="text.secondary" variant="body2">
-                Recommend min of 730x220 Accept PNG GIF or JPEG
-              </Typography>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '10px',
-                }}
-              >
-                <FormUploader
-                  value={banner}
-                  onChange={setBanner}
-                  previewStyle={{
-                    width: '100%',
-                    height: '200px',
-                    borderRadius: '10px',
-                  }}
-                />
-              </Box>
-            </Stack>
-          </Box>
-          <Box bgcolor="#2d2d2d" borderRadius="10px">
-            <Box padding="20px" display="flex" justifyContent="space-between">
-              <Typography variant="subtitleMB" color="text.secondary">
-                Links
-              </Typography>
-            </Box>
+      <div
+        className={cn(
+          'flex justify-center gap-[40px] py-[20px] px-[40px] mx-auto w-full',
+          'mobile:flex-col mobile:p-[10px] mobile:gap-[0px] mobile:mb-[40px] mobile:items-center',
+        )}
+      >
+        <Mobile>
+          <div className="w-full justify-center">
+            <CreateSpaceTabs
+              selectedTab={selectedTab}
+              onTabChange={handleTabChange}
+              tabStatuses={tabStatuses}
+            />
+          </div>
+        </Mobile>
+        <NotMobile>
+          <div className="flex w-[130px] justify-end">
+            <CreateSpaceTabs
+              selectedTab={selectedTab}
+              onTabChange={handleTabChange}
+              tabStatuses={tabStatuses}
+            />
+          </div>
+        </NotMobile>
 
-            <Box
-              padding={'20px'}
-              display={'flex'}
-              flexDirection={'column'}
-              gap={'30px'}
-              ref={socialLinksRef}
-            >
-              <Typography variant="subtitleSB" color="text.secondary">
-                Social Links
-              </Typography>
-              {socialLinks.map((item, index) => {
-                return (
-                  <Box
-                    display={'flex'}
-                    flexDirection={'row'}
-                    gap={'20px'}
-                    key={index}
-                  >
-                    <Box
-                      display={'flex'}
-                      flexDirection={'column'}
-                      gap={'10px'}
-                      flex={1}
-                    >
-                      <Typography variant="subtitle2" color="white">
-                        Select Social
-                      </Typography>
-                      <Select
-                        placeholder="Select"
-                        MenuProps={{
-                          PaperProps: {
-                            style: {
-                              backgroundColor: '#222222',
-                            },
-                          },
-                        }}
-                        sx={{
-                          '& > div': {
-                            padding: '8.5px 12px',
-                            borderRadius: '10px',
-                          },
-                        }}
-                      >
-                        {SOCIAL_TYPES.map((social, index) => {
-                          return (
-                            <MenuItem value={social.key} key={index}>
-                              {social.value}
-                            </MenuItem>
-                          );
-                        })}
-                      </Select>
-                    </Box>
-                    <Box
-                      display={'flex'}
-                      flexDirection={'column'}
-                      gap={'10px'}
-                      flex={1}
-                    >
-                      <Typography variant="subtitle2" color="white">
-                        URL
-                      </Typography>
-                      <TextField
-                        variant="outlined"
-                        placeholder="https://"
-                        sx={{
-                          '& > div > input': {
-                            padding: '8.5px 12px',
-                          },
-                        }}
-                      />
-                    </Box>
-                    <Box
-                      display={'flex'}
-                      flexDirection={'column'}
-                      justifyContent={'flex-end'}
-                      sx={{ cursor: 'pointer' }}
-                      onClick={() => handleRemoveSociaLink(item)}
-                    >
-                      <Box
-                        sx={{
-                          borderRadius: '10px',
-                          width: '40px',
-                          height: '40px',
-                          padding: '10px 14px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'white',
-                        }}
-                      >
-                        <CancelIcon sx={{ fontSize: 20 }} />
-                      </Box>
-                    </Box>
-                  </Box>
-                );
-              })}
-              <Button
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: '10px',
-                  padding: '8px 14px',
-                  borderRadius: '10px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                  textTransform: 'unset',
-                  color: 'white',
-                }}
-                onClick={handleAddSocialLink}
-              >
-                <AddCircleIcon />
-                <Typography variant="buttonMSB" color="white">
-                  Add Social Link
-                </Typography>
-              </Button>
-            </Box>
-            <Box
-              padding={'20px'}
-              display={'flex'}
-              flexDirection={'column'}
-              gap={'30px'}
-              borderTop={'1px solid rgba(255, 255, 255, 0.10)'}
-              ref={customLinksRef}
-            >
-              <Typography variant="subtitleSB" color="text.secondary">
-                Custom Links
-              </Typography>
-              {customLinks.map((item, index) => {
-                return (
-                  <Box
-                    display={'flex'}
-                    flexDirection={'row'}
-                    gap={'20px'}
-                    key={index}
-                  >
-                    <Box
-                      display={'flex'}
-                      flexDirection={'column'}
-                      gap={'10px'}
-                      flex={1}
-                    >
-                      <Typography variant="subtitle2" color="white">
-                        Link Title
-                      </Typography>
-                      <TextField
-                        variant="outlined"
-                        placeholder="Type a name"
-                        sx={{
-                          '& > div > input': {
-                            padding: '8.5px 12px',
-                          },
-                        }}
-                      />
-                    </Box>
-                    <Box
-                      display={'flex'}
-                      flexDirection={'column'}
-                      gap={'10px'}
-                      flex={1}
-                    >
-                      <Typography variant="subtitle2" color="white">
-                        URL
-                      </Typography>
-                      <TextField
-                        variant="outlined"
-                        placeholder="https://"
-                        sx={{
-                          '& > div > input': {
-                            padding: '8.5px 12px',
-                          },
-                        }}
-                      />
-                    </Box>
-                    <Box
-                      display={'flex'}
-                      flexDirection={'column'}
-                      justifyContent={'flex-end'}
-                      sx={{ cursor: 'pointer' }}
-                      onClick={() => handleRemoveCustomLink(item)}
-                    >
-                      <Box
-                        sx={{
-                          borderRadius: '10px',
-                          width: '40px',
-                          height: '40px',
-                          padding: '10px 14px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'white',
-                        }}
-                      >
-                        <CancelIcon sx={{ fontSize: 20 }} />
-                      </Box>
-                    </Box>
-                  </Box>
-                );
-              })}
+        <div className="w-full max-w-[700px] p-[20px] mobile:p-0">
+          {renderTabContent()}
+        </div>
 
-              <Button
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: '10px',
-                  padding: '8px 14px',
-                  borderRadius: '10px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                  color: 'white',
-                  textTransform: 'unset',
-                }}
-                onClick={handleAddCustomLink}
-              >
-                <AddCircleIcon />
-                <Typography variant="buttonMSB" color="white">
-                  Add Custom Link
-                </Typography>
-              </Button>
-            </Box>
-          </Box>
-          <Box display="flex" gap="20px">
-            <Button
-              sx={{
-                color: 'white',
-                borderRadius: '10px',
-                backgroundColor: '#373737',
-                fontSize: '14px',
-                padding: '6px 16px',
-                border: '1px solid #383838',
-                flex: 1,
-              }}
-              startIcon={<XMarkIcon size={5} />}
-            >
-              Discard
-            </Button>
-            <Button
-              sx={{
-                color: '#67DBFF',
-                borderRadius: '10px',
-                backgroundColor: 'rgba(103, 219, 255, 0.10)',
-                fontSize: '14px',
-                padding: '6px 16px',
-                flex: 1,
-                border: '1px solid rgba(103, 219, 255, 0.20)',
-                opacity: '1',
-                '&:disabled': {
-                  opacity: '0.6',
-                  color: '#67DBFF',
+        <div className="w-[320px] pt-4 tablet:hidden mobile:hidden">
+          <SpaceCard
+            data={{
+              id: 'preview',
+              name: spaceName || 'Community Name',
+              tagline: spaceTagline || 'Community tagline',
+              category: category,
+              description: '',
+              tags: tags.map((i) => ({ tag: i })),
+              banner: spaceBanner,
+              avatar: spaceAvatar,
+              owner: {
+                id: '',
+                zucityProfile: {
+                  id: '',
+                  avatar: '',
+                  username: '',
                 },
-              }}
-              startIcon={<SpacePlusIcon color="#67DBFF" />}
-              disabled={!name || submitting}
-              onClick={createSpace}
-            >
-              Create Space
-            </Button>
-          </Box>
-          {error && (
-            <Typography color={'red'} textAlign={'end'}>
-              {error}
-            </Typography>
-          )}
-        </Box>
-      </Stack>
-    </Stack>
+              },
+              userRoles: { edges: [] },
+              customAttributes: [],
+              installedApps: { edges: [] },
+              createdAt: '',
+              updatedAt: '',
+            }}
+            isJoined={false}
+            isFollowed={false}
+            autoWidth={true}
+            showFooter={false}
+          />
+        </div>
+      </div>
+    </div>
   );
 };
 

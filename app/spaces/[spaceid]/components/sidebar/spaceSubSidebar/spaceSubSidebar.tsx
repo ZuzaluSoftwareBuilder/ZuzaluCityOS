@@ -30,7 +30,6 @@ const SpaceSubSidebar = ({
   const spaceId = params.spaceid.toString();
   const appName = params.appName?.toString();
   const appId = query.get('id');
-  console.log(appId, appName);
 
   const { isOwner, isAdmin } = useSpacePermissions();
 

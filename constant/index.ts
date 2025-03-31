@@ -1,7 +1,7 @@
 import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
 import { createPublicClient, createWalletClient, getContract } from 'viem';
 import { http } from 'wagmi';
-import { sepolia, mainnet } from 'wagmi/chains';
+import { sepolia } from 'wagmi/chains';
 import { EdDSAPublicKey } from '@pcd/eddsa-pcd';
 import { EdDSATicketPCDTypeName } from '@pcd/eddsa-ticket-pcd';
 import { PipelineEdDSATicketZuAuthConfig } from '@pcd/passport-interface';
@@ -377,4 +377,12 @@ export const apps = [
   },
 ];
 
+export const Categories: { value: string; label: string }[] = [
+  { value: 'general-group', label: 'General Group' },
+  { value: 'event-org', label: 'Event Org' },
+  { value: 'venue', label: 'Venue' },
+  { value: 'shop', label: 'Shop' },
+  { value: 'developer', label: 'Developer' },
+  { value: 'permahub', label: 'PermaHub' },
+];
 export const USER_AVATAR_URL = '/user/avatar_p.png';

@@ -34,4 +34,5 @@ module.exports = {
 
     'prettier/prettier': ['error', {}, { usePrettierrc: true }],
   },
+  ignorePatterns: ['node_modules/', 'dist/', 'graphql/'],
 };

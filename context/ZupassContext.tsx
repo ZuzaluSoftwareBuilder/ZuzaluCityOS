@@ -8,7 +8,6 @@ import React, {
   useCallback,
   useReducer,
 } from 'react';
-import { Zuconfig } from '@/constant';
 import { zuAuthPopup } from '@pcd/zuauth/client';
 import { authenticate } from '@pcd/zuauth/server';
 import { ZupassConfig } from '@/types';

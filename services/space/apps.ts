@@ -31,7 +31,9 @@ export type UninstallDAppParams = {
   spaceId: string;
   installedAppIndexId: string;
 };
-export const uninstallDApp = async (uninstallDAppInput: UninstallDAppParams) => {
+export const uninstallDApp = async (
+  uninstallDAppInput: UninstallDAppParams,
+) => {
   try {
     const response = await axiosInstance.post('/api/space/dApp/uninstall', {
       id: uninstallDAppInput.spaceId,
