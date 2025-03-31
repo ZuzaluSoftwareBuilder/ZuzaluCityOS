@@ -97,8 +97,8 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
   const { ceramic, composeClient, isAuthenticated, profile } =
     useCeramicContext();
   const params = useParams();
-  const eventId = params.eventid.toString();
-  const spaceId = params.spaceid.toString();
+  const eventId = params.eventid?.toString() ?? '';
+  const spaceId = params.spaceid?.toString() ?? '';
   const profileId = profile?.id || '';
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [directions, setDirections] = useState<string>('');

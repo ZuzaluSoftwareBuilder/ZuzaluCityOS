@@ -34,7 +34,7 @@ const Calendar = () => {
   const params = useParams();
   const router = useRouter();
   const { ceramic } = useCeramicContext();
-  const spaceId = params.spaceid.toString();
+  const spaceId = params.spaceid?.toString() ?? '';
 
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<string>('');

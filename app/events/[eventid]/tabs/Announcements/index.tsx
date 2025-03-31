@@ -70,7 +70,7 @@ const Announcements: React.FC<IAbout> = ({ eventData, setVerify, canEdit }) => {
   const [mintedContract, setMintedContract] = useState<Contract>();
   const [transactionLog, setTransactionLog] = useState<any>();
   const params = useParams();
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
 
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('sm'));

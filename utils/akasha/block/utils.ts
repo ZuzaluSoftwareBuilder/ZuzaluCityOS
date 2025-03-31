@@ -2,7 +2,7 @@ import { BlockLabeledValue } from '@akashaorg/typings/lib/sdk/graphql-types-new'
 import {
   AkashaReadableImageBlockContent,
   ZulandReadableBlockContent,
-} from '../akasha.d';
+} from '@/types/akasha';
 import { decodeb64SlateContent } from '../akasha-utils';
 import { Descendant } from 'slate';
 

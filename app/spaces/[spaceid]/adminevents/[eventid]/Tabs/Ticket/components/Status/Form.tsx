@@ -89,7 +89,7 @@ export default function Form({ regAndAccess, onClose }: FormProps) {
   const pathname = useParams();
   const { profile } = useCeramicContext();
   const profileId = profile?.id || '';
-  const eventId = pathname.eventid.toString();
+  const eventId = pathname.eventid?.toString() ?? '';
 
   const [openTips, setOpenTips] = useState(false);
   const [showDialog, setShowDialog] = useState(false);

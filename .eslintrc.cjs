@@ -4,7 +4,6 @@ module.exports = {
     'next/core-web-vitals',
     'next',
     'eslint:recommended',
-    'plugin:storybook/recommended',
     'plugin:tailwindcss/recommended',
     'prettier',
   ],
@@ -12,11 +11,6 @@ module.exports = {
     React: 'readonly',
   },
   parser: '@typescript-eslint/parser',
-  overrides: [
-    {
-      files: ['*.stories.@(ts|tsx|js|jsx|mjs|cjs)'],
-    },
-  ],
   rules: {
     'no-unused-vars': 'off',
     'unused-imports/no-unused-imports': 'error',

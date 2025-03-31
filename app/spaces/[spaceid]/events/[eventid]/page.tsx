@@ -17,7 +17,7 @@ const Home = () => {
   const [sessionView, setSessionView] = useState<boolean>(false);
   const [verify, setVerify] = useState<boolean>(false);
   const { composeClient, ceramic } = useCeramicContext();
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
   const [urlOption, setUrlOption] = useState<string>('');
   const getEventDetailInfo = async () => {
     try {
@@ -139,14 +139,17 @@ const Home = () => {
       {!isDesktop && <IconSidebar />}
       {!isDesktop && (
         <Sidebar
-          spaceId={params.spaceid.toString()}
+          spaceId={params.spaceid?.toString() ?? ''}
           title={eventData?.space?.name}
           avatar={eventData?.space?.avatar}
           banner={eventData?.space?.banner}
         />
       )}
       <Stack color="white">
-        <Header name={eventData?.title} spaceId={params.spaceid.toString()} />
+        <Header
+          name={eventData?.title}
+          spaceId={params.spaceid?.toString() ?? ''}
+        />
         <Thumb
           tabName={tabName}
           setTabName={setTabName}

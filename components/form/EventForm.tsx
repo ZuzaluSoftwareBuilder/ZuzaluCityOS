@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useCallback } from 'react';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';

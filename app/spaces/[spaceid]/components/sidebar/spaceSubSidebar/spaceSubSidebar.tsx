@@ -27,7 +27,7 @@ const SpaceSubSidebar = ({
   const pathname = usePathname();
   const params = useParams();
   const query = useSearchParams();
-  const spaceId = params.spaceid.toString();
+  const spaceId = params.spaceid?.toString() ?? '';
   const appName = params.appName?.toString();
   const appId = query.get('id');
 

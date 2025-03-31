@@ -47,7 +47,7 @@ const Invite = () => {
           (item: any) => item.node,
         );
         const editSpace = fetchedSpaces.filter(
-          (item: any) => item.id === params.spaceid.toString(),
+          (item: any) => item.id === params.spaceid?.toString(),
         );
         // setSpace(editSpace);
         setMembers(editSpace[0].members);
@@ -77,7 +77,7 @@ const Invite = () => {
         mutation {
           updateSpace(
             input: {
-              id: "${params.spaceid.toString()}",
+              id: "${params.spaceid?.toString()}",
               content: {
                 members: "${'did:pkh:eip155:1:' + initial}"
               }

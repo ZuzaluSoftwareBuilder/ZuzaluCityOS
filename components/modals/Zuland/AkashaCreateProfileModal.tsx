@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useAkashaAuthStore } from '@/hooks/use-akasha-auth-store';
 
-import { AkashaProfileStats, createZulandProfile } from '@/utils/akasha';
+import { createZulandProfile } from '@/utils/akasha';
+import { AkashaProfileStats } from '@/types/akasha';
 
 import {
   Modal,

@@ -16,7 +16,7 @@ interface IVenue {
 const Home: React.FC<IVenue> = ({ event }) => {
   const { breakpoints } = useTheme();
   const params = useParams();
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
 
   const [open, setOpen] = useState(false);
 

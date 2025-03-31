@@ -26,7 +26,7 @@ const PcSpaceSettingSidebar: React.FC<SettingSubSidebarProps> = ({
 }) => {
   const router = useRouter();
   const params = useParams();
-  const spaceId = params.spaceid.toString();
+  const spaceId = params.spaceid?.toString() ?? '';
 
   const [sections, setSections] = useState<SettingSection[]>(() =>
     getSettingSections(spaceId),

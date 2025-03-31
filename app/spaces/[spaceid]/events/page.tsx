@@ -15,7 +15,7 @@ import {
 
 const Home = () => {
   const params = useParams();
-  const spaceId = params.spaceid.toString();
+  const spaceId = params.spaceid?.toString() ?? '';
 
   const [space, setSpace] = useState<Space>();
   const [events, setEvents] = useState<Event[]>([]);

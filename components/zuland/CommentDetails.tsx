@@ -5,9 +5,8 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import {
   getReadableReflectionsByReflectionId,
   standardDateFormat,
-  ZulandReadableReflection,
 } from '@/utils/akasha';
-
+import { ZulandReadableReflection } from '@/types/akasha';
 import {
   Stack,
   Typography,

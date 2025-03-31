@@ -45,7 +45,7 @@ export default function ScrollpassForm({ onClose, regAndAccess }: FormProps) {
   const pathname = useParams();
   const { profile } = useCeramicContext();
   const profileId = profile?.id || '';
-  const eventId = pathname.eventid.toString();
+  const eventId = pathname.eventid?.toString() ?? '';
 
   const updateMutation = useMutation({
     mutationFn: updateRegAndAccess,

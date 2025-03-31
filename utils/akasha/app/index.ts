@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import akashaSdk from '../akasha';
-import { ZulandCreateAppInput } from '../akasha.d';
+import { ZulandCreateAppInput } from '@/types/akasha';
 import { AkashaAppApplicationType } from '@akashaorg/typings/lib/sdk/graphql-types-new';
 
 export async function getAppByEventId(eventId: string) {

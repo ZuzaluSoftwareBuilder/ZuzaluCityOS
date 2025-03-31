@@ -44,7 +44,7 @@ interface IAbout {
 
 const About: React.FC<IAbout> = ({ eventData, setEventData, setVerify }) => {
   const params = useParams();
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
   const { breakpoints } = useTheme();
 
   const { composeClient, ceramic } = useCeramicContext();
