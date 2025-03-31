@@ -5,19 +5,14 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_INVITATIONS_QUERY } from '@/services/graphql/invitation';
 import {
-  Button,
   Card,
   CardBody,
   Chip,
   Avatar,
   Spinner,
   useDisclosure,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
 } from '@heroui/react';
+import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@/components/base'
 import { useCeramicContext } from '@/context/CeramicContext';
 import { cancelInvitation } from '@/services/invitation';
 import { format } from 'date-fns';
@@ -129,13 +124,13 @@ const InvitationsPage = () => {
 
     switch (status) {
       case 'pending':
-        return '待处理';
+        return 'Pending';
       case 'accepted':
-        return '已接受';
+        return 'Accepted';
       case 'rejected':
-        return '已拒绝';
+        return 'Rejected';
       case 'cancelled':
-        return '已取消';
+        return 'Cancelled';
       default:
         return status;
     }
@@ -152,8 +147,7 @@ const InvitationsPage = () => {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold text-white mb-6">空间邀请管理</h1>
+    <div className="p-[24px]">
       {isInvitationsLoading ? (
         <div className="flex justify-center items-center p-10">
           <Spinner size="lg" color="primary" />
@@ -186,7 +180,7 @@ const InvitationsPage = () => {
                       />
                       <div>
                         <p className="text-white font-medium">
-                          {invitation.inviteeProfile?.username || '未知用户'}
+                          {invitation.inviteeProfile?.username || 'Unknown User'}
                         </p>
                         <Chip
                           color={getStatusColor(invitation.status)}
@@ -201,28 +195,12 @@ const InvitationsPage = () => {
 
                     <div className="text-right">
                       <p className="text-white/60 text-sm mb-1">
-                        邀请时间: {formatDate(invitation.createdAt)}
+                        Invite Time: {formatDate(invitation.createdAt)}
                       </p>
                       <p className="text-white/60 text-sm">
-                        过期时间: {formatDate(invitation.expiresAt)}
+                        Expired Time: {formatDate(invitation.expiresAt)}
                       </p>
 
-                      {invitation.status === 'pending' &&
-                        currentUserDid &&
-                        invitation.inviterId?.id === currentUserDid && (
-                          <Button
-                            color="danger"
-                            variant="flat"
-                            size="sm"
-                            className="mt-2"
-                            startContent={<X size={16} />}
-                            onPress={() =>
-                              openCancelModal(invitation as Invitation)
-                            }
-                          >
-                            取消邀请
-                          </Button>
-                        )}
                     </div>
                   </div>
 
@@ -233,6 +211,25 @@ const InvitationsPage = () => {
                       </p>
                     </div>
                   )}
+
+                  <div className="flex justify-end">
+                    {invitation.status === 'pending' &&
+                      currentUserDid &&
+                      invitation.inviterId?.id === currentUserDid && (
+                        <Button
+                          color="danger"
+                          variant="flat"
+                          size="sm"
+                          className="mt-2"
+                          startContent={<X size={16} />}
+                          onPress={() =>
+                            openCancelModal(invitation as Invitation)
+                          }
+                        >
+                          Cancel Invitation
+                        </Button>
+                      )}
+                  </div>
                 </CardBody>
               </Card>
             );
@@ -242,14 +239,12 @@ const InvitationsPage = () => {
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
-          <ModalHeader className="text-white">确认取消邀请</ModalHeader>
+          <ModalHeader className="text-white p-[20px]">Cancel Invitation Confirm</ModalHeader>
           <ModalBody className="text-white/80">
             <p>
-              您确定要取消发送给{' '}
-              {selectedInvitation?.inviteeProfile?.username || '此用户'}{' '}
-              的邀请吗？
+              Are you sure you want to cancel the invitation sent to {selectedInvitation?.inviteeProfile?.username || '此用户'}{' '}?
             </p>
-            <p className="text-white/60 mt-2 text-sm">此操作不可撤销。</p>
+            <p className="text-white/60 mt-2 text-sm">This operation cannot be revoked.</p>
           </ModalBody>
           <ModalFooter>
             <Button
@@ -258,14 +253,14 @@ const InvitationsPage = () => {
               onPress={onClose}
               isDisabled={isLoading}
             >
-              取消
+              Cancel
             </Button>
             <Button
               color="danger"
               onPress={handleCancelInvitation}
               isLoading={isLoading}
             >
-              确认取消
+              Confirm
             </Button>
           </ModalFooter>
         </ModalContent>

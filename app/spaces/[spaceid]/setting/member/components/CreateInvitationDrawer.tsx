@@ -1,13 +1,24 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { Button } from '@/components/base'
 import {
   Drawer,
   DrawerContent,
   DrawerBody,
   CommonDrawerHeader,
 } from '@/components/base/drawer';
-import { Button, Input, Select, SelectItem, Checkbox, Avatar, Spinner, cn, addToast, Radio, RadioGroup } from '@heroui/react';
+import {
+  Input,
+  Select,
+  SelectItem,
+  Avatar,
+  Spinner,
+  cn,
+  addToast,
+  Radio,
+  RadioGroup,
+} from '@heroui/react';
 import { MagnifyingGlass } from '@phosphor-icons/react';
 import { useSearchUsers, SearchUser } from '@/hooks/useSearchUsers';
 import { Event, RolePermission, Space } from '@/types';
@@ -22,11 +33,12 @@ import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import { executeQuery } from '@/utils/ceramic';
 import { CHECK_EXISTING_ROLE_QUERY } from '@/services/graphql/role';
+import { MemberEmpty } from '@/app/spaces/[spaceid]/setting/roles/components/members/memberItem';
 
 // 资源类型枚举
 enum ResourceType {
   SPACE = 'space',
-  EVENT = 'event'
+  EVENT = 'event',
 }
 
 interface CreateInvitationDrawerProps {
@@ -46,7 +58,9 @@ export const CreateInvitationDrawer = ({
   const [selectedRoleId, setSelectedRoleId] = useState<string>('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [resourceType, setResourceType] = useState<ResourceType>(ResourceType.SPACE);
+  const [resourceType, setResourceType] = useState<ResourceType>(
+    ResourceType.SPACE,
+  );
   const [selectedResourceId, setSelectedResourceId] = useState<string>(spaceId);
 
   const {
@@ -58,28 +72,32 @@ export const CreateInvitationDrawer = ({
     clearSearch,
   } = useSearchUsers();
 
-  const { isOwner, isAdmin, isMember } = useSpacePermissions()
+  const { isOwner, isAdmin, isMember } = useSpacePermissions();
 
-
-  const { isLoading: isRoleLoading, owner, roles, members, } = useGetSpaceMember(
-    spaceId as string,
-  );
+  const {
+    isLoading: isRoleLoading,
+    owner,
+    roles,
+    members,
+  } = useGetSpaceMember(spaceId as string);
 
   const ownerAssignableRoles = useMemo(() => {
-    return roles?.data.filter(role => role.role.level !== 'owner')
-  }, [roles])
+    return roles?.data.filter((role) => role.role.level !== 'owner');
+  }, [roles]);
 
   const adminAssignableRoles = useMemo(() => {
-    return roles?.data.filter(role => !['owner', 'admin'].includes(role.role.level))
-  }, [roles])
+    return roles?.data.filter(
+      (role) => !['owner', 'admin'].includes(role.role.level),
+    );
+  }, [roles]);
 
   const assignableRoles = useMemo(() => {
-    return isOwner ? ownerAssignableRoles : isAdmin ? adminAssignableRoles : []
-  }, [isOwner, ownerAssignableRoles, isAdmin, adminAssignableRoles])
+    return isOwner ? ownerAssignableRoles : isAdmin ? adminAssignableRoles : [];
+  }, [isOwner, ownerAssignableRoles, isAdmin, adminAssignableRoles]);
 
   useEffect(() => {
-    console.log('roles', roles)
-  }, [roles])
+    console.log('roles', roles);
+  }, [roles]);
 
   const { data: spaceData, isLoading: isEventsLoading } = useGraphQL(
     ['getSpaceAndEvents', spaceId],
@@ -89,7 +107,7 @@ export const CreateInvitationDrawer = ({
       select: (data) => {
         return data?.data?.node as Space;
       },
-      enabled: !!spaceId && isOpen && resourceType === ResourceType.EVENT
+      enabled: !!spaceId && isOpen && resourceType === ResourceType.EVENT,
     },
   );
 
@@ -122,7 +140,9 @@ export const CreateInvitationDrawer = ({
         // roleId: 'kjzl6kcym7w8y7y5fz9tfvb6z91hurzhl6gd7mv46ljgh72o6q2kkzh245quha4',
         roleId: selectedRoleId,
         message: message || '',
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        expiresAt: new Date(
+          Date.now() + 30 * 24 * 60 * 60 * 1000,
+        ).toISOString(),
       });
     },
     onSuccess: () => {
@@ -171,23 +191,22 @@ export const CreateInvitationDrawer = ({
     }
   };
 
-  const isFormValid = selectedUser !== null &&
-    selectedRoleId !== '' &&
-    selectedResourceId !== '';
+  const isFormValid =
+    selectedUser !== null && selectedRoleId !== '' && selectedResourceId !== '';
 
   // 根据不同的资源类型渲染不同的资源选择组件
   const renderResourceSelector = () => {
     if (resourceType === ResourceType.SPACE) {
       return (
         <div className="flex items-center gap-3 p-3 bg-[rgba(255,255,255,0.05)] rounded-lg">
-          <span className="text-sm text-white">当前空间</span>
+          <span className="text-sm text-white">Current Space</span>
         </div>
       );
     } else if (resourceType === ResourceType.EVENT) {
       return (
         <div className="flex flex-col gap-3">
           <Select
-            placeholder="选择事件"
+            placeholder="Select event"
             selectedKeys={selectedResourceId ? [selectedResourceId] : []}
             onSelectionChange={(keys) => {
               const selectedKey = Array.from(keys)[0] as string;
@@ -196,19 +215,22 @@ export const CreateInvitationDrawer = ({
               }
             }}
             classNames={{
-              trigger: 'bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.1)] text-white',
+              trigger:
+                'bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.1)] text-white',
               listbox: 'bg-[#333] text-white',
             }}
             isDisabled={isEventsLoading || isSubmitting}
           >
             {isEventsLoading ? (
-              <SelectItem key="loading">加载中...</SelectItem>
+              <SelectItem key="loading">Loading...</SelectItem>
             ) : spaceEvents && spaceEvents.length > 0 ? (
               spaceEvents.map((event: any) => (
-                <SelectItem key={event.id}>{event.name || event.title || '未命名事件'}</SelectItem>
+                <SelectItem key={event.id}>
+                  {event.name || event.title || '未命名事件'}
+                </SelectItem>
               ))
             ) : (
-              <SelectItem key="empty">无可用事件</SelectItem>
+              <SelectItem key="empty">No Available Event</SelectItem>
             )}
           </Select>
         </div>
@@ -219,17 +241,97 @@ export const CreateInvitationDrawer = ({
   return (
     <Drawer isOpen={isOpen} onClose={onClose} placement="right">
       <DrawerContent>
-        <CommonDrawerHeader title="邀请成员" onClose={onClose} isDisabled={isSubmitting} />
+        <CommonDrawerHeader
+          title="Invite Members"
+          onClose={onClose}
+          isDisabled={isSubmitting}
+        />
         <DrawerBody className="px-5 py-6 flex flex-col gap-6">
           <div className="flex flex-col gap-3">
-            <p className="text-white text-sm font-medium">搜索用户</p>
+            <div className="flex flex-col gap-3">
+              <p className="text-white text-sm font-medium">Resource Type</p>
+              <RadioGroup
+                value={resourceType}
+                onValueChange={(value) =>
+                  setResourceType(value as ResourceType)
+                }
+                orientation="horizontal"
+                classNames={{
+                  wrapper: 'gap-4',
+                }}
+              >
+                <Radio value={ResourceType.SPACE}>Space</Radio>
+                <Radio value={ResourceType.EVENT}>Event</Radio>
+              </RadioGroup>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <p className="text-white text-sm font-medium">Resource</p>
+              {renderResourceSelector()}
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <p className="text-white text-sm font-medium">Role</p>
+              <Select
+                placeholder="Select the role to be assigned."
+                selectedKeys={selectedRoleId ? [selectedRoleId] : []}
+                onSelectionChange={(keys) => {
+                  const selectedKey = Array.from(keys)[0] as string;
+                  if (selectedKey) {
+                    setSelectedRoleId(selectedKey);
+                  }
+                }}
+                classNames={{
+                  trigger:
+                    'bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.1)] text-white',
+                  listbox: 'bg-[#333] text-white',
+                }}
+                isDisabled={
+                  isRoleLoading || isSubmitting || !selectedResourceId
+                }
+              >
+                {isRoleLoading ? (
+                  <SelectItem key="loading">Loading...</SelectItem>
+                ) : assignableRoles && assignableRoles.length > 0 ? (
+                  assignableRoles.map((rolePermission: any) => (
+                    <SelectItem key={rolePermission.role.id}>
+                      {rolePermission.role.name}
+                    </SelectItem>
+                  ))
+                ) : (
+                  <SelectItem key="empty">No Available Role</SelectItem>
+                )}
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <p className="text-white text-sm font-medium">
+                Invitation Message（optional）
+              </p>
+              <Input
+                placeholder="Input invitation message"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                classNames={{
+                  inputWrapper:
+                    'bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.1)]',
+                  input: 'text-white',
+                }}
+                isDisabled={isSubmitting}
+              />
+            </div>
+
+            <p className="text-white text-sm font-medium">Search User</p>
             <Input
-              placeholder="输入用户名或钱包地址搜索"
+              placeholder="Search Members By Fullname Or Wallet Address"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              startContent={<MagnifyingGlass size={16} className="text-white/60" />}
+              startContent={
+                <MagnifyingGlass size={16} className="text-white/60" />
+              }
               classNames={{
-                inputWrapper: 'bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.1)]',
+                inputWrapper:
+                  'bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.1)]',
                 input: 'text-white',
               }}
             />
@@ -248,111 +350,64 @@ export const CreateInvitationDrawer = ({
                       'flex items-center gap-3 p-2 rounded-lg cursor-pointer',
                       selectedUser?.id === user.id
                         ? 'bg-[rgba(255,255,255,0.1)]'
-                        : 'hover:bg-[rgba(255,255,255,0.05)]'
+                        : 'hover:bg-[rgba(255,255,255,0.05)]',
                     )}
                     onClick={() => setSelectedUser(user)}
                   >
                     <Avatar src={user.avatar} alt={user.username} size="sm" />
                     <div className="flex flex-col">
-                      <span className="text-sm font-medium text-white">{user.username}</span>
-                      <span className="text-xs text-white/60">{user.address}</span>
+                      <span className="text-sm font-medium text-white">
+                        {user.username}
+                      </span>
+                      <span className="text-xs text-white/60">
+                        {user.address}
+                      </span>
                     </div>
                   </div>
                 ))
               ) : searchQuery ? (
-                <p className="text-white/60 text-sm text-center p-4">未找到用户</p>
+                <MemberEmpty />
               ) : null}
             </div>
           </div>
 
-          {selectedUser && (
-            <div className="flex flex-col gap-3">
-              <p className="text-white text-sm font-medium">已选择用户</p>
-              <div className="flex items-center gap-3 p-3 bg-[rgba(255,255,255,0.05)] rounded-lg">
-                <Avatar src={selectedUser.avatar} alt={selectedUser.username} size="sm" />
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-white">{selectedUser.username}</span>
-                  <span className="text-xs text-white/60">{selectedUser.address}</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="flex flex-col gap-3">
-            <p className="text-white text-sm font-medium">选择资源类型</p>
-            <RadioGroup
-              value={resourceType}
-              onValueChange={(value) => setResourceType(value as ResourceType)}
-              orientation="horizontal"
-              classNames={{
-                wrapper: 'gap-4',
-              }}
-            >
-              <Radio value={ResourceType.SPACE}>空间</Radio>
-              <Radio value={ResourceType.EVENT}>事件</Radio>
-            </RadioGroup>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <p className="text-white text-sm font-medium">选择资源</p>
-            {renderResourceSelector()}
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <p className="text-white text-sm font-medium">选择角色</p>
-            <Select
-              placeholder="选择要分配的角色"
-              selectedKeys={selectedRoleId ? [selectedRoleId] : []}
-              onSelectionChange={(keys) => {
-                const selectedKey = Array.from(keys)[0] as string;
-                if (selectedKey) {
-                  setSelectedRoleId(selectedKey);
-                }
-              }}
-              classNames={{
-                trigger: 'bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.1)] text-white',
-                listbox: 'bg-[#333] text-white',
-              }}
-              isDisabled={isRoleLoading || isSubmitting || !selectedResourceId}
-            >
-              {isRoleLoading ? (
-                <SelectItem key="loading">加载中...</SelectItem>
-              ) : assignableRoles && assignableRoles.length > 0 ? (
-                assignableRoles.map((rolePermission: any) => (
-                  <SelectItem key={rolePermission.role.id}>{rolePermission.role.name}</SelectItem>
-                ))
-              ) : (
-                <SelectItem key="empty">无可用角色</SelectItem>
-              )}
-            </Select>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <p className="text-white text-sm font-medium">邀请信息（选填）</p>
-            <Input
-              placeholder="输入邀请消息"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              classNames={{
-                inputWrapper: 'bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.1)]',
-                input: 'text-white',
-              }}
-              isDisabled={isSubmitting}
-            />
-          </div>
+          {/*{selectedUser && (*/}
+          {/*  <div className="flex flex-col gap-3">*/}
+          {/*    <p className="text-white text-sm font-medium">Selected User</p>*/}
+          {/*    <div className="flex items-center gap-3 p-3 bg-[rgba(255,255,255,0.05)] rounded-lg">*/}
+          {/*      <Avatar*/}
+          {/*        src={selectedUser.avatar}*/}
+          {/*        alt={selectedUser.username}*/}
+          {/*        size="sm"*/}
+          {/*      />*/}
+          {/*      <div className="flex flex-col">*/}
+          {/*        <span className="text-sm font-medium text-white">*/}
+          {/*          {selectedUser.username}*/}
+          {/*        </span>*/}
+          {/*        <span className="text-xs text-white/60">*/}
+          {/*          {selectedUser.address}*/}
+          {/*        </span>*/}
+          {/*      </div>*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*)}*/}
 
           <div className="flex justify-end mt-4">
             <Button
               color="primary"
+              className={cn(
+                'h-[38px] rgba(103,219,255,0.10) text-[#67DBFF] border border-[rgba(103,219,255,0.2)] rounded-[10px] text-[14px] font-bold leading-[1.6]',
+                'w-[120px] mobile:flex-1'
+              )}
               onPress={handleSubmit}
               isDisabled={!isFormValid || isSubmitting}
               isLoading={isSubmitting}
             >
-              发送邀请
+              Send
             </Button>
           </div>
         </DrawerBody>
       </DrawerContent>
     </Drawer>
   );
-}; 
+};

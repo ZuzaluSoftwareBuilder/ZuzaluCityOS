@@ -1,11 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import {
-  acceptInvitation,
-  rejectInvitation,
-} from '@/services/invitation';
-import { Button, Tabs, Tab } from '@heroui/react';
+import { acceptInvitation, rejectInvitation } from '@/services/invitation';
+import { Tabs, Tab } from '@heroui/react';
+import { Button } from '@/components/base';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { Avatar } from '@heroui/react';
@@ -163,11 +161,11 @@ const NotificationsPage: React.FC = () => {
   const getResourceName = (invitation: Invitation) => {
     switch (invitation.resource) {
       case 'space':
-        return invitation.space?.name || '空间';
+        return invitation.space?.name || 'space';
       case 'event':
-        return invitation.event?.name || '活动';
+        return invitation.event?.name || 'event';
       default:
-        return '未知资源';
+        return 'unknown resource';
     }
   };
 
@@ -189,7 +187,7 @@ const NotificationsPage: React.FC = () => {
         locale: zhCN,
       });
     } catch (e) {
-      return '未知时间';
+      return 'Unknown Time';
     }
   };
 
@@ -198,25 +196,25 @@ const NotificationsPage: React.FC = () => {
       case InvitationStatus.PENDING:
         return (
           <span className="bg-yellow-500/20 text-yellow-400 text-xs py-1 px-2 rounded">
-            待处理
+            Pending
           </span>
         );
       case InvitationStatus.ACCEPTED:
         return (
           <span className="bg-green-500/20 text-green-400 text-xs py-1 px-2 rounded">
-            已接受
+            Accepted
           </span>
         );
       case InvitationStatus.REJECTED:
         return (
           <span className="bg-red-500/20 text-red-400 text-xs py-1 px-2 rounded">
-            已拒绝
+            Rejected
           </span>
         );
       case InvitationStatus.CANCELLED:
         return (
           <span className="bg-gray-500/20 text-gray-400 text-xs py-1 px-2 rounded">
-            已取消
+            Cancelled
           </span>
         );
       default:
@@ -232,17 +230,15 @@ const NotificationsPage: React.FC = () => {
     if (invitation.status === InvitationStatus.PENDING) {
       return (
         <div className="flex gap-3 mt-3">
-          <Button
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded-md px-4 py-2"
-            onPress={() => handleAccept(invitation)}
-          >
-            接受
+          <Button color="submit" onPress={() => handleAccept(invitation)}>
+            Accept
           </Button>
           <Button
+            color="dark"
             className="bg-transparent border border-gray-600 hover:bg-gray-700 text-white rounded-md px-4 py-2"
             onPress={() => handleReject(invitation.id)}
           >
-            拒绝
+            Reject
           </Button>
         </div>
       );
@@ -250,7 +246,7 @@ const NotificationsPage: React.FC = () => {
       return (
         <div className="flex gap-3 mt-3">
           <Button
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded-md px-4 py-2"
+            color="primary"
             onPress={() => {
               if (invitation.resource === 'space' && invitation.resourceId) {
                 router.push(`/spaces/${invitation.resourceId}`);
@@ -261,7 +257,7 @@ const NotificationsPage: React.FC = () => {
               }
             }}
           >
-            查看
+            View
           </Button>
         </div>
       );
@@ -274,7 +270,7 @@ const NotificationsPage: React.FC = () => {
     if (invitationsList.length === 0) {
       return (
         <div className="text-white text-center py-8">
-          <p>暂无邀请</p>
+          <p>No Invitation</p>
         </div>
       );
     }
@@ -296,8 +292,8 @@ const NotificationsPage: React.FC = () => {
                 <div className="flex flex-wrap justify-between items-start gap-2">
                   <div className="flex items-center gap-2">
                     <h3 className="text-white font-medium">
-                      {invitation.inviterProfile?.username || '未知用户'}{' '}
-                      邀请你加入 {getResourceName(invitation)}
+                      {invitation.inviterProfile?.username || 'Unknown User'}{' '}
+                      invite you into {getResourceName(invitation)}
                     </h3>
                     {getInvitationStatusBadge(invitation.status)}
                   </div>
@@ -339,24 +335,26 @@ const NotificationsPage: React.FC = () => {
   if (isInvitationsLoading) {
     return (
       <div className="container mx-auto py-8 px-4">
-        <h1 className="text-2xl font-semibold mb-6 text-white">通知</h1>
-        <div className="text-white">加载中...</div>
+        <h1 className="text-2xl font-semibold mb-6 text-white">
+          Notifications
+        </h1>
+        <div className="text-white">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-2xl font-semibold mb-6 text-white">通知</h1>
+    <div className="container mx-auto p-[24px]">
+      <h1 className="text-2xl font-semibold mb-6 text-white">Notifications</h1>
 
       {userInvitations?.length === 0 ? (
         <div className="text-white text-center py-8">
-          <p>暂无通知</p>
+          <p>No Notification</p>
         </div>
       ) : (
         <div className="space-y-4">
           <Tabs
-            aria-label="邀请状态"
+            aria-label="invitation status"
             selectedKey={selectedTab}
             onSelectionChange={(key) => setSelectedTab(key as TabType)}
             className="bg-[rgba(44,44,44,0.5)] rounded-xl p-1"
@@ -366,7 +364,7 @@ const NotificationsPage: React.FC = () => {
               key={TabType.ALL}
               title={
                 <div className="flex items-center gap-1">
-                  <span>全部</span>
+                  <span>All</span>
                   <span className="bg-gray-800 text-white text-xs rounded-full px-2 py-0.5">
                     {allInvitations.length}
                   </span>
@@ -378,7 +376,7 @@ const NotificationsPage: React.FC = () => {
                 key={TabType.PENDING}
                 title={
                   <div className="flex items-center gap-1">
-                    <span>待处理</span>
+                    <span>Pending</span>
                     <span className="bg-yellow-500/30 text-yellow-400 text-xs rounded-full px-2 py-0.5">
                       {pendingInvitations.length}
                     </span>
@@ -391,7 +389,7 @@ const NotificationsPage: React.FC = () => {
                 key={TabType.ACCEPTED}
                 title={
                   <div className="flex items-center gap-1">
-                    <span>已接受</span>
+                    <span>Accepted</span>
                     <span className="bg-green-500/30 text-green-400 text-xs rounded-full px-2 py-0.5">
                       {acceptedInvitations.length}
                     </span>
@@ -404,7 +402,7 @@ const NotificationsPage: React.FC = () => {
                 key={TabType.REJECTED}
                 title={
                   <div className="flex items-center gap-1">
-                    <span>已拒绝</span>
+                    <span>Rejected</span>
                     <span className="bg-red-500/30 text-red-400 text-xs rounded-full px-2 py-0.5">
                       {rejectedInvitations.length}
                     </span>
