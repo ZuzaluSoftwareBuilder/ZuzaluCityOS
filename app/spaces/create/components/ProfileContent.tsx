@@ -26,7 +26,6 @@ export const ProfilValidationSchema = Yup.object().shape({
     .min(3, 'Tagline must be at least 3 characters.')
     .required('Tagline is required.'),
   description: Yup.string()
-  
     .test(
       'is-valid-blocks',
       'community description is required',
