@@ -68,7 +68,7 @@ const PublicSessions: React.FC<ISessions> = ({ eventData, option }) => {
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const { ceramic, composeClient } = useCeramicContext();
   const params = useParams();
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [showDeleteButton, setShowDeleteButton] = useState<boolean>(false);
   const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);

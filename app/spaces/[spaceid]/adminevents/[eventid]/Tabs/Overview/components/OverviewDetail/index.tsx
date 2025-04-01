@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import {
   Alert,
@@ -34,7 +35,7 @@ interface PropTypes {
 
 const OverviewDetail = ({ eventData, handleEditEvent }: PropTypes) => {
   const params = useParams();
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
   const { breakpoints } = useTheme();
   const { ceramic, profile, composeClient } = useCeramicContext();
   const userDID = ceramic?.did?.parent.toString().toLowerCase() || '';

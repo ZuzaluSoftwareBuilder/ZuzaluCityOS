@@ -25,7 +25,7 @@ const EventContent: React.FC = () => {
   const pathname = useParams();
   const params = useParams();
   const router = useRouter();
-  const spaceId = params.spaceid.toString();
+  const spaceId = params.spaceid?.toString() ?? '';
 
   const { data: spaceData } = useQuery({
     queryKey: ['getSpaceByIDInAdminEvents', spaceId],

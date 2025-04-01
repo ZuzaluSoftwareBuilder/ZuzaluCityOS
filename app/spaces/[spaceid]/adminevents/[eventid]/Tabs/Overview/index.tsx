@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import {
   Box,
@@ -90,7 +91,7 @@ const schema = Yup.object().shape({
 const Overview = ({ event, refetch, setTabName }: PropTypes) => {
   const { ceramic, profile, composeClient } = useCeramicContext();
   const params = useParams();
-  const spaceId = params.spaceid.toString();
+  const spaceId = params.spaceid?.toString() ?? '';
 
   const [state, setState] = useState({
     top: false,

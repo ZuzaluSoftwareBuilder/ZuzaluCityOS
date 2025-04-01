@@ -16,7 +16,7 @@ interface PropTypes {
 const Home = ({ event }: PropTypes) => {
   const { breakpoints } = useTheme();
   const params = useParams();
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
   const { showDialog, hideDialog } = useDialog();
   const handleCreateDiscussion = async () => {
     /*if (nftGated && (!contractAddress || !isAddress(contractAddress))) {

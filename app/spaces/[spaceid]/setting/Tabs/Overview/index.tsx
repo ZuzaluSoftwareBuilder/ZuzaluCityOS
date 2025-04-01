@@ -41,7 +41,7 @@ const EditSpace = () => {
   const [isSubmit, setIsSubmit] = useState(false);
   const [isChange, setIsChange] = useState(false);
   const params = useParams();
-  const spaceId = params.spaceid.toString();
+  const spaceId = params.spaceid?.toString() ?? '';
   const { isMobile, isPc, isTablet } = useMediaQuery();
   const descriptionEditorStore = useEditorStore();
   const oldProfile = useRef<string>('');

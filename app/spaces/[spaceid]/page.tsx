@@ -42,7 +42,7 @@ export default function SpaceDetailPage() {
   const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
   const [showCopyToast, setShowCopyToast] = useState(false);
 
-  const spaceId = params?.spaceid.toString() ?? '';
+  const spaceId = params.spaceid?.toString() ?? '';
 
   const { data: spaceData, isLoading } = useGraphQL(
     ['getSpaceAndEvents', spaceId],

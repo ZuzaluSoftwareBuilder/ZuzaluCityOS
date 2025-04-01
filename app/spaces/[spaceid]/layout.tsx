@@ -10,12 +10,11 @@ interface SpacePageLayoutPropTypes {
 }
 
 type Props = {
-  params: { spaceid: string };
+  params: Promise<{ spaceid: string }>;
 };
 
-export const generateMetadata = async ({
-  params,
-}: Props): Promise<Metadata> => {
+export const generateMetadata = async (props: Props): Promise<Metadata> => {
+  const params = await props.params;
   const id = params.spaceid;
 
   return {

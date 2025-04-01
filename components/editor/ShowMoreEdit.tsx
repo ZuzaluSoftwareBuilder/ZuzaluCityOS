@@ -1,3 +1,4 @@
+'use client';
 import { ChevronUpIcon } from '../icons';
 
 import dynamic from 'next/dynamic';

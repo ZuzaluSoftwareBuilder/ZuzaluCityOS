@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import dayjs, { Dayjs } from 'dayjs';
@@ -115,7 +116,7 @@ const Sessions = () => {
   const [isDirections, setIsDirections] = useState<boolean>(false);
 
   const profileId = profile?.id || '';
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
 
   const getSessions = async () => {
     try {

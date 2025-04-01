@@ -45,7 +45,7 @@ const Home = () => {
   const [tickets, setTickets] = useState<ScrollPassTickets[]>([]);
   const [currentTicket, setCurrentTicket] = useState<ScrollPassTickets>();
 
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
 
   const getTickets = async () => {
     const GET_Profile_QUERY = `

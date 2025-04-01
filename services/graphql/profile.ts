@@ -64,57 +64,57 @@ export const GET_OWN_PROFILE_QUERY = graphql(`
 `);
 
 export const GET_USER_OWN_SPACE = graphql(`
-query GetUserOwnSpace($did: ID!) {
-  node(id: $did) {
-    ... on CeramicAccount {
-      zucityProfile {
-        id
-        username
-        avatar
-        author {
+  query GetUserOwnSpace($did: ID!) {
+    node(id: $did) {
+      ... on CeramicAccount {
+        zucityProfile {
           id
-        }
-        spaces(first: 100) {
-          edges {
-            node {
-              id
-              author {
+          username
+          avatar
+          author {
+            id
+          }
+          spaces(first: 100) {
+            edges {
+              node {
                 id
+                author {
+                  id
+                }
+                avatar
+                banner
+                name
+                description
+                category
+                color
+                profileId
+                customAttributes {
+                  tbd
+                }
+                customLinks {
+                  links
+                  title
+                }
+                owner {
+                  id
+                }
+                socialLinks {
+                  links
+                  title
+                }
+                tagline
+                tags {
+                  tag
+                }
+                createdAt
+                updatedAt
               }
-              avatar
-              banner
-              name
-              description
-              category
-              color
-              profileId
-              customAttributes {
-                tbd
-              }
-              customLinks {
-                links
-                title
-              }
-              owner {
-                id
-              }
-              socialLinks {
-                links
-                title
-              }
-              tagline
-              tags {
-                tag
-              }
-              createdAt
-              updatedAt
             }
           }
         }
       }
     }
   }
-}
 `);
 
 export const GET_USER_OWN_EVENT = graphql(`
@@ -175,4 +175,4 @@ export const GET_USER_OWN_EVENT = graphql(`
       }
     }
   }
-  `);
+`);
