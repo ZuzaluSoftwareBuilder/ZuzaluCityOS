@@ -46,7 +46,6 @@ export const NATIVE_APPS: NativeDApp[] = [
     },
   },
   {
-    isComingSoon: true,
     appIdentifier: 'zuland',
 
     appName: 'Zuland',
