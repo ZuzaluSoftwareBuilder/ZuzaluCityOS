@@ -43,7 +43,6 @@ const EditSpace = () => {
   const params = useParams();
   const spaceId = params.spaceid?.toString() ?? '';
   const { isMobile, isPc, isTablet } = useMediaQuery();
-  const descriptionEditorStore = useEditorStore();
   const oldProfile = useRef<string>('');
   const oldCategories = useRef<string>('');
   const oldLinks = useRef<string>('');
@@ -130,7 +129,6 @@ const EditSpace = () => {
     profileForm.setValue('name', data.name);
     profileForm.setValue('tagline', data.tagline);
     profileForm.setValue('description', data.description);
-    descriptionEditorStore.setValue(data.description);
     profileForm.setValue('avatar', data.avatar || '');
     profileForm.setValue('banner', data.banner || '');
     categoriesForm.setValue('tags', data.tags?.map((i) => i.tag) || []);
@@ -235,7 +233,6 @@ const EditSpace = () => {
       >
         <ProfileContent
           form={profileForm}
-          descriptionEditorStore={descriptionEditorStore}
           isDisabled={!isOwner}
         />
       </div>

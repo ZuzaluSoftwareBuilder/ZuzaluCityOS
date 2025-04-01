@@ -4,7 +4,7 @@ import { Controller, UseFormReturn } from 'react-hook-form';
 import { Image } from '@heroui/react';
 import * as Yup from 'yup';
 import { Input, Avatar } from '@/components/base';
-import SuperEditor from '@/components/editor/SuperEditor';
+import EditorPro from '@/components/editorPro';
 import PhotoUpload from '@/components/form/PhotoUpload';
 import { Image as PhotoIcon } from '@phosphor-icons/react';
 import { MarkdownLogo } from '@phosphor-icons/react';
@@ -30,16 +30,10 @@ export const ProfilValidationSchema = Yup.object().shape({
       'is-valid-blocks',
       'community description is required',
       function (value) {
-        if (!value) return true;
+        if (!value) return false;
         try {
           const parsed = JSON.parse(value);
-          if (
-            !parsed.blocks ||
-            !Array.isArray(parsed.blocks) ||
-            parsed.blocks.length === 0
-          ) {
-            return false;
-          }
+          if (parsed.isEmpty) return false;
           return true;
         } catch (e) {
           return false;
@@ -53,13 +47,11 @@ export const ProfilValidationSchema = Yup.object().shape({
 
 interface ProfileContentProps {
   form: UseFormReturn<ProfileFormData>;
-  descriptionEditorStore: ReturnType<typeof useEditorStore>;
   isDisabled?: boolean;
 }
 
 const ProfileContent: React.FC<ProfileContentProps> = ({
   form,
-  descriptionEditorStore,
   isDisabled = false,
 }) => {
   const {
@@ -127,15 +119,11 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
             name="description"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <SuperEditor
-                value={descriptionEditorStore.value}
-                onChange={(value) => {
-                  descriptionEditorStore.setValue(value);
-                  onChange(JSON.stringify(value));
-                }}
-                minHeight={190}
+              <EditorPro
+                value={value}
+                onChange={onChange}
+                className="min-h-[190px]"
                 placeholder="This is a description greeting for new members. You can also update descriptions."
-                isDisabled={isDisabled}
               />
             )}
           />

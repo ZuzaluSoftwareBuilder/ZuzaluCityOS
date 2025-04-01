@@ -78,7 +78,6 @@ const Create = () => {
       banner: '',
     },
   });
-  const descriptionEditorStore = useEditorStore();
 
   const categoriesForm = useForm<CategoriesFormData>({
     resolver: yupResolver(CategoriesValidationSchema),
@@ -178,7 +177,7 @@ const Create = () => {
   };
 
   const transformFormData = (): ZucitySpaceInput => {
-    const { name, tagline, avatar, banner } = profileForm.getValues();
+    const { name, tagline, avatar, banner, description } = profileForm.getValues();
     const { tags, category } = categoriesForm.getValues();
     const { socialLinks, customLinks } = linksForm.getValues();
     const adminId = ceramic?.did?.parent || '';
@@ -187,8 +186,8 @@ const Create = () => {
       customLinks,
       socialLinks,
       name,
-      description: descriptionEditorStore.getValueString(),
       tagline,
+      description,
       owner: adminId,
       profileId: profileId,
       avatar: avatar || DEFAULT_AVATAR,
@@ -331,7 +330,6 @@ const Create = () => {
       <>
         <div className={cn({ hidden: selectedTab !== TabContentEnum.Profile })}>
           <ProfileContent
-            descriptionEditorStore={descriptionEditorStore}
             onBack={() => router.push('/spaces')}
             form={profileForm}
             onSubmit={handleProfileSubmit}
