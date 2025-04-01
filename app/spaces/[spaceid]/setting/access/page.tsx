@@ -109,7 +109,7 @@ export default function AccessSettingPage() {
   };
 
   return (
-    <div className="gap-7.5 flex flex-col justify-center p-5">
+    <div className="flex flex-col justify-center gap-7 p-5">
       <div className="flex w-full flex-col gap-5">
         <div className="flex h-[50px] w-full items-center justify-center gap-2.5 rounded-lg border border-white/10 bg-white/10 p-2.5">
           <div className="flex w-full items-center gap-2.5">
