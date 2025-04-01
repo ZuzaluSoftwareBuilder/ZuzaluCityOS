@@ -172,7 +172,7 @@ DAppDetailDrawer.BasicInfo = memo(function BasicInfo(
           ])}
         />
       </div>
-      <div className="font-inter flex flex-col gap-[5px]">
+      <div className="flex flex-col gap-[5px]">
         <span className="text-lg font-bold leading-[140%]">
           {appName ?? '-'}
         </span>
@@ -190,7 +190,7 @@ DAppDetailDrawer.Categories = memo(function Categories(props: {
   const { categories = '' } = props;
   const categoriesArray = categories.split(',');
   return (
-    <div className="font-inter flex flex-wrap items-center gap-2.5 text-[13px] font-normal leading-[140%] tracking-[0.01em]">
+    <div className="flex flex-wrap items-center gap-2.5 text-[13px] font-normal leading-[140%] tracking-[0.01em]">
       <span className="opacity-50">Categories:</span>
       {categoriesArray.map((category) => (
         <div
@@ -211,7 +211,7 @@ DAppDetailDrawer.Developer = memo(function Developer(props: {
 }) {
   const { developer = '' } = props;
   return (
-    <div className="font-inter flex items-center gap-2.5 text-[13px] font-normal leading-[140%] tracking-[0.01em]">
+    <div className="flex items-center gap-2.5 text-[13px] font-normal leading-[140%] tracking-[0.01em]">
       <span className="opacity-50">Developer:</span>
       <span className="opacity-80">{developer}</span>
     </div>
@@ -356,7 +356,7 @@ DAppDetailDrawer.Status = memo(function Status(
       {items.map((item) => (
         <div
           key={item.label}
-          className="font-inter flex justify-between gap-4 text-[13px] font-normal leading-[140%] tracking-[0.01em]"
+          className="flex justify-between gap-4 text-[13px] font-normal leading-[140%] tracking-[0.01em]"
         >
           <span className="whitespace-nowrap opacity-50">{item.label}:</span>
           <span

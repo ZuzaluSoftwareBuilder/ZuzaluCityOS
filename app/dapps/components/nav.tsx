@@ -112,7 +112,7 @@ export default function Nav() {
         {navItems.map((item) => (
           <NavButton
             key={item.label}
-            className={activeTab === item.label ? 'active' : ''}
+            className={activeTab === item.label ? 'opacity-100' : ''}
             startIcon={item.icon}
             onClick={(e) => handleTabClick(e, item)}
             disableRipple

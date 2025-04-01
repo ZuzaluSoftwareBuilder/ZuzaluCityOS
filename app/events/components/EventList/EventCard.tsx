@@ -67,7 +67,7 @@ export function EventCard({ data }: IEventCardProps) {
           <p className="h-[30px] text-[18px] font-bold leading-[30px]">
             {title}
           </p>
-          <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] h-[22px] text-[13px] leading-[22px] tracking-[0.13px] opacity-60">
+          <p className=" h-[22px] text-[13px] leading-[22px] tracking-[0.13px] opacity-60">
             {tagline}
           </p>
         </div>

@@ -13,7 +13,7 @@ export function SmallEventCardSkeleton() {
   return (
     <div className="flex gap-[14px] rounded-[10px] border-1 border-b-w-10 p-[10px] hover:bg-white/5">
       <Skeleton className="size-[100px] rounded-[10px] mobile:size-[60px]">
-        <div className="flex-0"></div>
+        <div className=""></div>
       </Skeleton>
       <div className="flex w-[250px] flex-col gap-[10px]">
         <Skeleton className="rounded-[4px]">
@@ -51,7 +51,7 @@ export function SmallEventCard({ data }: SmallEventCardProps) {
           'https://framerusercontent.com/images/UkqE1HWpcAnCDpQzQYeFjpCWhRM.png'
         }
         classNames={{
-          base: 'w-[100px] h-[100px] flex-0 rounded-[10px] border-1 border-b-w-10 mobile:w-[60px] mobile:h-[60px]',
+          base: 'w-[100px] h-[100px]  rounded-[10px] border-1 border-b-w-10 mobile:w-[60px] mobile:h-[60px]',
         }}
       />
       <div className="flex flex-col gap-[10px]">

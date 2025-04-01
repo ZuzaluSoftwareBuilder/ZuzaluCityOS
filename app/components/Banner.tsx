@@ -21,12 +21,12 @@ const Banner = () => {
             <ArrowCircleRightIcon className="absolute inset-0 opacity-100 transition-opacity duration-300 group-hover:opacity-0" />
             <ArrowCircleRightFillIcon className="absolute inset-0 opacity-0 transition-all duration-300 group-hover:translate-x-[2px] group-hover:opacity-100" />
           </div>
-          <div className="relative transition-transform duration-300 group-hover:-translate-x-[2px]">
+          <div className="relative transition-transform duration-300 group-hover:translate-x-[-2px]">
             <p className="text-[14px] font-[600] leading-[1.2] text-white/80">
               dApp Explore Open! List your dApps now!
             </p>
             <p
-              className="animate-gradient absolute left-0 top-0 z-10 text-[14px] font-[600] leading-[1.2] text-transparent"
+              className="absolute left-0 top-0 z-10 text-[14px] font-[600] leading-[1.2] text-transparent"
               style={{
                 animationTimeline: 'auto',
                 animationRangeStart: 'normal',
@@ -41,7 +41,7 @@ const Banner = () => {
           </div>
         </div>
       </div>
-      <div className="bg-lightgray border-b-1 border-b-w-10 bg-[url('/banner/banner_bg.png')] bg-cover bg-center bg-no-repeat px-[42px] py-[32px] mobile:p-[20px]">
+      <div className="border-b-1 border-b-w-10 bg-[url('/banner/banner_bg.png')] bg-cover bg-center bg-no-repeat px-[42px] py-[32px] mobile:p-[20px]">
         <p className="mb-[10px] font-merriweather text-[49px] font-black leading-[1.2] mobile:mb-0 mobile:text-[42px]">
           Zuzalu City
         </p>

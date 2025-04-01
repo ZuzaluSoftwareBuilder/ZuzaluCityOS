@@ -63,7 +63,7 @@ const JoinSpaceNoGate = () => {
                 <Avatar
                   name="Junior"
                   classNames={{
-                    base: 'min-w-[60px] h-[60px] flex-0',
+                    base: 'min-w-[60px] h-[60px] ',
                   }}
                 />
                 <div className="flex flex-col gap-[6px]">
@@ -124,7 +124,7 @@ const JoinSpaceWithGate = () => {
                 <Avatar
                   name="Junior"
                   classNames={{
-                    base: 'min-w-[60px] h-[60px] flex-0',
+                    base: 'min-w-[60px] h-[60px] ',
                   }}
                 />
                 <div className="flex flex-col gap-[6px]">
@@ -156,7 +156,7 @@ const JoinSpaceWithGate = () => {
                     <Avatar
                       name="Junior"
                       classNames={{
-                        base: 'w-[30px] h-[30px] flex-0',
+                        base: 'w-[30px] h-[30px] ',
                       }}
                     />
                   }
@@ -174,7 +174,7 @@ const JoinSpaceWithGate = () => {
                     <Avatar
                       name="Junior"
                       classNames={{
-                        base: 'w-[30px] h-[30px] flex-0',
+                        base: 'w-[30px] h-[30px] ',
                       }}
                     />
                   }

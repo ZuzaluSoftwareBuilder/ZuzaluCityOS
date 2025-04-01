@@ -123,6 +123,7 @@ export default function ExploreNav({
         {navItems.map((item, index) => (
           <NavButton
             key={item.label}
+            // eslint-disable-next-line tailwindcss/no-custom-classname
             className={activeTab === item.label ? 'active' : ''}
             startIcon={item.icon}
             onClick={(e) => handleTabClick(e, item, index)}
