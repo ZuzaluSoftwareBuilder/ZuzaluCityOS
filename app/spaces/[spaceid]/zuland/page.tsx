@@ -9,9 +9,8 @@ import { Stack } from '@mui/material';
 import DiscussionsHome from '@/components/zuland/DiscussionsHome';
 import PostDetails from '@/components/zuland/PostDetails';
 import NewPost from '@/components/zuland/NewPost';
-
+import { ZulandReadableBeam, ZulandReadbleBlock } from '@/types/akasha';
 import {
-  ZulandReadableBeam,
   getZulandReadableBeams,
   hasUserTicketPermissions,
 } from '@/utils/akasha';
