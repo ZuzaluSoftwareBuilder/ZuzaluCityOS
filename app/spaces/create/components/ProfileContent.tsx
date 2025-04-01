@@ -31,12 +31,9 @@ export const ProfilValidationSchema = Yup.object().shape({
       'community description is required',
       function (value) {
         if (!value) return false;
-        
         try {
           const parsed = JSON.parse(value);
-          
           if (parsed.isEmpty) return false;
-          
           return true;
         } catch (e) {
           return false;
