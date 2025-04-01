@@ -17,8 +17,6 @@ export const dynamic = 'force-dynamic';
 
 const cancelInvitationSchema = z.object({
   invitationId: z.string().min(1, 'Invitation ID is required'),
-  id: z.string().min(1, 'Resource ID is required'),
-  resource: z.string().min(1, 'Resource type is required'),
 });
 
 export const POST = withBasicSessionValidation(async (request, sessionData) => {
@@ -41,8 +39,6 @@ export const POST = withBasicSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Failed to get user information', 401);
     }
 
-    console.log('Current user DID:', operatorId);
-
     const invitationResult = await composeClient.executeQuery(
       GET_INVITATION_BY_ID_QUERY.toString(),
       {
@@ -62,8 +58,6 @@ export const POST = withBasicSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Invitation not found', 404);
     }
 
-    console.log('Invitation data:', JSON.stringify(invitation, null, 2));
-
     const expiresAt = dayjs(invitation.expiresAt);
     if (expiresAt.isBefore(dayjs())) {
       return createErrorResponse('Invitation has expired', 400);
@@ -77,11 +71,6 @@ export const POST = withBasicSessionValidation(async (request, sessionData) => {
     }
 
     const inviterDid = invitation.inviterId?.id;
-    const authorDid = invitation.author?.id;
-
-    console.log('Inviter DID:', inviterDid);
-    console.log('Author DID:', authorDid);
-    console.log('Comparing with operatorId:', operatorId);
 
     const isInviter = String(inviterDid) === String(operatorId);
 

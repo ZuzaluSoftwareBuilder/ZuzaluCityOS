@@ -49,16 +49,12 @@ export const rejectInvitation = async (params: InvitationActionRequest): Promise
 
 export interface ICancelInvitationParams {
   invitationId: string;
-  id: string;
-  resource: string;
 }
 
-export const cancelInvitation = async ({ invitationId, id, resource }: ICancelInvitationParams): Promise<{ success: boolean; message?: string; }> => {
+export const cancelInvitation = async ({ invitationId }: ICancelInvitationParams): Promise<{ success: boolean; message?: string; }> => {
   try {
     const response = await axiosInstance.post(`/api/invitation/cancel`, {
       invitationId,
-      id,
-      resource
     });
     return {
       success: true,

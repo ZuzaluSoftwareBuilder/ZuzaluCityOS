@@ -18,8 +18,6 @@ export const dynamic = 'force-dynamic';
 
 const rejectInvitationSchema = z.object({
   invitationId: z.string().min(1, 'Invitation ID is required'),
-  id: z.string().min(1, 'Resource ID is required'),
-  resource: z.string().min(1, 'Resource type is required'),
 });
 
 export const POST = withBasicSessionValidation(async (request, sessionData) => {

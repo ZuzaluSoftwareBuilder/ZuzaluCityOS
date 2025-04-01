@@ -125,19 +125,16 @@ export const CreateInvitationDrawer = ({
     }
   }, [resourceType, spaceId]);
 
-  // 创建邀请的mutation
   const createInvitationMutation = useMutation({
     mutationFn: async () => {
       if (!selectedUser || !selectedRoleId || !selectedResourceId) {
-        throw new Error('请完成所有必填项');
+        throw new Error('Please complete all required fields');
       }
 
       return createInvitation({
         inviteeId: selectedUser.did,
         id: selectedResourceId,
         resource: resourceType,
-        // TODO for test, wait for delete
-        // roleId: 'kjzl6kcym7w8y7y5fz9tfvb6z91hurzhl6gd7mv46ljgh72o6q2kkzh245quha4',
         roleId: selectedRoleId,
         message: message || '',
         expiresAt: new Date(
@@ -147,23 +144,22 @@ export const CreateInvitationDrawer = ({
     },
     onSuccess: () => {
       addToast({
-        title: '邀请已发送',
-        description: '用户将收到您的邀请',
-        variant: 'solid',
+        title: 'Invitation is sent successfully',
+        description: 'User will receive your invitation email',
+        color: 'success',
       });
       resetForm();
       onSuccess?.();
     },
     onError: (error: any) => {
       addToast({
-        title: '发送邀请失败',
-        description: error.response?.data?.message || '请稍后再试',
-        variant: 'solid',
+        title: 'Failed to send invitation',
+        description: error.response?.data?.message || 'Please try again later',
+        color: 'danger',
       });
     },
   });
 
-  // 当抽屉关闭时清除表单
   useEffect(() => {
     if (!isOpen) {
       resetForm();
@@ -194,7 +190,6 @@ export const CreateInvitationDrawer = ({
   const isFormValid =
     selectedUser !== null && selectedRoleId !== '' && selectedResourceId !== '';
 
-  // 根据不同的资源类型渲染不同的资源选择组件
   const renderResourceSelector = () => {
     if (resourceType === ResourceType.SPACE) {
       return (

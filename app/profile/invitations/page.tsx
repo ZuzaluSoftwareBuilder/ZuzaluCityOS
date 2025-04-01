@@ -162,8 +162,6 @@ const NotificationsPage: React.FC = () => {
         const result = await acceptInvitation({
           invitationId: invitation.id,
           userId: invitation.inviteeId,
-          id: invitation.resourceId,
-          resource: invitation.resource,
         });
 
         if (result.success) {
@@ -217,15 +215,13 @@ const NotificationsPage: React.FC = () => {
         const result = await rejectInvitation({
           invitationId: invitation.id,
           userId: invitation.inviteeId,
-          id: invitation.resourceId,
-          resource: invitation.resource,
         });
 
         if (result.success) {
           addToast({
             title: 'Invitation rejected',
             description: 'You have successfully rejected the invitation',
-            color: 'success',
+            color: 'primary',
           });
           refetch();
         } else {
@@ -323,13 +319,13 @@ const NotificationsPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-[24px]">
-      <h1 className="text-2xl font-semibold mb-6 text-white">通知</h1>
+      <h1 className="text-2xl font-semibold mb-6 text-white">Notification</h1>
 
       {isInvitationsLoading ? (
         <Loading />
       ) : userInvitations?.length === 0 ? (
         <div className="text-white text-center py-8">
-          <p>暂无通知</p>
+          <p>No Notification</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -344,7 +340,7 @@ const NotificationsPage: React.FC = () => {
               key={TabType.ALL}
               title={
                 <div className="flex items-center gap-1">
-                  <span>全部</span>
+                  <span>All</span>
                   <span className="bg-gray-800 text-white text-xs rounded-full px-2 py-0.5">
                     {allInvitations.length}
                   </span>
@@ -356,7 +352,7 @@ const NotificationsPage: React.FC = () => {
                 key={TabType.PENDING}
                 title={
                   <div className="flex items-center gap-1">
-                    <span>待处理</span>
+                    <span>Pending</span>
                     <span className="bg-yellow-500/30 text-yellow-400 text-xs rounded-full px-2 py-0.5">
                       {pendingInvitations.length}
                     </span>
@@ -369,7 +365,7 @@ const NotificationsPage: React.FC = () => {
                 key={TabType.ACCEPTED}
                 title={
                   <div className="flex items-center gap-1">
-                    <span>已接受</span>
+                    <span>Accepted</span>
                     <span className="bg-green-500/30 text-green-400 text-xs rounded-full px-2 py-0.5">
                       {acceptedInvitations.length}
                     </span>
@@ -382,7 +378,7 @@ const NotificationsPage: React.FC = () => {
                 key={TabType.REJECTED}
                 title={
                   <div className="flex items-center gap-1">
-                    <span>已拒绝</span>
+                    <span>Rejected</span>
                     <span className="bg-red-500/30 text-red-400 text-xs rounded-full px-2 py-0.5">
                       {rejectedInvitations.length}
                     </span>
@@ -395,7 +391,7 @@ const NotificationsPage: React.FC = () => {
                 key={TabType.CANCELLED}
                 title={
                   <div className="flex items-center gap-1">
-                    <span>已取消</span>
+                    <span>Cancelled</span>
                     <span className="bg-gray-500/30 text-gray-400 text-xs rounded-full px-2 py-0.5">
                       {cancelledInvitations.length}
                     </span>

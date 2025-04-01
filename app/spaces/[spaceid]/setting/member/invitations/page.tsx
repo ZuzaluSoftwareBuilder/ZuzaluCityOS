@@ -11,6 +11,7 @@ import {
   Avatar,
   Spinner,
   useDisclosure,
+  addToast
 } from '@heroui/react';
 import {
   Button,
@@ -73,8 +74,9 @@ const InvitationsPage = () => {
     },
     {
       select: (data) =>
-        data.data?.zucityInvitationIndex?.edges?.map((item) => item?.node).filter(Boolean) ||
-        [],
+        data.data?.zucityInvitationIndex?.edges
+          ?.map((item) => item?.node)
+          .filter(Boolean) || [],
       enabled: !!spaceId,
     },
   );
@@ -84,20 +86,25 @@ const InvitationsPage = () => {
 
     try {
       setIsLoading(true);
-      const { id, resourceId, resource } = selectedInvitation;
       const result = await cancelInvitation({
-        invitationId: id,
-        id: resourceId as string,
-        resource: resource as string,
+        invitationId: selectedInvitation.id,
       });
       if (result.success) {
         console.log('Invitation has been successfully cancelled:', result);
+        addToast({
+          title: 'Invitation has been successfully cancelled',
+          color: 'primary',
+        })
         refetch();
         onClose();
       } else {
         console.error('Failed to cancel invitation:', result.message);
       }
     } catch (error) {
+      addToast({
+        title: 'Failed to cancel invitation',
+        color: 'danger',
+      })
       console.error('Failed to cancel invitation:', error);
     } finally {
       setIsLoading(false);
@@ -179,7 +186,11 @@ const InvitationsPage = () => {
                             'Unknown User'}
                         </p>
                         <Chip
-                          color={getStatusColor(invitation.status as InvitationStatus) as any}
+                          color={
+                            getStatusColor(
+                              invitation.status as InvitationStatus,
+                            ) as any
+                          }
                           variant="flat"
                           size="sm"
                           className="mt-1"

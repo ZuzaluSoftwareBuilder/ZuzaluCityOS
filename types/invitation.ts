@@ -35,22 +35,6 @@ export enum InvitationStatus {
   CANCELLED = 'cancelled',
 }
 
-export interface InvitationEdge {
-  node: ZucityInvitation;
-}
-
-export interface InvitationData {
-  zucityInvitationIndex: {
-    edges: InvitationEdge[];
-  };
-}
-
-export interface InvitationResponse {
-  data: ZucityInvitation;
-  success: boolean;
-  message?: string;
-}
-
 export interface CreateInvitationRequest {
   inviteeId: string;
   id: string;
@@ -60,25 +44,9 @@ export interface CreateInvitationRequest {
   expiresAt?: string;
 }
 
-export interface GetAssignableRolesRequest {
-  userId: string;
-  resourceId: string;
-  resourceType: string;
-}
-
 export interface InvitationActionRequest {
   invitationId: string;
   userId: string;
-  id: string;
-  resource: string;
-}
-
-export interface InvitationQueryParams {
-  resourceId?: string;
-  resourceType?: string;
-  status?: InvitationStatus;
-  offset?: number;
-  limit?: number;
 }
 
 export interface ProfileInfo {

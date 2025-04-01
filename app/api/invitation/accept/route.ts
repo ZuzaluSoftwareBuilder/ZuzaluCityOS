@@ -5,7 +5,7 @@ import {
   createSuccessResponse,
 } from '@/utils/service/response';
 import { dayjs } from '@/utils/dayjs';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import { InvitationStatus } from '@/types/invitation';
 import { composeClient } from '@/constant';
 import {
@@ -19,11 +19,8 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-// Accept invitation request schema
 const acceptInvitationSchema = z.object({
   invitationId: z.string().min(1, 'Invitation ID is required'),
-  id: z.string().min(1, 'Resource ID is required'),
-  resource: z.string().min(1, 'Resource type is required'),
 });
 
 export const POST = withBasicSessionValidation(async (request, sessionData) => {
@@ -144,23 +141,6 @@ export const POST = withBasicSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Failed to create user role', 500);
     }
 
-    console.log('create user role success');
-
-    // // 6. 验证资源访问权限
-    // const accessValidationResult = await executeQuery(VALIDATE_RESOURCE_ACCESS.toString(), {
-    //   userId: operatorId,
-    //   resourceId: invitation.resourceId,
-    //   source: invitation.resource
-    // });
-
-    // const edges = accessValidationResult.data?.zucityUserRolesIndex?.edges;
-    // const hasAccess = edges && edges.length > 0;
-    // if (!hasAccess) {
-    //   return createErrorResponse('Failed to grant resource access', 500);
-    // }
-
-    console.log('grant resource access success');
-
     const updateResult = await composeClient.executeQuery(
       UPDATE_INVITATION_MUTATION.toString(),
       {
@@ -174,8 +154,6 @@ export const POST = withBasicSessionValidation(async (request, sessionData) => {
         },
       },
     );
-
-    console.log('update invitation status success');
 
     if (updateResult.errors) {
       throw new Error(
