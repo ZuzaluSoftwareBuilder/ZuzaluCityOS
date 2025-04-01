@@ -11,7 +11,8 @@
     "lint": "next lint",
     "prettier": "prettier --write .",
     "codegen": "graphql-codegen --config codegen.ts",
-    "codegen:watch": "graphql-codegen --config codegen.ts --watch"
+    "codegen:watch": "graphql-codegen --config codegen.ts --watch",
+    "prepare": "husky"
   },
   "dependencies": {
     "@akashaorg/composedb-models": "0.1.3",
