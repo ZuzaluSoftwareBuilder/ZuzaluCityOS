@@ -89,6 +89,7 @@ export const POST = withBasicSessionValidation(async (request, sessionData) => {
       },
     );
 
+    // TODO: replace new role with existing role?
     const existingRoles =
       existingRoleResult.data?.zucityUserRolesIndex?.edges || [];
     if (existingRoles.length > 0) {

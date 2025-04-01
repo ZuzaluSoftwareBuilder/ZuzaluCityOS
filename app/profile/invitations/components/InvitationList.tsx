@@ -126,7 +126,7 @@ export const InvitationList = memo(
         {invitations.map((invitation) => (
           <div
             key={invitation.id}
-            className="bg-[rgba(44,44,44,0.8)] rounded-lg p-4 border border-[rgba(255,255,255,0.1)]"
+            className="flex justify-between bg-[rgba(44,44,44,0.8)] rounded-lg p-4 border border-[rgba(255,255,255,0.1)]"
           >
             <div className="flex items-start gap-3">
               <Avatar
@@ -137,30 +137,31 @@ export const InvitationList = memo(
               <div className="flex-1">
                 <div className="flex flex-wrap justify-between items-start gap-2">
                   <div className="flex items-center gap-2">
+                    {getInvitationStatusBadge(invitation.status)}
                     <h3 className="text-white font-medium">
                       {invitation.inviterProfile?.username || 'Unknown User'}{' '}
                       invited you to join {getResourceName(invitation)}
                     </h3>
-                    {getInvitationStatusBadge(invitation.status)}
+                    <span className="text-gray-400 text-sm">
+                      {formatTime(invitation.createdAt)}
+                    </span>
                   </div>
-                  <span className="text-gray-400 text-sm">
-                    {formatTime(invitation.createdAt)}
-                  </span>
                 </div>
 
                 {invitation.message && (
-                  <p className="text-gray-300 my-2">{invitation.message}</p>
+                  <p className="text-gray-400 my-2 text-sm">{invitation.message}</p>
                 )}
 
-                <InvitationActionButtons
-                  invitation={invitation}
-                  processing={processing}
-                  onAccept={onAccept}
-                  onReject={onReject}
-                  getResourceName={getResourceName}
-                />
               </div>
             </div>
+
+            <InvitationActionButtons
+              invitation={invitation}
+              processing={processing}
+              onAccept={onAccept}
+              onReject={onReject}
+              getResourceName={getResourceName}
+            />
           </div>
         ))}
       </div>

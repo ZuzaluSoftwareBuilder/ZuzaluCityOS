@@ -75,7 +75,9 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
       {isAuthenticated ? (
         <>
           <div className="flex items-center gap-3">
+            
             <NotificationBadge className="cursor-pointer" />
+
             <Button className={buttonClassName} onPress={handleMenuClick}>
               <Image
                 src={profile?.avatar ?? '/user/avatar_p.png'}

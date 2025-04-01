@@ -30,7 +30,18 @@ export const GET_INVITATIONS_QUERY = graphql(`
           lastSentAt
           message
           roleId
+          eventId
+          event {
+            id
+            imageUrl
+            title
+          }
           spaceId
+          space {
+            id
+            name
+            avatar
+          }
           status
           updatedAt
           inviteeProfileId
@@ -38,54 +49,11 @@ export const GET_INVITATIONS_QUERY = graphql(`
             id
           }
           createdAt
-          eventId
           expiresAt
           inviterProfileId
           customAttributes {
             tbd
           }
-        }
-      }
-    }
-  }
-`);
-
-const GET_INVITATION_QUERY_BY_ID = graphql(`
-  query GetInvitationById($id: ID!) {
-    node(id: $id) {
-      ... on ZucityInvitation {
-        id
-        inviterId {
-          id
-        }
-        inviteeId {
-          id
-        }
-        resource
-        resourceId
-        roleId
-        status
-        message
-        isRead
-        inviteeProfileId
-        inviterProfileId
-        eventId
-        spaceId
-        createdAt
-        expiresAt
-        updatedAt
-        lastSentAt
-        inviterProfile {
-          id
-          username
-          address
-          avatar
-        }
-        inviteeProfile {
-          id
-          username
-          address
-          avatar
         }
       }
     }
@@ -169,7 +137,17 @@ export const GET_INVITATION_BY_ID_QUERY = graphql(`
         inviteeProfileId
         inviterProfileId
         eventId
+        event {
+          id
+          imageUrl
+          title
+        }
         spaceId
+        space {
+          id
+          name
+          avatar
+        }
         createdAt
         expiresAt
         updatedAt
@@ -267,6 +245,11 @@ export const CREATE_INVITATION_MUTATION = graphql(`
         message
         roleId
         spaceId
+        space {
+          id
+          name
+          avatar
+        }
         status
         updatedAt
         inviteeProfileId
@@ -275,6 +258,11 @@ export const CREATE_INVITATION_MUTATION = graphql(`
         }
         createdAt
         eventId
+        event {
+          id
+          imageUrl
+          title
+        }
         expiresAt
         inviterProfileId
         customAttributes {
@@ -326,7 +314,7 @@ export const UPDATE_INVITATION_MUTATION = graphql(`
   }
 `);
 
-export const GET_UN_READ_INVITATION_COUNT = graphql(`
+export const GET_UNREAD_INVITATION_COUNT = graphql(`
   query GetUnreadInvitationsCount($userId: String!) {
     zucityInvitationCount(
       filters: {

@@ -24,16 +24,21 @@ const MemberListPage = () => {
 
   const membersList = useMemo(() => {
     const allMembers = [];
+    const processedDids = new Set();
 
     if (owner) {
-      allMembers.push({
-        id: owner.id,
-        name: owner.username || 'Unknown',
-        avatar: owner.avatar || '/user/avatar_p.png',
-        address: address,
-        role: 'Owner',
-        did: owner?.author?.id || '',
-      });
+      const ownerDid = owner?.author?.id;
+      if (ownerDid) {
+        processedDids.add(ownerDid);
+        allMembers.push({
+          id: owner.id,
+          name: owner.username || 'Unknown',
+          avatar: owner.avatar || '/user/avatar_p.png',
+          address: address,
+          role: 'Owner',
+          did: ownerDid,
+        });
+      }
     }
 
     if (members && members.length > 0) {
@@ -42,7 +47,11 @@ const MemberListPage = () => {
           const profile = member.userId.zucityProfile;
           if (!profile) return null;
           if (profile.id === owner?.id) return;
+
           const did = profile.author?.id;
+          if (!did || processedDids.has(did)) return;
+
+          processedDids.add(did);
           const roleName = roles?.data?.find(role => role.role.id === member.roleId)?.role.name || 'Member';
 
           allMembers.push({
@@ -51,7 +60,7 @@ const MemberListPage = () => {
             avatar: profile.avatar || '/user/avatar_p.png',
             address: getWalletAddressFromDid(did),
             role: roleName,
-            did: profile?.author?.id || '',
+            did: did,
           });
         }
       });
@@ -72,7 +81,7 @@ const MemberListPage = () => {
         </Button>
       </div>
 
-      <div className="flex flex-col mt-4 bg-[rgba(34,34,34,0.6)] rounded-2xl overflow-hidden">
+      <div className="flex flex-col bg-[rgba(34,34,34,0.6)] rounded-2xl overflow-hidden">
         <div className="flex items-center w-full px-4 py-3 border-b border-[rgba(255,255,255,0.1)]">
           <span className="flex-1 text-sm font-semibold text-white/60">User</span>
           <span className="w-[100px] text-sm font-semibold text-white/60 text-center">Role</span>

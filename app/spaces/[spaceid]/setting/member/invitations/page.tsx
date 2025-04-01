@@ -76,7 +76,7 @@ const InvitationsPage = () => {
       select: (data) =>
         data.data?.zucityInvitationIndex?.edges
           ?.map((item) => item?.node)
-          .filter(Boolean) || [],
+          .filter(Boolean).sort((a, b) => new Date(b?.createdAt || '').getTime() - new Date(a?.createdAt || '').getTime()) || [],
       enabled: !!spaceId,
     },
   );
@@ -169,72 +169,69 @@ const InvitationsPage = () => {
                 key={invitation.id}
                 className="bg-white/[0.02] border border-white/10"
               >
-                <CardBody className="p-4">
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center space-x-4">
+                <CardBody className="p-3">
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1 flex items-start gap-3">
                       <Avatar
                         src={
                           invitation.inviteeProfile?.avatar ||
                           '/user/avatar_p.png'
                         }
                         fallback="U"
-                        className="w-10 h-10 rounded-full"
+                        className="w-8 h-8 rounded-full flex-shrink-0"
                       />
-                      <div>
-                        <p className="text-white font-medium">
-                          {invitation.inviteeProfile?.username ||
-                            'Unknown User'}
-                        </p>
-                        <Chip
-                          color={
-                            getStatusColor(
-                              invitation.status as InvitationStatus,
-                            ) as any
-                          }
-                          variant="flat"
-                          size="sm"
-                          className="mt-1"
-                        >
-                          {getStatusText(invitation.status as InvitationStatus)}
-                        </Chip>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Chip
+                            color={
+                              getStatusColor(
+                                invitation.status as InvitationStatus,
+                              ) as any
+                            }
+                            variant="flat"
+                            size="sm"
+                          >
+                            {getStatusText(invitation.status as InvitationStatus)}
+                          </Chip>
+                          <p className="text-white font-medium text-sm">
+                            {invitation.inviteeProfile?.username ||
+                              'Unknown User'}
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap gap-x-4 mt-1">
+                          <p className="text-white/60 text-xs">
+                            Invite: {formatDate(invitation.createdAt)}
+                          </p>
+                          <p className="text-white/60 text-xs">
+                            Expire: {formatDate(invitation.expiresAt)}
+                          </p>
+                        </div>
+                        {invitation.message && (
+                          <div className="mt-2">
+                            <p className="text-white/80 text-xs line-clamp-2">
+                              {invitation.message}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    <div className="text-right">
-                      <p className="text-white/60 text-sm mb-1">
-                        Invite Time: {formatDate(invitation.createdAt)}
-                      </p>
-                      <p className="text-white/60 text-sm">
-                        Expired Time: {formatDate(invitation.expiresAt)}
-                      </p>
+                    <div className="flex-shrink-0">
+                      {invitation.status === 'pending' &&
+                        currentUserDid &&
+                        invitation.inviterId?.id === currentUserDid && (
+                          <Button
+                            variant="flat"
+                            size="sm"
+                            startContent={<X size={14} />}
+                            onPress={() =>
+                              openCancelModal(invitation as Invitation)
+                            }
+                          >
+                            Cancel
+                          </Button>
+                        )}
                     </div>
-                  </div>
-
-                  {invitation.message && (
-                    <div className="mt-3 p-3 bg-white/5 rounded-md">
-                      <p className="text-white/80 text-sm">
-                        {invitation.message}
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="flex justify-end">
-                    {invitation.status === 'pending' &&
-                      currentUserDid &&
-                      invitation.inviterId?.id === currentUserDid && (
-                        <Button
-                          color="danger"
-                          variant="flat"
-                          size="sm"
-                          className="mt-2"
-                          startContent={<X size={16} />}
-                          onPress={() =>
-                            openCancelModal(invitation as Invitation)
-                          }
-                        >
-                          Cancel Invitation
-                        </Button>
-                      )}
                   </div>
                 </CardBody>
               </Card>

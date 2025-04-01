@@ -7,32 +7,28 @@ import {
   DrawerContent,
   DrawerBody,
   CommonDrawerHeader,
-} from '@/components/base/drawer';
-import {
-  Input,
   Select,
   SelectItem,
+} from '@/components/base';
+import {
+  Input,
   Avatar,
   Spinner,
   cn,
   addToast,
   Radio,
   RadioGroup,
+  Checkbox,
 } from '@heroui/react';
 import { MagnifyingGlass } from '@phosphor-icons/react';
 import { useSearchUsers, SearchUser } from '@/hooks/useSearchUsers';
-import { Event, RolePermission, Space } from '@/types';
-import { InvitationStatus } from '@/types/invitation';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import axiosInstance from '@/utils/axiosInstance';
+import { Event, Space } from '@/types';
+import { useMutation } from '@tanstack/react-query';
 import { createInvitation } from '@/services/invitation';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_SPACE_AND_EVENTS_QUERY_BY_ID } from '@/services/graphql/space';
-import { getSpaceEvents } from '@/services/event';
 import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
-import { executeQuery } from '@/utils/ceramic';
-import { CHECK_EXISTING_ROLE_QUERY } from '@/services/graphql/role';
 import { MemberEmpty } from '@/app/spaces/[spaceid]/setting/roles/components/members/memberItem';
 
 // 资源类型枚举
@@ -48,13 +44,18 @@ interface CreateInvitationDrawerProps {
   onSuccess?: () => void;
 }
 
+interface ExtendedSearchUser extends SearchUser {
+  name?: string;
+  id: string;
+}
+
 export const CreateInvitationDrawer = ({
   isOpen,
   onClose,
   spaceId,
   onSuccess,
 }: CreateInvitationDrawerProps) => {
-  const [selectedUser, setSelectedUser] = useState<SearchUser | null>(null);
+  const [selectedUser, setSelectedUser] = useState<ExtendedSearchUser | null>(null);
   const [selectedRoleId, setSelectedRoleId] = useState<string>('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -233,6 +234,22 @@ export const CreateInvitationDrawer = ({
     }
   };
 
+  const displayedMembers = useMemo(() => {
+    return searchedUsers.map(user => ({
+      did: user.did,
+      avatar: user.avatar,
+      name: user.username,
+      address: user.address,
+      id: user.id
+    }));
+  }, [searchedUsers]);
+
+  const LoadingSkeleton = () => (
+    <div className="flex items-center justify-center p-4">
+      <Spinner size="sm" color="default" />
+    </div>
+  );
+
   return (
     <Drawer isOpen={isOpen} onClose={onClose} placement="right">
       <DrawerContent>
@@ -256,7 +273,7 @@ export const CreateInvitationDrawer = ({
                 }}
               >
                 <Radio value={ResourceType.SPACE}>Space</Radio>
-                <Radio value={ResourceType.EVENT}>Event</Radio>
+                <Radio value={ResourceType.EVENT} isDisabled={true}>Event</Radio>
               </RadioGroup>
             </div>
 
@@ -316,76 +333,77 @@ export const CreateInvitationDrawer = ({
               />
             </div>
 
-            <p className="text-white text-sm font-medium">Search User</p>
-            <Input
-              placeholder="Search Members By Fullname Or Wallet Address"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              startContent={
-                <MagnifyingGlass size={16} className="text-white/60" />
-              }
-              classNames={{
-                inputWrapper:
-                  'bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.1)]',
-                input: 'text-white',
-              }}
-            />
-            <div className="flex flex-col gap-2 min-h-[120px] max-h-[250px] overflow-y-auto">
-              {isSearchLoading ? (
-                <div className="flex justify-center items-center p-4">
-                  <Spinner size="sm" color="default" />
-                </div>
-              ) : searchError ? (
-                <p className="text-red-500 text-sm">{searchError}</p>
-              ) : searchedUsers.length > 0 ? (
-                searchedUsers.map((user) => (
-                  <div
-                    key={user.id}
-                    className={cn(
-                      'flex items-center gap-3 p-2 rounded-lg cursor-pointer',
-                      selectedUser?.id === user.id
-                        ? 'bg-[rgba(255,255,255,0.1)]'
-                        : 'hover:bg-[rgba(255,255,255,0.05)]',
-                    )}
-                    onClick={() => setSelectedUser(user)}
-                  >
-                    <Avatar src={user.avatar} alt={user.username} size="sm" />
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-white">
-                        {user.username}
-                      </span>
-                      <span className="text-xs text-white/60">
-                        {user.address}
-                      </span>
+            <div className="">
+              <p className="text-white text-sm font-medium">
+                Invite User
+              </p>
+              <div className="w-full relative my-[10px]">
+                <Input
+                  variant="bordered"
+                  classNames={{
+                    base: 'bg-[rgba(34,34,34,0.05)] border-[rgba(255,255,255,0.1)]',
+                    input: 'text-white',
+                  }}
+                  placeholder="Search Members By Fullname Or Wallet Address"
+                  radius="md"
+                  value={searchQuery}
+                  startContent={
+                    <MagnifyingGlass className="w-[20px] h-[20px] text-white opacity-50" />
+                  }
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  isDisabled={isSubmitting}
+                />
+              </div>
+
+              <div className="flex flex-col w-full gap-[4px] h-[200px] overflow-y-auto">
+                {isSearchLoading ? (
+                  Array.from({ length: 1 }).map((_, index) => (
+                    <LoadingSkeleton key={`skeleton-${index}`} />
+                  ))
+                ) : displayedMembers.length > 0 ? (
+                  displayedMembers.map((member) => (
+                    <div
+                      key={member.did}
+                      className={`flex items-center w-full px-[8px] py-[4px] rounded-[8px] cursor-pointer hover:bg-[rgba(255,255,255,0.03)] ${selectedUser?.did === member.did ? 'bg-[rgba(255,255,255,0.05)]' : ''
+                        }`}
+                      onClick={() => setSelectedUser({
+                        did: member.did,
+                        username: member.name,
+                        avatar: member.avatar,
+                        address: member.address,
+                        id: member.id
+                      })}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <div className="flex items-center gap-3 w-full">
+                        <Checkbox
+                          color="default"
+                          isSelected={selectedUser?.did === member.did}
+                          className="pointer-events-none"
+                        />
+                        <Avatar
+                          src={member.avatar || '/user/avatar_p.png'}
+                          alt={member.name || 'User avatar'}
+                          size="sm"
+                        />
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-white">
+                            {member.name}
+                          </span>
+                          <span className="text-xs text-white/60">
+                            {member.address}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))
-              ) : searchQuery ? (
-                <MemberEmpty />
-              ) : null}
+                  ))
+                ) : (
+                  <MemberEmpty />
+                )}
+              </div>
             </div>
           </div>
-
-          {/*{selectedUser && (*/}
-          {/*  <div className="flex flex-col gap-3">*/}
-          {/*    <p className="text-white text-sm font-medium">Selected User</p>*/}
-          {/*    <div className="flex items-center gap-3 p-3 bg-[rgba(255,255,255,0.05)] rounded-lg">*/}
-          {/*      <Avatar*/}
-          {/*        src={selectedUser.avatar}*/}
-          {/*        alt={selectedUser.username}*/}
-          {/*        size="sm"*/}
-          {/*      />*/}
-          {/*      <div className="flex flex-col">*/}
-          {/*        <span className="text-sm font-medium text-white">*/}
-          {/*          {selectedUser.username}*/}
-          {/*        </span>*/}
-          {/*        <span className="text-xs text-white/60">*/}
-          {/*          {selectedUser.address}*/}
-          {/*        </span>*/}
-          {/*      </div>*/}
-          {/*    </div>*/}
-          {/*  </div>*/}
-          {/*)}*/}
 
           <div className="flex justify-end mt-4">
             <Button
