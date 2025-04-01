@@ -22,7 +22,6 @@ import { useMediaQuery } from '@/hooks';
 import { Button } from '@/components/base';
 import { ArrowLineDown, X as XIcon } from '@phosphor-icons/react';
 import { UPDATE_SPACE_MUTATION } from '@/services/graphql/space';
-import { useEditorStore } from '@/components/editor/useEditorStore';
 import { Space } from '@/types';
 import { executeQuery } from '@/utils/ceramic';
 import { createUrlWhenEdit } from '@/services/url';
@@ -231,10 +230,7 @@ const EditSpace = () => {
           'mobile:block',
         )}
       >
-        <ProfileContent
-          form={profileForm}
-          isDisabled={!isOwner}
-        />
+        <ProfileContent form={profileForm} isDisabled={!isOwner} />
       </div>
       <div
         className={cn(

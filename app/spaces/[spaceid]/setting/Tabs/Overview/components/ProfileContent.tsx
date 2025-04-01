@@ -8,7 +8,6 @@ import EditorPro from '@/components/editorPro';
 import PhotoUpload from '@/components/form/PhotoUpload';
 import { Image as PhotoIcon } from '@phosphor-icons/react';
 import { MarkdownLogo } from '@phosphor-icons/react';
-import { useEditorStore } from '@/components/editor/useEditorStore';
 
 export interface ProfileFormData {
   name: string;

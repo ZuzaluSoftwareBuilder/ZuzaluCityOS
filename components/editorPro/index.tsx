@@ -1,11 +1,11 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import React, { useEffect } from 'react';
-import { 
-  TextHOne, 
-  TextHTwo, 
-  TextHThree, 
-  ListBullets, 
+import {
+  TextHOne,
+  TextHTwo,
+  TextHThree,
+  ListBullets,
   ListNumbers,
   TextBolder,
   TextItalic,
@@ -51,12 +51,12 @@ const MenuBar = ({ editor }: { editor: any }) => {
   }
 
   return (
-    <div className="flex flex-wrap gap-1 p-2 border-b border-white/10">
+    <div className="flex flex-wrap gap-1 border-b border-white/10 p-2">
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
         className={cn(
           'p-2 rounded hover:bg-white/10',
-          editor.isActive('heading', { level: 1 }) && 'bg-white/10'
+          editor.isActive('heading', { level: 1 }) && 'bg-white/10',
         )}
         title="Heading 1"
       >
@@ -66,7 +66,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         className={cn(
           'p-2 rounded hover:bg-white/10',
-          editor.isActive('heading', { level: 2 }) && 'bg-white/10'
+          editor.isActive('heading', { level: 2 }) && 'bg-white/10',
         )}
         title="Heading 2"
       >
@@ -76,18 +76,18 @@ const MenuBar = ({ editor }: { editor: any }) => {
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
         className={cn(
           'p-2 rounded hover:bg-white/10',
-          editor.isActive('heading', { level: 3 }) && 'bg-white/10'
+          editor.isActive('heading', { level: 3 }) && 'bg-white/10',
         )}
         title="Heading 3"
       >
         <TextHThree size={20} />
       </button>
-      <div className="w-px h-6 my-auto mx-1 bg-white/10" />
+      <div className="mx-1 my-auto h-6 w-px bg-white/10" />
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
         className={cn(
           'p-2 rounded hover:bg-white/10',
-          editor.isActive('bold') && 'bg-white/10'
+          editor.isActive('bold') && 'bg-white/10',
         )}
         title="Bold"
       >
@@ -97,18 +97,18 @@ const MenuBar = ({ editor }: { editor: any }) => {
         onClick={() => editor.chain().focus().toggleItalic().run()}
         className={cn(
           'p-2 rounded hover:bg-white/10',
-          editor.isActive('italic') && 'bg-white/10'
+          editor.isActive('italic') && 'bg-white/10',
         )}
         title="Italic"
       >
         <TextItalic size={20} />
       </button>
-      <div className="w-px h-6 my-auto mx-1 bg-white/10" />
+      <div className="mx-1 my-auto h-6 w-px bg-white/10" />
       <button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={cn(
           'p-2 rounded hover:bg-white/10',
-          editor.isActive('bulletList') && 'bg-white/10'
+          editor.isActive('bulletList') && 'bg-white/10',
         )}
         title="Bullet List"
       >
@@ -118,18 +118,18 @@ const MenuBar = ({ editor }: { editor: any }) => {
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         className={cn(
           'p-2 rounded hover:bg-white/10',
-          editor.isActive('orderedList') && 'bg-white/10'
+          editor.isActive('orderedList') && 'bg-white/10',
         )}
         title="Ordered List"
       >
         <ListNumbers size={20} />
       </button>
-      <div className="w-px h-6 my-auto mx-1 bg-white/10" />
+      <div className="mx-1 my-auto h-6 w-px bg-white/10" />
       <button
         onClick={() => editor.chain().focus().toggleCode().run()}
         className={cn(
           'p-2 rounded hover:bg-white/10',
-          editor.isActive('code') && 'bg-white/10'
+          editor.isActive('code') && 'bg-white/10',
         )}
         title="Code"
       >
@@ -139,7 +139,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
         className={cn(
           'p-2 rounded hover:bg-white/10',
-          editor.isActive('blockquote') && 'bg-white/10'
+          editor.isActive('blockquote') && 'bg-white/10',
         )}
         title="Quote"
       >
@@ -152,7 +152,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
 const defaultValue = JSON.stringify({
   content: '',
   type: 'doc',
-  isEmpty: true
+  isEmpty: true,
 });
 
 const EditorPro: React.FC<EditorProProps> = ({
@@ -166,7 +166,7 @@ const EditorPro: React.FC<EditorProProps> = ({
     if (!value) return JSON.parse(defaultValue);
     try {
       const parsedValue = JSON.parse(value);
-      
+
       // 检查解析出的值是否符合 EditorValue 结构
       if (!isValidEditorValue(parsedValue)) {
         console.error('Invalid editor value structure');
@@ -177,7 +177,7 @@ const EditorPro: React.FC<EditorProProps> = ({
       const contentIsEmpty = isContentEmpty(parsedValue.content);
       return {
         ...parsedValue,
-        isEmpty: contentIsEmpty
+        isEmpty: contentIsEmpty,
       };
     } catch (e) {
       console.error('Failed to parse editor value:', e);
@@ -220,7 +220,7 @@ const EditorPro: React.FC<EditorProProps> = ({
           '[&_pre_code]:bg-transparent [&_pre_code]:text-[0.8rem] [&_pre_code]:p-0',
           '[&_blockquote]:border-l-[3px] [&_blockquote]:border-white/20 [&_blockquote]:my-6 [&_blockquote]:pl-4',
           '[&_hr]:border-none [&_hr]:border-t [&_hr]:border-white/20 [&_hr]:my-8',
-          className
+          className,
         ),
       },
     },
@@ -230,7 +230,7 @@ const EditorPro: React.FC<EditorProProps> = ({
       const jsonValue: EditorValue = {
         content: html,
         type: 'doc',
-        isEmpty: contentIsEmpty
+        isEmpty: contentIsEmpty,
       };
       onChange?.(JSON.stringify(jsonValue));
     },
@@ -246,12 +246,12 @@ const EditorPro: React.FC<EditorProProps> = ({
 
   return (
     <div className="w-full">
-      <div className="bg-[#2D2D2D] rounded-lg overflow-hidden">
+      <div className="overflow-hidden rounded-lg bg-[#2D2D2D]">
         <MenuBar editor={editor} />
-        <div className="p-4 min-h-[200px] relative">
+        <div className="relative min-h-[200px] p-4">
           <EditorContent editor={editor} />
           {editorValue.isEmpty && (
-            <div className="absolute top-[15px] left-[15px] text-gray-500 pointer-events-none">
+            <div className="pointer-events-none absolute left-[15px] top-[15px] text-gray-500">
               {placeholder}
             </div>
           )}
@@ -261,4 +261,4 @@ const EditorPro: React.FC<EditorProProps> = ({
   );
 };
 
-export default EditorPro; 
+export default EditorPro;
