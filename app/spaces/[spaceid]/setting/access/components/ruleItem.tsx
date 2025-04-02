@@ -1,5 +1,12 @@
-import { Button } from '@/components/base';
-import { PencilSimple } from '@phosphor-icons/react';
+import { Button, Divider, Select, SelectItem } from '@/components/base';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { ArrowUpRight } from '@phosphor-icons/react';
+import { Controller, useForm } from 'react-hook-form';
+import { memo } from 'react';
+import * as yup from 'yup';
+import { POAP } from './rule';
+import { ZuPass } from './rule';
+import { cn } from '@heroui/react';
 
 interface AccessRuleProps {
   title: string;
@@ -8,71 +15,117 @@ interface AccessRuleProps {
   onEdit: () => void;
 }
 
-const RuleItem: React.FC<AccessRuleProps> = ({
-  title,
-  tags,
-  isActive,
-  onEdit,
-}) => {
+const RuleItem = ({ title, tags, isActive, onEdit }: AccessRuleProps) => {
   return (
-    <div className="w-full rounded-lg bg-white/5 bg-gradient-to-r from-[#363636]/0 to-[#37B387]/10">
-      <div className="flex w-full items-center justify-between gap-2.5 p-2.5">
-        <div className="flex items-center gap-2.5">
-          <div className="flex flex-row items-center gap-2.5">
-            <div className="flex items-center justify-center rounded-lg border border-white/10 bg-white/10 p-2.5">
-              <span className="text-base font-semibold text-white">
-                {title}
-              </span>
-            </div>
-            <span className="text-base font-normal text-white/60">with</span>
-            <div className="flex items-center justify-center rounded-lg border border-white/10 bg-white/10 p-1 px-2.5">
-              <span className="text-sm font-bold text-white/60">POAP</span>
-            </div>
-          </div>
-          <Button
-            isIconOnly
-            className="flex size-10 items-center justify-center rounded-full bg-white/5"
-            onPress={onEdit}
-          >
-            <PencilSimple size={24} weight="fill" />
-          </Button>
-        </div>
-      </div>
-      <div className="flex w-full flex-row items-center gap-2.5 p-2.5">
-        {tags.map((tag, index) => (
-          <div
-            key={index}
-            className="flex items-center rounded-[60px] bg-white/10 px-3 py-1"
-          >
-            <span className="text-xs text-white">{tag}</span>
-          </div>
-        ))}
-        <span className="text-sm font-medium text-white/50 shadow-md">OR</span>
-        {tags.map((tag, index) => (
-          <div
-            key={`tag-${index}`}
-            className="flex items-center rounded-[60px] bg-white/10 px-3 py-1"
-          >
-            <span className="text-xs text-white">{tag}</span>
-          </div>
-        ))}
-      </div>
-      <div className="flex w-full items-center border-t border-white/10 p-2.5">
-        <div className="flex flex-row items-center gap-2.5">
-          <div
-            className={`size-4 rounded-full ${isActive ? 'bg-[#7DFFD1]/40' : 'bg-[#2C2C2C]'}`}
-          >
-            <div
-              className={`size-3 rounded-full shadow-md ${isActive ? 'bg-white' : 'bg-white/80'} mx-auto my-0.5`}
-            ></div>
-          </div>
-          <span className="text-base font-normal text-white/60">
-            {isActive ? 'Active' : 'Inactive'}
-          </span>
-        </div>
-      </div>
+    <div className="w-full rounded-[10px] border border-white/10 bg-white/5">
+      <RuleItem.Edit />
     </div>
   );
 };
+
+const editSchema = yup.object({
+  rule: yup.string().required(),
+});
+
+RuleItem.Edit = memo(function Edit() {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm<yup.InferType<typeof editSchema>>({
+    resolver: yupResolver(editSchema),
+    defaultValues: {
+      rule: 'poap',
+    },
+  });
+
+  const rule = watch('rule');
+
+  return (
+    <>
+      <div className="flex items-center gap-2 p-5">
+        <Select
+          classNames={{ trigger: 'p-[4px_10px] min-h-[35px] h-[35px]' }}
+          isDisabled
+          selectedKeys={['member']}
+          aria-label="role"
+        >
+          <SelectItem key="member">Become Member</SelectItem>
+        </Select>
+        <span className="text-[16px] text-white/60">with</span>
+        <Controller
+          control={control}
+          name="rule"
+          render={({ field }) => (
+            <Select
+              classNames={{ trigger: 'p-[4px_10px] min-h-[35px] h-[35px]' }}
+              selectedKeys={[field.value]}
+              aria-label="rule"
+              onSelectionChange={(e) => {
+                field.onChange(e.currentKey);
+              }}
+            >
+              <SelectItem key="poap">POAP</SelectItem>
+              <SelectItem key="zupass">ZuPass</SelectItem>
+            </Select>
+          )}
+        />
+      </div>
+      <Divider />
+      {rule === 'poap' && <POAP />}
+      {rule === 'zupass' && <ZuPass />}
+      <Divider />
+      <div
+        className={cn(
+          'flex justify-end p-2.5 w-full',
+          rule === 'poap' && 'justify-between',
+        )}
+      >
+        {rule === 'poap' && (
+          <Button
+            endContent={<ArrowUpRight size={18} />}
+            className="h-[30px] gap-[5px] bg-transparent p-[2px_10px]"
+            onPress={() => {
+              window.open('https://poap.gallery', '_blank');
+            }}
+          >
+            Create a POAP
+          </Button>
+        )}
+        <div className="flex gap-2">
+          <Button color="functional" className="h-[30px] font-medium">
+            Discard
+          </Button>
+          <Button color="submit" className="h-[30px] font-medium">
+            Create Rule
+          </Button>
+        </div>
+      </div>
+    </>
+  );
+});
+
+RuleItem.Normal = memo(function Normal() {
+  return (
+    <>
+      <div className="flex items-center gap-2 p-5">
+        <Select
+          classNames={{ trigger: 'p-[4px_10px] min-h-[35px] h-[35px]' }}
+          isDisabled
+          selectedKeys={['member']}
+        >
+          <SelectItem key="member">Become Member</SelectItem>
+        </Select>
+        <span className="text-[16px] text-white/60">with</span>
+        <Select classNames={{ trigger: 'p-[4px_10px] min-h-[35px] h-[35px]' }}>
+          <SelectItem key="poap">POAP</SelectItem>
+          <SelectItem key="zupass">ZuPass</SelectItem>
+        </Select>
+      </div>
+      <Divider />
+    </>
+  );
+});
 
 export default RuleItem;

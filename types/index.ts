@@ -725,3 +725,9 @@ export interface Announcement {
     };
   };
 }
+
+export interface SpaceGating {
+  gatingStatus: string;
+  PoapsId: { poapId: string }[];
+  zuPassInfo: ZuPassInfo[];
+}
