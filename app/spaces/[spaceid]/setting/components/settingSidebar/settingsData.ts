@@ -33,7 +33,7 @@ export const getSettingSections = (spaceId: string): SettingSection[] => {
           id: 'Access',
           label: 'Access',
           path: `/spaces/${spaceId}/setting/access`,
-          locked: false,
+          locked: true,
         },
         {
           id: 'Event',
