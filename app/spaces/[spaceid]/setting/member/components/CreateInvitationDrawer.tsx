@@ -139,7 +139,7 @@ export const CreateInvitationDrawer = ({
         id: selectedResourceId,
         resource: resourceType,
         roleId: selectedRoleId,
-        message: message || '',
+        message: message || ' ',
         expiresAt: new Date(
           Date.now() + 30 * 24 * 60 * 60 * 1000,
         ).toISOString(),

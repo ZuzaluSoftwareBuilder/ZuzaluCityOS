@@ -36,6 +36,7 @@ export enum InvitationStatus {
   ACCEPTED = 'accepted',
   REJECTED = 'rejected',
   CANCELLED = 'cancelled',
+  INVALID = 'invalid',
 }
 
 export interface CreateInvitationRequest {

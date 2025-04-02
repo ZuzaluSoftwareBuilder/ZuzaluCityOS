@@ -30,7 +30,6 @@ const handleCancelInvitation = async (
   );
 };
 
-// 组合中间件
 export const POST = withBasicSessionValidation(
   withInvitationValidation(handleCancelInvitation, {
     expectedStatus: InvitationStatus.PENDING,

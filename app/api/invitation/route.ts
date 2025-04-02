@@ -13,6 +13,7 @@ import { composeClient } from '@/constant';
 import { SessionData } from '@/types/session';
 import { CREATE_INVITATION_MUTATION } from '@/services/graphql/invitation';
 import { getProfileIdByDid } from '@/services/profile/profile';
+import { CHECK_EXISTING_ROLE_QUERY } from '@/services/graphql/role';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,6 +41,28 @@ const handleCreateInvitation = async (
 
   if (!hasRequiredPermission(sessionData, PermissionName.INVITE_USERS)) {
     return createErrorResponse('Permission denied', 403);
+  }
+
+  const existingRoleResult = await composeClient.executeQuery(
+    CHECK_EXISTING_ROLE_QUERY.toString(),
+    {
+      userId: inviteeId,
+      resourceId: id,
+      resource,
+    },
+  );
+
+  const existingRoles =
+    existingRoleResult.data?.zucityUserRolesIndex?.edges || [];
+
+  if (existingRoles.length > 0) {
+    const existingRole = existingRoles[0].node;
+    if (existingRole.roleId === roleId) {
+      return createErrorResponse(
+        'Invitee already has the same role in this resource',
+        409,
+      );
+    }
   }
 
   const defaultExpiration = dayjs().add(7, 'day');
