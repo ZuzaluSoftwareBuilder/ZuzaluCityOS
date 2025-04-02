@@ -5,15 +5,14 @@ import {
   createSuccessResponse,
 } from '@/utils/service/response';
 import { hasRequiredPermission } from '@/utils/service/role';
-import { PermissionName, Space } from '@/types';
+import { PermissionName } from '@/types';
 import { InvitationStatus, createInvitationSchema } from '@/types/invitation';
 import { dayjs } from '@/utils/dayjs';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import { composeClient } from '@/constant';
 import { SessionData } from '@/types/session';
 import { CREATE_INVITATION_MUTATION } from '@/services/graphql/invitation';
 import { getProfileIdByDid } from '@/services/profile/profile';
-import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,7 +48,6 @@ const handleCreateInvitation = async (
   const [inviterProfile, inviteeProfile] = await Promise.all([
     getProfileIdByDid(sessionData.operatorId),
     getProfileIdByDid(inviteeId),
-
   ]);
 
   const error = await authenticateWithSpaceId(id);

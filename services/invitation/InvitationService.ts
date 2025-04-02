@@ -5,7 +5,7 @@ import {
   Invitation,
   InvitationStatus,
   GraphQLResponse,
-  InvitationErrorCode
+  InvitationErrorCode,
 } from '@/types/invitation';
 import {
   GET_INVITATION_BY_ID_QUERY,
@@ -16,7 +16,7 @@ export class InvitationError extends Error {
   constructor(
     public code: InvitationErrorCode,
     message: string,
-    public details?: any
+    public details?: any,
   ) {
     super(message);
     this.name = 'InvitationError';
@@ -26,7 +26,7 @@ export class InvitationError extends Error {
 export class InvitationService {
   private static instance: InvitationService;
 
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): InvitationService {
     if (!InvitationService.instance) {
@@ -38,45 +38,56 @@ export class InvitationService {
   async getInvitation(id: string): Promise<Invitation> {
     const result = await composeClient.executeQuery(
       GET_INVITATION_BY_ID_QUERY.toString(),
-      { id }
+      { id },
     );
 
-    const invitation = this.handleGraphQLResponse<{node: Invitation}>(result)?.node;
+    const invitation = this.handleGraphQLResponse<{ node: Invitation }>(
+      result,
+    )?.node;
 
     if (!invitation) {
       throw new InvitationError(
         InvitationErrorCode.NOT_FOUND,
-        'Invitation not found'
+        'Invitation not found',
       );
     }
 
     return invitation;
   }
 
-  async validateInvitation(invitation: Invitation, expectedStatus?: InvitationStatus): Promise<void> {
+  async validateInvitation(
+    invitation: Invitation,
+    expectedStatus?: InvitationStatus,
+  ): Promise<void> {
     const expiresAt = dayjs(invitation.expiresAt);
     if (expiresAt.isBefore(dayjs())) {
       throw new InvitationError(
         InvitationErrorCode.EXPIRED,
-        'Invitation has expired'
+        'Invitation has expired',
       );
     }
 
     if (expectedStatus && invitation.status !== expectedStatus) {
       throw new InvitationError(
         InvitationErrorCode.INVALID_STATUS,
-        `Invalid invitation status, expected ${expectedStatus}`
+        `Invalid invitation status, expected ${expectedStatus}`,
       );
     }
   }
 
-  validatePermission(invitation: Invitation, operatorId: string, isInvitee: boolean): void {
-    const targetId = isInvitee ? invitation.inviteeId.id : invitation.inviterId.id;
+  validatePermission(
+    invitation: Invitation,
+    operatorId: string,
+    isInvitee: boolean,
+  ): void {
+    const targetId = isInvitee
+      ? invitation.inviteeId.id
+      : invitation.inviterId.id;
 
     if (String(targetId) !== String(operatorId)) {
       throw new InvitationError(
         InvitationErrorCode.PERMISSION_DENIED,
-        'You do not have permission to perform this action'
+        'You do not have permission to perform this action',
       );
     }
   }
@@ -84,7 +95,7 @@ export class InvitationService {
   async updateInvitationStatus(
     id: string,
     status: InvitationStatus,
-    additionalData: Record<string, any> = {}
+    additionalData: Record<string, any> = {},
   ): Promise<Invitation> {
     const invitation = await this.getInvitation(id);
 
@@ -92,7 +103,7 @@ export class InvitationService {
     if (error) {
       throw new InvitationError(
         InvitationErrorCode.INTERNAL_ERROR,
-        'Failed to authenticate with space'
+        'Failed to authenticate with space',
       );
     }
 
@@ -104,16 +115,16 @@ export class InvitationService {
           content: {
             status,
             updatedAt: dayjs().toISOString(),
-            ...additionalData
-          }
-        }
-      }
+            ...additionalData,
+          },
+        },
+      },
     );
 
     return this.handleGraphQLResponse<{
       updateZucityInvitation: {
         document: Invitation;
-      }
+      };
     }>(result)?.updateZucityInvitation?.document;
   }
 
@@ -121,10 +132,10 @@ export class InvitationService {
     if (result.errors) {
       throw new InvitationError(
         InvitationErrorCode.INTERNAL_ERROR,
-        result.errors.map(e => e.message).join(', '),
-        result.errors
+        result.errors.map((e) => e.message).join(', '),
+        result.errors,
       );
     }
     return result.data as T;
   }
-} 
+}

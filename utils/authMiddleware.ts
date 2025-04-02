@@ -122,7 +122,9 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
   }
 }
 
-async function validateBasicSession(request: Request): Promise<BasicSessionCheckResult> {
+async function validateBasicSession(
+  request: Request,
+): Promise<BasicSessionCheckResult> {
   try {
     const sessionStr = request.headers
       .get('Authorization')

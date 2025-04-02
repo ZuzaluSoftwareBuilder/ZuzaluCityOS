@@ -58,7 +58,7 @@ const InvitationItem: React.FC<{
 }> = ({ invitation, isSelected, onClick }) => {
   const title = useMemo(() => {
     if (invitation.resource === 'space') {
-      return `Invitation to ${invitation.space?.name ?  `【${invitation.space?.name}】 Space` : 'space'}`;
+      return `Invitation to ${invitation.space?.name ? `【${invitation.space?.name}】 Space` : 'space'}`;
     } else if (invitation.resource === 'event') {
       return `Invitation to ${invitation.event?.name || ''} Event `;
     }
@@ -93,7 +93,7 @@ const InvitationItem: React.FC<{
 
   return (
     <div
-      className={`p-4 border-b border-white/10 cursor-pointer hover:bg-white/5 transition-colors relative ${
+      className={`relative cursor-pointer border-b border-white/10 p-4 transition-colors hover:bg-white/5 ${
         isSelected ? 'bg-white/10' : ''
       }`}
       onClick={onClick}
@@ -112,11 +112,11 @@ const InvitationItem: React.FC<{
             className="object-cover"
           />
         </Badge>
-        <div className="flex-1 min-w-0">
-          <div className="flex justify-between items-start">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
               <Button
-                className={`px-[8px] py-[2px] min-w-0 h-[30px] text-[12px] ${
+                className={`h-[30px] min-w-0 px-[8px] py-[2px] text-[12px] ${
                   invitation.status === InvitationStatus.PENDING
                     ? 'text-yellow-400'
                     : invitation.status === InvitationStatus.ACCEPTED
@@ -129,15 +129,15 @@ const InvitationItem: React.FC<{
                 {invitation.status.charAt(0).toUpperCase() +
                   invitation.status.slice(1)}
               </Button>
-              <h3 className="text-white font-medium truncate pr-2">{title}</h3>
+              <h3 className="truncate pr-2 font-medium text-white">{title}</h3>
             </div>
             <span className="text-xs text-white/50">{formattedTime}</span>
           </div>
-          <p className="text-sm text-white/70 truncate mt-1">{preview}</p>
+          <p className="mt-1 truncate text-sm text-white/70">{preview}</p>
         </div>
       </div>
       {!invitation.isRead && (
-        <div className="absolute w-2.5 h-2.5 bg-red-500 rounded-full top-4 right-4"></div>
+        <div className="absolute right-4 top-4 size-2.5 rounded-full bg-red-500"></div>
       )}
     </div>
   );
@@ -155,7 +155,7 @@ const InvitationDetail: React.FC<{
 }> = ({ invitation, onAccept, onReject, onBack, processing }) => {
   const title = useMemo(() => {
     if (invitation.resource === 'space') {
-      return `Invitation to ${invitation.space?.name ?  `【${invitation.space?.name}】 Space` : 'space'}`;
+      return `Invitation to ${invitation.space?.name ? `【${invitation.space?.name}】 Space` : 'space'}`;
     } else if (invitation.resource === 'event') {
       return `Invitation to ${invitation.event?.name || ''} Event `;
     }
@@ -181,21 +181,21 @@ const InvitationDetail: React.FC<{
   const canRespond = invitation.status === InvitationStatus.PENDING;
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="p-4 border-b border-white/10 flex items-center gap-2">
+    <div className="flex h-full flex-col">
+      <div className="flex items-center gap-2 border-b border-white/10 p-4">
         <Button
           isIconOnly
           variant="light"
           className="md:hidden"
           onPress={onBack}
         >
-          <ArrowLeftIcon className="w-5 h-5 text-white" />
+          <ArrowLeftIcon className="size-5 text-white" />
         </Button>
         <h2 className="text-xl font-semibold text-white">Details</h2>
       </div>
       <div className="flex-1 overflow-y-auto p-6">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="relative w-[40px] h-[40px] rounded-full overflow-hidden flex-shrink-0">
+        <div className="mb-6 flex items-center gap-4">
+          <div className="relative size-[40px] shrink-0 overflow-hidden rounded-full">
             <Image
               src={avatarSrc}
               alt={title}
@@ -211,20 +211,20 @@ const InvitationDetail: React.FC<{
                 From: {invitation.inviterProfile.username}
               </p>
             )}
-            <p className="text-white/50 text-sm">{formattedTime}</p>
+            <p className="text-sm text-white/50">{formattedTime}</p>
           </div>
         </div>
 
         {invitation.message && (
-          <div className="bg-white/5 rounded-xl p-4 mb-6">
-            <p className="text-white/90 whitespace-pre-wrap">
+          <div className="mb-6 rounded-xl bg-white/5 p-4">
+            <p className="whitespace-pre-wrap text-white/90">
               {invitation.message}
             </p>
           </div>
         )}
 
-        <div className="bg-white/5 rounded-xl p-4 mb-6">
-          <h4 className="text-white mb-2 font-medium">Invitation Details</h4>
+        <div className="mb-6 rounded-xl bg-white/5 p-4">
+          <h4 className="mb-2 font-medium text-white">Invitation Details</h4>
           <div className="space-y-2 text-sm">
             <p className="text-white/70">
               <span className="text-white/50">Type:</span>{' '}
@@ -324,7 +324,6 @@ const NotificationsPage: React.FC = () => {
           ) || [],
     },
   );
-
 
   useEffect(() => {
     console.log('userInvitations', userInvitations);
@@ -555,17 +554,17 @@ const NotificationsPage: React.FC = () => {
   ]);
 
   return (
-    <div className="container mx-auto p-[24px] h-[calc(100vh-80px)]">
-      <h1 className="text-2xl font-semibold mb-6 text-white">Notifications</h1>
+    <div className="container mx-auto h-[calc(100vh-80px)] p-[24px]">
+      <h1 className="mb-6 text-2xl font-semibold text-white">Notifications</h1>
 
       {isInvitationsLoading ? (
         <Loading />
       ) : isInvitationsFetched && userInvitations?.length === 0 ? (
-        <div className="text-white text-center py-8">
+        <div className="py-8 text-center text-white">
           <p>No Notifications</p>
         </div>
       ) : (
-        <div className="h-[calc(100%-70px)] flex flex-col">
+        <div className="flex h-[calc(100%-70px)] flex-col">
           <Tabs
             aria-label="invitation status"
             selectedKey={selectedTab}
@@ -588,7 +587,7 @@ const NotificationsPage: React.FC = () => {
               title={
                 <div className="flex items-center gap-1.5">
                   <span>All</span>
-                  <span className="bg-white/10 text-white text-xs rounded-full px-2 py-0.5 min-w-[20px] flex justify-center">
+                  <span className="flex min-w-[20px] justify-center rounded-full bg-white/10 px-2 py-0.5 text-xs text-white">
                     {allInvitations.length}
                   </span>
                 </div>
@@ -600,7 +599,7 @@ const NotificationsPage: React.FC = () => {
                 title={
                   <div className="flex items-center gap-1.5">
                     <span>Pending</span>
-                    <span className="bg-yellow-500/20 text-yellow-400 text-xs rounded-full px-2 py-0.5 min-w-[20px] flex justify-center">
+                    <span className="flex min-w-[20px] justify-center rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs text-yellow-400">
                       {pendingInvitations.length}
                     </span>
                   </div>
@@ -613,7 +612,7 @@ const NotificationsPage: React.FC = () => {
                 title={
                   <div className="flex items-center gap-1.5">
                     <span>Accepted</span>
-                    <span className="bg-green-500/20 text-green-400 text-xs rounded-full px-2 py-0.5 min-w-[20px] flex justify-center">
+                    <span className="flex min-w-[20px] justify-center rounded-full bg-green-500/20 px-2 py-0.5 text-xs text-green-400">
                       {acceptedInvitations.length}
                     </span>
                   </div>
@@ -626,7 +625,7 @@ const NotificationsPage: React.FC = () => {
                 title={
                   <div className="flex items-center gap-1.5">
                     <span>Rejected</span>
-                    <span className="bg-red-500/20 text-red-400 text-xs rounded-full px-2 py-0.5 min-w-[20px] flex justify-center">
+                    <span className="flex min-w-[20px] justify-center rounded-full bg-red-500/20 px-2 py-0.5 text-xs text-red-400">
                       {rejectedInvitations.length}
                     </span>
                   </div>
@@ -639,7 +638,7 @@ const NotificationsPage: React.FC = () => {
                 title={
                   <div className="flex items-center gap-1.5">
                     <span>Cancelled</span>
-                    <span className="bg-gray-500/20 text-gray-400 text-xs rounded-full px-2 py-0.5 min-w-[20px] flex justify-center">
+                    <span className="flex min-w-[20px] justify-center rounded-full bg-gray-500/20 px-2 py-0.5 text-xs text-gray-400">
                       {cancelledInvitations.length}
                     </span>
                   </div>
@@ -648,9 +647,9 @@ const NotificationsPage: React.FC = () => {
             )}
           </Tabs>
 
-          <div className="flex-1 mt-4 bg-black/20 backdrop-blur-md rounded-xl overflow-hidden flex">
+          <div className="mt-4 flex flex-1 overflow-hidden rounded-xl bg-black/20 backdrop-blur-md">
             <div
-              className={`border-r border-white/10 overflow-y-auto max-h-full ${selectedInvitation ? 'w-1/3 md:w-2/5' : 'w-full'}`}
+              className={`max-h-full overflow-y-auto border-r border-white/10 ${selectedInvitation ? 'md:w-2/5 w-1/3' : 'w-full'}`}
             >
               {currentTabInvitations.map((invitation) => (
                 <InvitationItem
@@ -663,7 +662,7 @@ const NotificationsPage: React.FC = () => {
             </div>
 
             {selectedInvitation && (
-              <div className="w-2/3 md:w-3/5 max-h-full overflow-hidden">
+              <div className="md:w-3/5 max-h-full w-2/3 overflow-hidden">
                 <InvitationDetail
                   invitation={selectedInvitation}
                   onAccept={handleAccept}

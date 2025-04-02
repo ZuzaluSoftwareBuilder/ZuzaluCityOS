@@ -1,2 +1,2 @@
 export * from './InvitationList';
-export * from './InvitationActionButtons'; 
+export * from './InvitationActionButtons';

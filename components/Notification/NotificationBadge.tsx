@@ -41,17 +41,17 @@ export const NotificationBadge: React.FC<NotificationBadgeProps> = ({
     {
       enabled: !!userDid,
       select: (data) => {
-        return data?.data?.zucityInvitationCount || 0
+        return data?.data?.zucityInvitationCount || 0;
       },
-    }
+    },
   );
 
-  const count = Number(unreadCount) || 0
+  const count = Number(unreadCount) || 0;
 
   return (
     <Link href="/profile/invitations" className={`relative ${className}`}>
       <Badge isInvisible={count === 0} content={count} color="danger">
-        <NotificationIcon className="w-[20px] h-[20px] text-gray-300 hover:text-gray-500" />
+        <NotificationIcon className="size-[20px] text-gray-300 hover:text-gray-500" />
       </Badge>
     </Link>
   );

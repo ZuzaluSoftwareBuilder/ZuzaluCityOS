@@ -121,29 +121,3 @@ export const GET_USER_ROLES_QUERY = graphql(`
     }
   }
 `);
-
-export const GET_ROLES_FROM_CERAMIC = graphql(`
-  query GetRolesFromCeramic($resourceId: String) {
-    zucityRolePermissionIndex(
-      first: 1000
-      filters: {
-        where: {
-          resourceId: { equalTo: $resourceId }
-        }
-      }
-    ) {
-      edges {
-        node {
-          id
-          roleId
-          permissionIds
-          resourceId
-          source
-          level
-          created_at
-          updated_at
-        }
-      }
-    }
-  }
-`);

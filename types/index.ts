@@ -538,14 +538,14 @@ export interface CreateRegAndAccessRequest {
 export interface UpdateRegAndAccessRequest
   extends Partial<CreateRegAndAccessRequest> {
   type:
-  | 'question'
-  | 'method'
-  | 'switch'
-  | 'whitelist'
-  | 'zuPass'
-  | 'scrollpass'
-  | 'zuLotto'
-  | 'scannedList';
+    | 'question'
+    | 'method'
+    | 'switch'
+    | 'whitelist'
+    | 'zuPass'
+    | 'scrollpass'
+    | 'zuLotto'
+    | 'scannedList';
   id: string;
   applicationForm?: string;
   checkinOpen?: string;

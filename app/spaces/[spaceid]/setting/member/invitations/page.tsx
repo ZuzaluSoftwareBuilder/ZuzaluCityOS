@@ -11,7 +11,7 @@ import {
   Avatar,
   Spinner,
   useDisclosure,
-  addToast
+  addToast,
 } from '@heroui/react';
 import {
   Button,
@@ -76,14 +76,19 @@ const InvitationsPage = () => {
       select: (data) =>
         data.data?.zucityInvitationIndex?.edges
           ?.map((item) => item?.node)
-          .filter(Boolean).sort((a, b) => new Date(b?.createdAt || '').getTime() - new Date(a?.createdAt || '').getTime()) || [],
+          .filter(Boolean)
+          .sort(
+            (a, b) =>
+              new Date(b?.createdAt || '').getTime() -
+              new Date(a?.createdAt || '').getTime(),
+          ) || [],
       enabled: !!spaceId,
     },
   );
 
   useEffect(() => {
     console.log('space invitations', invitations);
-  }, [invitations])
+  }, [invitations]);
 
   const handleCancelInvitation = async () => {
     if (!selectedInvitation) return;
@@ -98,7 +103,7 @@ const InvitationsPage = () => {
         addToast({
           title: 'Invitation has been successfully cancelled',
           color: 'primary',
-        })
+        });
         refetch();
         onClose();
       } else {
@@ -108,7 +113,7 @@ const InvitationsPage = () => {
       addToast({
         title: 'Failed to cancel invitation',
         color: 'danger',
-      })
+      });
       console.error('Failed to cancel invitation:', error);
     } finally {
       setIsLoading(false);
@@ -157,11 +162,11 @@ const InvitationsPage = () => {
   return (
     <div className="p-[24px]">
       {isInvitationsLoading ? (
-        <div className="flex justify-center items-center p-10">
+        <div className="flex items-center justify-center p-10">
           <Spinner size="lg" color="primary" />
         </div>
       ) : !invitations || invitations.length === 0 ? (
-        <Card className="bg-white/[0.02] border border-white/10">
+        <Card className="border border-white/10 bg-white/[0.02]">
           <CardBody className="p-6 text-center text-white/60">
             <p>No invitations found</p>
           </CardBody>
@@ -173,21 +178,21 @@ const InvitationsPage = () => {
             return (
               <Card
                 key={invitation.id}
-                className="bg-white/[0.02] border border-white/10"
+                className="border border-white/10 bg-white/[0.02]"
               >
                 <CardBody className="p-3">
-                  <div className="flex justify-between items-start gap-4">
-                    <div className="flex-1 flex items-start gap-3">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex flex-1 items-start gap-3">
                       <Avatar
                         src={
                           invitation.inviteeProfile?.avatar ||
                           '/user/avatar_p.png'
                         }
                         fallback="U"
-                        className="w-8 h-8 rounded-full flex-shrink-0"
+                        className="size-8 shrink-0 rounded-full"
                       />
                       <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex flex-wrap items-center gap-2">
                           <Chip
                             color={
                               getStatusColor(
@@ -197,24 +202,26 @@ const InvitationsPage = () => {
                             variant="flat"
                             size="sm"
                           >
-                            {getStatusText(invitation.status as InvitationStatus)}
+                            {getStatusText(
+                              invitation.status as InvitationStatus,
+                            )}
                           </Chip>
-                          <p className="text-white font-medium text-sm">
+                          <p className="text-sm font-medium text-white">
                             {invitation.inviteeProfile?.username ||
                               'Unknown User'}
                           </p>
                         </div>
-                        <div className="flex flex-wrap gap-x-4 mt-1">
-                          <p className="text-white/60 text-xs">
+                        <div className="mt-1 flex flex-wrap gap-x-4">
+                          <p className="text-xs text-white/60">
                             Invite: {formatDate(invitation.createdAt)}
                           </p>
-                          <p className="text-white/60 text-xs">
+                          <p className="text-xs text-white/60">
                             Expire: {formatDate(invitation.expiresAt)}
                           </p>
                         </div>
                         {invitation.message && (
                           <div className="mt-2">
-                            <p className="text-white/80 text-xs line-clamp-2">
+                            <p className="line-clamp-2 text-xs text-white/80">
                               {invitation.message}
                             </p>
                           </div>
@@ -222,7 +229,7 @@ const InvitationsPage = () => {
                       </div>
                     </div>
 
-                    <div className="flex-shrink-0">
+                    <div className="shrink-0">
                       {invitation.status === 'pending' &&
                         currentUserDid &&
                         invitation.inviterId?.id === currentUserDid && (
@@ -248,7 +255,7 @@ const InvitationsPage = () => {
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
-          <ModalHeader className="text-white p-[20px]">
+          <ModalHeader className="p-[20px] text-white">
             Cancel Invitation Confirm
           </ModalHeader>
           <ModalBody className="text-white/80">
@@ -256,7 +263,7 @@ const InvitationsPage = () => {
               Are you sure you want to cancel the invitation sent to{' '}
               {selectedInvitation?.inviteeProfile?.username || 'the user'} ?
             </p>
-            <p className="text-white/60 mt-2 text-sm">
+            <p className="mt-2 text-sm text-white/60">
               This operation cannot be revoked.
             </p>
           </ModalBody>

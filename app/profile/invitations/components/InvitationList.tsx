@@ -82,31 +82,31 @@ export const InvitationList = memo(
       switch (status) {
         case InvitationStatus.PENDING:
           return (
-            <span className="bg-yellow-500/20 text-yellow-400 text-xs py-1 px-2 rounded">
+            <span className="rounded bg-yellow-500/20 px-2 py-1 text-xs text-yellow-400">
               Pending
             </span>
           );
         case InvitationStatus.ACCEPTED:
           return (
-            <span className="bg-green-500/20 text-green-400 text-xs py-1 px-2 rounded">
+            <span className="rounded bg-green-500/20 px-2 py-1 text-xs text-green-400">
               Accepted
             </span>
           );
         case InvitationStatus.REJECTED:
           return (
-            <span className="bg-red-500/20 text-red-400 text-xs py-1 px-2 rounded">
+            <span className="rounded bg-red-500/20 px-2 py-1 text-xs text-red-400">
               Rejected
             </span>
           );
         case InvitationStatus.CANCELLED:
           return (
-            <span className="bg-gray-500/20 text-gray-400 text-xs py-1 px-2 rounded">
+            <span className="rounded bg-gray-500/20 px-2 py-1 text-xs text-gray-400">
               Cancelled
             </span>
           );
         default:
           return (
-            <span className="bg-gray-500/20 text-gray-400 text-xs py-1 px-2 rounded">
+            <span className="rounded bg-gray-500/20 px-2 py-1 text-xs text-gray-400">
               {status}
             </span>
           );
@@ -115,7 +115,7 @@ export const InvitationList = memo(
 
     if (invitations.length === 0) {
       return (
-        <div className="text-white text-center py-8">
+        <div className="py-8 text-center text-white">
           <p>No Invitations</p>
         </div>
       );
@@ -126,32 +126,33 @@ export const InvitationList = memo(
         {invitations.map((invitation) => (
           <div
             key={invitation.id}
-            className="flex justify-between bg-[rgba(44,44,44,0.8)] rounded-lg p-4 border border-[rgba(255,255,255,0.1)]"
+            className="flex justify-between rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(44,44,44,0.8)] p-4"
           >
             <div className="flex items-start gap-3">
               <Avatar
                 src={getResourceAvatar(invitation)}
                 alt={getResourceName(invitation)}
-                className="h-12 w-12 rounded-full"
+                className="size-12 rounded-full"
               />
               <div className="flex-1">
-                <div className="flex flex-wrap justify-between items-start gap-2">
+                <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="flex items-center gap-2">
                     {getInvitationStatusBadge(invitation.status)}
-                    <h3 className="text-white font-medium">
+                    <h3 className="font-medium text-white">
                       {invitation.inviterProfile?.username || 'Unknown User'}{' '}
                       invited you to join {getResourceName(invitation)}
                     </h3>
-                    <span className="text-gray-400 text-sm">
+                    <span className="text-sm text-gray-400">
                       {formatTime(invitation.createdAt)}
                     </span>
                   </div>
                 </div>
 
                 {invitation.message && (
-                  <p className="text-gray-400 my-2 text-sm">{invitation.message}</p>
+                  <p className="my-2 text-sm text-gray-400">
+                    {invitation.message}
+                  </p>
                 )}
-
               </div>
             </div>
 

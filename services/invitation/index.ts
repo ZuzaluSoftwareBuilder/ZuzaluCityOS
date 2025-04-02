@@ -95,7 +95,8 @@ export const markInvitationAsRead = async (
     console.error('Error marking invitation as read:', error);
     return {
       success: false,
-      message: error.response?.data?.message || 'Failed to mark invitation as read',
+      message:
+        error.response?.data?.message || 'Failed to mark invitation as read',
     };
   }
 };

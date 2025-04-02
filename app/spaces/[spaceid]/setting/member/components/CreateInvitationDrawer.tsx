@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Button } from '@/components/base'
+import { Button } from '@/components/base';
 import {
   Drawer,
   DrawerContent,
@@ -55,7 +55,9 @@ export const CreateInvitationDrawer = ({
   spaceId,
   onSuccess,
 }: CreateInvitationDrawerProps) => {
-  const [selectedUser, setSelectedUser] = useState<ExtendedSearchUser | null>(null);
+  const [selectedUser, setSelectedUser] = useState<ExtendedSearchUser | null>(
+    null,
+  );
   const [selectedRoleId, setSelectedRoleId] = useState<string>('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -194,7 +196,7 @@ export const CreateInvitationDrawer = ({
   const renderResourceSelector = () => {
     if (resourceType === ResourceType.SPACE) {
       return (
-        <div className="flex items-center gap-3 p-3 bg-[rgba(255,255,255,0.05)] rounded-lg">
+        <div className="flex items-center gap-3 rounded-lg bg-[rgba(255,255,255,0.05)] p-3">
           <span className="text-sm text-white">Current Space</span>
         </div>
       );
@@ -235,12 +237,12 @@ export const CreateInvitationDrawer = ({
   };
 
   const displayedMembers = useMemo(() => {
-    return searchedUsers.map(user => ({
+    return searchedUsers.map((user) => ({
       did: user.did,
       avatar: user.avatar,
       name: user.username,
       address: user.address,
-      id: user.id
+      id: user.id,
     }));
   }, [searchedUsers]);
 
@@ -258,10 +260,10 @@ export const CreateInvitationDrawer = ({
           onClose={onClose}
           isDisabled={isSubmitting}
         />
-        <DrawerBody className="px-5 py-6 flex flex-col gap-6">
+        <DrawerBody className="flex flex-col gap-6 px-5 py-6">
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-3">
-              <p className="text-white text-sm font-medium">Resource Type</p>
+              <p className="text-sm font-medium text-white">Resource Type</p>
               <RadioGroup
                 value={resourceType}
                 onValueChange={(value) =>
@@ -273,17 +275,19 @@ export const CreateInvitationDrawer = ({
                 }}
               >
                 <Radio value={ResourceType.SPACE}>Space</Radio>
-                <Radio value={ResourceType.EVENT} isDisabled={true}>Event</Radio>
+                <Radio value={ResourceType.EVENT} isDisabled={true}>
+                  Event
+                </Radio>
               </RadioGroup>
             </div>
 
             <div className="flex flex-col gap-3">
-              <p className="text-white text-sm font-medium">Resource</p>
+              <p className="text-sm font-medium text-white">Resource</p>
               {renderResourceSelector()}
             </div>
 
             <div className="flex flex-col gap-3">
-              <p className="text-white text-sm font-medium">Role</p>
+              <p className="text-sm font-medium text-white">Role</p>
               <Select
                 placeholder="Select the role to be assigned."
                 selectedKeys={selectedRoleId ? [selectedRoleId] : []}
@@ -317,7 +321,7 @@ export const CreateInvitationDrawer = ({
             </div>
 
             <div className="flex flex-col gap-3">
-              <p className="text-white text-sm font-medium">
+              <p className="text-sm font-medium text-white">
                 Invitation Message（optional）
               </p>
               <Input
@@ -334,10 +338,8 @@ export const CreateInvitationDrawer = ({
             </div>
 
             <div className="">
-              <p className="text-white text-sm font-medium">
-                Invite User
-              </p>
-              <div className="w-full relative my-[10px]">
+              <p className="text-sm font-medium text-white">Invite User</p>
+              <div className="relative my-[10px] w-full">
                 <Input
                   variant="bordered"
                   classNames={{
@@ -348,14 +350,14 @@ export const CreateInvitationDrawer = ({
                   radius="md"
                   value={searchQuery}
                   startContent={
-                    <MagnifyingGlass className="w-[20px] h-[20px] text-white opacity-50" />
+                    <MagnifyingGlass className="size-[20px] text-white opacity-50" />
                   }
                   onChange={(e) => setSearchQuery(e.target.value)}
                   isDisabled={isSubmitting}
                 />
               </div>
 
-              <div className="flex flex-col w-full gap-[4px] h-[200px] overflow-y-auto">
+              <div className="flex h-[200px] w-full flex-col gap-[4px] overflow-y-auto">
                 {isSearchLoading ? (
                   Array.from({ length: 1 }).map((_, index) => (
                     <LoadingSkeleton key={`skeleton-${index}`} />
@@ -364,19 +366,24 @@ export const CreateInvitationDrawer = ({
                   displayedMembers.map((member) => (
                     <div
                       key={member.did}
-                      className={`flex items-center w-full px-[8px] py-[4px] rounded-[8px] cursor-pointer hover:bg-[rgba(255,255,255,0.03)] ${selectedUser?.did === member.did ? 'bg-[rgba(255,255,255,0.05)]' : ''
-                        }`}
-                      onClick={() => setSelectedUser({
-                        did: member.did,
-                        username: member.name,
-                        avatar: member.avatar,
-                        address: member.address,
-                        id: member.id
-                      })}
+                      className={`flex w-full cursor-pointer items-center rounded-[8px] px-[8px] py-[4px] hover:bg-[rgba(255,255,255,0.03)] ${
+                        selectedUser?.did === member.did
+                          ? 'bg-[rgba(255,255,255,0.05)]'
+                          : ''
+                      }`}
+                      onClick={() =>
+                        setSelectedUser({
+                          did: member.did,
+                          username: member.name,
+                          avatar: member.avatar,
+                          address: member.address,
+                          id: member.id,
+                        })
+                      }
                       role="button"
                       tabIndex={0}
                     >
-                      <div className="flex items-center gap-3 w-full">
+                      <div className="flex w-full items-center gap-3">
                         <Checkbox
                           color="default"
                           isSelected={selectedUser?.did === member.did}
@@ -405,12 +412,12 @@ export const CreateInvitationDrawer = ({
             </div>
           </div>
 
-          <div className="flex justify-end mt-4">
+          <div className="mt-4 flex justify-end">
             <Button
               color="primary"
               className={cn(
                 'h-[38px] rgba(103,219,255,0.10) text-[#67DBFF] border border-[rgba(103,219,255,0.2)] rounded-[10px] text-[14px] font-bold leading-[1.6]',
-                'w-[120px] mobile:flex-1'
+                'w-[120px] mobile:flex-1',
               )}
               onPress={handleSubmit}
               isDisabled={!isFormValid || isSubmitting}
