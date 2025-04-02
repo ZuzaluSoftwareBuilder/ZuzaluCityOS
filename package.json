@@ -151,6 +151,7 @@
     "eslint-plugin-unused-imports": "^3.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.0",
+    "pino-pretty": "^13.0.0",
     "postcss": "^8.4.38",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
