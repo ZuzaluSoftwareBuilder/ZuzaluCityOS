@@ -41,10 +41,7 @@ const TabItem: React.FC<TabItemProps> = ({ label, onClick, status }) => {
       tabIndex={status === TabStatus.Active ? 0 : -1}
     >
       <div
-        className={cn(
-          'font-medium text-[13px] leading-[18px] font-inter',
-          textColorClass,
-        )}
+        className={cn('font-medium text-[13px] leading-[18px]', textColorClass)}
       >
         {label}
       </div>

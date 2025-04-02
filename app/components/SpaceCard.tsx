@@ -31,6 +31,9 @@ export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
           <Skeleton className="h-[13px] w-[30px] rounded-[4px]" />
         </div>
         <Skeleton className="mb-[6px] rounded-[4px]">
+          <div className="h-[24px] w-[90px]"></div>
+        </Skeleton>
+        <Skeleton className="mb-[6px] rounded-[4px]">
           <div className="h-[21px]"></div>
         </Skeleton>
         <Skeleton className="mb-[20px] rounded-[4px]">
@@ -151,10 +154,10 @@ export function SpaceCard({
         <div className="mb-[6px]">
           <SpaceChip />
         </div>
-        <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] mb-[6px] truncate text-[18px] font-bold leading-[1.2]">
+        <p className=" mb-[6px] truncate text-[18px] font-bold leading-[1.2]">
           {name}
         </p>
-        <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] mb-[20px] line-clamp-2 h-[42px] text-[13px] leading-[1.6] opacity-60">
+        <p className=" mb-[20px] line-clamp-2 h-[42px] text-[13px] leading-[1.6] opacity-60">
           {tagline}
         </p>
         <div className="mb-[10px] flex items-center gap-[10px] opacity-40">
