@@ -4455,6 +4455,7 @@ export type GetSpaceQuery = {
         color?: string | null;
         createdAt: any;
         updatedAt: any;
+        gated?: string | null;
         tags?: Array<{
           __typename?: 'ZucitySpaceTag';
           tag: string;
@@ -5639,6 +5640,7 @@ export const GetSpaceDocument = new TypedDocumentString(`
       color
       createdAt
       updatedAt
+      gated
       tags {
         tag
       }

@@ -52,6 +52,9 @@ const Button = extendVariants(HButton, {
       lg: 'rounded-[12px]',
       full: 'rounded-full',
     },
+    border: {
+      true: 'border border-white/10',
+    },
     // 根据设计稿定义状态变体
     // state: {
     //   active: "opacity-100",

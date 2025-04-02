@@ -15,6 +15,7 @@ export const GET_SPACE_QUERY_BY_ID = graphql(`
         color
         createdAt
         updatedAt
+        gated
         tags {
           tag
         }

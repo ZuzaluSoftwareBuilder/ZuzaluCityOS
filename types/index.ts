@@ -236,6 +236,7 @@ export interface Space {
       node: InstalledApp;
     }[];
   };
+  gated: string;
 }
 
 export interface CalendarConfig {
