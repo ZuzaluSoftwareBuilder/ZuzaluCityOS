@@ -5,52 +5,13 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { Image } from '@heroui/react';
 import { useInfiniteScroll } from '@heroui/use-infinite-scroll';
 import useDebounce from '@/hooks/useDebounce';
+import { getPOAPs } from '@/services/poap';
 
 interface POAP {
   id: number;
-  fancy_id: string;
   name: string;
-  event_url: string;
   image_url: string;
-  country: string;
-  city: string;
-  description: string;
-  year: number;
-  start_date: string;
-  end_date: string;
-  expiry_date: string;
-  from_admin: boolean;
-  virtual_event: boolean;
-  event_host: string;
-  event_template_id: number;
-  private_event: boolean;
 }
-
-interface POAPResponse {
-  total: number;
-  offset: number;
-  limit: number;
-  items: POAP[];
-}
-
-const fetchPOAPs = async ({
-  pageParam = 0,
-  queryKey,
-}: {
-  pageParam?: number;
-  queryKey: readonly unknown[];
-}): Promise<POAPResponse> => {
-  const [_, name] = queryKey;
-
-  if (!name || (typeof name === 'string' && name.length === 0)) {
-    return { total: 0, offset: 0, limit: 0, items: [] };
-  }
-
-  const response = await fetch(`/api/poap?name=${name}&offset=${pageParam}`);
-
-  const result = await response.json();
-  return result.data;
-};
 
 export default function POAPAutocomplete() {
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -63,7 +24,7 @@ export default function POAPAutocomplete() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
       queryKey: ['poaps', debouncedQuery],
-      queryFn: fetchPOAPs,
+      queryFn: getPOAPs,
       enabled: debouncedQuery.length > 0,
       initialPageParam: 0,
       getNextPageParam: (lastPage) => {
