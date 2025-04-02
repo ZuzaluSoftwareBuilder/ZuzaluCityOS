@@ -7,8 +7,8 @@ import {
   type DrawerProps,
   type DrawerHeaderProps,
   cn,
-  Button,
 } from '@heroui/react';
+import { Button } from '@/components/base';
 import React, { FC, forwardRef } from 'react';
 import { X } from '@phosphor-icons/react';
 
