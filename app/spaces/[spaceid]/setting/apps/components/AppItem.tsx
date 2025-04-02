@@ -190,7 +190,7 @@ const AppItem = (props: Props) => {
           <div
             className={clsx([
               'flex items-center gap-[5px]', // container
-              'font-inter lining-num align-middle font-normal tabular-nums', // text
+              'align-middle font-normal tabular-nums', // text
             ])}
           >
             <span className="text-[10px] leading-[120%] tracking-[0.02em] opacity-50">

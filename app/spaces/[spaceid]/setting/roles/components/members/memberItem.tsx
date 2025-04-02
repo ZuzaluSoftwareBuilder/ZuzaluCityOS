@@ -22,6 +22,7 @@ export const MemberItem: React.FC<MemberProps> = ({
         className="size-8"
       />
       <span
+        // eslint-disable-next-line tailwindcss/no-custom-classname
         className={`text-[14px] font-semibold ${color ? `text-[${color}]` : 'text-white'}`}
       >
         {name}

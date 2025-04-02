@@ -59,6 +59,9 @@ const nextConfig = {
       },
     ],
   },
+  experimental: {
+    turbo: {},
+  },
 };
 
 export default withBundleAnalyzer(nextConfig);

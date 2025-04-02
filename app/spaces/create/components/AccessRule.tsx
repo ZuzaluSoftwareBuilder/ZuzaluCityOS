@@ -29,7 +29,7 @@ export default function AccessRule({
           Optionally configure access to your community space. You can leave
           your space open or gate access to your space with a credential.
         </p>
-        <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] text-[14px] leading-[1.2] text-white  opacity-80">
+        <p className=" text-[14px] leading-[1.2] text-white  opacity-80">
           Note: Space Gating can also be configured later
         </p>
       </div>
@@ -95,7 +95,7 @@ export default function AccessRule({
               </div>
             </button>
           </div>
-          <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] text-[14px] leading-[1.2] text-white">
+          <p className=" text-[14px] leading-[1.2] text-white">
             An open space allows anyone to be a member. Apps inside a space can
             still be gated.
           </p>

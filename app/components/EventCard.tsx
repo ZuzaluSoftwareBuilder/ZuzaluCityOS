@@ -17,7 +17,7 @@ export function EventCardSkeleton() {
   return (
     <div className="flex gap-[14px] rounded-[10px] border-1 border-b-w-10 p-[10px] hover:bg-white/5">
       <Skeleton className="rounded-[10px]">
-        <div className="flex-0 size-[140px]"></div>
+        <div className=" size-[140px]"></div>
       </Skeleton>
       <div className="flex w-[300px] flex-col gap-[10px]">
         <Skeleton className="rounded-[4px]">
@@ -58,7 +58,7 @@ export function EventCard({ data }: EventCardProps) {
           'https://framerusercontent.com/images/UkqE1HWpcAnCDpQzQYeFjpCWhRM.png'
         }
         classNames={{
-          base: 'w-[140px] h-[140px] flex-0 rounded-[10px] border-1 border-b-w-10 mobile:w-[80px] mobile:h-[80px] shrink-0',
+          base: 'w-[140px] h-[140px]  rounded-[10px] border-1 border-b-w-10 mobile:w-[80px] mobile:h-[80px] shrink-0',
         }}
       />
       <div className="flex flex-col gap-[10px]">
