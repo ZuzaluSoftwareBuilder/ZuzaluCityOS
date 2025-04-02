@@ -78,7 +78,7 @@ const authenticateEthPKH = async (
           }
         }
         if (!session || (session.hasSession && session.isExpired)) {
-          const account = getAccount(config);
+          const account = getAccount(config as any);
           if (!account || !account.address) {
             reject(new Error('No wallet account found'));
             return;

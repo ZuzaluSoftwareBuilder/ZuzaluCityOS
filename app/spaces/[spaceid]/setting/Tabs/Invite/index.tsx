@@ -5,7 +5,6 @@ import { Stack, Typography, Box } from '@mui/material';
 import { ZuButton, ZuInput } from '@/components/core';
 import { PlusCircleIcon, XCricleIcon } from '@/components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { Space, SpaceData } from '@/types';
 
 interface IMember {
   id: string;
@@ -48,7 +47,7 @@ const Invite = () => {
           (item: any) => item.node,
         );
         const editSpace = fetchedSpaces.filter(
-          (item: any) => item.id === params.spaceid.toString(),
+          (item: any) => item.id === params.spaceid?.toString(),
         );
         // setSpace(editSpace);
         setMembers(editSpace[0].members);
@@ -78,7 +77,7 @@ const Invite = () => {
         mutation {
           updateSpace(
             input: {
-              id: "${params.spaceid.toString()}",
+              id: "${params.spaceid?.toString()}",
               content: {
                 members: "${'did:pkh:eip155:1:' + initial}"
               }

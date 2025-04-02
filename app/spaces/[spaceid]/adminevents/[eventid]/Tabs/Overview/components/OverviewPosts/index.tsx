@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Stack, Typography, Box } from '@mui/material';
-import { InformationIcon, PlusIcon, EditIcon } from 'components/icons';
+import { Stack, Typography } from '@mui/material';
+import { InformationIcon, EditIcon } from 'components/icons';
 import { ZuButton } from 'components/core';
 import OverviewPostCard from './OverviewPostCard';
 

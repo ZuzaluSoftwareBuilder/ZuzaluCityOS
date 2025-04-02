@@ -34,7 +34,7 @@ interface MobileNavProps {
 }
 
 const GreenDot = () => {
-  return <span className="w-[10px] h-[10px] rounded-full bg-[#7DFFD1]"></span>;
+  return <span className="size-[10px] rounded-full bg-[#7DFFD1]"></span>;
 };
 
 const MobileNav: React.FC<MobileNavProps> = ({
@@ -65,7 +65,10 @@ const MobileNav: React.FC<MobileNavProps> = ({
     ongoingEvents || [],
   );
 
-  const calendarDateConstraints = useCalendarConstraints(timeFilter, currentEvents);
+  const calendarDateConstraints = useCalendarConstraints(
+    timeFilter,
+    currentEvents,
+  );
 
   const isDateUnavailable = useDateAvailability(
     currentEvents,
@@ -96,15 +99,17 @@ const MobileNav: React.FC<MobileNavProps> = ({
     'bg-[rgba(34,34,34,0.8)] backdrop-blur-[12px]',
     'border-2 border-[rgba(255,255,255,0.1)]',
     'rounded-[10px]',
-  ]
-  const dropdownContentClassNames = ['bg-transparent', 'shadow-none', 'p-0', 'rounded-none']
+  ];
+  const dropdownContentClassNames = [
+    'bg-transparent',
+    'shadow-none',
+    'p-0',
+    'rounded-none',
+  ];
 
-  const dropdownClassNames = { 
-    base: [
-      'p-[10px] min-w-[202px]',
-      ...blurBgClassNames,
-    ],
-    content: dropdownContentClassNames
+  const dropdownClassNames = {
+    base: ['p-[10px] min-w-[202px]', ...blurBgClassNames],
+    content: dropdownContentClassNames,
   };
   const dropdownMotionProp = {
     variants: {
@@ -136,7 +141,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
     'flex items-center min-w-[auto] h-[32px] gap-[5px] px-[10px] rounded-[5px] bg-[#363636] active:bg-[#4A4A4A] hover:bg-[#4A4A4A]';
 
   return (
-    <div className="hidden tablet:block mobile:block sticky top-[95px] z-[1000] bg-[rgba(34,34,34,0.90)] backdrop-blur-[10px] pb-[10px]">
+    <div className="sticky top-[95px] z-[1000] hidden bg-[rgba(34,34,34,0.90)] pb-[10px] backdrop-blur-[10px] tablet:block mobile:block">
       <Accordion
         className="w-full"
         motionProps={{
@@ -144,29 +149,37 @@ const MobileNav: React.FC<MobileNavProps> = ({
             enter: {
               y: 0,
               opacity: 1,
-              transition: { duration: 0.3, ease: "easeOut" }
+              transition: { duration: 0.3, ease: 'easeOut' },
             },
             exit: {
               y: -10,
               opacity: 0,
-              transition: { duration: 0.2, ease: "easeIn" }
-            }
-          }
+              transition: { duration: 0.2, ease: 'easeIn' },
+            },
+          },
         }}
       >
         <AccordionItem
           key="filter"
           aria-label="Filter options"
           classNames={{
-            base: "border-none bg-transparent",
-            trigger: "py-[10px] px-0",
-            content: "py-[10px]",
+            base: 'border-none bg-transparent',
+            trigger: 'py-[10px] px-0',
+            content: 'py-[10px]',
           }}
           disableIndicatorAnimation={true}
           indicator={({ isOpen }) => (
-            <div className={`flex items-center gap-[5px] ${isOpen ? 'opacity-100' : 'opacity-50'}`}>
-               {filterCount > 0 && <GreenDot />}
-              <Funnel size={20} weight="fill" format="Stroke" color="#FFFFFF" className="shrink-0" />
+            <div
+              className={`flex items-center gap-[5px] ${isOpen ? 'opacity-100' : 'opacity-50'}`}
+            >
+              {filterCount > 0 && <GreenDot />}
+              <Funnel
+                size={20}
+                weight="fill"
+                format="Stroke"
+                color="#FFFFFF"
+                className="shrink-0"
+              />
               <CaretUp
                 size={16}
                 weight="light"
@@ -179,13 +192,13 @@ const MobileNav: React.FC<MobileNavProps> = ({
           startContent={
             <div className="flex items-center gap-[10px]">
               <Ticket size={20} weight="fill" format="Outline" />
-              <p className="text-[20px] font-bold text-white leading-[24px] shadow-[0px_5px_10px_rgba(0,0,0,0.15)]">
+              <p className="text-[20px] font-bold leading-[24px] text-white shadow-[0px_5px_10px_rgba(0,0,0,0.15)]">
                 Events
               </p>
             </div>
           }
         >
-          <div className="flex justify-between items-center gap-[10px] bg-[rgba(34,34,34,0.90)] backdrop-blur-[10px]">
+          <div className="flex items-center justify-between gap-[10px] bg-[rgba(34,34,34,0.90)] backdrop-blur-[10px]">
             <div className="flex gap-[10px]">
               <Dropdown
                 isOpen={isLocationDropdownOpen}
@@ -212,7 +225,8 @@ const MobileNav: React.FC<MobileNavProps> = ({
                       key={location.key}
                       className={cn(
                         dropdownItemBaseClassName,
-                        selectedLocation === location.key && 'bg-[rgba(255,255,255,0.1)]',
+                        selectedLocation === location.key &&
+                          'bg-[rgba(255,255,255,0.1)]',
                       )}
                     >
                       {location.label}
@@ -245,10 +259,12 @@ const MobileNav: React.FC<MobileNavProps> = ({
                       key={option.key}
                       className={cn(
                         dropdownItemBaseClassName,
-                        timeFilter === option.key ? 'bg-[rgba(255,255,255,0.1)]' : '',
+                        timeFilter === option.key
+                          ? 'bg-[rgba(255,255,255,0.1)]'
+                          : '',
                       )}
                     >
-                      <div className={'flex justify-between items-center'}>
+                      <div className={'flex items-center justify-between'}>
                         <span> {option.label}</span>
                         {timeFilter === option.key && (
                           <span className="ml-[5px]">✓</span>
@@ -265,8 +281,8 @@ const MobileNav: React.FC<MobileNavProps> = ({
               onOpenChange={(open) => setIsCalendarDropdownOpen(open)}
               placement="bottom-end"
               classNames={{
-                base: ['p-0',...blurBgClassNames],
-                content: dropdownContentClassNames
+                base: ['p-0', ...blurBgClassNames],
+                content: dropdownContentClassNames,
               }}
               motionProps={dropdownMotionProp}
             >
@@ -297,7 +313,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
               >
                 <DropdownItem
                   key="calendar-item"
-                  className="p-0 outline-none bg-transparent rounded-[10px]"
+                  className="rounded-[10px] bg-transparent p-0 outline-none"
                 >
                   <EventCalendar
                     value={selectedDate}

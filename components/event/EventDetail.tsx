@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import Link from 'next/link';
 import { Stack, Typography, Box, useTheme } from '@mui/material';
@@ -5,7 +6,6 @@ import { RightArrowIcon } from 'components/icons';
 import { SOCIAL_TYPES } from '@/constant';
 import 'leaflet/dist/leaflet.css';
 import { LatLngLiteral } from 'leaflet';
-import LocationFinder from '../map';
 import dynamic from 'next/dynamic';
 
 type UserLink = {

@@ -3,8 +3,6 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Stack, Typography, useTheme } from '@mui/material';
 import { ZuButton } from 'components/core';
-import { ShareIcon, HomeIcon } from 'components/icons';
-import { MoreIcon } from '@/components/icons/More';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Image from 'next/image';
 

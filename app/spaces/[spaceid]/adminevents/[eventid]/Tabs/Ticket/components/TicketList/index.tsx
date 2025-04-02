@@ -4,7 +4,6 @@ import { ZuButton } from 'components/core';
 import TicketCard from './TicketCard';
 import { TicketCardProps } from './TicketCard';
 import { PlusIcon } from 'components/icons';
-import { MOCK_DATA } from 'mock';
 import { Contract } from '@/types';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';

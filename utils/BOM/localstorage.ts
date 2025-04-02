@@ -3,7 +3,8 @@
  * Provides CRUD operations for browser's localStorage with reactive capabilities
  */
 export class LocalStorage {
-  private static listeners: Map<string, Set<(newValue: any) => void>> = new Map();
+  private static listeners: Map<string, Set<(newValue: any) => void>> =
+    new Map();
 
   /**
    * Set a value in localStorage with event emission
@@ -55,7 +56,7 @@ export class LocalStorage {
     try {
       const keys = Object.keys(localStorage);
       localStorage.clear();
-      keys.forEach(key => this.notifyListeners(key, null));
+      keys.forEach((key) => this.notifyListeners(key, null));
     } catch (error) {
       console.error('Error clearing localStorage:', error);
     }
@@ -82,11 +83,14 @@ export class LocalStorage {
    * @param callback Function to be called when the value changes
    * @returns Unsubscribe function
    */
-  static subscribe<T>(key: string, callback: (newValue: T | null) => void): () => void {
+  static subscribe<T>(
+    key: string,
+    callback: (newValue: T | null) => void,
+  ): () => void {
     if (!this.listeners.has(key)) {
       this.listeners.set(key, new Set());
     }
-    
+
     const keyListeners = this.listeners.get(key)!;
     keyListeners.add(callback);
 
@@ -105,7 +109,10 @@ export class LocalStorage {
    * @param callback Function to be called when the value changes
    * @returns Object containing current value and unsubscribe function
    */
-  static watch<T>(key: string, callback: (newValue: T | null) => void): {
+  static watch<T>(
+    key: string,
+    callback: (newValue: T | null) => void,
+  ): {
     value: T | null;
     unsubscribe: () => void;
   } {
@@ -122,7 +129,7 @@ export class LocalStorage {
   private static notifyListeners(key: string, newValue: any): void {
     const keyListeners = this.listeners.get(key);
     if (keyListeners) {
-      keyListeners.forEach(listener => listener(newValue));
+      keyListeners.forEach((listener) => listener(newValue));
     }
   }
 }

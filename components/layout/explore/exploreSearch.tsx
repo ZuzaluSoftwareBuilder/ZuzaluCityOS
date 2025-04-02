@@ -1,6 +1,5 @@
 import { OutlinedInput, InputAdornment } from '@mui/material';
 import { SearchIcon } from '@/components/icons';
-import { Broadcast } from '@phosphor-icons/react';
 import React from 'react';
 
 interface IExploreSearchProps {
@@ -14,8 +13,8 @@ interface IExploreSearchProps {
 const ExploreSearch: React.FC<IExploreSearchProps> = ({
   value,
   onChange,
-  placeholder = "Search",
-  className = "",
+  placeholder = 'Search',
+  className = '',
 }) => {
   return (
     <div className={`flex h-[40px] ${className}`}>

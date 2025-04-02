@@ -97,7 +97,7 @@ export default function Submissions({
   questions = [],
 }: SubmissionsProps) {
   const pathname = useParams();
-  const eventId = pathname.eventid.toString();
+  const eventId = pathname.eventid?.toString() ?? '';
 
   const queryClient = useQueryClient();
   const { open, handleOpen, handleClose } = useOpenDraw();

@@ -1,14 +1,7 @@
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  LeftArrowIcon,
-  RightArrowCircleIcon,
-} from '@/components/icons';
-import { Divider, Stack, Typography } from '@mui/material';
-import BpCheckbox from '../Checkbox';
+import { LeftArrowIcon, RightArrowCircleIcon } from '@/components/icons';
+import { Stack, Typography } from '@mui/material';
 import { ZuButton } from '@/components/core';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { Anchor } from '@/types';
+import { useState } from 'react';
 
 interface PropTypes {
   handleStep: (val: number) => void;

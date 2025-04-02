@@ -18,7 +18,7 @@ export interface IEventArg {
 
 const Home = () => {
   const params = useParams();
-  const spaceId = params.spaceid.toString();
+  const spaceId = params.spaceid?.toString() ?? '';
 
   const [open, setOpen] = useState(false);
 

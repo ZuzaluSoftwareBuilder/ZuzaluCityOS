@@ -4,7 +4,6 @@ import { Box } from '@mui/material';
 import SpaceCard from './cards/SpaceCard';
 import { useTheme, useMediaQuery } from '@mui/material';
 import { Space } from '@/types';
-import { SpaceComingSoonCard } from './cards/ComingSoonCard';
 import useUserSpace from '@/hooks/useUserSpace';
 
 export interface CarouselProps {
@@ -15,7 +14,7 @@ const Carousel: React.FC<CarouselProps> = ({ items }) => {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
 
-  const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace()
+  const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);

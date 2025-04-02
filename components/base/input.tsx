@@ -1,5 +1,5 @@
-import {extendVariants, Input as HInput} from "@heroui/react";
-import commonStyle from  "@/style/common";
+import { extendVariants, Input as HInput } from '@heroui/react';
+import commonStyle from '@/style/common';
 
 const Input = extendVariants(HInput, {
   variants: {
@@ -7,23 +7,18 @@ const Input = extendVariants(HInput, {
       default: {
         inputWrapper: [
           commonStyle.border,
-          "bg-white/[0.05]",
-          "focus-within:border-white/30",
-          "rounded-[8px]",
+          'bg-white/[0.05]',
+          'focus-within:border-white/30',
+          'rounded-[8px]',
         ],
-        input: [
-          "!text-white",
-          "placeholder:text-white/50",
-        ],
-        errorMessage: [
-          "text-error",
-        ],
+        input: ['!text-white', 'placeholder:text-white/50'],
+        errorMessage: ['text-error'],
       },
     },
   },
   defaultVariants: {
-    input: "default",
-    size: "md",
+    input: 'default',
+    size: 'md',
   },
 });
 

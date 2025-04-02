@@ -1,9 +1,6 @@
-import { Stack, Typography } from '@mui/material';
+import { Stack } from '@mui/material';
 import { ZuButton } from 'components/core';
-import { ScrollIcon } from 'components/icons';
-import Image from 'next/image';
-import React, { useEffect, useRef, useState } from 'react';
-import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
+import React from 'react';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 
 const ExternalTicketingDefault: React.FC = () => {

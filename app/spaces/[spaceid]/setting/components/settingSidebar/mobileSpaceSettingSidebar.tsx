@@ -8,7 +8,6 @@ import {
   DrawerBody,
   CommonDrawerHeader,
 } from '@/components/base';
-import { X } from '@phosphor-icons/react';
 import { SettingSection, getSettingSections } from './settingsData';
 import SectionGroup from './sectionGroup';
 
@@ -25,7 +24,7 @@ const MobileSpaceSettingSidebar: React.FC<MobileSettingSidebarProps> = ({
 }) => {
   const router = useRouter();
   const params = useParams();
-  const spaceId = params.spaceid.toString();
+  const spaceId = params.spaceid?.toString() ?? '';
 
   const [sections, setSections] = useState<SettingSection[]>(() =>
     getSettingSections(spaceId),
@@ -65,7 +64,7 @@ const MobileSpaceSettingSidebar: React.FC<MobileSettingSidebarProps> = ({
       placement="bottom"
       hideCloseButton={true}
     >
-      <DrawerContent className="max-h-[600px] border-t-2  rounded-t-[20px] shadow-[0px_-6px_24px_0px_rgba(0,0,0,0.25)]">
+      <DrawerContent className="max-h-[600px] rounded-t-[20px]  border-t-2 shadow-[0px_-6px_24px_0px_rgba(0,0,0,0.25)]">
         <CommonDrawerHeader title={'Navigate Settings'} onClose={onClose} />
 
         <DrawerBody className="p-[20px]">

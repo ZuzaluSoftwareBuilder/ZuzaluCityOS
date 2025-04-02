@@ -1,11 +1,11 @@
 'use client';
 
 import ExploreHeader from '@/components/layout/explore/exploreHeader';
-import { Shapes, } from '@phosphor-icons/react';
+import { Shapes } from '@phosphor-icons/react';
 import { CubeIcon, DIcon, GlobalIcon } from '@/components/icons';
 import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
 
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material';
 import { useMediaQuery } from '@mui/material';
 import { List, DappDetail } from './components';
 import React, { useCallback, useState } from 'react';

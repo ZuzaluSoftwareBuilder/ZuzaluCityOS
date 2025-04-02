@@ -4,9 +4,9 @@ import {
   AkashaContentBlock,
 } from '@akashaorg/typings/lib/sdk/graphql-types-new';
 import akashaSdk from '../akasha';
-import { decodeb64SlateContent, encodeSlateToBase64 } from '../akasha-utils';
+import { decodeb64SlateContent } from '../akasha-utils';
 import { getProfileByDid } from '../profile';
-import { ZulandReadableBeam, ZulandReadbleBlock } from '../akasha.d';
+import { ZulandReadableBeam, ZulandReadbleBlock } from '@/types/akasha';
 import { AccessControlCondition } from '@/utils/lit/types';
 import { ZulandLit } from '@/utils/lit';
 

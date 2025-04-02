@@ -30,8 +30,8 @@ export const getSettingSections = (spaceId: string): SettingSection[] => {
           locked: false,
         },
         {
-          id: 'AccessManagement',
-          label: 'Access Management',
+          id: 'Access',
+          label: 'Access',
           path: `/spaces/${spaceId}/setting/access`,
           locked: true,
         },

@@ -1,12 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { ZuButton } from '@/components/core';
-import { EthIcon } from '@/components/icons/EthIcon';
-import { USDTIcon } from '@/components/icons/USDTIcon';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { CheckedCircleIcon } from '@/components/icons/CheckedCircleIcon';
-import { EmptyCircleIcon } from '@/components/icons/EmptyCircleIcon';
-import { RightArrowIcon } from '@/components/icons';
 import { TokenConfirm } from './TokenConfirm';
 import { TicketDetail } from './TicketDetail';
 

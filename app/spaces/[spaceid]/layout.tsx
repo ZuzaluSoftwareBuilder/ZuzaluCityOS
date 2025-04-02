@@ -10,12 +10,11 @@ interface SpacePageLayoutPropTypes {
 }
 
 type Props = {
-  params: { spaceid: string };
+  params: Promise<{ spaceid: string }>;
 };
 
-export const generateMetadata = async ({
-  params,
-}: Props): Promise<Metadata> => {
+export const generateMetadata = async (props: Props): Promise<Metadata> => {
+  const params = await props.params;
   const id = params.spaceid;
 
   return {
@@ -34,7 +33,7 @@ export default function SpacePageLayout({
     <SpacePermissionProvider>
       <SpaceDataProvider>
         <SpaceTopHeader />
-        <div className="flex pc:pl-[62px] tablet:pl-[62px] text-white min-h-[calc(100vh-50px)]">
+        <div className="flex min-h-[calc(100vh-50px)] text-white pc:pl-[62px] tablet:pl-[62px]">
           <SpaceLayout />
           <div className="flex-1 overflow-auto">{children}</div>
         </div>

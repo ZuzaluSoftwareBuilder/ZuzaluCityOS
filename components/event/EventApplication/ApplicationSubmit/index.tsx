@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, TextField, Button, Typography } from '@mui/material';
+import { Stack } from '@mui/material';
 import { Event } from '@/types';
 interface ApplicationSubmitProps {
   handleClose: () => void;

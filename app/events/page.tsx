@@ -5,7 +5,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import React, { useCallback, useState } from 'react';
 import ExploreHeader from '@/components/layout/explore/exploreHeader';
-import { CalendarDots, Globe, Plus, Ticket } from '@phosphor-icons/react';
+import { CalendarDots, Globe, Ticket } from '@phosphor-icons/react';
 import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
 import { useCeramicContext } from '@/context/CeramicContext';
 import ExploreSearch from '@/components/layout/explore/exploreSearch';
@@ -76,11 +76,7 @@ const EventPage = () => {
 
       <ExploreNav navItems={NavItems} onNavChange={handleNavChange} />
 
-      <Stack
-        direction="column"
-        flex={1}
-        p={isMobile ? '20px 10px' : '20px'}
-      >
+      <Stack direction="column" flex={1} p={isMobile ? '20px 10px' : '20px'}>
         <ExploreSearch
           value={searchVal}
           onChange={setSearchVal}
@@ -88,7 +84,6 @@ const EventPage = () => {
         />
 
         <EventListWithCalendar searchVal={searchVal} />
-
       </Stack>
     </LocalizationProvider>
   );

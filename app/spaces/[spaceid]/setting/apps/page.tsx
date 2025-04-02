@@ -113,20 +113,20 @@ export default function ExploreAppsPage() {
       <DAppDetailDrawer>
         <div
           className={clsx(
-            'w-full h-full overflow-hidden',
+            'size-full overflow-hidden',
             'p-[20px] pc:p-[20px_40px_0]',
             'relative',
           )}
         >
           <div
             ref={scrollContainerRef}
-            className={clsx('w-full h-full overflow-auto flex gap-10')}
+            className={clsx('flex size-full gap-10 overflow-auto')}
           >
             <div
               className={clsx(
                 'hidden pc:flex', // show on pc
-                'absolute top-[20px] left-[40px]',
-                'h-full w-[150px] p-[20px] flex-col gap-5',
+                'absolute left-[40px] top-[20px]',
+                'h-full w-[150px] flex-col gap-5 p-[20px]',
               )}
             >
               {CATEGORIES.map((item) => (
@@ -145,8 +145,8 @@ export default function ExploreAppsPage() {
             </div>
             <div
               className={clsx(
-                'h-full w-full p-5  flex flex-col gap-5',
-                'pc:w-[600px] mx-auto', // pc
+                'flex size-full flex-col  gap-5 p-5',
+                'mx-auto pc:w-[600px]', // pc
                 'mobile:p-0', // mobile
               )}
             >
@@ -161,12 +161,12 @@ export default function ExploreAppsPage() {
                   <React.Fragment key={item.hash}>
                     <div
                       id={item.hash}
-                      className="w-full flex flex-col gap-2.5 "
+                      className="flex w-full flex-col gap-2.5 "
                     >
-                      <div className="leading-[140%] font-semibold text-[18px]">
+                      <div className="text-[18px] font-semibold leading-[140%]">
                         {item.title}
                       </div>
-                      <div className="leading-[140%] font-medium text-[13px] opacity-50">
+                      <div className="text-[13px] font-medium leading-[140%] opacity-50">
                         {item.subTitle}
                       </div>
                       <div className="flex flex-col">

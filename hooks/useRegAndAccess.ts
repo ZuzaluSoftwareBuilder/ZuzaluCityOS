@@ -26,7 +26,7 @@ const useRegAndAccess = (props: Props) => {
   const pathname = useParams();
   const { profile } = useCeramicContext();
   const profileId = profile?.id || '';
-  const eventId = pathname.eventid.toString();
+  const eventId = pathname.eventid?.toString() ?? '';
 
   const abortControllerRef = useRef<AbortController | null>(null);
 

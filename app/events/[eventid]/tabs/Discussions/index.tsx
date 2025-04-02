@@ -11,10 +11,10 @@ import PostDetails from '@/components/zuland/PostDetails';
 import NewPost from '@/components/zuland/NewPost';
 
 import {
-  ZulandReadableBeam,
   getZulandReadableBeams,
   hasUserTicketPermissions,
 } from '@/utils/akasha';
+import { ZulandReadableBeam } from '@/types/akasha';
 import { akashaBeamToMarkdown, Post } from '@/utils/akasha/beam-to-post';
 import Container from '@/components/zuland/Container';
 import { useInfiniteQuery } from '@tanstack/react-query';

@@ -31,8 +31,8 @@ import {
   encodeSlateToBase64,
   getTopReadableReflectionsByBeamId,
   standardDateFormat,
-  ZulandReadableReflection,
 } from '@/utils/akasha';
+import { ZulandReadableReflection } from '@/types/akasha';
 
 import {
   ChatBubbleIcon,
@@ -79,7 +79,6 @@ const PostDetails: React.FC<PostDetailsProps> = ({
     hasNextPage: hasMoreReflections,
     isLoading: isLoadingReflections,
     isFetching: isFetchingReflections,
-    error,
   } = useInfiniteQuery({
     queryKey: ['reflections', postId],
     queryFn: async ({ pageParam }) => {

@@ -28,7 +28,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>((props, ref) => {
       header: classNames.header,
       body: classNames.body,
       footer: classNames.footer,
-      closeButton: classNames.closeButton
+      closeButton: classNames.closeButton,
     }),
   };
 
@@ -64,12 +64,12 @@ export const CommonDrawerHeader: FC<{
 }> = ({ title, onClose, isDisabled }) => {
   return (
     <DrawerHeader className="px-[20px]">
-      <h3 className="text-[18px] mobile:text-[16px] font-bold text-white leading-[1.4]">
+      <h3 className="text-[18px] font-bold leading-[1.4] text-white mobile:text-[16px]">
         {title}
       </h3>
       <Button
         isIconOnly={true}
-        className="bg-transparent hover:bg-[rgba(255,255,255,0.1)] rounded-lg w-[44px] h-[36px] flex items-center justify-center"
+        className="flex h-[36px] w-[44px] items-center justify-center rounded-lg bg-transparent hover:bg-[rgba(255,255,255,0.1)]"
         onPress={onClose}
         isDisabled={isDisabled}
       >

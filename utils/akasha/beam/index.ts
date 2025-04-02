@@ -14,7 +14,7 @@ import {
   BeamsByAuthorDid,
   ZulandContentBlockInput,
   ZulandReadableBeam,
-} from '../akasha.d';
+} from '@/types/akasha';
 import {
   extractBeamReadableContent,
   extractDecryptedBeamReadableContent,
@@ -23,7 +23,6 @@ import { getAppByEventId } from '../app';
 import { createBlockContent } from '../block';
 import { ZulandLit } from '@/utils/lit';
 import { AccessControlCondition } from '@/utils/lit/types';
-import { beam } from 'viem/chains';
 
 const DEFAULT_BEAMS_TAKE = 10;
 

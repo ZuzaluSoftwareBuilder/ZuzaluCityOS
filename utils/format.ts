@@ -1,5 +1,3 @@
-import { getAddress } from 'viem';
-
 export function shortenAddress(address: string, chars = 4): string {
   try {
     // const parsed = getAddress(address)

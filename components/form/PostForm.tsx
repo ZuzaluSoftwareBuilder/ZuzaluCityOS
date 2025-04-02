@@ -1,10 +1,7 @@
+'use client';
 import {
   Box,
-  Chip,
   FormHelperText,
-  MenuItem,
-  OutlinedInput,
-  Select,
   Stack,
   Typography,
   useTheme,
@@ -17,7 +14,6 @@ import {
   FormTitle,
 } from '../typography/formTypography';
 import { ZuInput } from '../core';
-import SelectCheckItem from '../select/selectCheckItem';
 import FormFooter from './FormFooter';
 import { useEditorStore } from '../editor/useEditorStore';
 import Yup from '@/utils/yupExtensions';
@@ -63,7 +59,7 @@ const PostForm: React.FC<PostFormProps> = ({
   const descriptionEditorStore = useEditorStore();
   const { profile } = useCeramicContext();
   const params = useParams();
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
 
   const [blockClickModal, setBlockClickModal] = useState(false);
   const [showModal, setShowModal] = useState(false);

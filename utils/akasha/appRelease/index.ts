@@ -6,7 +6,7 @@ import akashaSdk from '../akasha';
 import {
   ZulandCreateAppReleaseInput,
   ZulandCreateAppReleaseInputWithTicketRules,
-} from '../akasha.d';
+} from '@/types/akasha';
 
 /**
  * Creates an app release in the AKASHA system.

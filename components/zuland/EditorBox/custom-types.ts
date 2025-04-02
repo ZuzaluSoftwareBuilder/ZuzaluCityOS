@@ -1,4 +1,8 @@
-import { CustomEditor, CustomElement, CustomText } from '@akashaorg/typings/lib/ui';
+import {
+  CustomEditor,
+  CustomElement,
+  CustomText,
+} from '@akashaorg/typings/lib/ui';
 
 declare module 'slate' {
   interface CustomTypes {

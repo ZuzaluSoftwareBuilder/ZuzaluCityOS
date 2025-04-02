@@ -1,11 +1,6 @@
 'use client';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import {
-  useRouter,
-  useParams,
-  usePathname,
-  useSearchParams,
-} from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import {
   Stack,
   Typography,
@@ -104,7 +99,7 @@ const Home = () => {
     useCeramicContext();
   const [sessionView, setSessionView] = useState<boolean>(false);
   const [verify, setVerify] = useState<boolean>(false);
-  const eventId = params?.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
   const isPublic = searchParams?.get('public') === '1';
   const [urlOption, setUrlOption] = useState<string>('');
   const [session, setSession] = useState<Session>();
@@ -291,7 +286,7 @@ const Home = () => {
       const { data: sessionData } = await supabase
         .from('sessions')
         .select('*')
-        .eq('uuid', params?.sessionid.toString())
+        .eq('uuid', params.sessionid?.toString() ?? '')
         .single();
       if (sessionData) {
         setSession(sessionData);
@@ -701,7 +696,7 @@ const Home = () => {
         return (
           sessionStartDay ===
             dayjs(sessionStartTime).utc().format('YYYY-MM-DD') &&
-          session.uuid !== params?.sessionid.toString()
+          session.uuid !== (params.sessionid?.toString() ?? '')
         );
       });
       bookedSessionsForDay = bookedSessionsDay;
@@ -786,7 +781,7 @@ const Home = () => {
       organizers: JSON.stringify(sessionOrganizers),
       speakers: JSON.stringify(sessionSpeakers),
       creatorDID: adminId,
-      uuid: params?.sessionid.toString() ?? '',
+      uuid: params.sessionid?.toString() ?? '',
       liveStreamLink: sessionLiveStreamLink,
       recording_link: sessionRecordingLink,
     };

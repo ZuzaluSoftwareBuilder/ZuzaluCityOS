@@ -32,9 +32,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     }
     const { id, installedAppIndexId } = validationResult.data;
 
-    if (
-      !hasRequiredPermission(sessionData, PermissionName.MANAGE_APPS)
-    ) {
+    if (!hasRequiredPermission(sessionData, PermissionName.MANAGE_APPS)) {
       return createErrorResponse('Permission denied', 403);
     }
 

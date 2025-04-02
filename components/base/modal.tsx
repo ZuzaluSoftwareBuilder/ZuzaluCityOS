@@ -76,8 +76,8 @@ export const CommonModalHeader: React.FC<{
   isDisabled?: boolean;
 }> = ({ title, onClose, isDisabled }) => {
   return (
-    <ModalHeader className="flex justify-between items-center h-[60px] pl-[20px] pr-[10px]">
-      <h3 className="text-white font-bold text-base">{title}</h3>
+    <ModalHeader className="flex h-[60px] items-center justify-between pl-[20px] pr-[10px]">
+      <h3 className="text-base font-bold text-white">{title}</h3>
       <Button
         isIconOnly
         variant="light"

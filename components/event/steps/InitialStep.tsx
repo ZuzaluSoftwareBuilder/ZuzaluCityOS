@@ -1,10 +1,4 @@
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  RightArrowCircleIcon,
-} from '@/components/icons';
-import { Divider, Stack, Typography } from '@mui/material';
-import BpCheckbox from '../Checkbox';
+import { Stack } from '@mui/material';
 import { ZuButton } from '@/components/core';
 import { Dispatch, SetStateAction } from 'react';
 import { Anchor } from '@/types';

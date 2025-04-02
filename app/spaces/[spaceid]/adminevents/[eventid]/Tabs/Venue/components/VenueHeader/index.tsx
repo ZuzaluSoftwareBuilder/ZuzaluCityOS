@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Stack, Typography, useTheme } from '@mui/material';
-import { GroupIcon, NewspaperIcon, PlusCircleIcon } from 'components/icons';
+import { GroupIcon } from 'components/icons';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 

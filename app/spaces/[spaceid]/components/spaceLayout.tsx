@@ -14,7 +14,7 @@ const SpaceLayout = () => {
       <SpaceSidebar />
 
       {isSettingPage ? null : (
-        <div className="mobile:hidden tablet:hidden">
+        <div className="tablet:hidden mobile:hidden">
           <SpaceSubSidebar />
         </div>
       )}

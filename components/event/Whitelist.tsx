@@ -26,7 +26,6 @@ import {
   mUSDT_TOKEN,
   isDev,
   SCROLL_EXPLORER,
-  composeClient,
 } from '@/constant';
 import { Address } from 'viem';
 import { TICKET_ABI } from '@/utils/ticket_abi';
@@ -39,7 +38,7 @@ import { ZuButton } from '@/components/core';
 import gaslessFundAndUpload from '@/utils/gaslessFundAndUpload';
 import { generateNFTMetadata } from '@/utils/generateNFTMetadata';
 import { createFileFromJSON } from '@/utils/generateNFTMetadata';
-import { Event, Contract, ScrollPassTickets } from '@/types';
+import { Event, Contract } from '@/types';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useCeramicContext } from '@/context/CeramicContext';

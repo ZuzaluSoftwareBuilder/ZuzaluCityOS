@@ -1,5 +1,4 @@
-import { CubeIcon, GlobalIcon } from '@/components/icons';
-import { Stack, Box, Button, styled, Chip, Typography } from '@mui/material';
+import { Stack, Box, Button, styled, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
 
 const NavButton = styled(Button)(
@@ -124,6 +123,7 @@ export default function ExploreNav({
         {navItems.map((item, index) => (
           <NavButton
             key={item.label}
+            // eslint-disable-next-line tailwindcss/no-custom-classname
             className={activeTab === item.label ? 'active' : ''}
             startIcon={item.icon}
             onClick={(e) => handleTabClick(e, item, index)}

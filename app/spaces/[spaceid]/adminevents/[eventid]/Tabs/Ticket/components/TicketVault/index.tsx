@@ -6,7 +6,6 @@ import {
   USDTIcon,
 } from '@/components/icons';
 import { Box, Button, Stack, Typography, useMediaQuery } from '@mui/material';
-import Image from 'next/image';
 import { SendNFTTicket, WithdrawToken, Whitelist } from './component';
 import React, { useEffect, useState } from 'react';
 import { SCROLL_EXPLORER, mUSDC_TOKEN } from '@/constant';

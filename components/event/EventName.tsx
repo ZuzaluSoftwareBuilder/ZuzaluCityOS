@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-  Box,
-  Stack,
-  Typography,
-  useTheme,
-  useMediaQuery,
-  IconButton,
-} from '@mui/material';
+import { Box, Stack, Typography, useTheme, IconButton } from '@mui/material';
 import { EventIcon, GroupIcon, MapIcon, ShareIcon } from 'components/icons';
 import { convertDateStringFormat } from '@/utils';
 import useGetShareLink from '@/hooks/useGetShareLink';
@@ -65,8 +58,8 @@ const EventName = ({
               [theme.breakpoints.down('sm')]: {
                 width: '100%',
                 height: 'auto',
-                aspectRatio: '1/1'
-              }
+                aspectRatio: '1/1',
+              },
             }}
           />
         </Stack>

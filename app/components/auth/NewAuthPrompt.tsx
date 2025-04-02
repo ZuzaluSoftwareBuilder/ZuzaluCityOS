@@ -185,7 +185,7 @@ const NewAuthPrompt: React.FC = () => {
     return (
       <Button
         onPress={hideAuthPrompt}
-        className="bg-transparent opacity-50 hover:opacity-100 transition-opacity p-0 min-w-0 w-auto h-auto"
+        className="size-auto min-w-0 bg-transparent p-0 opacity-50 transition-opacity hover:opacity-100"
         aria-label="Close"
       >
         <X
@@ -202,13 +202,13 @@ const NewAuthPrompt: React.FC = () => {
     const { title, description } = connectWalletContent;
     return (
       <>
-        <div className="flex items-center justify-between w-full p-[20px]">
-          <ModalHeader className="p-0 text-[18px] leading-[1.2] font-bold">
+        <div className="flex w-full items-center justify-between p-[20px]">
+          <ModalHeader className="p-0 text-[18px] font-bold leading-[1.2]">
             {title}
           </ModalHeader>
           {renderCloseButton()}
         </div>
-        <ModalBody className="pb-5 gap-[10px]">
+        <ModalBody className="gap-[10px] pb-5">
           <p className="text-[14px] leading-[1.4] text-white/70">
             {description}
           </p>
@@ -217,7 +217,7 @@ const NewAuthPrompt: React.FC = () => {
             onConnectClick={handleConnectButtonClick}
           />
         </ModalBody>
-        <div className="w-full bg-[#363636] py-[10px] px-[20px] rounded-b-[10px]">
+        <div className="w-full rounded-b-[10px] bg-[#363636] px-[20px] py-[10px]">
           <p className="text-[12px] leading-[1.4] text-white/70">
             Wallet Connection Provided by <strong>Rainbow Kit</strong>
           </p>
@@ -234,7 +234,7 @@ const NewAuthPrompt: React.FC = () => {
   const renderNewUserContent = useCallback(() => {
     return (
       <>
-        <div className="flex items-center justify-between w-full p-[20px]">
+        <div className="flex w-full items-center justify-between p-[20px]">
           <ModalHeader>Welcome to Zuzalu City! (beta)</ModalHeader>
           {renderCloseButton()}
         </div>
@@ -243,14 +243,14 @@ const NewAuthPrompt: React.FC = () => {
             {`Let's create your username. You can skip this or change it later. Default will be your address.`}
           </p>
           <div>
-            <p className="text-[16px] leading-[1.2] font-medium text-white mb-[10px]">
+            <p className="mb-[10px] text-[16px] font-medium leading-[1.2] text-white">
               Username
             </p>
             <Input
               placeholder="type your username"
               value={inputUsername}
               onValueChange={onInputChange}
-              className="text-white h-[40px] px-[0]"
+              className="h-[40px] px-0 text-white"
               classNames={{
                 base: ['shadow-none border-none'],
                 mainWrapper: ['p-0'],
@@ -262,7 +262,7 @@ const NewAuthPrompt: React.FC = () => {
               }}
               isDisabled={isSkipLoading || isContinueLoading}
             />
-            <div className="flex justify-end w-full mt-[10px]">
+            <div className="mt-[10px] flex w-full justify-end">
               <p className="text-xs text-white/50">{`${maxUsernameLength - inputUsername.length} characters left`}</p>
             </div>
           </div>
@@ -306,14 +306,14 @@ const NewAuthPrompt: React.FC = () => {
 
     return (
       <>
-        <div className="flex items-center justify-between w-full p-[20px]">
+        <div className="flex w-full items-center justify-between p-[20px]">
           <ModalHeader>{`You're all set.`}</ModalHeader>
           {renderCloseButton()}
         </div>
         <ModalBody>
           {username && !isAddressUsername && (
             <div className="flex gap-[20px]">
-              <h2 className="text-[20px] font-bold leading-[1.2] bg-gradient-to-r from-[#7DFFD1] to-[#FFCA7A] text-transparent bg-clip-text">
+              <h2 className="bg-gradient-to-r from-[#7DFFD1] to-[#FFCA7A] bg-clip-text text-[20px] font-bold leading-[1.2] text-transparent">
                 {username}!
               </h2>
             </div>

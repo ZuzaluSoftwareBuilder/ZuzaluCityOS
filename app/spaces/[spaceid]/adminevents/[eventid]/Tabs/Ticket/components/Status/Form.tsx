@@ -30,7 +30,7 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import { RegistrationAndAccess } from '@/types';
 import { isAddress } from 'viem';
 import { isDev } from '@/constant';
-import { sepolia, mainnet, scrollSepolia } from 'wagmi/chains';
+import { sepolia, mainnet } from 'wagmi/chains';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
 import { formatAddressString } from '@/components/layout/UserProfileSection';
@@ -89,7 +89,7 @@ export default function Form({ regAndAccess, onClose }: FormProps) {
   const pathname = useParams();
   const { profile } = useCeramicContext();
   const profileId = profile?.id || '';
-  const eventId = pathname.eventid.toString();
+  const eventId = pathname.eventid?.toString() ?? '';
 
   const [openTips, setOpenTips] = useState(false);
   const [showDialog, setShowDialog] = useState(false);

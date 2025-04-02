@@ -1,15 +1,13 @@
 'use client';
 // import type { Metadata } from 'next';
 import './globals.css';
-import { Inter } from 'next/font/google';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import { AppRouterCacheProvider } from '@/components/emotion/AppRouterCacheProvider';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from 'theme/theme';
 import { WalletProvider } from '../context/WalletContext';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { CeramicProvider } from '../context/CeramicContext';
 import { Header } from '@/components/layout';
-import AuthPrompt from '@/components/AuthPrompt';
 import AppContextProvider from '@/context/AppContext';
 import React, { useEffect, useState } from 'react';
 import { ZupassProvider } from '@/context/ZupassContext';

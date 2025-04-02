@@ -15,7 +15,7 @@ export default function FormHeader({
   handleClose,
   title,
   isBack = false,
-  extra
+  extra,
 }: IProps) {
   return (
     <Box
@@ -39,7 +39,9 @@ export default function FormHeader({
       >
         {isBack ? 'Back' : 'Close'}
       </ZuButton>
-      <Typography flex={1} variant="subtitleSB">{title}</Typography>
+      <Typography flex={1} variant="subtitleSB">
+        {title}
+      </Typography>
       {extra}
     </Box>
   );

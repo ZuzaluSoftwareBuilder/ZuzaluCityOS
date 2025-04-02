@@ -1,11 +1,5 @@
-import {
-  Box,
-  FormHelperText,
-  MenuItem,
-  OutlinedInput,
-  Stack,
-  Typography,
-} from '@mui/material';
+'use client';
+import { Box, FormHelperText, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo } from 'react';
 import FormHeader from './FormHeader';
 import {
@@ -27,8 +21,7 @@ import SelectCategories from '../select/selectCategories';
 
 import dynamic from 'next/dynamic';
 import FormUploader from './FormUploader';
-import SelectCheckItem from '../select/selectCheckItem';
-import { createDapp, updateDapp } from '@/services/dapp.ts';
+import { createDapp, updateDapp } from '@/services/dapp';
 import { Button, Select, SelectItem } from '../base';
 import { Check } from '@phosphor-icons/react';
 import { isAddress } from 'viem';
@@ -711,7 +704,7 @@ const DappForm: React.FC<DappFormProps> = ({
               <div className="flex gap-2">
                 <Button
                   size="md"
-                  className="rounded-[6px] p-[4px_8px] gap-[5px] border border-white/10 h-[30px]"
+                  className="h-[30px] gap-[5px] rounded-[6px] border border-white/10 p-[4px_8px]"
                   endContent={<Check size={16} weight="thin" />}
                 >
                   iFrame App
@@ -719,7 +712,7 @@ const DappForm: React.FC<DappFormProps> = ({
                 <Button
                   size="md"
                   isDisabled
-                  className="rounded-[6px] p-[4px_8px] gap-[5px] border border-white/10 h-[30px]"
+                  className="h-[30px] gap-[5px] rounded-[6px] border border-white/10 p-[4px_8px]"
                 >
                   More Coming Soon
                 </Button>

@@ -1,9 +1,7 @@
 import React from 'react';
-import { Stack, Typography, IconButton } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { ZuButton } from 'components/core';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
-import CheckinConnectButton from '@/components/checkin/CheckinConnectButton';
 
 interface SuccessVerifyProps {
   handleStep: (step: number) => void;

@@ -46,4 +46,4 @@ const ResponsiveGridItem: React.FC<ResponsiveGridItemProps> = ({
   );
 };
 
-export default ResponsiveGridItem; 
+export default ResponsiveGridItem;

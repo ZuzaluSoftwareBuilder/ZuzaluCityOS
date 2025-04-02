@@ -6,9 +6,6 @@ import { useParams } from 'next/navigation';
 import { Event } from '@/types';
 import { ZuButton } from '@/components/core';
 import { useDialog } from '@/components/dialog/DialogContext';
-import { createZulandAppRelease } from '@/utils/akasha';
-import { createApp } from '@/utils/akasha/app';
-import { getAppByEventId } from '@/utils/akasha';
 import { apps } from '@/constant';
 interface IVenue {
   event?: Event;
@@ -19,7 +16,7 @@ interface PropTypes {
 const Home = ({ event }: PropTypes) => {
   const { breakpoints } = useTheme();
   const params = useParams();
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
   const { showDialog, hideDialog } = useDialog();
   const handleCreateDiscussion = async () => {
     /*if (nftGated && (!contractAddress || !isAddress(contractAddress))) {

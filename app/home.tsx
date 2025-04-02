@@ -25,7 +25,7 @@ const Home: React.FC = () => {
           height={'calc(100vh - 50px)'}
         >
           {!isTablet && <Sidebar selected="Home" />}
-          <div className="flex-1 w-screen pc:w-full lg:w-[calc(100vw-260px)] h-full overflow-y-auto overflow-x-hidden text-white">
+          <div className="lg:w-[calc(100vw-260px)] h-full w-screen flex-1 overflow-y-auto overflow-x-hidden text-white pc:w-full">
             <Banner />
             <Communities />
             <OngoingEventList />

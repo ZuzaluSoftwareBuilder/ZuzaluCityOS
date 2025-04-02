@@ -1,6 +1,6 @@
 'use client';
 import { useParams } from 'next/navigation';
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material';
 import {
   Box,
   Snackbar,
@@ -42,7 +42,7 @@ export default function SpaceDetailPage() {
   const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
   const [showCopyToast, setShowCopyToast] = useState(false);
 
-  const spaceId = params?.spaceid.toString() ?? '';
+  const spaceId = params.spaceid?.toString() ?? '';
 
   const { data: spaceData, isLoading } = useGraphQL(
     ['getSpaceAndEvents', spaceId],
@@ -119,7 +119,7 @@ export default function SpaceDetailPage() {
                   height: '100%',
                   borderRadius: '10px',
                 }}
-                className="absolute inset-0 object-cover w-full h-full rounded-[10px]"
+                className="absolute inset-0 size-full rounded-[10px] object-cover"
               />
             ) : (
               <Skeleton

@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Stack, Typography, useMediaQuery } from '@mui/material';
-import ZuButton from 'components/core/Button';
-import {
-  ThreeVerticalIcon,
-  CheckCircleIcon,
-  EyeSlashIcon,
-  CheckIcon,
-} from 'components/icons';
+import { CheckCircleIcon, EyeSlashIcon, CheckIcon } from 'components/icons';
 import Image from 'next/image';
 import { shortenAddress } from '@/utils/format';
 import { mUSDC_TOKEN } from '@/constant';

@@ -1,7 +1,7 @@
 'use client';
 
 import { Sidebar } from 'components/layout';
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material';
 import { Stack, useMediaQuery } from '@mui/material';
 import { Header, List, Nav, DappDetail } from './components';
 import { useCallback, useState } from 'react';

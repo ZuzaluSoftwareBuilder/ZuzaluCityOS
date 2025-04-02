@@ -1,15 +1,12 @@
-import { ZuButton, ZuInput, ZuSwitch } from '@/components/core';
+import { ZuInput, ZuSwitch } from '@/components/core';
 import {
   CheckCircleIcon,
   CheckIcon,
   CircleCloseIcon,
   CopyIcon,
-  EthereumIcon,
   GoToExplorerIcon,
-  LeftArrowIcon,
   RightArrowIcon,
   ScrollIcon,
-  SignCreateIcon,
   USDCIcon,
   USDTIcon,
   UncheckCircleIcon,
@@ -18,10 +15,8 @@ import { STARTING_STATUS } from '@/constant';
 import {
   Box,
   Button,
-  Input,
   MenuItem,
   Select,
-  Switch,
   Stack,
   Step,
   StepLabel,
@@ -31,17 +26,15 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import Image from 'next/image';
-import React, { useRef, useState } from 'react';
-import dayjs, { Dayjs } from 'dayjs';
+import React from 'react';
+import { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { shortenAddress } from '@/utils/format';
 import { SCROLL_EXPLORER } from '@/constant';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { Uploader3, SelectedFile } from '@lxdao/uploader3';
-import { PreviewFile } from '@/components';
-import { useUploaderPreview } from '@/components/PreviewFile/useUploaderPreview';
+import { SelectedFile } from '@lxdao/uploader3';
 import { ButtonGroup } from '../Common';
 import FormUploader from '@/components/form/FormUploader';
 

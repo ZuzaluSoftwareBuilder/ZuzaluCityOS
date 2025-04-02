@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import FormHeader from '@/components/form/FormHeader';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -56,7 +56,7 @@ const ConfigForm: React.FC<RegistrationMethodSelectorProps> = ({
   const pass = formMethods.watch('pass');
   const profileId = profile?.id || '';
 
-  const eventId = pathname.eventid.toString();
+  const eventId = pathname.eventid?.toString() ?? '';
 
   const createMutation = useMutation({
     mutationFn: (input: CreateRegAndAccessRequest) => {

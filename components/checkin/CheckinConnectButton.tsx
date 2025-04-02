@@ -1,8 +1,7 @@
-import { Stack, Typography } from '@mui/material';
+import { Stack } from '@mui/material';
 import { ZuButton } from '@/components/core';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import Image from 'next/image';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import React from 'react';
 

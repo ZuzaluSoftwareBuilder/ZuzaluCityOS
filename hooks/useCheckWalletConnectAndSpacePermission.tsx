@@ -90,7 +90,7 @@ const useCheckWalletConnectAndSpacePermission = ({
 
   const allChecksComplete = useMemo(() => {
     return checkStatus.walletChecked && checkStatus.permissionChecked;
-  }, [checkStatus])
+  }, [checkStatus]);
 
   const currentStatus = useMemo((): PermissionCheckStatus => {
     if (!allChecksComplete) {

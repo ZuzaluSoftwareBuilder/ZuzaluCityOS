@@ -1,7 +1,9 @@
 import { graphql } from '@/graphql/gql';
 
 export const CREATE_ANNOUNCEMENT_MUTATION = graphql(`
-  mutation CreateZucityAnnouncementMutation($input: CreateZucityAnnouncementInput!) {
+  mutation CreateZucityAnnouncementMutation(
+    $input: CreateZucityAnnouncementInput!
+  ) {
     createZucityAnnouncement(input: $input) {
       document {
         id
@@ -26,7 +28,9 @@ export const CREATE_ANNOUNCEMENT_MUTATION = graphql(`
 `);
 
 export const UPDATE_ANNOUNCEMENT_MUTATION = graphql(`
-  mutation UpdateZucityAnnouncementMutation($input: UpdateZucityAnnouncementInput!) {
+  mutation UpdateZucityAnnouncementMutation(
+    $input: UpdateZucityAnnouncementInput!
+  ) {
     updateZucityAnnouncement(input: $input) {
       document {
         id
@@ -39,7 +43,9 @@ export const UPDATE_ANNOUNCEMENT_MUTATION = graphql(`
 `);
 
 export const ENABLE_ANNOUNCEMENT_INDEXING_MUTATION = graphql(`
-  mutation EnableIndexingZucityAnnouncement($input: EnableIndexingZucityAnnouncementInput!) {
+  mutation EnableIndexingZucityAnnouncement(
+    $input: EnableIndexingZucityAnnouncementInput!
+  ) {
     enableIndexingZucityAnnouncement(input: $input) {
       document {
         id

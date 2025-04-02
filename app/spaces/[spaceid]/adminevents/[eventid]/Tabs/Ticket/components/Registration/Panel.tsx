@@ -3,7 +3,6 @@ import { Stack, Typography } from '@mui/material';
 import { SettingIcon } from 'components/icons';
 import Drawer from '@/components/drawer';
 import ConfigForm from './Form';
-import { ZuButton } from '@/components/core';
 import useOpenDraw from '@/hooks/useOpenDraw';
 import { ConfigPanel } from '../Common';
 
