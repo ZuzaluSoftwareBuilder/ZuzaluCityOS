@@ -2,8 +2,10 @@ import { useState } from 'react';
 import RuleItem from './ruleItem';
 import { Button } from '@/components/base';
 import { Plus } from '@phosphor-icons/react';
+import { useSpacePermissions } from '../../../components/permission';
 
 function RuleList() {
+  const { checkPermission } = useSpacePermissions();
   const [accessRules, setAccessRules] = useState<
     {
       title: string;
@@ -34,7 +36,7 @@ function RuleList() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-5">
       {accessRules.map((rule, index) => (
         <RuleItem
           key={index}
@@ -46,11 +48,13 @@ function RuleList() {
       ))}
 
       <Button
-        className="flex w-full flex-row items-center justify-center gap-2.5 rounded-lg bg-white/5 p-3"
-        onPress={handleAddRule}
+        size="lg"
+        color="functional"
+        className="p-[12px]"
+        fullWidth
+        endContent={<Plus size={18} />}
       >
-        <Plus size={24} />
-        <span className="text-base font-medium text-white">Create a Rule</span>
+        Create a Rule
       </Button>
     </div>
   );

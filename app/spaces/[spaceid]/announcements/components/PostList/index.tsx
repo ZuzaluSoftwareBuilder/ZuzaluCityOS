@@ -22,7 +22,7 @@ import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
 import CreateOrEditorPostDrawer, {
   useCreateOrEditorPostDrawer,
 } from '../CreateOrEditorPostDrawer';
-import { Announcement } from '@/types';
+import { Announcement, PermissionName } from '@/types';
 import EditorPreview from '@/components/editor/EditorPreview';
 
 import { PostListDataProvider, usePostListData } from './PostListDataContext';
@@ -33,7 +33,11 @@ import clsx from 'clsx';
 const PostList = () => {
   const { startCreate } = useCreateOrEditorPostDrawer();
   const { posts, loading } = usePostListData();
-  const { isAdmin, isOwner } = useSpacePermissions();
+  const { checkPermission } = useSpacePermissions();
+
+  const hasManageSpaceAccess = checkPermission(
+    PermissionName.MANAGE_ANNOUNCEMENTS,
+  );
 
   return (
     <div className="flex flex-1 flex-col gap-5">
@@ -41,7 +45,7 @@ const PostList = () => {
         <div className="flex items-center gap-2.5">
           <span className="text-[20px] font-bold leading-[140%]">Posts</span>
         </div>
-        {(isOwner || isAdmin) && (
+        {hasManageSpaceAccess && (
           <Button
             color="secondary"
             size="sm"
