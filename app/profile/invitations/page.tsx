@@ -58,9 +58,9 @@ const InvitationItem: React.FC<{
 }> = ({ invitation, isSelected, onClick }) => {
   const title = useMemo(() => {
     if (invitation.resource === 'space') {
-      return `Space ${invitation.space?.name || ''} Invitation `;
+      return `Invitation to ${invitation.space?.name ?  `【${invitation.space?.name}】 Space` : 'space'}`;
     } else if (invitation.resource === 'event') {
-      return `Event ${invitation.event?.name || ''} Invitation `;
+      return `Invitation to ${invitation.event?.name || ''} Event `;
     }
     return 'Invitation';
   }, [invitation]);
@@ -155,9 +155,9 @@ const InvitationDetail: React.FC<{
 }> = ({ invitation, onAccept, onReject, onBack, processing }) => {
   const title = useMemo(() => {
     if (invitation.resource === 'space') {
-      return `Space ${invitation.space?.name || ''} Invitation `;
+      return `Invitation to ${invitation.space?.name ?  `【${invitation.space?.name}】 Space` : 'space'}`;
     } else if (invitation.resource === 'event') {
-      return `Event ${invitation.event?.name || ''} Invitation `;
+      return `Invitation to ${invitation.event?.name || ''} Event `;
     }
     return 'Invitation';
   }, [invitation]);
@@ -325,6 +325,7 @@ const NotificationsPage: React.FC = () => {
     },
   );
 
+
   useEffect(() => {
     console.log('userInvitations', userInvitations);
   }, [userInvitations]);
@@ -336,11 +337,10 @@ const NotificationsPage: React.FC = () => {
           console.log('markInvitationAsRead invitation.id', invitation.id);
           const result = await markInvitationAsRead(invitation.id);
           if (result.success) {
-            refetch();
-
-            queryClient.invalidateQueries({
+            await queryClient.invalidateQueries({
               queryKey: ['GET_UNREAD_INVITATIONS_COUNT', userDid],
             });
+            refetch();
           } else {
             console.error('Failed to mark invitation as read:', result.message);
           }
@@ -448,7 +448,7 @@ const NotificationsPage: React.FC = () => {
             description: 'You have successfully accepted the invitation',
             color: 'success',
           });
-          queryClient.invalidateQueries({
+          await queryClient.invalidateQueries({
             queryKey: ['GET_USER_INVITATION_QUERY', userDid],
           });
           if (invitation.resource === 'space' && invitation.space) {
@@ -503,7 +503,7 @@ const NotificationsPage: React.FC = () => {
             description: 'You have successfully rejected the invitation',
             color: 'primary',
           });
-          queryClient.invalidateQueries({
+          await queryClient.invalidateQueries({
             queryKey: ['GET_USER_INVITATION_QUERY', userDid],
           });
         } else {
@@ -573,7 +573,7 @@ const NotificationsPage: React.FC = () => {
               setSelectedTab(key as TabType);
               setSelectedInvitation(null);
             }}
-            className="rounded-xl backdrop-blur-md bg-black/20"
+            className="rounded-xl backdrop-blur-md"
             color="primary"
             classNames={{
               base: 'w-full',

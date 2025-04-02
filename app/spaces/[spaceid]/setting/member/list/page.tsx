@@ -96,7 +96,7 @@ const MemberListPage = () => {
           <div className="flex flex-col">
             {membersList.map((member) => (
               <div
-                key={member.id}
+                key={member.did}
                 className="flex items-center w-full px-4 py-3 border-b border-[rgba(255,255,255,0.05)] last:border-b-0"
               >
                 <div className="flex items-center flex-1 gap-3">
@@ -109,17 +109,6 @@ const MemberListPage = () => {
                 <div className="w-[100px] text-center">
                   <span className="text-sm text-white/80">{member.role}</span>
                 </div>
-                {/*<div className="w-[100px] flex justify-center">*/}
-                {/*  {member.role !== 'Owner' && (*/}
-                {/*    <Button*/}
-                {/*      isIconOnly*/}
-                {/*      variant="light"*/}
-                {/*      className="bg-[rgba(255,255,255,0.05)] w-8 h-8 min-w-0 rounded-full"*/}
-                {/*    >*/}
-                {/*      <X size={16} className="text-white" />*/}
-                {/*    </Button>*/}
-                {/*  )}*/}
-                {/*</div>*/}
               </div>
             ))}
           </div>

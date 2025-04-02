@@ -1,131 +1,39 @@
-import { z } from 'zod';
+import { NextRequest } from 'next/server';
 import { withBasicSessionValidation } from '@/utils/authMiddleware';
-import {
-  createErrorResponse,
-  createSuccessResponse,
-} from '@/utils/service/response';
-import { dayjs } from '@/utils/dayjs';
-import { authenticateWithSpaceId } from '@/utils/ceramic';
+import { withInvitationValidation } from '@/middleware/invitationMiddleware';
+import { createSuccessResponse } from '@/utils/service/response';
+import { InvitationService } from '@/services/invitation/InvitationService';
 import { InvitationStatus } from '@/types/invitation';
-import { composeClient } from '@/constant';
-import {
-  GET_INVITATION_BY_ID_QUERY,
-  UPDATE_INVITATION_MUTATION,
-} from '@/services/graphql/invitation';
+import { SessionData } from '@/types/session';
 
 export const dynamic = 'force-dynamic';
 
-const cancelInvitationSchema = z.object({
-  invitationId: z.string().min(1, 'Invitation ID is required'),
-});
+const handleCancelInvitation = async (
+  req: NextRequest,
+  sessionData: SessionData,
+) => {
+  const { invitation } = sessionData;
 
-export const POST = withBasicSessionValidation(async (request, sessionData) => {
-  try {
-    const body = await request.json();
-    const validationResult = cancelInvitationSchema.safeParse(body);
-
-    if (!validationResult.success) {
-      return createErrorResponse(
-        'Invalid request parameters',
-        400,
-        validationResult.error.format(),
-      );
-    }
-
-    const { invitationId } = validationResult.data;
-    const operatorId = sessionData.operatorId;
-
-    if (!operatorId) {
-      return createErrorResponse('Failed to get user information', 401);
-    }
-
-    const invitationResult = await composeClient.executeQuery(
-      GET_INVITATION_BY_ID_QUERY.toString(),
-      {
-        id: invitationId,
-      },
-    );
-
-    if (invitationResult.errors) {
-      throw new Error(
-        invitationResult.errors.map((e: any) => e.message).join(', '),
-      );
-    }
-
-    const invitation = invitationResult.data?.node;
-
-    if (!invitation) {
-      return createErrorResponse('Invitation not found', 404);
-    }
-
-    const expiresAt = dayjs(invitation.expiresAt);
-    if (expiresAt.isBefore(dayjs())) {
-      return createErrorResponse('Invitation has expired', 400);
-    }
-
-    if (invitation.status !== InvitationStatus.PENDING) {
-      return createErrorResponse(
-        'Invalid invitation status, cannot be cancelled',
-        400,
-      );
-    }
-
-    const inviterDid = invitation.inviterId?.id;
-
-    const isInviter = String(inviterDid) === String(operatorId);
-
-    if (!isInviter) {
-      return createErrorResponse(
-        'You do not have permission to cancel this invitation',
-        403,
-      );
-    }
-
-    try {
-      const error = await authenticateWithSpaceId(invitation.resourceId);
-      if (error) {
-        return createErrorResponse('Failed to get private key', 500);
-      }
-
-      const updateResult = await composeClient.executeQuery(
-        UPDATE_INVITATION_MUTATION.toString(),
-        {
-          input: {
-            id: invitationId,
-            content: {
-              status: InvitationStatus.CANCELLED,
-              updatedAt: dayjs().toISOString(),
-            },
-          },
-        },
-      );
-
-      if (updateResult.errors) {
-        throw new Error(
-          updateResult.errors.map((e: any) => e.message).join(', '),
-        );
-      }
-
-      const updatedInvitation =
-        updateResult.data?.updateZucityInvitation?.document;
-      return createSuccessResponse(
-        updatedInvitation,
-        'Invitation cancelled successfully',
-      );
-    } catch (error: any) {
-      console.error('Failed to cancel invitation:', error);
-      return createErrorResponse(
-        'Failed to reject invitation',
-        500,
-        error.message,
-      );
-    }
-  } catch (error: any) {
-    console.error('Failed to cancel invitation:', error);
-    return createErrorResponse(
-      'Failed to cancel invitation',
-      500,
-      error.message,
-    );
+  if (!invitation) {
+    throw new Error('Invitation not found in session data');
   }
-});
+
+  const invitationService = InvitationService.getInstance();
+  const updatedInvitation = await invitationService.updateInvitationStatus(
+    invitation.id,
+    InvitationStatus.CANCELLED,
+  );
+
+  return createSuccessResponse(
+    updatedInvitation,
+    'Invitation cancelled successfully',
+  );
+};
+
+// 组合中间件
+export const POST = withBasicSessionValidation(
+  withInvitationValidation(handleCancelInvitation, {
+    expectedStatus: InvitationStatus.PENDING,
+    validateInviter: true,
+  }),
+);

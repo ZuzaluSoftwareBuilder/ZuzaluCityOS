@@ -97,6 +97,7 @@ export const GET_USER_INVITATION_QUERY = graphql(`
           space {
             id
             name
+            avatar
           }
           status
           updatedAt
@@ -163,55 +164,6 @@ export const GET_INVITATION_BY_ID_QUERY = graphql(`
           username
           address
           avatar
-        }
-      }
-    }
-  }
-`);
-
-export const VALIDATE_ROLE_QUERY = graphql(`
-  query ValidateRoleById($roleId: ID!, $resourceId: String!) {
-    zucityRoleIndex(
-      first: 1
-      filters: { where: { resourceId: { equalTo: $resourceId } } }
-    ) {
-      edges {
-        node {
-          id
-          name
-          source
-          color
-          created_at
-          updated_at
-        }
-      }
-    }
-  }
-`);
-
-export const VALIDATE_RESOURCE_ACCESS = graphql(`
-  query ValidateUserResourceAccess(
-    $userId: String!
-    $resourceId: String!
-    $source: String!
-  ) {
-    zucityUserRolesIndex(
-      first: 1
-      filters: {
-        where: {
-          userId: { equalTo: $userId }
-          resourceId: { equalTo: $resourceId }
-          source: { equalTo: $source }
-        }
-      }
-    ) {
-      edges {
-        node {
-          id
-          roleId
-          userId {
-            id
-          }
         }
       }
     }
@@ -321,18 +273,5 @@ export const GET_UNREAD_INVITATION_COUNT = graphql(`
         where: { isRead: { equalTo: "false" }, inviteeId: { equalTo: $userId } }
       }
     )
-  }
-`);
-
-export const MARK_INVITATION_READ = graphql(`
-  mutation MarkInvitationAsRead($invitationId: ID!) {
-    updateZucityInvitation(
-      input: { id: $invitationId, content: { isRead: "true" } }
-    ) {
-      document {
-        id
-        isRead
-      }
-    }
   }
 `);

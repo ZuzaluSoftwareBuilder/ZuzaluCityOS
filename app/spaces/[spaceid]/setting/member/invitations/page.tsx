@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_INVITATIONS_QUERY } from '@/services/graphql/invitation';
@@ -22,10 +22,10 @@ import {
   ModalFooter,
 } from '@/components/base';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { cancelInvitation } from '@/services/invitation';
 import { format } from 'date-fns';
 import { X } from '@phosphor-icons/react';
 import { InvitationStatus } from '@/types/invitation';
+import { cancelInvitation } from '@/services/invitation';
 
 interface InvitationProfile {
   id?: string;
@@ -81,6 +81,10 @@ const InvitationsPage = () => {
     },
   );
 
+  useEffect(() => {
+    console.log('space invitations', invitations);
+  }, [invitations])
+
   const handleCancelInvitation = async () => {
     if (!selectedInvitation) return;
 
@@ -118,24 +122,26 @@ const InvitationsPage = () => {
 
   const getStatusColor = (status: InvitationStatus) => {
     if (!status) return 'default';
+    const statusLowerCase = status.toLowerCase() as InvitationStatus;
     const statusColorMap: Record<InvitationStatus, string> = {
       [InvitationStatus.PENDING]: 'warning',
       [InvitationStatus.ACCEPTED]: 'success',
       [InvitationStatus.REJECTED]: 'danger',
       [InvitationStatus.CANCELLED]: 'default',
     };
-    return statusColorMap[status] || 'default';
+    return statusColorMap[statusLowerCase] || 'default';
   };
 
   const getStatusText = (status: InvitationStatus) => {
     if (!status) return 'Unknown Status';
+    const statusLowerCase = status.toLowerCase() as InvitationStatus;
     const statusTextMap: Record<InvitationStatus, string> = {
       [InvitationStatus.PENDING]: 'Pending',
       [InvitationStatus.ACCEPTED]: 'Accepted',
       [InvitationStatus.REJECTED]: 'Rejected',
       [InvitationStatus.CANCELLED]: 'Cancelled',
     };
-    return statusTextMap[status] || 'Unknown Status';
+    return statusTextMap[statusLowerCase] || 'Unknown Status';
   };
 
   const formatDate = (dateString: string | undefined) => {

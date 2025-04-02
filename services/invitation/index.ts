@@ -1,11 +1,9 @@
 import {
   CreateInvitationRequest,
   InvitationActionRequest,
-  ZucityInvitation,
 } from '@/types/invitation';
 import axiosInstance from '@/utils/axiosInstance';
-import { composeClient } from '@/constant';
-import { MARK_INVITATION_READ } from '@/services/graphql/invitation';
+import { ZucityInvitation } from '@/graphql/graphql';
 
 export const createInvitation = async (
   invitation: CreateInvitationRequest,

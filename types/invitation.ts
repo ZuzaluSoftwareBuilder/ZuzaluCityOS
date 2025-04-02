@@ -1,27 +1,30 @@
-export interface ZucityInvitation {
+import { z } from 'zod';
+
+export interface Invitation {
   id: string;
   author: {
     id: string;
   };
-  inviterId: string;
-  inviteeId: string;
+  inviterId: {
+    id: string;
+  };
+  inviteeId: {
+    id: string;
+  };
   resource: string;
   resourceId: string;
   roleId: string;
   status: InvitationStatus;
   message?: string;
   isRead: string;
-
+  inviterProfileId?: string;
+  inviteeProfileId?: string;
   createdAt: string;
   expiresAt: string;
   updatedAt?: string;
-  lastSentAt?: string;
-
-  customAttributes?: Array<{ tbd?: string }>;
-
+  lastSentAt: string;
   inviterProfile?: ProfileInfo | null;
   inviteeProfile?: ProfileInfo | null;
-
   eventId?: string;
   event?: any;
   spaceId?: string;
@@ -56,4 +59,48 @@ export interface ProfileInfo {
   author: {
     id: string;
   };
+}
+
+export interface GraphQLResponse<T> {
+  data?: T;
+  errors?: Array<{
+    message: string;
+    locations?: Array<{
+      line: number;
+      column: number;
+    }>;
+    path?: string[];
+  }>;
+}
+
+export const createInvitationSchema = z.object({
+  inviteeId: z.string().min(1, 'Invitee ID is required'),
+  id: z.string().min(1, 'Resource ID is required'),
+  resource: z.string().min(1, 'Resource type is required'),
+  roleId: z.string().min(1, 'Role ID is required'),
+  message: z.string().optional(),
+  expiresAt: z.string().optional(),
+});
+
+export const invitationActionSchema = z.object({
+  invitationId: z.string().min(1, 'Invitation ID is required'),
+});
+
+export interface InvitationResponse {
+  success: boolean;
+  data?: Invitation | null;
+  message?: string;
+  error?: {
+    code: number;
+    message: string;
+    details?: any;
+  };
+}
+
+export enum InvitationErrorCode {
+  NOT_FOUND = 'INVITATION_NOT_FOUND',
+  EXPIRED = 'INVITATION_EXPIRED',
+  INVALID_STATUS = 'INVALID_STATUS',
+  PERMISSION_DENIED = 'PERMISSION_DENIED',
+  INTERNAL_ERROR = 'INTERNAL_ERROR'
 } 
