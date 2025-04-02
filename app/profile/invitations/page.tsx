@@ -58,9 +58,9 @@ const InvitationItem: React.FC<{
 }> = ({ invitation, isSelected, onClick }) => {
   const title = useMemo(() => {
     if (invitation.resource === 'space') {
-      return `Invitation to ${invitation.space?.name ? `【${invitation.space?.name}】 Space` : 'space'}`;
+      return 'Space Invitation';
     } else if (invitation.resource === 'event') {
-      return `Invitation to ${invitation.event?.name || ''} Event `;
+      return 'Event Invitation';
     }
     return 'Invitation';
   }, [invitation]);
@@ -131,14 +131,16 @@ const InvitationItem: React.FC<{
               </Button>
               <h3 className="truncate pr-2 font-medium text-white">{title}</h3>
             </div>
-            <span className="text-xs text-white/50">{formattedTime}</span>
           </div>
-          <p className="mt-1 truncate text-sm text-white/70">{preview}</p>
+          <span className="text-xs text-white/50">{formattedTime}</span>
+          {preview && (
+            <p className="mt-1 truncate text-sm text-white/70">{preview}</p>
+          )}
         </div>
       </div>
-      {!invitation.isRead && (
-        <div className="absolute right-4 top-4 size-2.5 rounded-full bg-red-500"></div>
-      )}
+      {/*{!invitation.isRead && (*/}
+      {/*  <div className="absolute right-4 top-4 size-2.5 rounded-full bg-red-500"></div>*/}
+      {/*)}*/}
     </div>
   );
 };
@@ -215,7 +217,7 @@ const InvitationDetail: React.FC<{
           </div>
         </div>
 
-        {invitation.message && (
+        {invitation.message?.trim() && (
           <div className="mb-6 rounded-xl bg-white/5 p-4">
             <p className="whitespace-pre-wrap text-white/90">
               {invitation.message}
