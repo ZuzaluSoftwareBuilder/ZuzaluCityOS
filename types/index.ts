@@ -665,17 +665,6 @@ export interface RolePermission {
   permission_ids: string[];
 }
 
-export interface RolePermissionFromCeramic {
-  id: string;
-  roleId: string;
-  permissionIds: string[];
-  resourceId: string;
-  source: string;
-  level: string;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface UserRole {
   id: string;
   roleId: string;

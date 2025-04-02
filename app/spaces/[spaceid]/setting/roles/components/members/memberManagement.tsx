@@ -99,7 +99,6 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
         const promises = [];
 
         if (membersWithoutRoles.length > 0) {
-          console.log('addMembersToRole', roleId, roleData);
           promises.push(
             addMembersToRole(
               resource,
