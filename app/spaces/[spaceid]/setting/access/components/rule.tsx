@@ -3,7 +3,12 @@ import POAPAutocomplete from './poapAutocomplete';
 const POAP = () => {
   return (
     <div className="p-5">
-      <POAPAutocomplete />
+      <POAPAutocomplete
+        initialValue={[184602, 187955]}
+        onChange={(e) => {
+          console.log(e);
+        }}
+      />
     </div>
   );
 };
