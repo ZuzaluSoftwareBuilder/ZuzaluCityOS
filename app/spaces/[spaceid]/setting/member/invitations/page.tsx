@@ -133,6 +133,7 @@ const InvitationsPage = () => {
       [InvitationStatus.ACCEPTED]: 'success',
       [InvitationStatus.REJECTED]: 'danger',
       [InvitationStatus.CANCELLED]: 'default',
+      [InvitationStatus.INVALID]: 'default',
     };
     return statusColorMap[statusLowerCase] || 'default';
   };
@@ -145,6 +146,7 @@ const InvitationsPage = () => {
       [InvitationStatus.ACCEPTED]: 'Accepted',
       [InvitationStatus.REJECTED]: 'Rejected',
       [InvitationStatus.CANCELLED]: 'Cancelled',
+      [InvitationStatus.INVALID]: 'Invalided',
     };
     return statusTextMap[statusLowerCase] || 'Unknown Status';
   };
