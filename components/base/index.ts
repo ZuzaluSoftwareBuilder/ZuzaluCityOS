@@ -8,3 +8,4 @@ export * from './card';
 export * from './chip';
 export * from './modal';
 export * from './select';
+export * from './autocomplete';
