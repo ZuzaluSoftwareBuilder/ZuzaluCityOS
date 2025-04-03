@@ -8,8 +8,7 @@ import {
 } from '@/services/invitation';
 import { Button, Tabs, Tab, addToast, Badge, Image, cn } from '@heroui/react';
 import { useRouter } from 'next/navigation';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { InvitationStatus } from '@/types/invitation';
+import { Invitation, InvitationStatus } from '@/types/invitation';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_USER_INVITATION_QUERY } from '@/services/graphql/invitation';
 import useDid from '@/hooks/useDid';
@@ -17,31 +16,6 @@ import Loading from '@/app/loading';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { formatDistanceToNow } from 'date-fns';
 import { useQueryClient } from '@tanstack/react-query';
-
-interface Invitation {
-  id: string;
-  inviterProfile?: {
-    username?: string;
-    avatar?: string;
-  };
-  space?: {
-    id?: string;
-    name?: string;
-    avatar?: string;
-  };
-  event?: {
-    id?: string;
-    name?: string;
-    avatar?: string;
-  };
-  resource: string;
-  resourceId: string;
-  status: string;
-  message?: string;
-  isRead: 'true' | 'false';
-  createdAt: string;
-  inviteeId: string;
-}
 
 enum TabType {
   ALL = 'all',
@@ -77,8 +51,8 @@ const InvitationItem: React.FC<{
   const avatarSrc = useMemo(() => {
     if (invitation.resource === 'space' && invitation.space?.avatar) {
       return invitation.space.avatar;
-    } else if (invitation.resource === 'event' && invitation.event?.avatar) {
-      return invitation.event.avatar;
+    } else if (invitation.resource === 'event' && invitation.event?.imageUrl) {
+      return invitation.event.imageUrl;
     } else if (invitation.inviterProfile?.avatar) {
       return invitation.inviterProfile.avatar;
     }
@@ -159,7 +133,7 @@ const InvitationDetail: React.FC<{
     if (invitation.resource === 'space') {
       return `Invitation to ${invitation.space?.name ? `【${invitation.space?.name}】 Space` : 'space'}`;
     } else if (invitation.resource === 'event') {
-      return `Invitation to ${invitation.event?.name || ''} Event `;
+      return `Invitation to ${invitation.event?.title || ''} Event `;
     }
     return 'Invitation';
   }, [invitation]);
@@ -167,8 +141,8 @@ const InvitationDetail: React.FC<{
   const avatarSrc = useMemo(() => {
     if (invitation.resource === 'space' && invitation.space?.avatar) {
       return invitation.space.avatar;
-    } else if (invitation.resource === 'event' && invitation.event?.avatar) {
-      return invitation.event.avatar;
+    } else if (invitation.resource === 'event' && invitation.event?.imageUrl) {
+      return invitation.event.imageUrl;
     } else if (invitation.inviterProfile?.avatar) {
       return invitation.inviterProfile.avatar;
     }
@@ -287,8 +261,6 @@ const InvitationDetail: React.FC<{
 
 const NotificationsPage: React.FC = () => {
   const { did: userDid } = useDid();
-  const { profile } = useCeramicContext();
-  const userId = profile?.author?.id || '';
   const router = useRouter();
   const queryClient = useQueryClient();
   const [selectedTab, setSelectedTab] = useState<TabType>(TabType.ALL);
@@ -377,56 +349,22 @@ const NotificationsPage: React.FC = () => {
         cancelledInvitations: [],
       };
 
-    const mapInvitation = (inv: any): Invitation => ({
-      id: inv.id,
-      inviterProfile: inv.inviterProfile
-        ? {
-            username: inv.inviterProfile.username,
-            avatar: inv.inviterProfile.avatar,
-          }
-        : undefined,
-      space: inv.space,
-      event: inv.event,
-      resource: inv.resource,
-      resourceId: inv.resourceId,
-      status: inv.status,
-      message: inv.message,
-      isRead: inv.isRead,
-      createdAt: inv.createdAt,
-      inviteeId: userId,
-    });
-
-    const all = [...userInvitations]
-      .sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      )
-      .map(mapInvitation);
-
-    const pending = userInvitations
-      .filter((inv) => inv.status === InvitationStatus.PENDING)
-      .map(mapInvitation);
-
-    const accepted = userInvitations
-      .filter((inv) => inv.status === InvitationStatus.ACCEPTED)
-      .map(mapInvitation);
-
-    const rejected = userInvitations
-      .filter((inv) => inv.status === InvitationStatus.REJECTED)
-      .map(mapInvitation);
-
-    const cancelled = userInvitations
-      .filter((inv) => inv.status === InvitationStatus.CANCELLED)
-      .map(mapInvitation);
-
     return {
-      allInvitations: all,
-      pendingInvitations: pending,
-      acceptedInvitations: accepted,
-      rejectedInvitations: rejected,
-      cancelledInvitations: cancelled,
+      allInvitations: userInvitations,
+      pendingInvitations: userInvitations.filter(
+        (inv) => inv.status === InvitationStatus.PENDING,
+      ),
+      acceptedInvitations: userInvitations.filter(
+        (inv) => inv.status === InvitationStatus.ACCEPTED,
+      ),
+      rejectedInvitations: userInvitations.filter(
+        (inv) => inv.status === InvitationStatus.REJECTED,
+      ),
+      cancelledInvitations: userInvitations.filter(
+        (inv) => inv.status === InvitationStatus.CANCELLED,
+      ),
     };
-  }, [userId, userInvitations]);
+  }, [userInvitations]);
 
   const handleAccept = useCallback(
     async (invitation: Invitation) => {
@@ -440,7 +378,7 @@ const NotificationsPage: React.FC = () => {
       try {
         const result = await acceptInvitation({
           invitationId: invitation.id,
-          userId: invitation.inviteeId,
+          userId: invitation.inviteeId.id,
         });
 
         if (result.success) {
@@ -495,7 +433,7 @@ const NotificationsPage: React.FC = () => {
       try {
         const result = await rejectInvitation({
           invitationId: invitation.id,
-          userId: invitation.inviteeId,
+          userId: invitation.inviteeId.id,
         });
 
         if (result.success) {
@@ -656,9 +594,11 @@ const NotificationsPage: React.FC = () => {
               {currentTabInvitations.map((invitation) => (
                 <InvitationItem
                   key={invitation.id}
-                  invitation={invitation}
+                  invitation={invitation as Invitation}
                   isSelected={selectedInvitation?.id === invitation.id}
-                  onClick={() => handleSelectInvitation(invitation)}
+                  onClick={() =>
+                    handleSelectInvitation(invitation as Invitation)
+                  }
                 />
               ))}
             </div>

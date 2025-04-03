@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Avatar, Spinner } from '@heroui/react';
 import { Button } from '@/components/base';
 import { Plus } from '@phosphor-icons/react';
@@ -18,10 +18,6 @@ const MemberListPage = () => {
     useGetSpaceMember(spaceId);
   const { open, handleOpen, handleClose } = useOpenDraw();
   const { address } = useAccount();
-
-  useEffect(() => {
-    console.log('members', members);
-  }, [members]);
 
   const membersList = useMemo(() => {
     const allMembers = [];

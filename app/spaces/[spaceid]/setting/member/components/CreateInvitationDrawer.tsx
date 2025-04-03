@@ -31,7 +31,6 @@ import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import { MemberEmpty } from '@/app/spaces/[spaceid]/setting/roles/components/members/memberItem';
 
-// 资源类型枚举
 enum ResourceType {
   SPACE = 'space',
   EVENT = 'event',
@@ -118,7 +117,6 @@ export const CreateInvitationDrawer = ({
     return (spaceData?.events?.edges.map((edge) => edge.node) || []) as Event[];
   }, [spaceData]);
 
-  // 当资源类型变更时，重置选中的资源ID和角色ID
   useEffect(() => {
     if (resourceType === ResourceType.SPACE) {
       setSelectedResourceId(spaceId);

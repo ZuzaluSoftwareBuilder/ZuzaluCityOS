@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_INVITATIONS_QUERY } from '@/services/graphql/invitation';
@@ -24,33 +24,8 @@ import {
 import { useCeramicContext } from '@/context/CeramicContext';
 import { format } from 'date-fns';
 import { X } from '@phosphor-icons/react';
-import { InvitationStatus } from '@/types/invitation';
+import { Invitation, InvitationStatus } from '@/types/invitation';
 import { cancelInvitation } from '@/services/invitation';
-
-interface InvitationProfile {
-  id?: string;
-  username?: string;
-  avatar?: string | null;
-  address?: string;
-  __typename?: string;
-}
-
-interface Invitation {
-  id: string;
-  status: InvitationStatus;
-  message?: string | null;
-  createdAt: string;
-  expiresAt: string;
-  inviterId?: {
-    id: string;
-  };
-  inviterProfile?: InvitationProfile | null;
-  inviteeProfile?: InvitationProfile | null;
-  resource?: string;
-  resourceId?: string;
-  isRead?: string;
-  __typename?: string;
-}
 
 const InvitationsPage = () => {
   const params = useParams();
@@ -85,10 +60,6 @@ const InvitationsPage = () => {
       enabled: !!spaceId,
     },
   );
-
-  useEffect(() => {
-    console.log('space invitations', invitations);
-  }, [invitations]);
 
   const handleCancelInvitation = async () => {
     if (!selectedInvitation) return;

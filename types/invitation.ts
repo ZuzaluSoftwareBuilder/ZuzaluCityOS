@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Space, Event } from '@/types';
 
 export interface Invitation {
   id: string;
@@ -16,19 +17,19 @@ export interface Invitation {
   roleId: string;
   status: InvitationStatus;
   message?: string;
-  isRead: string;
+  isRead: 'true' | 'false';
   inviterProfileId?: string;
   inviteeProfileId?: string;
+  inviterProfile?: ProfileInfo;
+  inviteeProfile?: ProfileInfo;
+  eventId?: string;
+  event?: Event;
+  spaceId?: string;
+  space?: Space;
   createdAt: string;
   expiresAt: string;
   updatedAt?: string;
   lastSentAt: string;
-  inviterProfile?: ProfileInfo | null;
-  inviteeProfile?: ProfileInfo | null;
-  eventId?: string;
-  event?: any;
-  spaceId?: string;
-  space?: any;
 }
 
 export enum InvitationStatus {

@@ -1,34 +1,9 @@
 import { memo } from 'react';
-import { Avatar } from '@heroui/react';
-import { InvitationStatus } from '@/types/invitation';
+import { Avatar, cn } from '@heroui/react';
+import { Invitation, InvitationStatus } from '@/types/invitation';
 import { InvitationActionButtons } from './InvitationActionButtons';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-
-interface Invitation {
-  id: string;
-  inviterProfile?: {
-    username?: string;
-    avatar?: string;
-  };
-  space?: {
-    id?: string;
-    name?: string;
-    avatar?: string;
-  };
-  event?: {
-    id?: string;
-    name?: string;
-    avatar?: string;
-  };
-  resource: string;
-  resourceId: string;
-  status: string;
-  message?: string;
-  isRead: boolean;
-  createdAt: string;
-  inviteeId: string;
-}
 
 interface InvitationListProps {
   invitations: Invitation[];
@@ -50,7 +25,7 @@ export const InvitationList = memo(
         case 'space':
           return invitation.space?.name || 'space';
         case 'event':
-          return invitation.event?.name || 'event';
+          return invitation.event?.title || 'event';
         default:
           return 'unknown resource';
       }
@@ -61,7 +36,7 @@ export const InvitationList = memo(
         case 'space':
           return invitation.space?.avatar || '/default-space.png';
         case 'event':
-          return invitation.event?.avatar || '/default-event.png';
+          return invitation.event?.imageUrl || '/default-event.png';
         default:
           return '/default-resource.png';
       }
@@ -78,39 +53,27 @@ export const InvitationList = memo(
       }
     };
 
-    const getInvitationStatusBadge = (status: string) => {
-      switch (status) {
-        case InvitationStatus.PENDING:
-          return (
-            <span className="rounded bg-yellow-500/20 px-2 py-1 text-xs text-yellow-400">
-              Pending
-            </span>
-          );
-        case InvitationStatus.ACCEPTED:
-          return (
-            <span className="rounded bg-green-500/20 px-2 py-1 text-xs text-green-400">
-              Accepted
-            </span>
-          );
-        case InvitationStatus.REJECTED:
-          return (
-            <span className="rounded bg-red-500/20 px-2 py-1 text-xs text-red-400">
-              Rejected
-            </span>
-          );
-        case InvitationStatus.CANCELLED:
-          return (
-            <span className="rounded bg-gray-500/20 px-2 py-1 text-xs text-gray-400">
-              Cancelled
-            </span>
-          );
-        default:
-          return (
-            <span className="rounded bg-gray-500/20 px-2 py-1 text-xs text-gray-400">
-              {status}
-            </span>
-          );
-      }
+    const getInvitationStatusBadge = (status: InvitationStatus) => {
+      const commonClassNames = 'rounded px-2 py-1 text-xs';
+      const colorMap: Record<InvitationStatus, string> = {
+        [InvitationStatus.PENDING]: 'bg-yellow-500/20 text-yellow-400',
+        [InvitationStatus.ACCEPTED]: 'bg-green-500/20 text-green-400',
+        [InvitationStatus.REJECTED]: 'bg-red-500/20 text-red-400',
+        [InvitationStatus.CANCELLED]: 'bg-gray-500/20 text-gray-400',
+        [InvitationStatus.INVALID]: 'bg-gray-500/20 text-gray-400',
+      };
+      const textMap: Record<InvitationStatus, string> = {
+        [InvitationStatus.PENDING]: 'Pending',
+        [InvitationStatus.ACCEPTED]: 'Accepted',
+        [InvitationStatus.REJECTED]: 'Rejected',
+        [InvitationStatus.CANCELLED]: 'Cancelled',
+        [InvitationStatus.INVALID]: 'Invalid',
+      };
+      return (
+        <span className={cn(commonClassNames, colorMap[status])}>
+          {textMap[status]}
+        </span>
+      );
     };
 
     if (invitations.length === 0) {
