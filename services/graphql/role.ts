@@ -66,6 +66,7 @@ export const CREATE_ROLE_QUERY = graphql(`
   mutation CreateZucityUserRoles($input: CreateZucityUserRolesInput!) {
     createZucityUserRoles(input: $input) {
       document {
+        id
         userId {
           id
         }

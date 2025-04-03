@@ -67,14 +67,12 @@ export const getSettingSections = (spaceId: string): SettingSection[] => {
         {
           id: 'MemberList',
           label: 'Member List',
-          path: `/spaces/${spaceId}/setting/member-list`,
-          locked: true,
+          path: `/spaces/${spaceId}/setting/member/list`,
         },
         {
           id: 'Invitations',
           label: 'Invitations',
-          path: `/spaces/${spaceId}/setting/invitations`,
-          locked: true,
+          path: `/spaces/${spaceId}/setting/member/invitations`,
         },
       ],
     },

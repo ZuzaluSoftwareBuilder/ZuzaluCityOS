@@ -16,6 +16,12 @@ export type SessionCheckResult = {
   error?: string;
 };
 
+export type BasicSessionCheckResult = {
+  isValid: boolean;
+  operatorId?: string;
+  error?: string;
+};
+
 async function validateSession(request: Request): Promise<SessionCheckResult> {
   try {
     const sessionStr = request.headers
@@ -116,6 +122,44 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
   }
 }
 
+async function validateBasicSession(
+  request: Request,
+): Promise<BasicSessionCheckResult> {
+  try {
+    const sessionStr = request.headers
+      .get('Authorization')
+      ?.replace('Bearer ', '');
+
+    if (!sessionStr) {
+      return { isValid: false, error: 'No session provided' };
+    }
+
+    let didSession;
+    try {
+      didSession = (await DIDSession.fromSession(sessionStr)) as any;
+    } catch (error) {
+      return { isValid: false, error: 'Invalid DID session format' };
+    }
+
+    if (didSession.isExpired) {
+      return { isValid: false, error: 'Unauthorized: DID session expired' };
+    }
+
+    const operatorId = didSession.did._parentId;
+    if (!operatorId) {
+      return { isValid: false, error: 'No operator ID found in session' };
+    }
+
+    return {
+      isValid: true,
+      operatorId,
+    };
+  } catch (error) {
+    console.error('Error validating basic session:', error);
+    return { isValid: false, error: 'Session validation failed' };
+  }
+}
+
 export function withSessionValidation(
   handler: (
     request: NextRequest,
@@ -125,6 +169,25 @@ export function withSessionValidation(
   return async (request: NextRequest) => {
     const clonedRequest = request.clone();
     const sessionCheck = await validateSession(clonedRequest);
+    const { isValid, error, ...rest } = sessionCheck;
+
+    if (!isValid) {
+      return NextResponse.json({ error }, { status: 401 });
+    }
+
+    return handler(request, { ...rest });
+  };
+}
+
+export function withBasicSessionValidation(
+  handler: (
+    request: NextRequest,
+    sessionData: Omit<BasicSessionCheckResult, 'isValid' | 'error'>,
+  ) => Promise<NextResponse>,
+) {
+  return async (request: NextRequest) => {
+    const clonedRequest = request.clone();
+    const sessionCheck = await validateBasicSession(clonedRequest);
     const { isValid, error, ...rest } = sessionCheck;
 
     if (!isValid) {
