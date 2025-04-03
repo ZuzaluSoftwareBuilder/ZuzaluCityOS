@@ -84,7 +84,7 @@ export function SpaceCard({
   const SpaceChip = () => {
     const categoryInfo = useMemo(
       () => Categories.find((c) => c.value === category),
-      [category],
+      [],
     );
     const chipClass =
       'bg-white/[0.05] rounded-[4px] text-[10px] px-[4px] py-[8px] gap-[5px]';
@@ -99,8 +99,12 @@ export function SpaceCard({
         </Chip>
       );
     }
+    const Icon = React.cloneElement(Categories[0].icon, {
+      size: 16,
+      weight: 'fill',
+    });
     return (
-      <Chip startContent={Categories[0].icon} size="sm" className={chipClass}>
+      <Chip startContent={Icon} size="sm" className={chipClass}>
         {Categories[0].label}
       </Chip>
     );
