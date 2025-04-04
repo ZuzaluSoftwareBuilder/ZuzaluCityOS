@@ -56,7 +56,7 @@ const InstalledAppsData = ({ children }: PropsWithChildren) => {
   }, [spaceData]);
 
   useEffect(() => {
-    if (installedAppsData.length === 0) return;
+    if (!installedAppsData) return;
     setInstalledAppIds(
       installedAppsData.map((app) => ({
         installedAppIndexId: app.id ?? '',
