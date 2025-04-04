@@ -28,6 +28,14 @@ import { useMediaQuery } from '@mui/material';
 import NewAuthPrompt from '@/app/components/auth/NewAuthPrompt';
 import { BuildInRoleProvider } from '@/context/BuildInRoleContext';
 
+// 添加在这里 - import语句之后，组件定义之前
+if (typeof window !== 'undefined') {
+  window.global = window;
+  window.process = window.process || {};
+  // 可能还需要添加Buffer polyfill
+  if (!window.Buffer) window.Buffer = require('buffer/').Buffer;
+}
+
 const queryClient = new QueryClient();
 
 const ceramicDown = process.env.NEXT_PUBLIC_CERAMIC_DOWN === 'true';

@@ -3,7 +3,7 @@ import {
   AkashaBeamEdge,
   AkashaContentBlock,
 } from '@akashaorg/typings/lib/sdk/graphql-types-new';
-import akashaSdk from '../akasha';
+import { getAkashaSDK } from '../akasha';
 import { decodeb64SlateContent } from '../akasha-utils';
 import { getProfileByDid } from '../profile';
 import { ZulandReadableBeam, ZulandReadbleBlock } from '@/types/akasha';
@@ -17,7 +17,11 @@ export async function extractBeamReadableContent(
     ...beam,
     content: await Promise.all(
       beam.content.map(async (contentBlock) => {
-        const block = await akashaSdk.services.gql.client.GetContentBlockById({
+        const sdk = await getAkashaSDK();
+        if (!sdk) {
+          throw new Error('AKASHA SDK not initialized');
+        }
+        const block = await sdk.services.gql.client.GetContentBlockById({
           id: contentBlock.blockID,
         });
         if (block.node && JSON.stringify(block.node) !== '{}') {
@@ -69,7 +73,11 @@ export async function extractDecryptedBeamReadableContent(
     ...beam,
     content: await Promise.all(
       beam.content.map(async (contentBlock) => {
-        const block = await akashaSdk.services.gql.client.GetContentBlockById({
+        const sdk = await getAkashaSDK();
+        if (!sdk) {
+          throw new Error('AKASHA SDK not initialized');
+        }
+        const block = await sdk.services.gql.client.GetContentBlockById({
           id: contentBlock.blockID,
         });
         if (block.node && JSON.stringify(block.node) !== '{}') {
@@ -149,10 +157,13 @@ export async function extractBlocksFromBeam(beam: AkashaBeamEdge) {
   const beamBlocksContent: AkashaContentBlock[] | undefined = [];
 
   beam.node?.content.map(async (beamBlock) => {
-    const contentBlock =
-      await akashaSdk.services.gql.client.GetContentBlockById({
-        id: beamBlock.blockID,
-      });
+    const sdk = await getAkashaSDK();
+    if (!sdk) {
+      throw new Error('AKASHA SDK not initialized');
+    }
+    const contentBlock = await sdk.services.gql.client.GetContentBlockById({
+      id: beamBlock.blockID,
+    });
 
     if (contentBlock.node && JSON.stringify(contentBlock.node) !== '{}') {
       beamBlocksContent.push(contentBlock.node as AkashaContentBlock);

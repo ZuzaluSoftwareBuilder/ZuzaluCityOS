@@ -1,169 +1,89 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { useQueryState } from 'nuqs';
-import { useAkashaAuthStore } from '@/hooks/use-akasha-auth-store';
-import { Stack } from '@mui/material';
-import DiscussionsHome from '@/components/zuland/DiscussionsHome';
-import PostDetails from '@/components/zuland/PostDetails';
-import NewPost from '@/components/zuland/NewPost';
-import { ZulandReadableBeam } from '@/types/akasha';
-import {
-  getZulandReadableBeams,
-  hasUserTicketPermissions,
-} from '@/utils/akasha';
-import { akashaBeamToMarkdown, Post } from '@/utils/akasha/beam-to-post';
-import Container from '@/components/zuland/Container';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { ZulandLit } from '@/utils/lit';
+import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
+import { Stack, Alert, Snackbar } from '@mui/material';
+import dynamic from 'next/dynamic';
+const CreateDiscussionModal = dynamic(
+  () => import('@/components/modals/Zuland/CreateDiscussionModal'),
+  { ssr: false },
+);
+import { ConfigPanel } from '../adminevents/[eventid]/Tabs/Ticket/components/Common';
 
-export default function SimplestZuland() {
+export default function DiscussionDebugPage() {
   const params = useParams();
   const spaceId = params.spaceid as string;
 
-  const queryClient = useQueryClient();
-  const { currentAkashaUser } = useAkashaAuthStore();
+  // 控制模态框显示
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  // 添加配置模态框状态
+  const [showConfigModal, setShowConfigModal] = useState(false);
 
-  const [selectedSort, setSelectedSort] = useState<string>('NEW');
-  const [beams, setBeams] = useState<Array<ZulandReadableBeam> | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [isNewPostOpen, setIsNewPostOpen] = useQueryState('newPost', {
-    defaultValue: '',
-  });
-  const [postId, setPostId] = useQueryState('postId', {
-    defaultValue: '',
-  });
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  // 消息通知状态
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastSeverity, setToastSeverity] = useState<
+    'success' | 'error' | 'info' | 'warning'
+  >('info');
+  const [showToast, setShowToast] = useState(false);
 
-  const {
-    data: beamsData,
-    fetchNextPage,
-    hasNextPage: hasMoreBeams,
-    isLoading: isLoadingBeams,
-    isFetching: isFetchingBeams,
-    error,
-  } = useInfiniteQuery({
-    queryKey: ['beams', spaceId],
-    queryFn: async ({ pageParam }) => {
-      const zulandLit = new ZulandLit();
-      await zulandLit.connect();
-      await zulandLit.disconnect();
-
-      const isUserOkay = await hasUserTicketPermissions(spaceId);
-      if (isUserOkay) {
-        const readableBeams = await getZulandReadableBeams(spaceId, {
-          first: 10,
-          after: pageParam,
-        });
-        pageParam = readableBeams.pageInfo.endCursor ?? '';
-        return readableBeams;
-      } else {
-        setErrorMessage('You dont have access');
-        return {
-          edges: [],
-          pageInfo: {
-            startCursor: null,
-            endCursor: null,
-            hasNextPage: false,
-            hasPreviousPage: false,
-          },
-        };
-      }
-    },
-    initialPageParam: '',
-    getNextPageParam: (lastPage) =>
-      lastPage.pageInfo.hasNextPage ? lastPage.pageInfo.endCursor : undefined,
-  });
-
-  const loadMoreBeams = () => {
-    if (hasMoreBeams) {
-      fetchNextPage();
-    }
+  // 处理消息提示
+  const handleShowToast = (
+    text: string,
+    severity: 'success' | 'error' | 'info' | 'warning',
+  ) => {
+    setToastMessage(text);
+    setToastSeverity(severity);
+    setShowToast(true);
   };
 
-  const selectedPost = posts.find((post) => post.id === postId);
-
-  const getSortedPosts = (inputPosts: Post[], sort: string): Post[] => {
-    if (sort === 'NEW' || sort === 'OLDEST') {
-      const sortedPosts = [...inputPosts].sort((a, b) => {
-        const dateA = new Date(a.createdAt || 0);
-        const dateB = new Date(b.createdAt || 0);
-        return selectedSort === 'OLDEST'
-          ? dateA.getTime() - dateB.getTime()
-          : dateB.getTime() - dateA.getTime();
-      });
-      return sortedPosts;
+  // 添加处理不同模态框类型的函数
+  const handleType = (type: string) => {
+    if (type === 'config') {
+      setShowConfigModal(true);
     }
-    return inputPosts;
-  };
-
-  useEffect(() => {
-    if (beamsData) {
-      // Get the last page from the data
-      const lastPage = beamsData.pages[beamsData.pages.length - 1];
-      // Process only the beams from the last page
-      const lastPageBeams = lastPage.edges
-        ? lastPage.edges.map((edge) => edge.node)
-        : [];
-      setBeams(lastPageBeams);
-      const newPosts = akashaBeamToMarkdown(lastPageBeams, spaceId);
-      const sortedPosts = getSortedPosts(newPosts, selectedSort);
-      setPosts(sortedPosts);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [beamsData]);
-
-  useEffect(() => {
-    const sortedPosts = getSortedPosts(posts, selectedSort);
-    setPosts(sortedPosts);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSort]);
-
-  const handleNewPostCreated = () => {
-    queryClient.invalidateQueries({ queryKey: ['beams', spaceId] });
-    setIsNewPostOpen('');
   };
 
   return (
-    <>
-      <Stack
-        justifyContent="center"
-        alignItems="center"
-        bgcolor="#222222"
-        width="100%"
-      >
-        {postId && selectedPost ? (
-          <Container>
-            <PostDetails
-              postId={postId}
-              discussion={selectedPost}
-              eventId={spaceId}
-            />
-          </Container>
-        ) : isNewPostOpen !== '' && currentAkashaUser ? (
-          <Container>
-            <NewPost
-              eventId={spaceId}
-              onCancel={() => setIsNewPostOpen('')}
-              onPostCreated={handleNewPostCreated}
-            />
-          </Container>
-        ) : (
-          <DiscussionsHome
-            eventId={spaceId}
-            posts={posts}
-            isLoadingBeams={isLoadingBeams || isFetchingBeams}
-            setIsNewPostOpen={setIsNewPostOpen}
-            selectedSort={selectedSort}
-            setSelectedSort={setSelectedSort}
-            loadMoreBeams={loadMoreBeams}
-            hasMoreBeams={hasMoreBeams}
-            errorMessage={errorMessage}
+    <Stack direction="row" width={'100%'} height={'100%'}>
+      <Stack width="100%" position="relative">
+        <ConfigPanel
+          title="Configure Space Zuland"
+          desc="You need to setup initial configurations"
+          sx={{
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            background: 'rgba(44, 44, 44, 0.80)',
+            width: '600px',
+            position: 'absolute',
+            top: '40%',
+            left: '50%',
+            zIndex: 1200,
+            transform: 'translate(-50%, -50%)',
+          }}
+          handleOpen={() => setShowCreateModal(true)}
+        />
+
+        {showCreateModal && (
+          <CreateDiscussionModal
+            showModal={showCreateModal}
+            setShowModal={setShowCreateModal}
+            showToast={handleShowToast}
+            resourceId={spaceId}
+            resourceType="spaces"
+            resourceName="Discussion"
+            resourceDescription="Space gated discussion"
           />
         )}
+
+        {/* 消息提示 */}
+        <Snackbar
+          open={showToast}
+          autoHideDuration={6000}
+          onClose={() => setShowToast(false)}
+        >
+          <Alert severity={toastSeverity}>{toastMessage}</Alert>
+        </Snackbar>
       </Stack>
-    </>
+    </Stack>
   );
 }

@@ -202,7 +202,15 @@ export type ZulandCreateAppReleaseInputWithTicketRules = {
     value?: string;
   };
 };
-
+export type ZulandCreateAppReleaseInputWithRoleRequirements = {
+  applicationID: string;
+  version: string;
+  source: string;
+  roleRequirements?: {
+    roleId: string[];
+    spaceId: string;
+  };
+};
 export type ZulandReadableReflectionResult = {
   reflections: {
     edges: {

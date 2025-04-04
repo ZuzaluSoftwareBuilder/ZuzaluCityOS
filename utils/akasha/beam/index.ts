@@ -8,7 +8,7 @@ import {
   BeamLabeledInput,
   SortOrder,
 } from '@akashaorg/typings/lib/sdk/graphql-types-new';
-import akashaSdk from '../akasha';
+import { getAkashaSDK } from '../akasha';
 import {
   AkashaPageInfo,
   BeamsByAuthorDid,
@@ -34,7 +34,11 @@ export async function getBeams(options?: {
   filters?: AkashaBeamFiltersInput;
   sorting?: AkashaBeamSortingInput;
 }) {
-  const beams = await akashaSdk.services.gql.client.GetBeams({
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const beams = await sdk.services.gql.client.GetBeams({
     first: options?.first ?? DEFAULT_BEAMS_TAKE,
     last: options?.last,
     before: options?.before,
@@ -49,7 +53,11 @@ export async function getBeams(options?: {
 }
 
 export async function getBeamById(id: string): Promise<AkashaBeam | null> {
-  const beam = await akashaSdk.services.gql.client.GetBeamById({
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const beam = await sdk.services.gql.client.GetBeamById({
     id,
   });
   return (beam.node as AkashaBeam) ?? null;
@@ -66,7 +74,11 @@ export async function getBeamsByAuthorDid(
     sorting?: AkashaBeamSortingInput;
   },
 ): Promise<BeamsByAuthorDid | null> {
-  const beams = await akashaSdk.services.gql.client.GetBeamsByAuthorDid(
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const beams = await sdk.services.gql.client.GetBeamsByAuthorDid(
     {
       id: did,
       first: options?.first ?? DEFAULT_BEAMS_TAKE,
@@ -77,7 +89,7 @@ export async function getBeamsByAuthorDid(
       // filters: options?.filters,
     },
     {
-      context: { source: akashaSdk.services.gql.contextSources.composeDB },
+      context: { source: sdk.services.gql.contextSources.composeDB },
     },
   );
   if (JSON.stringify(beams.node) === '{}') {
@@ -87,17 +99,20 @@ export async function getBeamsByAuthorDid(
 }
 
 export async function createBeam(beam: AkashaBeamInput) {
-  const createAkashaBeamResponse =
-    await akashaSdk.services.gql.client.CreateBeam(
-      {
-        i: {
-          content: beam,
-        },
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const createAkashaBeamResponse = await sdk.services.gql.client.CreateBeam(
+    {
+      i: {
+        content: beam,
       },
-      {
-        context: { source: akashaSdk.services.gql.contextSources.composeDB },
-      },
-    );
+    },
+    {
+      context: { source: sdk.services.gql.contextSources.composeDB },
+    },
+  );
 
   return createAkashaBeamResponse?.createAkashaBeam ?? null;
 }

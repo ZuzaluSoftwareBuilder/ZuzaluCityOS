@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import { SHA256 } from 'crypto-js';
 import bs58 from 'bs58';
 export const isMobile = (): boolean => {
   let flag: RegExpMatchArray | null = navigator.userAgent.match(
@@ -34,9 +34,14 @@ export function base64ToUint8Array(base64: string): Uint8Array {
 }
 
 export function hashAndEncodeBase58(value: string): string {
-  const hash = crypto.createHash('sha256').update(value).digest();
+  const hash = SHA256(value).toString();
 
-  const encoded = bs58.encode(new Uint8Array(hash));
+  const hashBytes = new Uint8Array(hash.length / 2);
+  for (let i = 0; i < hash.length; i += 2) {
+    hashBytes[i / 2] = parseInt(hash.substring(i, i + 2), 16);
+  }
+
+  const encoded = bs58.encode(hashBytes);
 
   return encoded.slice(0, 16);
 }

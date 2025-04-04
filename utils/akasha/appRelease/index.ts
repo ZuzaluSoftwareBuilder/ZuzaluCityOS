@@ -1,11 +1,14 @@
+'use client';
+
 import {
   AkashaAppRelease,
   AppProviderValueInput,
 } from '@akashaorg/typings/lib/sdk/graphql-types-new';
-import akashaSdk from '../akasha';
+import { getAkashaSDK } from '../akasha';
 import {
   ZulandCreateAppReleaseInput,
   ZulandCreateAppReleaseInputWithTicketRules,
+  ZulandCreateAppReleaseInputWithRoleRequirements,
 } from '@/types/akasha';
 
 /**
@@ -19,23 +22,26 @@ import {
  * A promise that resolves to the created app release data.
  */
 export async function createAppRelease(params: ZulandCreateAppReleaseInput) {
-  const createAppReleaseResult =
-    await akashaSdk.services.gql.client.SetAppRelease(
-      {
-        i: {
-          content: {
-            applicationID: params.applicationID,
-            source: params.source,
-            version: params.version,
-            meta: params.meta,
-            createdAt: new Date().toISOString(),
-          },
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const createAppReleaseResult = await sdk.services.gql.client.SetAppRelease(
+    {
+      i: {
+        content: {
+          applicationID: params.applicationID,
+          source: params.source,
+          version: params.version,
+          meta: params.meta,
+          createdAt: new Date().toISOString(),
         },
       },
-      {
-        context: { source: akashaSdk.services.gql.contextSources.composeDB },
-      },
-    );
+    },
+    {
+      context: { source: sdk.services.gql.contextSources.composeDB },
+    },
+  );
   return {
     clientMutationId:
       createAppReleaseResult?.setAkashaAppRelease?.clientMutationId || null,
@@ -89,10 +95,41 @@ export async function createZulandAppRelease(
   return createAppReleaseResult;
 }
 
+export async function createZulandSpaceAppRelease(
+  params: ZulandCreateAppReleaseInputWithRoleRequirements,
+) {
+  // convert params.ticketsRequirements to AppProviderValueInput
+  const appMeta: AppProviderValueInput = {
+    property: params.roleRequirements ? 'TEXT#ENCRYPTED' : 'TEXT',
+    value: params.roleRequirements
+      ? JSON.stringify({
+          roleId: params.roleRequirements.roleId,
+          spaceId: params.roleRequirements.spaceId,
+          returnValueTest: {
+            comparator: '==',
+            value: 'true',
+          },
+        })
+      : 'content-not-encrypted',
+    provider: '@bg/zuland',
+  };
+
+  const createAppReleaseResult = await createAppRelease({
+    applicationID: params.applicationID,
+    version: params.version,
+    source: params.source,
+    meta: [appMeta],
+  });
+  return createAppReleaseResult;
+}
+
 export async function getAppReleaseById(id: string) {
-  const appReleaseResult =
-    await akashaSdk.services.gql.client.GetAppReleaseByID({
-      id,
-    });
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const appReleaseResult = await sdk.services.gql.client.GetAppReleaseByID({
+    id,
+  });
   return (appReleaseResult?.node as AkashaAppRelease) ?? null;
 }

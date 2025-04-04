@@ -87,6 +87,7 @@ const SpaceSubSidebar = ({
     return [
       hasCalendar ? (
         <TabItem
+          key="calendar"
           label="Calendar"
           href={`/spaces/${spaceId}/calendar`}
           icon={<CalendarDots />}
@@ -96,6 +97,7 @@ const SpaceSubSidebar = ({
       ) : null,
       hasZuland ? (
         <TabItem
+          key="zuland"
           label="Zuland"
           href={`/spaces/${spaceId}/zuland`}
           icon={<CalendarDots />}

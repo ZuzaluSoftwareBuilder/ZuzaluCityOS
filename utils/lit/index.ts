@@ -1,5 +1,5 @@
 import * as LitJsSdk from '@lit-protocol/lit-node-client';
-import akashaSdk from '../akasha/akasha';
+import { getAkashaSDK } from '../akasha/akasha';
 import { AccessControlCondition } from './types';
 import {
   createSiweMessageWithRecaps,
@@ -109,7 +109,11 @@ export class ZulandLit {
           expiration,
           resourceAbilityRequests,
         }) => {
-          const userAddress = akashaSdk.services.common.web3.state.address;
+          const sdk = await getAkashaSDK();
+          if (!sdk) {
+            throw new Error('AKASHA SDK not initialized');
+          }
+          const userAddress = sdk.services.common.web3.state.address;
           if (!userAddress) {
             throw new Error('No wallet connected');
           }
@@ -131,8 +135,7 @@ export class ZulandLit {
             nonce: await getLatestBlockhash(),
             litNodeClient: this.litNodeClient,
           });
-          const signature =
-            await akashaSdk.services.common.web3.signMessage(toSign);
+          const signature = await sdk.services.common.web3.signMessage(toSign);
 
           // Create an AuthSig using the derived signature, the message, and wallet address
           return {

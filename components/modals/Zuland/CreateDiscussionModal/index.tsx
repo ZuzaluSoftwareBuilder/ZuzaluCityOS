@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, Dispatch, SetStateAction, useEffect, useMemo } from 'react';
+import { useState, Dispatch, SetStateAction, useEffect } from 'react';
 import { ZuButton, ZuInput, ZuSwitch } from '@/components/core';
 import {
   createApp,
   createZulandAppRelease,
+  createZulandSpaceAppRelease,
   getAppByEventId,
 } from '@/utils/akasha';
 import {
@@ -12,12 +13,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  MenuItem,
   Select,
   Stack,
   Typography,
 } from '@mui/material';
-import { LIT_CHAINS } from '@lit-protocol/constants';
+//import { LIT_CHAINS } from '@lit-protocol/constants';
 import { useAkashaAuthStore } from '@/hooks/use-akasha-auth-store';
 import { isAddress } from 'viem';
 import Link from 'next/link';
@@ -29,24 +29,26 @@ interface CreateDiscussionModalProps {
     text: string,
     severity: 'success' | 'error' | 'info' | 'warning',
   ) => void;
-  eventId: string;
-  eventName: string;
-  eventDescription: string;
+  resourceId: string;
+  resourceName: string;
+  resourceDescription: string;
+  resourceType: 'events' | 'spaces';
 }
 
 export default function CreateDiscussionModal({
   showModal,
   setShowModal,
   showToast,
-  eventId,
-  eventName,
-  eventDescription,
+  resourceId,
+  resourceName,
+  resourceDescription,
+  resourceType,
 }: CreateDiscussionModalProps) {
   const { currentAkashaUser, loginAkasha } = useAkashaAuthStore();
 
   const [appAlreadyExists, setAppAlreadyExists] = useState<boolean>(false);
-  const [displayName, setDisplayName] = useState<string>(eventName);
-  const [description, setDescription] = useState<string>(eventDescription);
+  const [displayName, setDisplayName] = useState<string>(resourceName);
+  const [description, setDescription] = useState<string>(resourceDescription);
 
   // nft gated
   const [nftGated, setNftGated] = useState<boolean>(true);
@@ -58,19 +60,19 @@ export default function CreateDiscussionModal({
   const [comparator, setComparator] = useState<string>('>');
   const [comparisonValue, setComparisonValue] = useState<string>('0');
 
-  const litSupportedChains = useMemo(() => {
-    return Object.entries(LIT_CHAINS)
-      .filter(([key]) => key !== 'hushedNorthstar')
-      .sort(([keyA], [keyB]) =>
-        keyA.toLowerCase().localeCompare(keyB.toLowerCase()),
-      )
-      .map(([key, chain]) => ({
-        litIdentifier: key,
-        chainName: chain.name,
-        symbol: chain.symbol,
-        chainId: chain.chainId,
-      }));
-  }, []);
+  // const litSupportedChains = useMemo(() => {
+  //   return Object.entries(LIT_CHAINS)
+  //     .filter(([key]) => key !== 'hushedNorthstar')
+  //     .sort(([keyA], [keyB]) =>
+  //       keyA.toLowerCase().localeCompare(keyB.toLowerCase()),
+  //     )
+  //     .map(([key, chain]) => ({
+  //       litIdentifier: key,
+  //       chainName: chain.name,
+  //       symbol: chain.symbol,
+  //       chainId: chain.chainId,
+  //     }));
+  // }, []);
 
   // const availableComparators = [
   //   { id: 1, value: '>', label: 'Greater Than' },
@@ -85,7 +87,8 @@ export default function CreateDiscussionModal({
 
   useEffect(() => {
     async function checkAppExists() {
-      const appAlreadyExists = await getAppByEventId(eventId);
+      const appAlreadyExists = await getAppByEventId(resourceId);
+      console.log('appAlreadyExists', appAlreadyExists);
       if (appAlreadyExists) {
         setAppAlreadyExists(true);
         setDisplayName(appAlreadyExists.name);
@@ -93,7 +96,7 @@ export default function CreateDiscussionModal({
       }
     }
     checkAppExists();
-  }, [eventId, eventName, setShowModal, showToast]);
+  }, [resourceId, resourceName, setShowModal, showToast]);
 
   /* AKASHA login if not logged in */
   useEffect(() => {
@@ -103,66 +106,94 @@ export default function CreateDiscussionModal({
   }, [currentAkashaUser, loginAkasha]);
 
   const handleCreateDiscussion = async () => {
-    if (nftGated && (!contractAddress || !isAddress(contractAddress))) {
-      showToast('Please enter a valid contract address', 'error');
-      return;
-    }
-    if (nftGated && (!functionName || !comparator || !comparisonValue)) {
-      showToast('Please enter valid contract details', 'error');
-      return;
-    }
-    if (!chainName) {
-      showToast('Please select a chain', 'error');
-      return;
-    }
-    if (!displayName) {
-      showToast('Please enter a display name', 'error');
-      return;
+    if (resourceType === 'events') {
+      if (nftGated && (!contractAddress || !isAddress(contractAddress))) {
+        showToast('Please enter a valid contract address', 'error');
+        return;
+      }
+      if (nftGated && (!functionName || !comparator || !comparisonValue)) {
+        showToast('Please enter valid contract details', 'error');
+        return;
+      }
+      if (!chainName) {
+        showToast('Please select a chain', 'error');
+        return;
+      }
+      if (!displayName) {
+        showToast('Please enter a display name', 'error');
+        return;
+      }
     }
 
     try {
-      const appAlreadyExists = await getAppByEventId(eventId);
+      const appAlreadyExists = await getAppByEventId(resourceId);
       if (appAlreadyExists) {
         console.log('app already exists');
         return;
       }
+      console.log('currentAkashaUser', currentAkashaUser);
+      console.log('appAlreadyExists', appAlreadyExists);
       /* Create Akasha app */
       if (currentAkashaUser) {
         const createAppResult = await createApp({
-          eventID: eventId,
+          eventID: resourceId,
           displayName: displayName,
           description: description,
         });
+        console.log('createAppResult', createAppResult);
         if (createAppResult) {
-          await createZulandAppRelease({
-            applicationID: createAppResult?.document.id,
-            version: '0.0.2',
-            source: `https://zuzalu.city/events/${eventId}`,
-            ticketRequirements: nftGated
-              ? {
-                  contractAddress: contractAddress,
-                  chain: chainName,
-                  method: functionName,
-                  comparator: comparator,
-                  value: comparisonValue,
-                }
-              : undefined,
-          });
+          if (resourceType === 'events') {
+            await createZulandAppRelease({
+              applicationID: createAppResult?.document.id,
+              version: '0.0.2',
+              source: `https://zuzalu.city/${resourceType}/${resourceId}`,
+              ticketRequirements: nftGated
+                ? {
+                    contractAddress: contractAddress,
+                    chain: chainName,
+                    method: functionName,
+                    comparator: comparator,
+                    value: comparisonValue,
+                  }
+                : undefined,
+            });
+          } else if (resourceType === 'spaces') {
+            await createZulandSpaceAppRelease({
+              applicationID: createAppResult?.document.id,
+              version: '0.0.2',
+              source: `https://zuzalu.city/${resourceType}/${resourceId}`,
+              roleRequirements: {
+                roleId: [
+                  '2c41c2d0-94bc-4320-8696-5efef3d5e3ff',
+                  'e90b1b3b-4af1-4c7a-b943-7595907fefad',
+                  '219e3125-4748-43b4-a0e9-0602dbe12869',
+                ],
+                spaceId: resourceId,
+              },
+            });
+            console.log(
+              'createZulandSpaceAppRelease',
+              createZulandSpaceAppRelease,
+            );
+          }
           showToast(
-            `Successfully created Akasha discussion for "${eventName}"`,
+            `Successfully created Akasha discussion for "${resourceName}"`,
             'success',
           );
           setShowModal(false);
         }
       } else {
         showToast(
-          `Please connect to Akasha to create a discussion for "${eventName}"`,
+          `Please connect to Akasha to create a discussion for "${resourceName}"`,
           'error',
         );
       }
     } catch (error) {
       console.error('Error creating discussion:', error);
-      showToast(`Error creating discussion for event "${eventName}"`, 'error');
+      showToast(
+        `Error creating discussion for ${resourceType} "${resourceName}"`,
+        'error',
+      );
     }
   };
 
@@ -202,7 +233,7 @@ export default function CreateDiscussionModal({
       >
         {appAlreadyExists
           ? 'Discussion already exists'
-          : 'Create a Discussion for this event'}
+          : `Create a Discussion for this ${resourceType === 'events' ? 'event' : 'space'}`}
       </DialogTitle>
       <DialogContent style={{ width: '100%', color: 'white', padding: '10px' }}>
         <Stack
@@ -212,7 +243,10 @@ export default function CreateDiscussionModal({
           spacing={2}
         >
           {appAlreadyExists ? (
-            <Link href={`/events/${eventId}?tab=discussions`} target="_blank">
+            <Link
+              href={`/${resourceType}/${resourceId}?tab=discussions`}
+              target="_blank"
+            >
               <ZuButton
                 sx={{
                   width: '100%',
@@ -242,169 +276,128 @@ export default function CreateDiscussionModal({
               onChange={(e) => setDescription(e.target.value)}
             />
           </Stack>
-          <Stack spacing={1}>
-            <Typography fontSize={'18px'}>Event NFT Gated?</Typography>
-            <ZuSwitch
-              checked={nftGated}
-              onChange={() => setNftGated((v) => !v)}
-            />
-          </Stack>
-          {nftGated ? (
+
+          {/* 根据resourceType显示不同内容 */}
+          {resourceType === 'events' ? (
             <>
-              <Stack spacing={0}>
-                <Typography variant="body2">
-                  We support NFT contracts following OpenZeppelin ERC721
-                  standard.
-                </Typography>
-                <Typography variant="body2">
-                  We check if balanceOf(userAddress) &#x3e; 0.
-                </Typography>
-              </Stack>
               <Stack spacing={1}>
-                <Typography fontSize={'18px'}>Contract Address</Typography>
-                <ZuInput
-                  value={contractAddress}
-                  placeholder="0x..."
-                  onChange={(e) => setContractAddress(e.target.value)}
+                <Typography fontSize={'18px'}>Event NFT Gated?</Typography>
+                <ZuSwitch
+                  checked={nftGated}
+                  onChange={() => setNftGated((v) => !v)}
                 />
               </Stack>
-              <Stack spacing={1}>
-                <Typography fontSize={'18px'}>Contract Chain</Typography>
-                <Select
-                  value={chainName}
-                  placeholder="Select Lit Compatible Chain"
-                  onChange={(e) => setChainName(e.target.value)}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        backgroundColor: '#222222',
-                      },
-                    },
-                  }}
-                >
-                  {litSupportedChains &&
-                    litSupportedChains.map((chain) => (
-                      <MenuItem
-                        key={chain.litIdentifier}
-                        value={chain.litIdentifier}
-                        sx={{
-                          '&:hover': {
-                            backgroundColor: '#333333',
+              {nftGated && (
+                <>
+                  <Stack spacing={0}>
+                    <Typography variant="body2">
+                      We support NFT contracts following OpenZeppelin ERC721
+                      standard.
+                    </Typography>
+                    <Typography variant="body2">
+                      We check if balanceOf(userAddress) &#x3e; 0.
+                    </Typography>
+                  </Stack>
+                  <Stack spacing={1}>
+                    <Typography fontSize={'18px'}>Contract Address</Typography>
+                    <ZuInput
+                      value={contractAddress}
+                      placeholder="0x..."
+                      onChange={(e) => setContractAddress(e.target.value)}
+                    />
+                  </Stack>
+                  <Stack spacing={1}>
+                    <Typography fontSize={'18px'}>Contract Chain</Typography>
+                    <Select
+                      value={chainName}
+                      placeholder="Select Lit Compatible Chain"
+                      onChange={(e) => setChainName(e.target.value)}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            backgroundColor: '#222222',
                           },
-                        }}
-                      >
-                        {chain.chainName} ({chain.chainId})
-                      </MenuItem>
-                    ))}
-                </Select>
-              </Stack>
-              {/*
-              <Accordion
+                        },
+                      }}
+                    >
+                      {/* 链选项... */}
+                    </Select>
+                  </Stack>
+                </>
+              )}
+            </>
+          ) : (
+            /* Space类型资源的展示内容 */
+            <Stack spacing={1}>
+              <Typography fontSize={'18px'}>Gated Roles</Typography>
+              <Stack
+                direction="column"
+                spacing={1}
                 sx={{
-                  backgroundColor: '#222222',
+                  padding: '12px',
+                  backgroundColor: 'rgba(255,255,255,0.05)',
+                  borderRadius: '8px',
                 }}
               >
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                  style={{ marginTop: '10px' }}
+                <Typography
+                  variant="body1"
+                  sx={{ display: 'flex', alignItems: 'center' }}
                 >
-                  <Typography>Advanced Settings</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Stack spacing={2}>
-                    <Stack spacing={1}>
-                      <Typography fontSize={'18px'}>Function Name</Typography>
-                      <ZuInput
-                        value={functionName}
-                        placeholder="functionName"
-                        onChange={(e) => setFunctionName(e.target.value)}
-                      />
-                    </Stack>
-                     <Stack spacing={1}>
-                      <Typography fontSize={'18px'}>Function Params</Typography>
-                      <ZuInput
-                        value={functionParams}
-                        placeholder="functionParams"
-                        onChange={(e) => setFunctionParams(e.target.value)}
-                      />
-                      <Typography variant="body2" color="gray.700">
-                        <a
-                          href="https://developer.litprotocol.com/sdk/access-control/evm/basic-examples"
-                          style={{
-                            textDecoration: 'underline',
-                            color: 'white',
-                          }}
-                          target="_blank"
-                        >
-                          See more examples using Function Params.
-                        </a>{' '}
-                        If you need multiple params, separate them with a
-                        semicolon (;)
-                      </Typography>
-                    </Stack> 
-                    <Stack spacing={1}>
-                      <Typography fontSize={'18px'}>Comparator</Typography>
-                      <Select
-                        value={comparator}
-                        placeholder="Select Comparator"
-                        onChange={(e) => setComparator(e.target.value)}
-                        MenuProps={{
-                          PaperProps: {
-                            style: {
-                              backgroundColor: '#222222',
-                            },
-                          },
-                        }}
-                      >
-                        {availableComparators &&
-                          availableComparators.map((comparator) => (
-                            <MenuItem
-                              key={comparator.id}
-                              value={comparator.value}
-                              sx={{
-                                '&:hover': {
-                                  backgroundColor: '#333333',
-                                },
-                              }}
-                            >
-                              {comparator.label} ({comparator.value})
-                            </MenuItem>
-                          ))}
-                      </Select>
-                      <Typography variant="body2" color="gray.700">
-                        <a
-                          href="https://developer.litprotocol.com/sdk/access-control/evm/basic-examples"
-                          style={{
-                            textDecoration: 'underline',
-                            color: 'white',
-                          }}
-                          target="_blank"
-                        >
-                          Learn more about Lit comparators.
-                        </a>
-                      </Typography>
-                    </Stack>
-                    {comparator !== 'contains' && comparator !== '!contains' ? (
-                      <>
-                        <Stack spacing={1}>
-                          <Typography fontSize={'18px'}>
-                            Comparison Value
-                          </Typography>
-                          <ZuInput
-                            value={comparisonValue}
-                            placeholder="comparisonValue"
-                            onChange={(e) => setComparisonValue(e.target.value)}
-                          />
-                        </Stack>
-                      </>
-                    ) : null}
-                  </Stack>
-                </AccordionDetails>
-              </Accordion>*/}
-            </>
-          ) : null}
+                  <span
+                    style={{
+                      width: '10px',
+                      height: '10px',
+                      backgroundColor: '#ffd700',
+                      borderRadius: '50%',
+                      display: 'inline-block',
+                      marginRight: '8px',
+                    }}
+                  ></span>
+                  Owner
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <span
+                    style={{
+                      width: '10px',
+                      height: '10px',
+                      backgroundColor: '#c0c0c0',
+                      borderRadius: '50%',
+                      display: 'inline-block',
+                      marginRight: '8px',
+                    }}
+                  ></span>
+                  Admin
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <span
+                    style={{
+                      width: '10px',
+                      height: '10px',
+                      backgroundColor: '#cd7f32',
+                      borderRadius: '50%',
+                      display: 'inline-block',
+                      marginRight: '8px',
+                    }}
+                  ></span>
+                  Member
+                </Typography>
+              </Stack>
+              <Typography
+                variant="body2"
+                color="rgba(255,255,255,0.6)"
+                sx={{ mt: 1 }}
+              >
+                The discussion will be gated to users with these roles in this
+                space.
+              </Typography>
+            </Stack>
+          )}
         </Stack>
       </DialogContent>
       <DialogActions
@@ -424,7 +417,7 @@ export default function CreateDiscussionModal({
             onClick={handleCreateDiscussion}
             disabled={appAlreadyExists}
           >
-            Create
+            Connect to Akasha Core and Create
           </ZuButton>
         </Stack>
       </DialogActions>

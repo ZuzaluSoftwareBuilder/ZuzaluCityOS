@@ -16,6 +16,8 @@ const nextConfig = {
       process.env.PUBLIC_WALLET_CONNECT_PROJECT_ID,
     PUBLIC_LOG_LEVEL: process.env.PUBLIC_LOG_LEVEL,
     PUBLIC_API_STATUS_PATH: process.env.PUBLIC_API_STATUS_PATH,
+    PUBLIC_PUSH_PROTOCOL_CHANNEL_ID:
+      process.env.PUBLIC_PUSH_PROTOCOL_CHANNEL_ID,
   },
   images: {
     remotePatterns: [
@@ -58,6 +60,29 @@ const nextConfig = {
         port: '',
       },
     ],
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        crypto: require.resolve('crypto-browserify'),
+        stream: require.resolve('stream-browserify'),
+        buffer: require.resolve('buffer/'),
+        util: require.resolve('util/'),
+        assert: require.resolve('assert/'),
+        fs: false,
+        path: false,
+        os: false,
+      };
+
+      config.plugins.push(
+        new config.constructor.ProvidePlugin({
+          process: 'process/browser',
+          Buffer: ['buffer', 'Buffer'],
+        }),
+      );
+    }
+    return config;
   },
 };
 

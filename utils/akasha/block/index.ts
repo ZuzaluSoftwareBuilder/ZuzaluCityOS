@@ -1,16 +1,20 @@
 import { AkashaContentBlockInput } from '@akashaorg/typings/lib/sdk/graphql-types-new';
-import akashaSdk from '../akasha';
+import { getAkashaSDK } from '../akasha';
 
 export async function createBlockContent(block: AkashaContentBlockInput) {
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
   const createAkashaContentBlockResponse =
-    await akashaSdk.services.gql.client.CreateContentBlock(
+    await sdk.services.gql.client.CreateContentBlock(
       {
         i: {
           content: block,
         },
       },
       {
-        context: { source: akashaSdk.services.gql.contextSources.composeDB },
+        context: { source: sdk.services.gql.contextSources.composeDB },
       },
     );
 

@@ -1,11 +1,16 @@
-import crypto from 'crypto';
-import akashaSdk from '../akasha';
+'use client';
+
+import { SHA1 } from 'crypto-js';
+import { getAkashaSDK } from '../akasha';
 import { ZulandCreateAppInput } from '@/types/akasha';
 import { AkashaAppApplicationType } from '@akashaorg/typings/lib/sdk/graphql-types-new';
 
 export async function getAppByEventId(eventId: string) {
-  const sha1Hash = crypto.createHash('sha1').update(eventId).digest('hex');
-
+  const sha1Hash = SHA1(eventId).toString();
+  const akashaSdk = await getAkashaSDK();
+  if (!akashaSdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
   const app = await akashaSdk.services.gql.client.GetApps({
     first: 1,
     filters: {
@@ -20,12 +25,14 @@ export async function getAppByEventId(eventId: string) {
 }
 
 export async function createApp(params: ZulandCreateAppInput) {
-  const sha1Hash = crypto
-    .createHash('sha1')
-    .update(params.eventID)
-    .digest('hex');
+  const sha1Hash = SHA1(params.eventID).toString();
 
-  const createAppResult = await akashaSdk.services.gql.client.CreateApp(
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+
+  const createAppResult = await sdk.services.gql.client.CreateApp(
     {
       i: {
         content: {
@@ -39,7 +46,7 @@ export async function createApp(params: ZulandCreateAppInput) {
       },
     },
     {
-      context: { source: akashaSdk.services.gql.contextSources.composeDB },
+      context: { source: sdk.services.gql.contextSources.composeDB },
     },
   );
   return createAppResult.setAkashaApp;

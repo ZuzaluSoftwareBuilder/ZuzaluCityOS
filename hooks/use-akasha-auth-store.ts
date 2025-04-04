@@ -1,5 +1,7 @@
+'use client';
+
 import { create } from 'zustand';
-import { getProfileStatsByDid } from '@/utils/akasha';
+import { getAkashaSDK, getProfileStatsByDid } from '@/utils/akasha';
 import { AkashaProfileStats } from '@/types/akasha';
 interface AkashaAuthState {
   currentAkashaUser: {
@@ -23,9 +25,12 @@ export const useAkashaAuthStore = create<AkashaAuthState>((set, get) => ({
   loginAkasha: async () => {
     try {
       // Dynamically import akashaSdk only when needed
-      const { default: akashaSdk } = await import('@/utils/akasha/akasha');
 
-      const authRes = await akashaSdk.api.auth.signIn({
+      const sdk = await getAkashaSDK();
+      if (!sdk) {
+        throw new Error('AKASHA SDK not initialized');
+      }
+      const authRes = await sdk.api.auth.signIn({
         provider: 2, // 2 = Web3Injected
         checkRegistered: false,
         resumeSignIn: false,
@@ -34,7 +39,7 @@ export const useAkashaAuthStore = create<AkashaAuthState>((set, get) => ({
       const akashaProfileData = await getProfileStatsByDid(
         authRes.data?.id ?? '',
       );
-
+      console.log('akashaProfileData', akashaProfileData);
       set({
         currentAkashaUser: authRes.data,
         currentAkashaUserStats: akashaProfileData?.akashaProfile,

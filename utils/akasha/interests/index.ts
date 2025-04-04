@@ -1,9 +1,13 @@
-import akashaSdk from '../akasha';
+import { getAkashaSDK } from '../akasha';
 
 export async function setUserInterests(
   topics: { labelType: string; value: string }[],
 ) {
-  const response = await akashaSdk.services.gql.client.CreateInterests(
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const response = await sdk.services.gql.client.CreateInterests(
     {
       i: {
         content: {
@@ -12,19 +16,27 @@ export async function setUserInterests(
       },
     },
     {
-      context: { source: akashaSdk.services.gql.contextSources.composeDB },
+      context: { source: sdk.services.gql.contextSources.composeDB },
     },
   );
   return response.setAkashaProfileInterests;
 }
 
 export async function getUserInterests() {
-  const response = await akashaSdk.services.gql.client.GetInterests();
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const response = await sdk.services.gql.client.GetInterests();
   return response.akashaProfileInterestsIndex;
 }
 
 export async function getProfileInterestsByDid(did: string) {
-  const response = await akashaSdk.services.gql.client.GetInterestsByDid({
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const response = await sdk.services.gql.client.GetInterestsByDid({
     id: did,
   });
   return response.node;

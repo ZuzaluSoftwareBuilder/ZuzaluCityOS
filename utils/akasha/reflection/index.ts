@@ -8,7 +8,7 @@ import {
   CreateOptionsInput,
   SortOrder,
 } from '@akashaorg/typings/lib/sdk/graphql-types-new';
-import akashaSdk from '../akasha';
+import { getAkashaSDK } from '../akasha';
 import {
   AkashaGetReflectionsFromBeamResponse,
   AkashaReflections,
@@ -34,8 +34,12 @@ export async function createReflection(
   clientMutationId?: string,
   options?: CreateOptionsInput,
 ) {
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
   const createAkashaReflectionResponse =
-    await akashaSdk.services.gql.client.CreateReflect(
+    await sdk.services.gql.client.CreateReflect(
       {
         i: {
           clientMutationId,
@@ -44,7 +48,7 @@ export async function createReflection(
         },
       },
       {
-        context: { source: akashaSdk.services.gql.contextSources.composeDB },
+        context: { source: sdk.services.gql.contextSources.composeDB },
       },
     );
 
@@ -113,22 +117,25 @@ export async function getReflectionsFromBeamId(
     filters?: AkashaReflectInterfaceFiltersInput;
   },
 ): Promise<AkashaReflectionsFromBeam | null> {
-  const reflections =
-    await akashaSdk.services.gql.client.GetReflectionsFromBeam(
-      {
-        id: beamId,
-        first: options?.first ?? DEFAULT_REFLECTIONS_TAKE,
-        after: options?.after,
-        before: options?.before,
-        last: options?.last,
-        sorting: options?.sorting ?? { createdAt: SortOrder.Desc },
-        // TODO: understand what filters are
-        // filters: undefined,
-      },
-      {
-        context: { source: akashaSdk.services.gql.contextSources.composeDB },
-      },
-    );
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const reflections = await sdk.services.gql.client.GetReflectionsFromBeam(
+    {
+      id: beamId,
+      first: options?.first ?? DEFAULT_REFLECTIONS_TAKE,
+      after: options?.after,
+      before: options?.before,
+      last: options?.last,
+      sorting: options?.sorting ?? { createdAt: SortOrder.Desc },
+      // TODO: understand what filters are
+      // filters: undefined,
+    },
+    {
+      context: { source: sdk.services.gql.contextSources.composeDB },
+    },
+  );
   if (!reflections.node || JSON.stringify(reflections.node) === '{}') {
     return null;
   }
@@ -146,7 +153,11 @@ export async function getReflectionsOfReflection(
     sorting?: AkashaReflectSortingInput;
   },
 ): Promise<AkashaReflections | null> {
-  const res = await akashaSdk.services.gql.client.GetReflectReflections({
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const res = await sdk.services.gql.client.GetReflectReflections({
     id: reflectionId,
     first: options?.first ?? DEFAULT_REFLECTIONS_TAKE,
     last: options?.last,
@@ -218,38 +229,41 @@ export async function getTopReadableReflectionsByBeamId(
     // filters?: AkashaReflectInterfaceFiltersInput;
   },
 ): Promise<ZulandReadableReflectionResult | null> {
-  const reflections =
-    await akashaSdk.services.gql.client.GetReflectionsFromBeam(
-      {
-        id: beamId,
-        first: options?.first ?? DEFAULT_REFLECTIONS_TAKE,
-        after: options?.after,
-        before: options?.before,
-        last: options?.last,
-        sorting: options?.sorting ?? { createdAt: SortOrder.Desc },
-        filters: {
-          or: [
-            {
-              where: {
-                isReply: {
-                  equalTo: false,
-                },
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const reflections = await sdk.services.gql.client.GetReflectionsFromBeam(
+    {
+      id: beamId,
+      first: options?.first ?? DEFAULT_REFLECTIONS_TAKE,
+      after: options?.after,
+      before: options?.before,
+      last: options?.last,
+      sorting: options?.sorting ?? { createdAt: SortOrder.Desc },
+      filters: {
+        or: [
+          {
+            where: {
+              isReply: {
+                equalTo: false,
               },
             },
-            {
-              where: {
-                isReply: {
-                  isNull: true,
-                },
+          },
+          {
+            where: {
+              isReply: {
+                isNull: true,
               },
             },
-          ],
-        },
+          },
+        ],
       },
-      {
-        context: { source: akashaSdk.services.gql.contextSources.composeDB },
-      },
-    );
+    },
+    {
+      context: { source: sdk.services.gql.contextSources.composeDB },
+    },
+  );
 
   if (!reflections.node) {
     return null;

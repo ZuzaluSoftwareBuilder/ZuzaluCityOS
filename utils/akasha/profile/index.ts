@@ -1,5 +1,5 @@
 import { AkashaProfile } from '@akashaorg/typings/lib/ui';
-import akashaSdk from '../akasha';
+import { getAkashaSDK } from '../akasha';
 import { AkashaProfileStats, ZulandProfileInput } from '@/types/akasha';
 import { SetOptionsInput } from '@akashaorg/typings/lib/sdk/graphql-types-new';
 import { getAppByEventId } from '../app';
@@ -12,7 +12,11 @@ export async function getProfileByDid(did: string): Promise<{
   akashaProfile: AkashaProfile;
   isViewer: boolean;
 } | null> {
-  const profile = await akashaSdk.services.gql.client.GetProfileByDid({
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const profile = await sdk.services.gql.client.GetProfileByDid({
     id: did,
   });
   if (JSON.stringify(profile.node) === '{}' || profile.node === undefined) {
@@ -28,14 +32,22 @@ export async function getProfileByDid(did: string): Promise<{
  * Get the user profile using the SDK context
  */
 export async function getUserProfile() {
-  const profile = await akashaSdk.services.gql.client.GetMyProfile();
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const profile = await sdk.services.gql.client.GetMyProfile();
   return profile.viewer?.akashaProfile ?? null;
 }
 
 export async function getProfileById(
   id: string,
 ): Promise<AkashaProfile | null> {
-  const profile = await akashaSdk.services.gql.client.GetProfileByID({
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const profile = await sdk.services.gql.client.GetProfileByID({
     id,
   });
   if (!profile || !profile.node || Object.keys(profile.node).length === 0) {
@@ -47,11 +59,13 @@ export async function getProfileById(
 export async function getProfileStatsByDid(
   did: string,
 ): Promise<AkashaProfileStats | null> {
-  const profileStats = await akashaSdk.services.gql.client.GetProfileStatsByDid(
-    {
-      id: did,
-    },
-  );
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const profileStats = await sdk.services.gql.client.GetProfileStatsByDid({
+    id: did,
+  });
   if (
     !profileStats ||
     !profileStats.node ||
@@ -69,24 +83,27 @@ export async function createProfile(
   clientMutationId?: string,
   options?: SetOptionsInput,
 ) {
-  const createProfileResponse =
-    await akashaSdk.services.gql.client.CreateProfile(
-      {
-        i: {
-          clientMutationId: clientMutationId,
-          content: {
-            appID,
-            appVersionID,
-            createdAt: new Date().toISOString(),
-            ...profile,
-          },
-          options: options,
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
+  const createProfileResponse = await sdk.services.gql.client.CreateProfile(
+    {
+      i: {
+        clientMutationId: clientMutationId,
+        content: {
+          appID,
+          appVersionID,
+          createdAt: new Date().toISOString(),
+          ...profile,
         },
+        options: options,
       },
-      {
-        context: { source: akashaSdk.services.gql.contextSources.composeDB },
-      },
-    );
+    },
+    {
+      context: { source: sdk.services.gql.contextSources.composeDB },
+    },
+  );
 
   return createProfileResponse.setAkashaProfile;
 }
@@ -140,8 +157,12 @@ export async function hasUserTicketPermissions(eventId: string) {
       : null;
 
     // this will trigger the connection if not connected
-    await akashaSdk.services.common.web3.connect();
-    const userAddress = akashaSdk.services.common.web3.state.address;
+    const sdk = await getAkashaSDK();
+    if (!sdk) {
+      throw new Error('AKASHA SDK not initialized');
+    }
+    await sdk.services.common.web3.connect();
+    const userAddress = sdk.services.common.web3.state.address;
     if (!userAddress) {
       console.error('User address not found');
       return false;

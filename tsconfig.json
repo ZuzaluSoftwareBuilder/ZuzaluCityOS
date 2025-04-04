@@ -34,7 +34,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "types/**/*.d.ts",
-    "mui.d.ts"
+    "mui.d.ts",
+    "app/spaces/[spaceid]/zuland/page"
   ],
   "exclude": ["node_modules"]
 }

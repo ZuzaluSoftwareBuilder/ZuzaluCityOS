@@ -1,5 +1,6 @@
 import getSDK from '@akashaorg/core-sdk';
 import { type Image } from '@akashaorg/typings/lib/ui';
+import { getAkashaSDK } from '../akasha';
 
 /**
  * @internal
@@ -56,7 +57,10 @@ export const saveMediaFile = async ({
   content,
   isUrl,
 }: ISaveMediaFile) => {
-  const sdk = getSDK();
+  const sdk = await getAkashaSDK();
+  if (!sdk) {
+    throw new Error('AKASHA SDK not initialized');
+  }
   try {
     return await sdk.api.profile.saveMediaFile({
       isUrl,
