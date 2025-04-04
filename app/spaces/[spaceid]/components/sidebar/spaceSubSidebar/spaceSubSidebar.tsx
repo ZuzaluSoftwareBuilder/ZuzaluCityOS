@@ -2,7 +2,13 @@
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { InstalledApp } from '@/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { House, Ticket, CalendarDots, Megaphone } from '@phosphor-icons/react';
+import {
+  House,
+  Ticket,
+  CalendarDots,
+  Megaphone,
+  Gear,
+} from '@phosphor-icons/react';
 import TabItem from './tabItem';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/sidebarHeader';
 import { TableIcon } from '@/components/icons';
@@ -14,6 +20,7 @@ import {
   subscribeSpaceLastViewTime,
 } from '../../../announcements/lastViewTime';
 import { dayjs } from '@/utils/dayjs';
+import Link from 'next/link';
 
 interface MainSubSidebarProps {
   needBlur?: boolean;
@@ -210,6 +217,24 @@ const SpaceSubSidebar = ({
           )}
         </div>
       </div>
+
+      {(isOwner || isAdmin) && (
+        <div className="absolute bottom-0 left-0 h-[90px] w-[260px] border-t border-[rgba(255,255,255,0.1)] px-2.5 pt-5">
+          <div className="px-2.5 text-[12px] leading-[14px] text-white">
+            ADMINS
+          </div>
+          <div className={'mt-2.5'}>
+            <Link href={`/spaces/${spaceId}/setting`}>
+              <TabItem
+                label="Space Settings"
+                icon={<Gear />}
+                isActive={false}
+                onClick={() => console.log('Space Settings', spaceId)}
+              />
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

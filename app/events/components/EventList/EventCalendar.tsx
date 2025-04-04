@@ -1,8 +1,9 @@
 import React from 'react';
-import { Calendar, CalendarButton } from '@/components/base';
+import { Calendar } from '@/components/base';
 import { DateValue } from '@heroui/react';
 import { ArrowsCounterClockwiseIcon } from '@/components/icons';
 import { ArrowsCounterClockwise } from '@phosphor-icons/react';
+import CalendarButton from './CalendarButton';
 
 interface EventCalendarProps {
   value: DateValue | null;

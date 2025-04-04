@@ -1,5 +1,5 @@
 import { Image, Avatar, Skeleton, cn, Chip } from '@heroui/react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import React from 'react';
 import { Space } from '@/types';
 import {
@@ -10,6 +10,7 @@ import {
 import { Button } from '@/components/base';
 import { useRouter } from 'next/navigation';
 import { Categories } from '@/app/spaces/create/components/constant';
+import { useCeramicContext } from '@/context/CeramicContext';
 
 export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
   return (
@@ -73,13 +74,49 @@ export function SpaceCard({
   isFollowed,
   showFooter = true,
 }: SpaceCardProps) {
-  const { banner, name, tagline, avatar, tags, userRoles, category } = data;
+  const {
+    banner,
+    name,
+    tagline,
+    avatar,
+    tags,
+    userRoles,
+    category,
+    isLegacy,
+    owner,
+  } = data;
   const router = useRouter();
+  const { profile } = useCeramicContext();
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers = userRoles?.edges.map((item) => item.node).length ?? 0;
     return formatMemberCount(totalMembers + 1);
   }, [userRoles]);
+
+  const tagsContent = useMemo(() => {
+    const currentTags = isLegacy
+      ? (category as string).split(',').map((item) => ({ tag: item }))
+      : tags;
+    return (
+      <>
+        {currentTags?.slice(0, 2).map((item) => (
+          <span key={item.tag} className="text-[10px] uppercase leading-[1.2]">
+            {item.tag}
+          </span>
+        ))}
+        {currentTags && currentTags.length > 2 && (
+          <span className="text-[10px] leading-[1.2]">
+            +{currentTags.length - 2}
+          </span>
+        )}
+      </>
+    );
+  }, [tags, category, isLegacy]);
+
+  const isLegacyOwner = useMemo(() => {
+    if (!isLegacy) return false;
+    return (owner as unknown as string) === profile?.author?.id;
+  }, [isLegacy, owner, profile?.author?.id]);
 
   const SpaceChip = () => {
     const categoryInfo = useMemo(
@@ -109,6 +146,14 @@ export function SpaceCard({
       </Chip>
     );
   };
+
+  const handleClick = useCallback(() => {
+    if (isLegacyOwner) {
+      router.push(`/spaces/create`);
+    } else {
+      router.push(`/spaces/${data.id}`);
+    }
+  }, [isLegacyOwner, router, data.id]);
 
   return (
     <div
@@ -165,34 +210,25 @@ export function SpaceCard({
           {tagline}
         </p>
         <div className="mb-[10px] flex items-center gap-[10px] opacity-40">
-          {tags?.slice(0, 2).map((item) => (
-            <span
-              key={item.tag}
-              className="text-[10px] uppercase leading-[1.2]"
-            >
-              {item.tag}
-            </span>
-          ))}
-          {tags && tags.length > 2 && (
-            <span className="text-[10px] leading-[1.2]">
-              +{tags.length - 2}
-            </span>
-          )}
+          {tagsContent}
         </div>
 
         {showFooter && (
           <Button
-            startContent={<ArrowSquareRightIcon />}
+            startContent={!isLegacy && <ArrowSquareRightIcon />}
             className="w-full bg-[#363636] py-[6px] text-[14px]"
-            onPress={() => router.push(`/spaces/${data.id}`)}
+            disabled={isLegacy && !isLegacyOwner}
+            onPress={handleClick}
           >
-            View Community
+            {!isLegacy
+              ? 'View Space'
+              : isLegacyOwner
+                ? 'Recreate Space'
+                : 'Legacy Space'}
           </Button>
         )}
         {!showFooter && (
-          <div className="flex h-[34px] w-full items-center gap-[10px] rounded-[8px] bg-[#363636]">
-            {' '}
-          </div>
+          <div className="flex h-[40px] w-full items-center gap-[10px] rounded-[8px] bg-[#363636]" />
         )}
       </div>
     </div>

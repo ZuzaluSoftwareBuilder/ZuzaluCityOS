@@ -93,12 +93,12 @@ const useCheckWalletConnectAndSpacePermission = ({
   }, [checkStatus]);
 
   const currentStatus = useMemo((): PermissionCheckStatus => {
-    if (!allChecksComplete) {
-      return PermissionCheckStatus.CHECKING;
-    }
-
     if (!isConnected) {
       return PermissionCheckStatus.WALLET_NOT_CONNECTED;
+    }
+
+    if (!allChecksComplete) {
+      return PermissionCheckStatus.CHECKING;
     }
 
     return hasPermission
@@ -163,17 +163,17 @@ const useCheckWalletConnectAndSpacePermission = ({
   ]);
 
   useEffect(() => {
-    if (!allChecksComplete) {
-      return;
-    }
-
-    console.log('all checks complete');
-
     if (!isConnected) {
       console.log('user is not connected');
       onWalletNotConnected?.() || onNoPermission?.();
       return;
     }
+
+    if (!allChecksComplete) {
+      return;
+    }
+
+    console.log('all checks complete');
 
     if (isAuthenticated && !hasPermission) {
       console.log(
