@@ -197,12 +197,12 @@ const AppItem = (props: Props) => {
               DEVELOPER:
             </span>
             <Image
-              alt={profile.username || 'Developer'}
-              src={profile.avatar ?? USER_AVATAR_URL}
+              alt={profile?.username || 'Developer'}
+              src={profile?.avatar ?? USER_AVATAR_URL}
               className="size-[16px] rounded-full"
             />
             <span className="text-[13px] leading-[140%] tracking-[0.01em] opacity-60">
-              {profile.username ?? '-'}
+              {profile?.username ?? '-'}
             </span>
           </div>
         </div>
