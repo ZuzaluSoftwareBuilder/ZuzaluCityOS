@@ -2,7 +2,7 @@ import { Button, Divider, Select, SelectItem } from '@/components/base';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 import * as yup from 'yup';
 import { POAP } from './rule';
 import { ZuPass } from './rule';
@@ -54,13 +54,36 @@ RuleItem.Edit = memo(function Edit() {
     resolver: yupResolver(editSchema),
     defaultValues: {
       rule: 'poap',
+      poap: [],
+      zupass: {
+        publicKey: '',
+        eventId: '',
+        eventName: '',
+      },
     },
-    mode: 'onChange',
+    mode: 'all',
+    reValidateMode: 'onChange',
+    shouldUnregister: false,
   });
 
   const rule = form.watch('rule');
-  const { isValid } = form.formState;
-  console.log('isValid', form.formState);
+  const poap = form.watch('poap');
+
+  const [manualIsValid, setManualIsValid] = useState(false);
+
+  useEffect(() => {
+    const values = form.getValues();
+    let isValid = false;
+
+    if (rule === 'poap') {
+      isValid = Array.isArray(values.poap) && values.poap.length > 0;
+    } else if (rule === 'zupass') {
+      const zupass = values.zupass;
+      isValid = !!(zupass?.publicKey && zupass?.eventId && zupass?.eventName);
+    }
+
+    setManualIsValid(isValid);
+  }, [form, rule, poap]);
 
   return (
     <FormProvider {...form}>
@@ -128,7 +151,11 @@ RuleItem.Edit = memo(function Edit() {
           <Button
             color="submit"
             className="h-[30px] font-medium"
-            isDisabled={!isValid}
+            isDisabled={!manualIsValid}
+            onPress={() => {
+              console.log('Create Rule clicked, form state:', form.formState);
+              console.log('Form values:', form.getValues());
+            }}
           >
             Create Rule
           </Button>

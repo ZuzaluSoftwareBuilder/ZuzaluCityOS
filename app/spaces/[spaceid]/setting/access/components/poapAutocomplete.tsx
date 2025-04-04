@@ -71,10 +71,12 @@ export default function POAPAutocomplete({
       const foundItem = items.find((item) => item.id === Number(key));
       if (foundItem && !selectedPOAP.some((item) => item.id === foundItem.id)) {
         setItems([]);
+        const data = [...selectedPOAP.map((item) => item.id), foundItem.id];
         setSelectedPOAP((v) => [...v, foundItem]);
+        onChange(data);
       }
     },
-    [items, selectedPOAP],
+    [items, onChange, selectedPOAP],
   );
 
   useEffect(() => {
@@ -95,11 +97,6 @@ export default function POAPAutocomplete({
       setSelectedKey(null);
     }
   }, [selectedKey]);
-
-  useEffect(() => {
-    const ids = selectedPOAP.map((item) => item.id) || [];
-    onChange(ids);
-  }, [onChange, selectedPOAP]);
 
   return (
     <div className="flex flex-col gap-[10px]">
@@ -157,7 +154,11 @@ export default function POAPAutocomplete({
               endContent={<X size={16} />}
               className="h-[30px] p-[4px_8px]"
               onPress={() => {
-                setSelectedPOAP((v) => v.filter((i) => i.id !== item.id));
+                const newSelectedPOAP = selectedPOAP.filter(
+                  (i) => i.id !== item.id,
+                );
+                setSelectedPOAP(newSelectedPOAP);
+                onChange(newSelectedPOAP.map((p) => p.id));
               }}
             >
               {item.name}

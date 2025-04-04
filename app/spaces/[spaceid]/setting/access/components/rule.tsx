@@ -28,7 +28,6 @@ const ZuPass = () => {
             <Textarea
               {...field}
               placeholder="e.g. 1ebfb9...e75003,10ec38...b7d204"
-              multiple
             />
           )}
         />
