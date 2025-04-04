@@ -55,9 +55,12 @@ RuleItem.Edit = memo(function Edit() {
     defaultValues: {
       rule: 'poap',
     },
+    mode: 'onChange',
   });
 
   const rule = form.watch('rule');
+  const { isValid } = form.formState;
+  console.log('isValid', form.formState);
 
   return (
     <FormProvider {...form}>
@@ -122,7 +125,11 @@ RuleItem.Edit = memo(function Edit() {
           <Button color="functional" className="h-[30px] font-medium">
             Discard
           </Button>
-          <Button color="submit" className="h-[30px] font-medium">
+          <Button
+            color="submit"
+            className="h-[30px] font-medium"
+            isDisabled={!isValid}
+          >
             Create Rule
           </Button>
         </div>

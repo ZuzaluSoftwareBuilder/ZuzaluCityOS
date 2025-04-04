@@ -1,6 +1,6 @@
 import POAPAutocomplete from './poapAutocomplete';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Input } from '@/components/base';
+import { Input, Textarea } from '@/components/base';
 
 interface POAPProps {
   initialValue?: number[];
@@ -18,22 +18,44 @@ const POAP = ({ initialValue, onChange }: POAPProps) => {
 const ZuPass = () => {
   const { control } = useFormContext();
   return (
-    <div className="p-5">
-      <Controller
-        control={control}
-        name="publicKey"
-        render={({ field }) => <Input {...field} placeholder="Public Key" />}
-      />
-      <Controller
-        control={control}
-        name="eventId"
-        render={({ field }) => <Input {...field} placeholder="Event ID" />}
-      />
-      <Controller
-        control={control}
-        name="eventName"
-        render={({ field }) => <Input {...field} placeholder="Event Name" />}
-      />
+    <div className="flex flex-col gap-5 p-5">
+      <div className="flex flex-col gap-2.5">
+        <p className="text-[16px] font-medium leading-[1.2]">Public Key</p>
+        <Controller
+          control={control}
+          name="zupass.publicKey"
+          render={({ field }) => (
+            <Textarea
+              {...field}
+              placeholder="e.g. 1ebfb9...e75003,10ec38...b7d204"
+              multiple
+            />
+          )}
+        />
+      </div>
+      <div className="flex flex-col gap-2.5">
+        <p className="text-[16px] font-medium leading-[1.2]">Event ID</p>
+        <Controller
+          control={control}
+          name="zupass.eventId"
+          render={({ field }) => (
+            <Input
+              {...field}
+              placeholder="e.g. 6f5f194b-xxxx-xxxx-xxxx-0998f3eacc75"
+            />
+          )}
+        />
+      </div>
+      <div className="flex flex-col gap-2.5">
+        <p className="text-[16px] font-medium leading-[1.2]">Event Name</p>
+        <Controller
+          control={control}
+          name="zupass.eventName"
+          render={({ field }) => (
+            <Input {...field} placeholder="e.g. Example Event Name" />
+          )}
+        />
+      </div>
     </div>
   );
 };
