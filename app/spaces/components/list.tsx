@@ -104,7 +104,7 @@ const SpaceList = () => {
           alignContent: 'flex-start',
         }}
       >
-        {isLoading || isRoleLoading
+        {isLoading || isRoleLoading || isLegacyLoading
           ? Array.from({ length: 8 }).map((_, index) => (
               <ResponsiveGridItem key={index}>
                 <SpaceCardSkeleton autoWidth={true} key={index} />
