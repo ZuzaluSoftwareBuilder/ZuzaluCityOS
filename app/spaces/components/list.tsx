@@ -10,6 +10,8 @@ import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
 import dayjs from '@/utils/dayjs';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/utils/supabase/client';
 
 const SpaceList = () => {
   const theme = useTheme();
@@ -46,17 +48,35 @@ const SpaceList = () => {
     },
   );
 
+  const { data: legacySpacesData, isLoading: isLegacyLoading } = useQuery({
+    queryKey: ['GET_LEGACY_SPACES_DATA'],
+    queryFn: () => {
+      return supabase.from('betaSpaces').select('*');
+    },
+    select: (data: any) => {
+      if (!data.data) {
+        return [];
+      }
+      return data.data.map((item: any) => ({
+        ...item,
+        isLegacy: true,
+      })) as Space[];
+    },
+  });
+
   const filteredSpacesData = useMemo(() => {
-    const sortedData = (spaces || []).sort((a, b) => {
-      return dayjs(b.createdAt).diff(dayjs(a.createdAt));
-    });
+    const sortedData = (spaces || [])
+      .sort((a, b) => {
+        return dayjs(b.createdAt).diff(dayjs(a.createdAt));
+      })
+      .concat(legacySpacesData || []);
     if (searchVal === '') {
       return sortedData;
     }
     return sortedData?.filter((space) =>
       space.name.toLowerCase().includes(searchVal.toLowerCase()),
     );
-  }, [spaces, searchVal]);
+  }, [spaces, legacySpacesData, searchVal]);
 
   return (
     <Stack
