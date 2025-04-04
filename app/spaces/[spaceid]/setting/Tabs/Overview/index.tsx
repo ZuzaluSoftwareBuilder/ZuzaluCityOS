@@ -22,7 +22,6 @@ import { useMediaQuery } from '@/hooks';
 import { Button } from '@/components/base';
 import { ArrowLineDown, X as XIcon } from '@phosphor-icons/react';
 import { UPDATE_SPACE_MUTATION } from '@/services/graphql/space';
-import { useEditorStore } from '@/components/editor/useEditorStore';
 import { Space } from '@/types';
 import { executeQuery } from '@/utils/ceramic';
 import { createUrlWhenEdit } from '@/services/url';
@@ -43,7 +42,6 @@ const EditSpace = () => {
   const params = useParams();
   const spaceId = params.spaceid?.toString() ?? '';
   const { isMobile, isPc, isTablet } = useMediaQuery();
-  const descriptionEditorStore = useEditorStore();
   const oldProfile = useRef<string>('');
   const oldCategories = useRef<string>('');
   const oldLinks = useRef<string>('');
@@ -130,7 +128,6 @@ const EditSpace = () => {
     profileForm.setValue('name', data.name);
     profileForm.setValue('tagline', data.tagline);
     profileForm.setValue('description', data.description);
-    descriptionEditorStore.setValue(data.description);
     profileForm.setValue('avatar', data.avatar || '');
     profileForm.setValue('banner', data.banner || '');
     categoriesForm.setValue('tags', data.tags?.map((i) => i.tag) || []);
@@ -233,11 +230,7 @@ const EditSpace = () => {
           'mobile:block',
         )}
       >
-        <ProfileContent
-          form={profileForm}
-          descriptionEditorStore={descriptionEditorStore}
-          isDisabled={!isOwner}
-        />
+        <ProfileContent form={profileForm} isDisabled={!isOwner} />
       </div>
       <div
         className={cn(

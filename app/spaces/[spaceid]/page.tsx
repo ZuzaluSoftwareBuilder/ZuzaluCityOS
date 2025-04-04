@@ -27,6 +27,8 @@ import dynamic from 'next/dynamic';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_SPACE_AND_EVENTS_QUERY_BY_ID } from '@/services/graphql/space';
+import EditorPro from '@/components/editorPro';
+import { cn } from '@heroui/react';
 
 const EditorPreview = dynamic(
   () => import('@/components/editor/EditorPreview'),
@@ -38,7 +40,7 @@ const EditorPreview = dynamic(
 export default function SpaceDetailPage() {
   const params = useParams();
   const theme = useTheme();
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
   const [showCopyToast, setShowCopyToast] = useState(false);
 
@@ -258,24 +260,66 @@ export default function SpaceDetailPage() {
                 </Box>
                 <Box
                   sx={{
-                    padding: '20px',
                     width: '100%',
-                    backgroundColor: '#ffffff05',
+                    backgroundColor: 'bg-w-10',
                     borderRadius: '10px',
                     boxSizing: 'border-box',
                     overflow: 'hidden',
                   }}
                 >
-                  <EditorPreview
+                  <EditorPro
                     value={spaceData.description}
+                    isEdit={false}
+                    className={cn('bg-w-5')}
+                    collapsable={true}
+                    collapseHeight={150}
                     collapsed={isCollapsed}
-                    onCollapse={(collapsed) => {
-                      setIsCanCollapse((v) => {
-                        return v || collapsed;
-                      });
-                      setIsCollapsed(collapsed);
+                    onCollapse={(canCollapse) => {
+                      setIsCanCollapse(canCollapse);
                     }}
                   />
+
+                  {isCanCollapse && (
+                    <SidebarButton
+                      sx={{
+                        width: '100%',
+                        padding: '10px 14px',
+                        backgroundColor: '#2b2b2b',
+                        '&:hover': {
+                          backgroundColor: '#ffffff1a',
+                        },
+                        borderRadius: '10px',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        boxSizing: 'border-box',
+                        marginTop: '10px',
+                      }}
+                      onClick={() => {
+                        setIsCollapsed((v) => !v);
+                      }}
+                    >
+                      <Stack
+                        direction="row"
+                        spacing={'10px'}
+                        alignItems={'center'}
+                      >
+                        {isCollapsed ? (
+                          <>
+                            <ChevronDownIcon size={4} />
+                            <span>Show More</span>
+                          </>
+                        ) : (
+                          <>
+                            <ChevronUpIcon size={4} />
+                            <span>Show Less</span>
+                          </>
+                        )}
+                      </Stack>
+                    </SidebarButton>
+                  )}
                 </Box>
               </>
             ) : (
@@ -285,38 +329,6 @@ export default function SpaceDetailPage() {
                 </Typography>
                 <Skeleton variant="rounded" width={'100%'} height={80} />
               </>
-            )}
-
-            {isCanCollapse && (
-              <SidebarButton
-                sx={{
-                  width: '100%',
-                  padding: '10px 14px',
-                  backgroundColor: '#2b2b2b',
-                  '&:hover': {
-                    backgroundColor: '#ffffff1a',
-                  },
-                  borderRadius: '10px',
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  boxSizing: 'border-box',
-                }}
-                onClick={() => {
-                  setIsCollapsed((v) => !v);
-                }}
-              >
-                <Stack direction="row" spacing={'10px'} alignItems={'center'}>
-                  {isCollapsed ? (
-                    <ChevronDownIcon size={4} />
-                  ) : (
-                    <ChevronUpIcon size={4} />
-                  )}
-                  <span>{isCollapsed ? 'Show More' : 'Show Less'}</span>
-                </Stack>
-              </SidebarButton>
             )}
           </Box>
           {isLoading ? (
