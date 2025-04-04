@@ -118,8 +118,6 @@ export function SpaceCard({
     return (owner as unknown as string) === profile?.author?.id;
   }, [isLegacy, owner, profile?.author?.id]);
 
-  console.log(profile?.author?.id, owner, '====');
-
   const SpaceChip = () => {
     const categoryInfo = useMemo(
       () => Categories.find((c) => c.value === category),
