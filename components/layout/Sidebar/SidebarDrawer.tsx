@@ -21,8 +21,8 @@ export default function SidebarDrawer({ open, onClose, selected }: PropTypes) {
         },
       }}
     >
-      <div className="w-[260px] h-screen bg-[rgba(34,34,34,0.8)] border-r border-[rgb(58,60,62)] flex flex-col justify-between backdrop-blur-[20px]">
-        <div className="p-[10px] flex items-center bg-none pb-0">
+      <div className="flex h-screen w-[260px] flex-col justify-between border-r border-[rgb(58,60,62)] bg-[rgba(34,34,34,0.8)] backdrop-blur-[20px]">
+        <div className="flex items-center bg-none p-[10px] pb-0">
           <Button
             isIconOnly
             aria-label="close"

@@ -1,3 +1,4 @@
+'use client';
 import React, { useMemo, useState } from 'react';
 import { Box, Stack, Typography } from '@mui/material';
 import { ChevronDownIcon, ChevronUpIcon } from '@/components/icons';

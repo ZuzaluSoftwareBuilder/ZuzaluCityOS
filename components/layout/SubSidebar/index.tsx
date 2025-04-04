@@ -10,7 +10,6 @@ import {
 import {
   SearchIcon,
   HomeIcon,
-  MegaPhoneIcon,
   EventIcon,
   ChevronDownIcon,
 } from 'components/icons';

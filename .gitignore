@@ -7,7 +7,7 @@
 .yarn/install-state.gz
 
 # env
-.env
+.env*
 
 # testing
 /coverage
@@ -41,3 +41,5 @@ next-env.d.ts
 *storybook.log
 .idea/
 yarn.lock
+
+*.local.sh

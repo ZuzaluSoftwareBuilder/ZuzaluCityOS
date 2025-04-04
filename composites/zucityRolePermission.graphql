@@ -1,0 +1,22 @@
+type ZucityRolePermission
+  @createModel(
+    accountRelation: LIST
+    description: "Permission and Roles for Zuzalu.city beta version"
+  )
+  @createIndex(fields: [{ path: "resourceId" }])
+  @createIndex(fields: [{ path: "source" }]){
+  author: DID! @documentAccount
+  roleId: StreamID! 
+  permissionIds: [StreamID!] @list(maxLength: 10000)
+  resourceId: String @string(minLength: 1, maxLength: 10000)
+  source: String @string(minLength: 1, maxLength: 10000)
+  level: String! @string(minLength: 1, maxLength: 10000)
+  created_at: DateTime!
+  updated_at: DateTime!
+  customAttributes: [TBD] @list(maxLength: 10000)
+}
+
+
+type TBD {
+  tbd: String @string(minLength: 1, maxLength: 10000)
+}

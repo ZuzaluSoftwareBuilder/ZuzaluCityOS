@@ -1,0 +1,38 @@
+type ZucitySpaceGating
+  @createModel(
+    accountRelation: LIST
+    description: "Space gating for Zuzalu.city beta version"
+  ) {
+  author: DID! @documentAccount
+  spaceId: StreamID! @documentReference(model: "ZucitySpace")
+  space: ZucitySpace! @relationDocument(property: "spaceId")
+  zuPassInfo: [ZuPass] @list(maxLength: 10000)
+  customAttributes: [TBD] @list(maxLength: 10000)
+  gatingCondition: String @string(minLength: 1, maxLength: 100000)
+  gatingStatus: String @string(minLength: 1, maxLength: 100000)
+  PoapsId: [POAPID] @list(maxLength: 10000)
+  ERC20ContractAddress: String @string(minLength: 1, maxLength: 100000)
+  ERC721ContractAddress: String @string(minLength: 1, maxLength: 100000)
+  ERC1155ContractAddress: String @string(minLength: 1, maxLength: 100000)
+}
+
+
+type ZucitySpace @loadModel(id: "$Space_ID") {
+  id: ID!
+}
+
+type POAPID {
+  poapId: String @string(minLength: 1, maxLength: 1000)
+}
+
+type ZuPass {
+  eventId: String @string(minLength: 1, maxLength: 1000)
+  eventName: String @string(minLength: 1, maxLength: 1000)
+  registration: String @string(minLength: 1, maxLength: 1000)
+  access: String @string(minLength: 1, maxLength: 1000)
+}
+
+
+type TBD {
+  tbd: String @string(minLength: 1, maxLength: 10000)
+}

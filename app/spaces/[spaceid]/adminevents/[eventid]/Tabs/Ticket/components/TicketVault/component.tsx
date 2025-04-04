@@ -1,35 +1,24 @@
-import {
-  TICKET_FACTORY_ADDRESS,
-  mUSDC_TOKEN,
-  isDev,
-  resendApiKey,
-} from '@/constant';
+import { mUSDC_TOKEN, isDev } from '@/constant';
 import { client, config } from '@/context/WalletContext';
 import { ERC20_ABI } from '@/utils/erc20_abi';
 import { TICKET_ABI } from '@/utils/ticket_abi';
 import { TICKET_WITH_WHITELIST_ABI } from '@/utils/ticket_with_whitelist_abi';
 import React, { Dispatch, useEffect, useMemo, useState } from 'react';
-import { Address, isAddress, parseUnits } from 'viem';
-import { scroll, scrollSepolia } from 'viem/chains';
+import { Address, isAddress } from 'viem';
+import { mainnet, sepolia } from 'viem/chains';
 import {
   writeContract,
   waitForTransactionReceipt,
   readContract,
 } from 'wagmi/actions';
-import { ZuButton, ZuInput } from '@/components/core';
-import { supabase } from '@/utils/supabase/client';
+import { ZuButton } from '@/components/core';
 import {
   ArrowDownSquare,
   CloseIcon,
-  PlusCircleIcon,
   RightArrowIcon,
-  ScrollIcon,
   SendIcon,
   ChevronDownIcon,
   XCricleIcon,
-  LeftArrowIcon,
-  CheckIcon,
-  CircleCloseIcon,
   CopyIcon,
   GoToExplorerIcon,
   Square2StackIcon,
@@ -48,27 +37,23 @@ import {
   Stepper,
   StepLabel,
   Modal,
-  List,
-  ListItem,
   IconButton,
   Collapse,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import gaslessFundAndUpload from '@/utils/gaslessFundAndUpload';
 import { generateNFTMetadata } from '@/utils/generateNFTMetadata';
 import { createFileFromJSON } from '@/utils/generateNFTMetadata';
 import { fetchEmailJsConfig } from '@/utils/emailService';
 import { send } from '@emailjs/browser';
 import { Contract, Event } from '@/types';
-import { formatAddressString } from '@/components/layout/Header';
+import { formatAddressString } from '@/components/layout/UserProfileSection';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import * as yup from 'yup';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ButtonGroup } from '../Common';
 import { useToast } from '@/components/toast/ToastContext';
-import { Resend } from 'resend';
 
 interface IProps {
   amount?: string;
@@ -160,7 +145,7 @@ export const WithdrawToken = ({
     try {
       const ABI = ticket[8]?.result ? TICKET_WITH_WHITELIST_ABI : TICKET_ABI;
       const withdrawHash = await writeContract(config, {
-        chainId: isDev ? scrollSepolia.id : scroll.id,
+        chainId: isDev ? sepolia.id : mainnet.id,
         address: ticketAddress as Address,
         functionName: 'withdraw',
         abi: ABI,
@@ -441,7 +426,7 @@ export const SendNFTTicket = ({
       const uploadedID = await gaslessFundAndUpload(metadataFile, tags, 'EVM');
       const ABI = ticket[8]?.result ? TICKET_WITH_WHITELIST_ABI : TICKET_ABI;
       const adminMintHash = await writeContract(config, {
-        chainId: isDev ? scrollSepolia.id : scroll.id,
+        chainId: isDev ? sepolia.id : mainnet.id,
         address: ticketAddress as Address,
         functionName: 'adminMint',
         abi: ABI,
@@ -1030,7 +1015,7 @@ export const Whitelist = ({
       setIsLoading(true);
       const { addresses, emails } = data;
       const appendHash = await writeContract(config, {
-        chainId: isDev ? scrollSepolia.id : scroll.id,
+        chainId: isDev ? sepolia.id : mainnet.id,
         address: ticketAddress as Address,
         functionName: 'appendToWhitelist',
         abi: TICKET_WITH_WHITELIST_ABI,
@@ -1115,7 +1100,7 @@ export const Whitelist = ({
               abi: ticket[8]?.result ? TICKET_WITH_WHITELIST_ABI : TICKET_ABI,
               functionName: 'balanceOf',
               args: [address as Address],
-              chainId: isDev ? scrollSepolia.id : scroll.id,
+              chainId: isDev ? sepolia.id : mainnet.id,
             });
             return { result: balance };
           } catch (error) {

@@ -13,9 +13,11 @@ import { Stack } from '@mui/material';
 import { useState, useMemo } from 'react';
 import { Item } from '.';
 import Filter from './filter';
-import { useQuery } from '@tanstack/react-query';
 import { Dapp } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
 
 interface ListProps {
   onDetailClick: (data: Dapp) => void;
@@ -25,51 +27,28 @@ interface ListProps {
 export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { composeClient, ceramic } = useCeramicContext();
+  const { ceramic } = useCeramicContext();
   const userDID = ceramic.did?.parent;
   const [filter, setFilter] = useState<string[]>([]);
   const [searchVal, setSearchVal] = useState<string>('');
 
-  const { data, isLoading } = useQuery<Dapp[]>({
-    queryKey: ['getDappInfoList'],
-    queryFn: async () => {
-      const response: any = await composeClient.executeQuery(`
-      query {
-        zucityDappInfoIndex(first: 100) {
-          edges {
-            node {
-              id
-              appName
-              tagline
-              developerName
-              description
-              bannerUrl
-              categories
-              devStatus
-              openSource
-              repositoryUrl
-              appUrl
-              websiteUrl
-              docsUrl
-              profile {
-                author {
-                  id
-                }
-              }
-            }
-          }
-        }
-      }
-    `);
-
-      if (response && response.data && 'zucityDappInfoIndex' in response.data) {
-        return response.data.zucityDappInfoIndex.edges.map(
-          (edge: any) => edge.node,
-        );
-      }
-      return [];
+  const { data, isLoading } = useGraphQL(
+    ['GET_DAPP_LIST_QUERY'],
+    GET_DAPP_LIST_QUERY,
+    {
+      first: 100,
     },
-  });
+    {
+      select: (data) => {
+        if (data.data.zucityDappInfoIndex?.edges) {
+          return data.data.zucityDappInfoIndex.edges.map(
+            (edge: any) => edge.node,
+          );
+        }
+        return [];
+      },
+    },
+  );
 
   const filterData = useMemo(() => {
     const tags = data?.map((dapp) => dapp.categories.split(','));
@@ -191,38 +170,12 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
             width: '100%',
             maxWidth: '100%',
           },
+          alignContent: 'flex-start',
         }}
       >
         {isLoading
           ? Array.from({ length: 4 }).map((_, index) => (
-              <Grid
-                item
-                xl={3}
-                lg={4}
-                md={6}
-                sm={12}
-                xs={12}
-                gap={20}
-                sx={{
-                  '@media (max-width: 809px)': {
-                    maxWidth: '100% !important',
-                    flexBasis: '100% !important',
-                  },
-                  '@media (min-width: 810px) and (max-width: 1199px)': {
-                    maxWidth: '50% !important',
-                    flexBasis: '50% !important',
-                  },
-                  '@media (min-width: 1200px) and (max-width: 1399px)': {
-                    maxWidth: '33.333% !important',
-                    flexBasis: '33.333% !important',
-                  },
-                  '@media (min-width: 1400px)': {
-                    maxWidth: '25% !important',
-                    flexBasis: '25% !important',
-                  },
-                }}
-                key={index}
-              >
+              <ResponsiveGridItem key={index}>
                 <Stack p="10px">
                   <Skeleton
                     variant="rounded"
@@ -254,39 +207,12 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
                   </Stack>
                   <Skeleton variant="rounded" width="100%" height="12px" />
                 </Stack>
-              </Grid>
+              </ResponsiveGridItem>
             ))
           : currentData?.map((data, index) => (
-              <Grid
-                item
-                xl={3}
-                lg={4}
-                md={6}
-                sm={12}
-                xs={12}
-                gap={20}
-                sx={{
-                  '@media (max-width: 809px)': {
-                    maxWidth: '100% !important',
-                    flexBasis: '100% !important',
-                  },
-                  '@media (min-width: 810px) and (max-width: 1199px)': {
-                    maxWidth: '50% !important',
-                    flexBasis: '50% !important',
-                  },
-                  '@media (min-width: 1200px) and (max-width: 1399px)': {
-                    maxWidth: '33.333% !important',
-                    flexBasis: '33.333% !important',
-                  },
-                  '@media (min-width: 1400px)': {
-                    maxWidth: '25% !important',
-                    flexBasis: '25% !important',
-                  },
-                }}
-                key={index}
-              >
+              <ResponsiveGridItem key={index}>
                 <Item data={data} onClick={() => onDetailClick(data)} />
-              </Grid>
+              </ResponsiveGridItem>
             ))}
       </Grid>
     </Stack>

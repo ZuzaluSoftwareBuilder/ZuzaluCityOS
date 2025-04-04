@@ -1,5 +1,5 @@
 import { CubeIcon, GlobalIcon } from '@/components/icons';
-import { Stack, Box, Button, styled, Chip, Typography } from '@mui/material';
+import { Stack, Box, Button, styled, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
 
 const NavButton = styled(Button)(
@@ -112,7 +112,7 @@ export default function Nav() {
         {navItems.map((item) => (
           <NavButton
             key={item.label}
-            className={activeTab === item.label ? 'active' : ''}
+            className={activeTab === item.label ? 'opacity-100' : ''}
             startIcon={item.icon}
             onClick={(e) => handleTabClick(e, item)}
             disableRipple

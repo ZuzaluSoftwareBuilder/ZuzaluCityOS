@@ -18,7 +18,7 @@ const Home = () => {
   const [discussionsView, setDiscussionsView] = useState<boolean>(false);
   const [announcementsEdit, setAnnouncementsEdit] = useState<boolean>(false);
   const [verify, setVerify] = useState<boolean>(false);
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
   const [urlOption, setUrlOption] = useState<string>('');
 
   const getEventDetailInfo = async () => {

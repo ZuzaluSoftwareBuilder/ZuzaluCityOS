@@ -1,70 +1,55 @@
 import { SpaceCard, SpaceCardSkeleton } from './SpaceCard';
-import { Space, SpaceData } from '@/types';
 import { useRouter } from 'next/navigation';
 import CommonHeader from './CommonHeader';
 import { BuildingsIcon } from '@/components/icons';
-import { getSpacesQuery } from '@/services/space';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { ScrollShadow } from '@heroui/react';
 import { useMediaQuery } from '@/hooks';
+import dayjs from '@/utils/dayjs';
+import useUserSpace from '@/hooks/useUserSpace';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import { Space } from '@/types';
+import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
+import { useBuildInRole } from '@/context/BuildInRoleContext';
 
 export default function Communities() {
   const router = useRouter();
-  const { composeClient } = useCeramicContext();
   const { isMobile } = useMediaQuery();
 
-  const { data: spacesData, isLoading } = useQuery({
-    queryKey: ['spaces'],
-    queryFn: async () => {
-      try {
-        const response: any = await composeClient.executeQuery(getSpacesQuery);
-        if ('zucitySpaceIndex' in response.data) {
-          const spaceData: SpaceData = response.data as SpaceData;
-          const spaces = spaceData.zucitySpaceIndex.edges.map(
-            (edge) => edge.node,
-          );
+  const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
+  const { adminRole, memberRole, isRoleLoading } = useBuildInRole();
 
-          return spaces;
-        } else {
-          console.error('Invalid data structure:', response.data);
+  const { data: spacesData, isLoading } = useGraphQL(
+    ['GET_ALL_SPACE_AND_MEMBER_QUERY'],
+    GET_ALL_SPACE_AND_MEMBER_QUERY,
+    {
+      first: 100,
+      userRolesFilters: {
+        where: {
+          roleId: {
+            in: [adminRole, memberRole].map((role) => role?.id ?? ''),
+          },
+        },
+      },
+    },
+    {
+      select: (data) => {
+        if (!data?.data?.zucitySpaceIndex?.edges) {
           return [];
         }
-      } catch (error) {
-        console.error('Failed to fetch spaces:', error);
-        throw error;
-      }
+        return data.data.zucitySpaceIndex.edges.map(
+          (edge) => edge!.node,
+        ) as Space[];
+      },
     },
-  });
+  );
 
   const filteredSpacesData = useMemo(() => {
-    const getCreatedTime = (space: Space): number | null => {
-      if (!space.customAttributes?.length) return null;
-
-      for (const attr of space.customAttributes) {
-        if (!attr || !('tbd' in attr)) continue;
-
-        try {
-          const parsedAttr = JSON.parse(attr.tbd);
-          if (parsedAttr.key === 'createdTime' && parsedAttr.value) {
-            return new Date(parsedAttr.value).getTime();
-          }
-        } catch {
-          // do nothing
-        }
-      }
-      return null;
-    };
-
-    return spacesData?.sort((a, b) => {
-      const timeA = getCreatedTime(a);
-      const timeB = getCreatedTime(b);
-
-      if (timeA && timeB) return timeB - timeA;
-      if (timeA) return -1;
-      if (timeB) return 1;
-      return 0;
+    if (!spacesData) {
+      return [];
+    }
+    return spacesData.sort((a, b) => {
+      return dayjs(b.createdAt).diff(dayjs(a.createdAt));
     });
   }, [spacesData]);
 
@@ -83,12 +68,17 @@ export default function Communities() {
         className="flex-1 overflow-auto"
       >
         <div className="flex gap-[20px] overflow-auto px-[20px]">
-          {isLoading
+          {isLoading || isRoleLoading
             ? Array.from({ length: 5 }).map((_, index) => (
                 <SpaceCardSkeleton key={index} />
               ))
             : filteredSpacesData?.map((item) => (
-                <SpaceCard key={item.id} data={item} />
+                <SpaceCard
+                  key={item.id}
+                  data={item}
+                  isJoined={userJoinedSpaceIds.has(item.id)}
+                  isFollowed={userFollowedSpaceIds.has(item.id)}
+                />
               ))}
         </div>
       </ScrollShadow>

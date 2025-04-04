@@ -21,7 +21,7 @@ const OverviewHeader = ({ event, setTabName }: PropTypes) => {
   const needShow = (event?.regAndAccess?.edges?.length ?? 0) > 0;
 
   const params = useParams();
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
   const profileId = profile?.id || '';
   const { breakpoints } = useTheme();
 

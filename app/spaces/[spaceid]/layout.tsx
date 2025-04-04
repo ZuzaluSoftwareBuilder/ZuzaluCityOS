@@ -1,18 +1,20 @@
-import { Box } from '@mui/material';
 import React from 'react';
 import type { Metadata } from 'next';
+import SpaceLayout from '@/app/spaces/[spaceid]/components/spaceLayout';
+import SpaceTopHeader from '@/app/spaces/[spaceid]/components/spaceTopHeader';
+import { SpacePermissionProvider } from './components/permission';
+import { SpaceDataProvider } from './components/context/spaceData';
 
 interface SpacePageLayoutPropTypes {
   children: React.ReactNode;
 }
 
 type Props = {
-  params: { spaceid: string };
+  params: Promise<{ spaceid: string }>;
 };
 
-export const generateMetadata = async ({
-  params,
-}: Props): Promise<Metadata> => {
+export const generateMetadata = async (props: Props): Promise<Metadata> => {
+  const params = await props.params;
   const id = params.spaceid;
 
   return {
@@ -28,11 +30,14 @@ export default function SpacePageLayout({
   children,
 }: SpacePageLayoutPropTypes) {
   return (
-    <Box
-      sx={{ color: 'white', display: 'flex', flexDirection: 'row' }}
-      minHeight={'calc(100vh - 50px)'}
-    >
-      {children}
-    </Box>
+    <SpacePermissionProvider>
+      <SpaceDataProvider>
+        <SpaceTopHeader />
+        <div className="flex min-h-[calc(100vh-50px)] text-white pc:pl-[62px] tablet:pl-[62px]">
+          <SpaceLayout />
+          <div className="flex-1 overflow-auto">{children}</div>
+        </div>
+      </SpaceDataProvider>
+    </SpacePermissionProvider>
   );
 }

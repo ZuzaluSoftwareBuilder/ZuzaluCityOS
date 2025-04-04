@@ -18,6 +18,7 @@ const useGetShareLink = ({ id, name }: IUseGetShareLink) => {
         const { name, hash, type } = data;
         return `${window.location.origin}/${type === 'spaces' ? 's' : 'e'}/${name}${hash !== '0' ? `/${hash}` : ''}`;
       }
+      return window.location.href;
     },
   });
 

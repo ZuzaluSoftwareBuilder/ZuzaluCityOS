@@ -1,13 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import { Stack, Typography, Box, Divider } from '@mui/material';
-import {
-  ScrollIcon,
-  RightArrowIcon,
-  LeftArrowIcon,
-  ChevronDownIcon,
-} from '@/components/icons';
-import { ZuButton, ZuInput } from '@/components/core';
+import { Stack, Typography, Box } from '@mui/material';
+import { ScrollIcon } from '@/components/icons';
 import { Agree, Email, Code, Mint, Completion } from './Register';
 
 const Home = () => {

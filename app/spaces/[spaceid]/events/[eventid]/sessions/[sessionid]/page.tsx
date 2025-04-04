@@ -1,15 +1,8 @@
 'use client';
-import React, {
-  useState,
-  useEffect,
-  Dispatch,
-  SetStateAction,
-  useRef,
-} from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {
   Stack,
-  Grid,
   Typography,
   SwipeableDrawer,
   Divider,
@@ -17,41 +10,28 @@ import {
   Select,
   OutlinedInput,
   MenuItem,
-  Chip,
-  InputAdornment,
   useTheme,
   useMediaQuery,
   Snackbar,
   Alert,
-  TextField,
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers';
 import { DesktopTimePicker } from '@mui/x-date-pickers';
 import { TimeView } from '@mui/x-date-pickers/models';
-import { TimeStepOptions } from '@mui/x-date-pickers/models';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from '@/utils/dayjs';
-import { ZuInput, ZuButton, ZuSwitch, ZuCalendar } from '@/components/core';
-import { IconSidebar, Header, Thumb, Sidebar } from '../../components';
+import { ZuInput, ZuButton, ZuSwitch } from '@/components/core';
+import { IconSidebar, Header, Sidebar } from '../../components';
 import {
   PlusCircleIcon,
   LockIcon,
   XMarkIcon,
-  ArchiveBoxIcon,
   ArrowDownIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  SearchIcon,
-  FingerPrintIcon,
-  UserPlusIcon,
-  EditIcon,
-  QueueListIcon,
-  ChevronDoubleRightIcon,
-  LeftArrowIcon,
   MapIcon,
   SessionIcon,
-  Cog6Icon,
   MicrophoneIcon,
   TagIcon,
   PlusIcon,
@@ -59,11 +39,9 @@ import {
   CalendarIcon,
   ShareIcon,
 } from '@/components/icons';
-import SessionCard from '@/app/spaces/[spaceid]/adminevents/[eventid]/Tabs/Sessions/components/SessionList/SessionCard';
 import {
   Anchor,
   Session,
-  SessionData,
   ProfileEdge,
   Profile,
   CeramicResponseType,
@@ -72,26 +50,18 @@ import {
   Event,
   FilmOptionType,
 } from '@/types';
-import { SPACE_CATEGORIES, EXPREIENCE_LEVEL_TYPES } from '@/constant';
+import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { supabase } from '@/utils/supabase/client';
 import { SessionSupabaseData } from '@/types';
 import { supaEditSession } from '@/services/session';
 import Link from 'next/link';
 import formatDateAgo from '@/utils/formatDateAgo';
-import SlotDate from '@/components/calendar/SlotDate';
-import ZuAutoCompleteInput from '@/components/input/ZuAutocompleteInput';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
-import { FormTitle } from '@/components/typography/formTypography';
-import SlotDates from '@/components/calendar/SlotDate';
-import { authenticate } from '@pcd/zuauth/server';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import SidebarButton from 'components/layout/Sidebar/SidebarButton';
 import SelectCategories from '@/components/select/selectCategories';
-import {
-  useEditorStore,
-  decodeOutputData,
-} from '@/components/editor/useEditorStore';
+import { useEditorStore } from '@/components/editor/useEditorStore';
 import BpCheckbox from '@/components/event/Checkbox';
 import {
   FormLabel,
@@ -99,7 +69,6 @@ import {
 } from '@/components/typography/formTypography';
 
 import SelectSearchUser from '@/components/select/selectSearchUser';
-import { OutputData } from '@editorjs/editorjs';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import { formatUserName } from '@/utils/format';
@@ -127,8 +96,8 @@ const Home = () => {
     useCeramicContext();
   const [sessionView, setSessionView] = useState<boolean>(false);
   const [verify, setVerify] = useState<boolean>(false);
-  const eventId = params.eventid.toString();
-  const spaceId = params.spaceid.toString();
+  const eventId = params.eventid?.toString() ?? '';
+  const spaceId = params.spaceid?.toString() ?? '';
   const [urlOption, setUrlOption] = useState<string>('');
   const [session, setSession] = useState<Session>();
   const [isRsvped, setIsRsvped] = useState<boolean>(false);
@@ -296,7 +265,7 @@ const Home = () => {
       const { data: sessionData, error: sessionError } = await supabase
         .from('sessions')
         .select('*')
-        .eq('uuid', params.sessionid.toString())
+        .eq('uuid', params.sessionid?.toString() ?? '')
         .single();
       if (sessionData && profile) {
         setSession(sessionData);
@@ -676,7 +645,7 @@ const Home = () => {
 
           return (
             sessionStartDay === selectedDay &&
-            session.uuid !== params.sessionid.toString()
+            session.uuid !== (params.sessionid?.toString() ?? '')
           );
         });
         setBookedSessionsForDay(bookedSessionsDay);
@@ -725,7 +694,7 @@ const Home = () => {
         return (
           sessionStartDay ===
             dayjs(sessionStartTime).utc().format('YYYY-MM-DD') &&
-          session.uuid !== params.sessionid.toString()
+          session.uuid !== (params.sessionid?.toString() ?? '')
         );
       });
       bookedSessionsForDay = bookedSessionsDay;
@@ -816,7 +785,7 @@ const Home = () => {
       organizers: JSON.stringify(sessionOrganizers),
       speakers: JSON.stringify(sessionSpeakers),
       creatorDID: adminId,
-      uuid: params.sessionid.toString(),
+      uuid: params.sessionid?.toString() ?? '',
       liveStreamLink: sessionLiveStreamLink,
     };
     try {
@@ -1886,7 +1855,7 @@ const Home = () => {
         {!isDesktop && <IconSidebar />}
         {!isDesktop && (
           <Sidebar
-            spaceId={params.spaceid.toString()}
+            spaceId={params.spaceid?.toString() ?? ''}
             title={eventData?.space?.name}
             avatar={eventData?.space?.avatar}
             banner={eventData?.space?.banner}
@@ -1904,7 +1873,7 @@ const Home = () => {
         >
           <Header
             name={eventData?.title}
-            spaceId={params.spaceid.toString()}
+            spaceId={params.spaceid?.toString() ?? ''}
             backFun={() => {
               sessionStorage.setItem('tab', 'Sessions');
               router.push(`/spaces/${spaceId}/events/${eventId}`);

@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Stack, useTheme } from '@mui/material';
 import { Header, PostList } from './components';
@@ -16,7 +16,7 @@ interface IVenue {
 const Home: React.FC<IVenue> = ({ event }) => {
   const { breakpoints } = useTheme();
   const params = useParams();
-  const eventId = params.eventid.toString();
+  const eventId = params.eventid?.toString() ?? '';
 
   const [open, setOpen] = useState(false);
 

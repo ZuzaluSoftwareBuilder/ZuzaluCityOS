@@ -38,8 +38,8 @@ const gaslessFundAndUploadEVM = async (
           const bSig = Buffer.from(signature, 'hex');
           // Pad & convert so it's in the format the signer expects to have to convert from.
           const pad = Buffer.concat([
-            Buffer.from([0]),
-            Buffer.from(bSig),
+            new Uint8Array([0]),
+            new Uint8Array(bSig),
           ]).toString('hex');
           return pad;
         },

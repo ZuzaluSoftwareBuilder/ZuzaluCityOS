@@ -1,3 +1,4 @@
+'use client';
 import { ClickAwayListener, Stack, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import React, { Dispatch, SetStateAction, useState } from 'react';

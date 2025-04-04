@@ -1,15 +1,6 @@
 import { Stack, Typography } from '@mui/material';
 import { ZuButton } from 'components/core';
-import { ScrollIcon } from 'components/icons';
-import Image from 'next/image';
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  Dispatch,
-  SetStateAction,
-} from 'react';
-import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
+import React, { Dispatch, SetStateAction } from 'react';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import TicketCard from '../components/ticketCard';
 import { Anchor, ScrollPassTickets } from '@/types';

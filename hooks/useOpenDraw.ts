@@ -7,5 +7,5 @@ export default function useOpenDraw() {
   const handleOpen = useCallback(() => setOpen(true), []);
   const handleClose = useCallback(() => setOpen(false), []);
 
-  return { open, handleOpen, handleClose };
+  return { open, setOpen, handleOpen, handleClose };
 }

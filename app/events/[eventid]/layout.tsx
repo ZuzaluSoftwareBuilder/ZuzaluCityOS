@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import { AppRouterCacheProvider } from '@/components/emotion/AppRouterCacheProvider';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from 'theme/theme';
 
 type Props = {
-  params: { eventid: string };
+  params: Promise<{ eventid: string }>;
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const id = params.eventid;
 
   return {

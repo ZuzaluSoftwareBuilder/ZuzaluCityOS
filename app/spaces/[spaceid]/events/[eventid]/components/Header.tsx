@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { Stack, Typography } from '@mui/material';
-import { LeftArrowIcon, ShareIcon, ThreeHorizonIcon } from 'components/icons';
+import { LeftArrowIcon } from 'components/icons';
 import { ZuButton } from 'components/core';
 
 interface IHeader {

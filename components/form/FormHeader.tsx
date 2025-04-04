@@ -8,12 +8,14 @@ interface IProps {
   title: string;
   isBack?: boolean;
   handleClose: () => void;
+  extra?: React.ReactNode;
 }
 
 export default function FormHeader({
   handleClose,
   title,
   isBack = false,
+  extra,
 }: IProps) {
   return (
     <Box
@@ -37,7 +39,10 @@ export default function FormHeader({
       >
         {isBack ? 'Back' : 'Close'}
       </ZuButton>
-      <Typography variant="subtitleSB">{title}</Typography>
+      <Typography flex={1} variant="subtitleSB">
+        {title}
+      </Typography>
+      {extra}
     </Box>
   );
 }

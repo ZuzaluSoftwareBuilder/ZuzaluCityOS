@@ -9,7 +9,9 @@ export const serializeToPlainText = (node: any) => {
     return `@${node.name || node.id}`;
   }
 
-  const children: any = node.children.map((n: any) => serializeToPlainText(n)).join(' ');
+  const children: any = node.children
+    .map((n: any) => serializeToPlainText(n))
+    .join(' ');
 
   return children;
 };

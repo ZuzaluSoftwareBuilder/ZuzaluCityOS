@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import FormHeader from '@/components/form/FormHeader';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -17,7 +17,7 @@ import {
   UpdateRegAndAccessRequest,
 } from '@/types';
 import { isDev } from '@/constant';
-import { scroll, scrollSepolia } from 'viem/chains';
+import { sepolia, mainnet } from 'viem/chains';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useCreateEventId } from '../../hooks/useCreateEventId';
 import { useEventContext } from '../../../../EventContext';
@@ -56,7 +56,7 @@ const ConfigForm: React.FC<RegistrationMethodSelectorProps> = ({
   const pass = formMethods.watch('pass');
   const profileId = profile?.id || '';
 
-  const eventId = pathname.eventid.toString();
+  const eventId = pathname.eventid?.toString() ?? '';
 
   const createMutation = useMutation({
     mutationFn: (input: CreateRegAndAccessRequest) => {
@@ -108,7 +108,7 @@ const ConfigForm: React.FC<RegistrationMethodSelectorProps> = ({
               .filter(Boolean)
               .map(
                 (address) =>
-                  `did:pkh:eip155:${isDev ? scrollSepolia.id : scroll.id}:${address.trim()}`,
+                  `did:pkh:eip155:${isDev ? sepolia.id : mainnet.id}:${address.trim()}`,
               ) || undefined;
           createMutation.mutate({
             eventId,

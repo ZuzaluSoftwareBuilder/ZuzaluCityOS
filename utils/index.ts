@@ -36,7 +36,7 @@ export function base64ToUint8Array(base64: string): Uint8Array {
 export function hashAndEncodeBase58(value: string): string {
   const hash = crypto.createHash('sha256').update(value).digest();
 
-  const encoded = bs58.encode(hash);
+  const encoded = bs58.encode(new Uint8Array(hash));
 
   return encoded.slice(0, 16);
 }

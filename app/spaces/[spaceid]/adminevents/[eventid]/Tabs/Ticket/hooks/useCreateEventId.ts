@@ -1,12 +1,11 @@
 import { useCallback, useState } from 'react';
 import { isDev, TICKET_FACTORY_ADDRESS } from '@/constant';
 import { config } from '@/context/WalletContext';
-import { updateContractID } from '@/services/event/addContractID';
 import { Event } from '@/types';
 import { convertDateToEpoch } from '@/utils/format';
 import { Address } from 'viem';
 import { writeContract, waitForTransactionReceipt } from 'wagmi/actions';
-import { scroll, scrollSepolia } from 'viem/chains';
+import { sepolia, mainnet } from 'viem/chains';
 import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
 import { useAccount, useSwitchChain } from 'wagmi';
 import { ethers } from 'ethers';
@@ -23,12 +22,12 @@ export const useCreateEventId = ({ event }: PropTypes) => {
   const createEventID = useCallback(async () => {
     try {
       setIsLoading(true);
-      const chainId = isDev ? scrollSepolia.id : scroll.id;
+      const chainId = isDev ? sepolia.id : mainnet.id;
       await switchChainAsync({
         chainId,
       });
       const createEventHash = await writeContract(config, {
-        chainId: isDev ? scrollSepolia.id : scroll.id,
+        chainId: isDev ? sepolia.id : mainnet.id,
         address: TICKET_FACTORY_ADDRESS as Address,
         abi: TICKET_FACTORY_ABI,
         functionName: 'createEvent',

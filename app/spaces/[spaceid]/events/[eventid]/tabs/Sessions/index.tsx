@@ -1,15 +1,8 @@
 'use client';
-import React, {
-  useState,
-  useEffect,
-  Dispatch,
-  SetStateAction,
-  useRef,
-} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {
   Stack,
-  Grid,
   Typography,
   SwipeableDrawer,
   Divider,
@@ -17,11 +10,9 @@ import {
   Select,
   OutlinedInput,
   MenuItem,
-  Chip,
   InputAdornment,
   useTheme,
   useMediaQuery,
-  Menu,
   Popover,
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -34,27 +25,21 @@ import dayjs, { Dayjs } from '@/utils/dayjs';
 import { ZuInput, ZuButton, ZuSwitch, ZuCalendar } from '@/components/core';
 import {
   PlusCircleIcon,
-  LockIcon,
   XMarkIcon,
-  ArchiveBoxIcon,
   ArrowDownIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   SearchIcon,
-  FingerPrintIcon,
   UserPlusIcon,
   EditIcon,
-  QueueListIcon,
   ChevronDoubleRightIcon,
   LeftArrowIcon,
   MapIcon,
   SessionIcon,
-  Cog6Icon,
   MicrophoneIcon,
   TagIcon,
   PlusIcon,
   MinusIcon,
-  RightArrowIcon,
   CalendarIcon,
 } from '@/components/icons';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
@@ -63,26 +48,14 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
 import SessionCard from '@/app/spaces/[spaceid]/adminevents/[eventid]/Tabs/Sessions/components/SessionList/SessionCard';
 import BpCheckbox from '@/components/event/Checkbox';
-import {
-  Anchor,
-  Session,
-  SessionData,
-  ProfileEdge,
-  Profile,
-  CeramicResponseType,
-  EventEdge,
-  Venue,
-  Event,
-} from '@/types';
-import { SPACE_CATEGORIES, EXPREIENCE_LEVEL_TYPES } from '@/constant';
+import { Anchor, Session, ProfileEdge, Profile, Venue, Event } from '@/types';
+import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { supabase } from '@/utils/supabase/client';
 import { SessionSupabaseData } from '@/types';
 import { supaCreateSession } from '@/services/session';
 import Link from 'next/link';
 import formatDateAgo from '@/utils/formatDateAgo';
-import SlotDate from '@/components/calendar/SlotDate';
-import ZuAutoCompleteInput from '@/components/input/ZuAutocompleteInput';
 import SelectCategories from '@/components/select/selectCategories';
 import SelectSearchUser from '@/components/select/selectSearchUser';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
@@ -90,7 +63,6 @@ import { useEditorStore } from '@/components/editor/useEditorStore';
 import {
   FormLabel,
   FormLabelDesc,
-  FormTitle,
 } from '@/components/typography/formTypography';
 import SlotDates from '@/components/calendar/SlotDate';
 import { v4 as uuidv4 } from 'uuid';
@@ -125,8 +97,8 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
   const { ceramic, composeClient, isAuthenticated, profile } =
     useCeramicContext();
   const params = useParams();
-  const eventId = params.eventid.toString();
-  const spaceId = params.spaceid.toString();
+  const eventId = params.eventid?.toString() ?? '';
+  const spaceId = params.spaceid?.toString() ?? '';
   const profileId = profile?.id || '';
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [directions, setDirections] = useState<string>('');

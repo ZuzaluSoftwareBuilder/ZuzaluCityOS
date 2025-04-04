@@ -1,9 +1,6 @@
 'use client';
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
 import { Stack, Typography, useTheme } from '@mui/material';
-import { ZuButton } from 'components/core';
-import { PlusIcon } from 'components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
 
 const EventHeader = () => {

@@ -4,8 +4,8 @@ import {
   darkTheme,
   connectorsForWallets,
 } from '@rainbow-me/rainbowkit';
-import { WagmiProvider, createConfig, http } from 'wagmi';
-import { scroll, scrollSepolia } from 'wagmi/chains';
+import { WagmiProvider, createConfig, http, fallback } from 'wagmi';
+import { mainnet, sepolia } from 'wagmi/chains';
 import React, { ReactNode } from 'react';
 import { createPublicClient } from 'viem';
 import {
@@ -35,19 +35,24 @@ const connectors = connectorsForWallets(
 );
 
 const isDev = process.env.NEXT_PUBLIC_ENV === 'dev';
+const selectedChain = isDev ? sepolia : mainnet;
 
-const selectedChain = isDev ? scrollSepolia : scroll;
-const transportUrl = isDev
-  ? 'https://scroll-sepolia.g.alchemy.com/v2/dfNyixall1vyEd5e-7HCZKo-ozGPz6JD'
-  : 'https://scroll.drpc.org';
+const RPC_CONFIG = {
+  [sepolia.id]: fallback(
+    [http('https://eth-sepolia.reddio.com'), http('/api/rpc')],
+    { retryCount: 3 },
+  ),
+  [mainnet.id]: fallback(
+    [http('https://eth-mainnet.reddio.com'), http('/api/rpc')],
+    { retryCount: 3 },
+  ),
+} as const;
 
 export const config = createConfig({
   chains: [selectedChain],
   transports: {
-    [scrollSepolia.id]: isDev
-      ? http()
-      : http('https://scroll-sepolia.drpc.org'),
-    [scroll.id]: isDev ? http() : http('https://scroll.drpc.org'),
+    [sepolia.id]: RPC_CONFIG[sepolia.id],
+    [mainnet.id]: RPC_CONFIG[mainnet.id],
   },
   connectors,
   ssr: true,
@@ -55,7 +60,7 @@ export const config = createConfig({
 
 export const client = createPublicClient({
   chain: selectedChain,
-  transport: http(transportUrl),
+  transport: RPC_CONFIG[selectedChain.id],
 });
 
 interface WalletProviderProps {

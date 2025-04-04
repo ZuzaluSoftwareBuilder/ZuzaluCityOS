@@ -25,10 +25,10 @@ const EventContent: React.FC = () => {
   const pathname = useParams();
   const params = useParams();
   const router = useRouter();
-  const spaceId = params.spaceid.toString();
+  const spaceId = params.spaceid?.toString() ?? '';
 
   const { data: spaceData } = useQuery({
-    queryKey: ['getSpaceByID', spaceId],
+    queryKey: ['getSpaceByIDInAdminEvents', spaceId],
     queryFn: () => {
       return composeClient.executeQuery(getSpacesQuery, {
         id: spaceId,
@@ -198,21 +198,6 @@ const EventContent: React.FC = () => {
         return <Overview setTabName={setTabName} />;
     }
   };
-
-  React.useEffect(() => {
-    if (spaceData) {
-      const superAdmins =
-        spaceData?.superAdmin?.map((superAdmin) =>
-          superAdmin.id.toLowerCase(),
-        ) || [];
-      const admins =
-        spaceData?.admins?.map((admin) => admin.id.toLowerCase()) || [];
-      const userDID = ceramic?.did?.parent.toString().toLowerCase() || '';
-      if (!admins.includes(userDID) && !superAdmins.includes(userDID)) {
-        router.push('/');
-      }
-    }
-  }, [ceramic?.did?.parent, router, spaceData]);
 
   return (
     <Stack width="100%" id="111122">

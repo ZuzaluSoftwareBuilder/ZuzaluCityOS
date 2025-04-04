@@ -1,6 +1,6 @@
-import { Image, Avatar, Skeleton } from '@heroui/react';
+import { Image, Avatar, Skeleton, cn, Chip } from '@heroui/react';
 import { useMemo } from 'react';
-
+import React from 'react';
 import { Space } from '@/types';
 import {
   ArrowSquareRightIcon,
@@ -8,24 +8,31 @@ import {
   UsersIcon,
 } from '@/components/icons';
 import { Button } from '@/components/base';
-import { useCeramicContext } from '@/context/CeramicContext';
 import { useRouter } from 'next/navigation';
-import { isUserAssociated } from '@/utils/permissions';
+import { Categories } from '@/app/spaces/create/components/constant';
 
-export function SpaceCardSkeleton() {
+export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
   return (
-    <div className="w-[276px] flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden">
+    <div
+      className={cn(
+        autoWidth ? 'w-full' : 'w-[276px]',
+        'flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden',
+      )}
+    >
       <div className="relative">
         <Skeleton className="rounded-none">
-          <div className="w-full h-[108px]"></div>
+          <div className="aspect-[2.5] w-full"></div>
         </Skeleton>
-        <Skeleton className="absolute left-[11px] w-[60px] h-[60px] bottom-[-21px] z-10 rounded-full" />
+        <Skeleton className="absolute bottom-[-21px] left-[11px] z-10 size-[60px] rounded-full" />
       </div>
       <div className="p-[10px]">
-        <div className="flex items-center gap-[6px] justify-end opacity-50 mb-[7px] h-[18px]">
-          <Skeleton className="w-[16px] h-[16px] rounded-full" />
-          <Skeleton className="w-[30px] h-[13px] rounded-[4px]" />
+        <div className="mb-[7px] flex h-[18px] items-center justify-end gap-[6px] opacity-50">
+          <Skeleton className="size-[16px] rounded-full" />
+          <Skeleton className="h-[13px] w-[30px] rounded-[4px]" />
         </div>
+        <Skeleton className="mb-[6px] rounded-[4px]">
+          <div className="h-[24px] w-[90px]"></div>
+        </Skeleton>
         <Skeleton className="mb-[6px] rounded-[4px]">
           <div className="h-[21px]"></div>
         </Skeleton>
@@ -33,11 +40,11 @@ export function SpaceCardSkeleton() {
           <div className="h-[42px]"></div>
         </Skeleton>
         <div className="mb-[10px] flex items-center gap-[10px]">
-          <Skeleton className="w-[40px] h-[12px] rounded-[4px]" />
-          <Skeleton className="w-[40px] h-[12px] rounded-[4px]" />
+          <Skeleton className="h-[12px] w-[40px] rounded-[4px]" />
+          <Skeleton className="h-[12px] w-[40px] rounded-[4px]" />
         </div>
         <Skeleton className="rounded-[8px]">
-          <div className="w-full h-[40px]"></div>
+          <div className="h-[40px] w-full"></div>
         </Skeleton>
       </div>
     </div>
@@ -53,95 +60,136 @@ const formatMemberCount = (count: number): string => {
 
 interface SpaceCardProps {
   data: Space;
+  isJoined: boolean;
+  isFollowed: boolean;
+  autoWidth?: boolean;
+  showFooter?: boolean;
 }
 
-export function SpaceCard({ data }: SpaceCardProps) {
-  const {
-    banner,
-    name,
-    tagline,
-    avatar,
-    members,
-    admins,
-    superAdmin,
-    category,
-  } = data;
-  const { profile } = useCeramicContext();
+export function SpaceCard({
+  data,
+  autoWidth,
+  isJoined,
+  isFollowed,
+  showFooter = true,
+}: SpaceCardProps) {
+  const { banner, name, tagline, avatar, tags, userRoles, category } = data;
   const router = useRouter();
 
-  const currentUserId = profile?.author?.id;
-
-  const isUserJoined = useMemo(() => {
-    return currentUserId && isUserAssociated(data, currentUserId);
-  }, [currentUserId, data]);
-
   const formattedMemberCount = useMemo(() => {
-    const totalMembers =
-      (members?.length || 0) +
-      (admins?.length || 0) +
-      (superAdmin?.length || 0);
-    return formatMemberCount(totalMembers);
-  }, [members?.length, admins?.length, superAdmin?.length]);
+    const totalMembers = userRoles?.edges.map((item) => item.node).length ?? 0;
+    return formatMemberCount(totalMembers + 1);
+  }, [userRoles]);
+
+  const SpaceChip = () => {
+    const categoryInfo = useMemo(
+      () => Categories.find((c) => c.value === category),
+      [category],
+    );
+    const chipClass =
+      'bg-white/[0.05] rounded-[4px] text-[10px] px-[4px] py-[8px] gap-[5px]';
+    if (categoryInfo) {
+      const Icon = React.cloneElement(categoryInfo.icon, {
+        size: 16,
+        weight: 'fill',
+      });
+      return (
+        <Chip startContent={Icon} size="sm" className={chipClass}>
+          {categoryInfo.label}
+        </Chip>
+      );
+    }
+    return (
+      <Chip startContent={Categories[0].icon} size="sm" className={chipClass}>
+        {Categories[0].label}
+      </Chip>
+    );
+  };
 
   return (
-    <div className="w-[276px] flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden hover:bg-white/5 transition-colors">
+    <div
+      className={cn(
+        autoWidth ? 'w-full' : 'w-[276px]',
+        'flex-shrink-0 rounded-[10px] border border-b-w-10 bg-[#262626] overflow-hidden hover:bg-white/5 transition-colors',
+      )}
+    >
       <div className="relative">
+        {/*
+          xl: width/height = 268/106 = 2.528
+          pc: width/height = 285/113 = 2.522
+          tablet: width/height = 373/148 = 2.520
+          mobile: width/height = 368/146 = 2.520
+        */}
         <Image
           src={banner}
           alt={name}
-          width="100%"
-          height="108px"
-          className="object-cover rounded-none"
+          width={'100%'}
+          height={'100%'}
+          className="aspect-[2.5] w-full rounded-none object-cover"
         />
         <Avatar
           src={avatar}
           alt={name}
+          icon={null}
           classNames={{
             base: 'absolute left-[11px] w-[60px] h-[60px] bottom-[-21px] z-10 shadow-[0px_0px_0px_1px_rgba(34,34,34,0.10)]',
           }}
         />
-        {isUserJoined && (
-          <div className="flex items-center gap-[5px] px-[10px] py-[5px] rounded-[4px] border border-b-w-10 bg-[rgba(34,34,34,0.60)] backdrop-filter backdrop-blur-[5px] absolute right-[10px] top-[10px] z-10">
+        {isJoined && (
+          <div className="absolute right-[10px] top-[10px] z-10 flex items-center gap-[5px] rounded-[4px] border border-b-w-10 bg-[rgba(34,34,34,0.60)] px-[10px] py-[5px] backdrop-blur-[5px]">
             <CheckCircleIcon size={4} />
-            <span className="text-[14px] font-[500]">Joined</span>
+            <span className="text-[14px] font-[500]">
+              {isFollowed ? 'Followed' : 'Joined'}
+            </span>
           </div>
         )}
       </div>
       <div className="p-[10px]">
-        <div className="flex items-center gap-[6px] justify-end opacity-50 mb-[6px]">
+        <div className="mb-[6px] flex items-center justify-end gap-[6px] opacity-50">
           <UsersIcon size={4} />
           <span className="text-[13px] leading-[1.4]">
             {formattedMemberCount}
           </span>
         </div>
-        <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] text-[18px] font-bold leading-[1.2] truncate mb-[6px]">
+        <div className="mb-[6px]">
+          <SpaceChip />
+        </div>
+        <p className=" mb-[6px] truncate text-[18px] font-bold leading-[1.2]">
           {name}
         </p>
-        <p className="text-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] text-[13px] leading-[1.6] opacity-60 line-clamp-2 h-[42px] mb-[20px]">
+        <p className=" mb-[20px] line-clamp-2 h-[42px] text-[13px] leading-[1.6] opacity-60">
           {tagline}
         </p>
         <div className="mb-[10px] flex items-center gap-[10px] opacity-40">
-          {category
-            ?.split(',')
-            .slice(0, 2)
-            .map((item) => (
-              <span key={item} className="text-[10px] leading-[1.2] uppercase">
-                {item}
-              </span>
-            ))}
-          {category && category.split(',').length > 2 && (
+          {tags?.slice(0, 2).map((item) => (
+            <span
+              key={item.tag}
+              className="text-[10px] uppercase leading-[1.2]"
+            >
+              {item.tag}
+            </span>
+          ))}
+          {tags && tags.length > 2 && (
             <span className="text-[10px] leading-[1.2]">
-              +{category.split(',').length - 2}
+              +{tags.length - 2}
             </span>
           )}
         </div>
-        <Button
-          startContent={<ArrowSquareRightIcon />}
-          className="w-full text-[14px] bg-[#363636] py-[6px]"
-          onPress={() => router.push(`/spaces/${data.id}`)}
-        >
-          View Community
-        </Button>
+
+        {showFooter && (
+          <Button
+            startContent={<ArrowSquareRightIcon />}
+            className="w-full bg-[#363636] py-[6px] text-[14px]"
+            onPress={() => router.push(`/spaces/${data.id}`)}
+          >
+            View Community
+          </Button>
+        )}
+        {!showFooter && (
+          <div className="flex h-[34px] w-full items-center gap-[10px] rounded-[8px] bg-[#363636]">
+            {' '}
+          </div>
+        )}
       </div>
     </div>
   );

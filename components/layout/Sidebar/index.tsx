@@ -10,17 +10,12 @@ import {
   StorefrontIcon,
   VideoIcon,
 } from 'components/icons';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { EventData, SpaceData } from '@/types';
-import { useCallback, useState, useMemo } from 'react';
+import { useCallback, useState } from 'react';
 import Image from 'next/image';
 import { cn, Tab, Tabs, ScrollShadow, Skeleton } from '@heroui/react';
 import { Button } from '@/components/base';
-import { useQuery } from '@tanstack/react-query';
-import { isUserAssociated } from '@/utils/permissions';
-import { getSpacesQuery } from '@/services/space';
-import { EVENTS_QUERY } from '@/graphql/eventQueries';
-
+import useUserSpace from '@/hooks/useUserSpace';
+import useUserEvent from '@/hooks/useUserEvent';
 interface SidebarProps {
   selected: string;
   isMobile?: boolean;
@@ -108,65 +103,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, composeClient, ceramic } = useCeramicContext();
 
   const [selectedTab, setSelectedTab] = useState('events');
 
-  const userDID = ceramic?.did?.parent?.toString();
-
-  const { data: allEvents, isLoading: isEventsLoading } = useQuery({
-    queryKey: ['userEvents'],
-    queryFn: async () => {
-      try {
-        const response: any = await composeClient.executeQuery(EVENTS_QUERY);
-
-        if (response && response.data && 'zucityEventIndex' in response.data) {
-          const eventData: EventData = response.data as EventData;
-          return eventData.zucityEventIndex.edges.map((edge) => edge.node);
-        } else {
-          console.error('Invalid data structure:', response.data);
-          return [];
-        }
-      } catch (error) {
-        console.error('Failed to fetch events:', error);
-        return [];
-      }
-    },
-    enabled: isAuthenticated,
-  });
-
-  const { data: spacesData, isLoading: isSpacesLoading } = useQuery({
-    queryKey: ['spaces'],
-    queryFn: async () => {
-      try {
-        const response: any = await composeClient.executeQuery(getSpacesQuery);
-        if ('zucitySpaceIndex' in response.data) {
-          const spaceData: SpaceData = response.data as SpaceData;
-
-          return spaceData.zucitySpaceIndex.edges.map((edge) => edge.node);
-        } else {
-          console.error('Invalid data structure:', response.data);
-          return [];
-        }
-      } catch (error) {
-        console.error('Failed to fetch spaces:', error);
-        throw error;
-      }
-    },
-    enabled: isAuthenticated,
-  });
-
-  const userEvents = useMemo(() => {
-    if (!allEvents || !userDID) return [];
-
-    return allEvents.filter((event) => isUserAssociated(event, userDID));
-  }, [allEvents, userDID]);
-
-  const userSpaces = useMemo(() => {
-    if (!spacesData || !userDID) return [];
-
-    return spacesData.filter((space) => isUserAssociated(space, userDID));
-  }, [spacesData, userDID]);
+  const { userJoinedSpaces, isUserSpaceLoading } = useUserSpace();
+  const { userJoinedEvents, isUserEventLoading } = useUserEvent();
 
   const handleClick = useCallback(
     (item: any) => {
@@ -184,7 +125,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     return Array.from({ length: 3 }).map((_, index) => (
       <div key={index} className="flex items-center gap-[10px] p-[6px_10px]">
         <Skeleton className="rounded-[2px]">
-          <div className="w-[20px] h-[20px]"></div>
+          <div className="size-[20px]"></div>
         </Skeleton>
         <Skeleton className="rounded-[4px]">
           <div className="h-[17px] w-[190px]"></div>
@@ -205,7 +146,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       return (
         <div
           key={itemId}
-          className="flex items-center gap-[10px] p-[6px_10px] opacity-70 cursor-pointer hover:bg-[rgba(255,255,255,0.05)] rounded-[10px]"
+          className="flex cursor-pointer items-center gap-[10px] rounded-[10px] p-[6px_10px] opacity-70 hover:bg-[rgba(255,255,255,0.05)]"
           onClick={() => {
             router.push(itemPath);
             onClose?.();
@@ -223,7 +164,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               width: '20px',
             }}
           />
-          <p className="text-white text-[14px] font-semibold leading-[1.6] truncate">
+          <p className="truncate text-[14px] font-semibold leading-[1.6] text-white">
             {itemTitle}
           </p>
         </div>
@@ -234,20 +175,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const renderTabContent = useCallback(() => {
     const isEventsTab = selectedTab === 'events';
-    const isLoading = isEventsTab ? isEventsLoading : isSpacesLoading;
-    const items = isEventsTab ? userEvents : userSpaces;
+    const isLoading = isEventsTab ? isUserEventLoading : isUserSpaceLoading;
+    const items = isEventsTab ? userJoinedEvents : userJoinedSpaces;
 
     if (isLoading) {
       return renderLoadingSkeleton();
     }
 
-    return items.map((item) => renderItem(item, isEventsTab));
+    return items?.map((item) => renderItem(item, isEventsTab));
   }, [
     selectedTab,
-    isEventsLoading,
-    isSpacesLoading,
-    userEvents,
-    userSpaces,
+    isUserEventLoading,
+    isUserSpaceLoading,
+    userJoinedEvents,
+    userJoinedSpaces,
     renderLoadingSkeleton,
     renderItem,
   ]);
@@ -261,7 +202,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       )}
     >
       <ScrollShadow className="flex-1 overflow-y-auto" visibility="bottom">
-        <div className="flex flex-col p-[10px] gap-[10px]">
+        <div className="flex flex-col gap-[10px] p-[10px]">
           {naviButtons.map((item, index) => {
             return (
               <div
@@ -285,23 +226,23 @@ const Sidebar: React.FC<SidebarProps> = ({
                   >
                     {item.icon}
                     {selected !== 'Space Details' && (
-                      <p className="text-white font-medium text-[14px]">
+                      <p className="text-[14px] font-medium text-white">
                         {item.content}
                       </p>
                     )}
                   </div>
                   {item.isNew && (
-                    <p className="rounded-[4px] bg-[rgba(125,255,209,0.10)] p-[2px_4px] text-[12px] text-[#7dffd1] font-semibold leading-[1.4]">
+                    <p className="rounded-[4px] bg-[rgba(125,255,209,0.10)] p-[2px_4px] text-[12px] font-semibold leading-[1.4] text-[#7dffd1]">
                       New!
                     </p>
                   )}
                 </div>
                 {item.isSoon ? (
-                  <p className="text-[10px] leading-[1.2] opacity-50 text-white">
+                  <p className="text-[10px] leading-[1.2] text-white opacity-50">
                     SOON
                   </p>
                 ) : item.version ? (
-                  <p className="text-[10px] leading-[1.2] opacity-30 text-white">
+                  <p className="text-[10px] leading-[1.2] text-white opacity-30">
                     {item.version}
                   </p>
                 ) : null}
@@ -310,9 +251,9 @@ const Sidebar: React.FC<SidebarProps> = ({
           })}
         </div>
         <div
-          className={`flex flex-col gap-[5px] border-t border-b-w-10 rounded-[10px] mx-[10px] py-[10px] justify-between`}
+          className={`mx-[10px] flex flex-col justify-between gap-[5px] rounded-[10px] border-t border-b-w-10 py-[10px]`}
         >
-          <p className="text-[10px] text-[rgba(255,255,255,0.7)] leading-[17px] text-center opacity-70 uppercase">
+          <p className="text-center text-[10px] uppercase leading-[17px] text-[rgba(255,255,255,0.7)] opacity-70">
             YOUR activities
           </p>
           <Tabs
@@ -320,7 +261,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             variant="light"
             selectedKey={selectedTab}
             onSelectionChange={handleTabChange}
-            className="w-full flex justify-center"
+            className="flex w-full justify-center"
             classNames={{
               cursor: 'bg-white/5 shadow-none',
               tabList: 'w-full',
@@ -333,13 +274,13 @@ const Sidebar: React.FC<SidebarProps> = ({
           <div className="flex flex-col gap-[10px]">{renderTabContent()}</div>
         </div>
       </ScrollShadow>
-      <div className="flex flex-col p-[10px] flex-shrink-0 border-t border-[#383838] gap-[10px]">
+      <div className="flex shrink-0 flex-col gap-[10px] border-t border-[#383838] p-[10px]">
         <div className="flex flex-row flex-wrap gap-[10px] p-[10px]">
           {footerItems.map((item, index) => {
             return (
               <a
                 key={index}
-                className="text-[rgba(225,225,225,0.7)] text-[13px] no-underline hover:underline hover:decoration-[#7dffd1] hover:text-[#7dffd1] hover:opacity-70"
+                className="text-[13px] text-[rgba(225,225,225,0.7)] no-underline hover:text-[#7dffd1] hover:underline hover:decoration-[#7dffd1] hover:opacity-70"
                 href={item.url}
                 target="_blank"
               >
@@ -349,7 +290,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           })}
         </div>
         <div
-          className="flex gap-[10px] items-center justify-center cursor-pointer opacity-70 hover:opacity-100"
+          className="flex cursor-pointer items-center justify-center gap-[10px] opacity-70 hover:opacity-100"
           onClick={() =>
             window.open(
               'https://github.com/ZuzaluSoftwareBuilder/ZuzaluCityOS',
@@ -357,7 +298,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             )
           }
         >
-          <p className="text-[10px] text-white leading-[1.2] uppercase">
+          <p className="text-[10px] uppercase leading-[1.2] text-white">
             ZUZalu city is open source
           </p>
           <Image
@@ -369,8 +310,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
         <Button
           variant="light"
-          border
-          className="text-[13px] leading-[1.4] p-[6px_14px]"
+          color="functional"
+          className="p-[6px_14px] text-[13px] leading-[1.4]"
           endContent={<ArrowUpRightIcon size={5} />}
           onPress={() =>
             window.open(

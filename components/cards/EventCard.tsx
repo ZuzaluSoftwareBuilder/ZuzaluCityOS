@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { Box, Skeleton, Typography } from '@mui/material';
 import { useTheme, useMediaQuery } from '@mui/material';
-import { MapIcon, LockIcon } from '../icons';
+import { MapIcon } from '../icons';
 import { Event } from '@/types';
 import { supabase } from '@/utils/supabase/client';
 import { dayjs } from '@/utils/dayjs';

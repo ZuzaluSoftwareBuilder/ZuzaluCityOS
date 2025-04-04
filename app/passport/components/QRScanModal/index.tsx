@@ -5,20 +5,18 @@ import {
   Box,
   Modal,
   Button,
-  Select,
-  MenuItem,
   Stack,
   CircularProgress,
   useTheme,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { ZuSelect } from 'components/core';
 import dayjs from 'dayjs';
 import { client } from '@/context/WalletContext';
 import { CeramicResponseType } from '@/types';
 import { EventEdge } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { updateRegAndAccess } from '@/services/event/regAndAccess';
+import { getWalletAddressFromDid } from '@/utils/did';
 const QrReader = require('react-qr-scanner');
 
 // ERC721 ABI (只包含我们需要的函数)
@@ -163,7 +161,7 @@ const ScanQRModal = ({ showModal, setShowModal }: IScanQRModal) => {
           // if (dayjs().diff(scannedDate, 'minute') > 1) {
           //   throw new Error('QR Code has expired');
           // }
-          const walletAddress = authorId.split(':')[4];
+          const walletAddress = getWalletAddressFromDid(authorId);
 
           const [hasNFT, result] = await Promise.all([
             verifyNFTOwnership(walletAddress, ticketAddress),

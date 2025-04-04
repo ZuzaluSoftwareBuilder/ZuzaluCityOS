@@ -1,12 +1,5 @@
-import {
-  Box,
-  FormHelperText,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  Stack,
-  Typography,
-} from '@mui/material';
+'use client';
+import { Box, FormHelperText, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo } from 'react';
 import FormHeader from './FormHeader';
 import {
@@ -28,8 +21,10 @@ import SelectCategories from '../select/selectCategories';
 
 import dynamic from 'next/dynamic';
 import FormUploader from './FormUploader';
-import SelectCheckItem from '../select/selectCheckItem';
-import { createDapp, updateDapp } from '@/services/dapp.ts';
+import { createDapp, updateDapp } from '@/services/dapp';
+import { Button, Select, SelectItem } from '../base';
+import { Check } from '@phosphor-icons/react';
+import { isAddress } from 'viem';
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,
 });
@@ -47,10 +42,11 @@ const schema = Yup.object().shape({
   tagline: Yup.string()
     .required('Tagline is required')
     .max(70, 'Maximum 70 characters are allowed'),
-  bannerUrl: Yup.string().required('Banner URL is required'),
   categories: Yup.array(Yup.string().required('Category is required'))
     .min(1, 'At least one category is required')
     .max(5, 'Maximum 5 categories are allowed'),
+  appLogoUrl: Yup.string().required('App logo is required'),
+  bannerUrl: Yup.string().required('App banner is required'),
   developmentStatus: Yup.string().required('Development status is required'),
   openSource: Yup.boolean(),
   repositoryUrl: Yup.string().when('openSource', (v, schema) => {
@@ -58,9 +54,27 @@ const schema = Yup.object().shape({
     if (!openSource) return schema;
     return schema.url().required('Repository URL is required');
   }),
-  appUrl: Yup.string().url(),
+  isSCApp: Yup.boolean(),
+  scAddresses: Yup.string().test(
+    'scAddresses',
+    'Enter valid contract addresses',
+    (v) => {
+      if (!v) return true;
+      const a = v?.split(',');
+      return a?.map((item) => isAddress(item)).every(Boolean);
+    },
+  ),
+  isInstallable: Yup.boolean(),
   websiteUrl: Yup.string().url(),
   docsUrl: Yup.string().url(),
+  auditLogUrl: Yup.string().url(),
+  appUrl: Yup.string()
+    .url()
+    .when('isInstallable', (v, schema) => {
+      const isInstallable = v?.[0];
+      if (!isInstallable) return schema;
+      return schema.required('App URL is required');
+    }),
 });
 
 type FormData = Yup.InferType<typeof schema>;
@@ -95,21 +109,28 @@ const DappForm: React.FC<DappFormProps> = ({
       appName: initialData?.appName || '',
       developerName: initialData?.developerName || '',
       description: initialData?.description || '',
-      bannerUrl: initialData?.bannerUrl || '',
-      categories: initialData?.categories?.split(',') || [],
-      developmentStatus: initialData?.devStatus || '',
       tagline: initialData?.tagline || '',
+      categories: initialData?.categories?.split(',') || [],
+      appLogoUrl: initialData?.appLogoUrl || '',
+      bannerUrl: initialData?.bannerUrl || '',
+      developmentStatus: initialData?.devStatus || '',
       openSource: Number(initialData?.openSource) === 1 || false,
       repositoryUrl: initialData?.repositoryUrl || '',
-      appUrl: initialData?.appUrl || '',
+      isSCApp: Number(initialData?.isSCApp) === 1 || false,
+      scAddresses:
+        initialData?.scAddresses?.map((item) => item.address).join(',') || '',
+      isInstallable: Number(initialData?.isInstallable) === 1 || false,
       websiteUrl: initialData?.websiteUrl || '',
       docsUrl: initialData?.docsUrl || '',
+      appUrl: initialData?.appUrl || '',
+      auditLogUrl: initialData?.auditLogUrl || '',
     },
   });
 
   const openSource = watch('openSource');
-  const developmentStatus = watch('developmentStatus');
+  const isSCApp = watch('isSCApp');
   const tagline = watch('tagline');
+  const isInstallable = watch('isInstallable');
 
   const resetForm = useCallback(() => {
     reset();
@@ -119,16 +140,16 @@ const DappForm: React.FC<DappFormProps> = ({
   const submitMutation = useMutation({
     mutationFn: ({ type, data }: { type: 'create' | 'edit'; data: any }) => {
       if (type === 'create') {
-        return createDapp(composeClient, { ...data, profileId });
+        return createDapp({ ...data, profileId });
       } else {
-        return updateDapp(composeClient, { ...data, id: initialData?.id });
+        return updateDapp({ ...data, id: initialData?.id });
       }
     },
     onSuccess: () => {
       resetForm();
       refetch?.();
       handleClose();
-      queryClient.invalidateQueries({ queryKey: ['getDappInfoList'] });
+      queryClient.invalidateQueries({ queryKey: ['GET_DAPP_LIST_QUERY'] });
     },
   });
 
@@ -208,7 +229,8 @@ const DappForm: React.FC<DappFormProps> = ({
         display="flex"
         flexDirection="column"
         gap="20px"
-        padding={3}
+        padding="20px"
+        pb="0"
         flex={1}
       >
         <Stack direction="column" gap="10px">
@@ -217,7 +239,7 @@ const DappForm: React.FC<DappFormProps> = ({
         </Stack>
         <Stack
           direction={'column'}
-          spacing="30px"
+          spacing="20px"
           bgcolor="#262626"
           padding="20px"
           borderRadius="10px"
@@ -289,29 +311,6 @@ const DappForm: React.FC<DappFormProps> = ({
             )}
           </Stack>
           <Stack spacing="10px">
-            <FormLabel>App Banner Image*</FormLabel>
-            <FormLabelDesc>
-              Recommend 620 x 280. Upload PNG, GIF or JPEG
-            </FormLabelDesc>
-            <Controller
-              name="bannerUrl"
-              control={control}
-              render={({ field }) => (
-                <FormUploader
-                  previewStyle={{
-                    aspectRatio: '620/280',
-                    width: '100%',
-                    height: 'auto',
-                  }}
-                  {...field}
-                />
-              )}
-            />
-            {errors?.bannerUrl && (
-              <FormHelperText error>{errors?.bannerUrl.message}</FormHelperText>
-            )}
-          </Stack>
-          <Stack spacing="10px">
             <Stack spacing="10px">
               <FormLabel>Select App Categories*</FormLabel>
               <FormLabelDesc>
@@ -340,13 +339,62 @@ const DappForm: React.FC<DappFormProps> = ({
               )}
             </Box>
           </Stack>
+          <Stack spacing="10px">
+            <FormLabel>App Logo*</FormLabel>
+            <FormLabelDesc>
+              Recommend min of 200x200px (1:1 Ratio). Supported Formats: JPG,
+              PNG, GIF
+            </FormLabelDesc>
+            <Controller
+              name="appLogoUrl"
+              control={control}
+              render={({ field }) => (
+                <FormUploader
+                  previewStyle={{
+                    width: '140px',
+                    height: '140px',
+                  }}
+                  {...field}
+                />
+              )}
+            />
+            {errors?.appLogoUrl && (
+              <FormHelperText error>
+                {errors?.appLogoUrl.message}
+              </FormHelperText>
+            )}
+          </Stack>
+          <Stack spacing="10px">
+            <FormLabel>App Banner Image*</FormLabel>
+            <FormLabelDesc>
+              Recommend 620 x 280px. Supported Formats: JPG, PNG, GIF
+            </FormLabelDesc>
+            <Controller
+              name="bannerUrl"
+              control={control}
+              render={({ field }) => (
+                <FormUploader
+                  previewStyle={{
+                    aspectRatio: '620/280',
+                    width: '100%',
+                    height: 'auto',
+                  }}
+                  {...field}
+                />
+              )}
+            />
+            {errors?.bannerUrl && (
+              <FormHelperText error>{errors?.bannerUrl.message}</FormHelperText>
+            )}
+          </Stack>
         </Stack>
       </Box>
       <Box
         display="flex"
         flexDirection="column"
         gap="20px"
-        padding={3}
+        padding="20px"
+        pb="0"
         flex={1}
       >
         <Stack direction="column" gap="10px">
@@ -355,7 +403,7 @@ const DappForm: React.FC<DappFormProps> = ({
         </Stack>
         <Stack
           direction={'column'}
-          spacing="30px"
+          spacing="20px"
           bgcolor="#262626"
           padding="20px"
           borderRadius="10px"
@@ -365,23 +413,22 @@ const DappForm: React.FC<DappFormProps> = ({
             <Controller
               control={control}
               name="developmentStatus"
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  size="small"
-                  renderValue={(selected) => selected}
-                  input={<OutlinedInput label="Name" />}
-                >
-                  {developmentStatusOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      <SelectCheckItem
-                        label={option.label}
-                        isChecked={developmentStatus === option.value}
-                      />
-                    </MenuItem>
-                  ))}
-                </Select>
-              )}
+              render={({ field }) => {
+                return (
+                  <Select
+                    selectedKeys={[field.value]}
+                    onSelectionChange={(value) => {
+                      console.log(value.currentKey);
+                      setValue('developmentStatus', value.currentKey!);
+                    }}
+                    {...field}
+                  >
+                    {developmentStatusOptions.map((option) => (
+                      <SelectItem key={option.value}>{option.label}</SelectItem>
+                    ))}
+                  </Select>
+                );
+              }}
             />
             {errors?.developmentStatus && (
               <FormHelperText error>
@@ -446,13 +493,119 @@ const DappForm: React.FC<DappFormProps> = ({
               </Stack>
             )}
           </Stack>
+          <Stack
+            spacing="20px"
+            p="20px"
+            borderRadius="10px"
+            border="1px solid rgba(255, 255, 255, 0.10)"
+          >
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Stack spacing="10px">
+                <Typography
+                  sx={{
+                    fontSize: '16px',
+                    fontWeight: 700,
+                    lineHeight: 1.2,
+                  }}
+                >
+                  Dapp Smart Contracts
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: '14px',
+                    lineHeight: 1.2,
+                    opacity: 0.8,
+                  }}
+                >
+                  Does this app utilize smart contracts?
+                </Typography>
+              </Stack>
+              <Controller
+                control={control}
+                name="isSCApp"
+                render={({ field }) => (
+                  <ZuSwitch checked={field.value} {...field} />
+                )}
+              />
+            </Stack>
+            {isSCApp && (
+              <Stack gap="20px">
+                <div className="flex flex-col gap-2">
+                  <p className="text-[16px] font-[500] leading-[1.2]">
+                    Add smart contract addresses
+                  </p>
+                  <p className="text-[13px] leading-[1.4] opacity-60">
+                    You can add multiple address by using a “,” comma after each
+                    address
+                  </p>
+                </div>
+                <Controller
+                  control={control}
+                  name="scAddresses"
+                  render={({ field }) => (
+                    <ZuInput multiline rows={3} {...field} placeholder="0x" />
+                  )}
+                />
+                {errors?.scAddresses && (
+                  <FormHelperText error>
+                    {errors?.scAddresses.message}
+                  </FormHelperText>
+                )}
+              </Stack>
+            )}
+          </Stack>
+          <Stack
+            spacing="20px"
+            p="20px"
+            borderRadius="10px"
+            border="1px solid rgba(255, 255, 255, 0.10)"
+          >
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Stack spacing="10px">
+                <Typography
+                  sx={{
+                    fontSize: '16px',
+                    fontWeight: 700,
+                    lineHeight: 1.2,
+                  }}
+                >
+                  Installable App?
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: '14px',
+                    lineHeight: 1.2,
+                    opacity: 0.8,
+                  }}
+                >
+                  Is this app installable for community spaces?
+                </Typography>
+              </Stack>
+              <Controller
+                control={control}
+                name="isInstallable"
+                render={({ field }) => (
+                  <ZuSwitch checked={field.value} {...field} />
+                )}
+              />
+            </Stack>
+          </Stack>
         </Stack>
       </Box>
       <Box
         display="flex"
         flexDirection="column"
         gap="20px"
-        padding={3}
+        padding="20px"
+        pb="0"
         flex={1}
       >
         <Stack direction="column" gap="10px">
@@ -463,25 +616,11 @@ const DappForm: React.FC<DappFormProps> = ({
         </Stack>
         <Stack
           direction={'column'}
-          spacing="30px"
+          spacing="20px"
           bgcolor="#262626"
           padding="20px"
           borderRadius="10px"
         >
-          <Stack spacing="10px">
-            <FormLabel>App Link</FormLabel>
-            <FormLabelDesc>Link to hosted app</FormLabelDesc>
-            <Controller
-              control={control}
-              name="appUrl"
-              render={({ field }) => (
-                <ZuInput {...field} placeholder="https://" />
-              )}
-            />
-            {errors?.appUrl && (
-              <FormHelperText error>{errors?.appUrl.message}</FormHelperText>
-            )}
-          </Stack>
           <Stack spacing="10px">
             <FormLabel>Website</FormLabel>
             <FormLabelDesc>App or project website</FormLabelDesc>
@@ -514,8 +653,88 @@ const DappForm: React.FC<DappFormProps> = ({
               <FormHelperText error>{errors?.docsUrl.message}</FormHelperText>
             )}
           </Stack>
+          <Stack spacing="10px">
+            <FormLabel>Audit Reports</FormLabel>
+            <FormLabelDesc>Enter the URL for the audit reports</FormLabelDesc>
+            <Controller
+              control={control}
+              name="auditLogUrl"
+              render={({ field }) => (
+                <ZuInput {...field} placeholder="https://" />
+              )}
+            />
+            {errors?.auditLogUrl && (
+              <FormHelperText error>
+                {errors?.auditLogUrl.message}
+              </FormHelperText>
+            )}
+          </Stack>
         </Stack>
       </Box>
+      {isInstallable && (
+        <Box
+          display="flex"
+          flexDirection="column"
+          gap="20px"
+          padding="20px"
+          pb="0"
+          flex={1}
+        >
+          <Stack direction="column" gap="10px">
+            <FormTitle>List App For Community Spaces</FormTitle>
+            <FormLabelDesc>
+              Include a URL to your app for spaces to install
+            </FormLabelDesc>
+          </Stack>
+          <Stack
+            direction={'column'}
+            spacing="20px"
+            bgcolor="#262626"
+            padding="20px"
+            borderRadius="10px"
+          >
+            <p className="text-[14px] leading-[1.6] opacity-60">
+              Note: v0.1.0 only include iframe-based apps
+            </p>
+            <div className="flex flex-col gap-2">
+              <FormLabel>Integration Type</FormLabel>
+              <FormLabelDesc>
+                Select the installation type for spaces
+              </FormLabelDesc>
+              <div className="flex gap-2">
+                <Button
+                  size="md"
+                  className="h-[30px] gap-[5px] rounded-[6px] border border-white/10 p-[4px_8px]"
+                  endContent={<Check size={16} weight="thin" />}
+                >
+                  iFrame App
+                </Button>
+                <Button
+                  size="md"
+                  isDisabled
+                  className="h-[30px] gap-[5px] rounded-[6px] border border-white/10 p-[4px_8px]"
+                >
+                  More Coming Soon
+                </Button>
+              </div>
+            </div>
+            <Stack spacing="10px">
+              <FormLabel>App URL*</FormLabel>
+              <FormLabelDesc>Link for users to use this app</FormLabelDesc>
+              <Controller
+                control={control}
+                name="appUrl"
+                render={({ field }) => (
+                  <ZuInput {...field} placeholder="https://" />
+                )}
+              />
+              {errors?.appUrl && (
+                <FormHelperText error>{errors?.appUrl.message}</FormHelperText>
+              )}
+            </Stack>
+          </Stack>
+        </Box>
+      )}
       <Box padding={3}>
         <FormFooter
           confirmText={initialData ? 'Update App' : 'Confirm App'}

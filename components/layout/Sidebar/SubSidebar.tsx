@@ -17,7 +17,7 @@ import {
   StackProps,
   Typography,
 } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material';
 import { useRouter, usePathname } from 'next/navigation';
 
 import styles from './SubSidebar.module.css';

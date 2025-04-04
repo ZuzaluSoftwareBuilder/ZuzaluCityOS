@@ -55,7 +55,7 @@ export default function ZupassForm({ regAndAccess, onClose }: FormProps) {
 
   const queryClient = useQueryClient();
   const pathname = useParams();
-  const eventId = pathname.eventid.toString();
+  const eventId = pathname.eventid?.toString();
 
   const updateMutation = useMutation({
     mutationFn: updateRegAndAccess,

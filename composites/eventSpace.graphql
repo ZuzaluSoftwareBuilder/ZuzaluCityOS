@@ -2,6 +2,30 @@ type ZucityEvent @loadModel(id: "$Event_ID") {
   id: ID!
 }
 
+type ZucityInstalledApp @loadModel(id: "$InstalledApp_ID") {
+  id: ID!
+}
+
+type ZucityAnnouncement @loadModel(id: "$Announcement_ID") {  
+  id: ID!
+}
+
+type ZucitySpaceGating @loadModel(id: "$SpaceGating_ID") {
+  id: ID!
+}
+
+type ZucityUserRoles @loadModel(id: "$UserRoles_ID") {
+  id: ID!
+}
+
 type ZucitySpace @loadModel(id: "$Space_ID") {
   events: [ZucityEvent] @relationFrom(model: "ZucityEvent", property: "spaceId")
+  installedApps: [ZucityInstalledApp]
+    @relationFrom(model: "ZucityInstalledApp", property: "spaceId")
+  announcements: [ZucityAnnouncement]
+    @relationFrom(model: "ZucityAnnouncement", property: "spaceId")
+  spaceGating: [ZucitySpaceGating]
+    @relationFrom(model: "ZucitySpaceGating", property: "spaceId")
+  userRoles: [ZucityUserRoles]
+    @relationFrom(model: "ZucityUserRoles", property: "spaceId")
 }

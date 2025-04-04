@@ -1,11 +1,14 @@
 import FormHeader from '@/components/form/FormHeader';
 import { GlobeAltIcon, WindowIcon } from '@/components/icons';
 import { Box, Typography, Stack, Divider } from '@mui/material';
-import Link from 'next/link';
 
 import ShowMoreEdit from '@/components/editor/ShowMoreEdit';
 import { Dapp } from '@/types';
 import theme from '@/theme/theme';
+import DAppDetailDrawer from '@/app/spaces/[spaceid]/setting/apps/components/DAppDetailDrawer';
+import { Image } from '@heroui/react';
+import { BoxArrowDown } from '@phosphor-icons/react';
+import { Plugs } from '@phosphor-icons/react';
 interface DappDetailProps {
   data?: Dapp;
   handleClose: () => void;
@@ -26,6 +29,8 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
     websiteUrl,
     docsUrl,
     tagline,
+    isInstallable,
+    appLogoUrl,
   } = data;
 
   const categoriesArray = categories.split(',');
@@ -33,17 +38,39 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
   return (
     <Box>
       <FormHeader title={appName} handleClose={handleClose} />
-      <Stack display="flex" flexDirection="column" gap="20px" padding="20px">
-        <img
+      <div className="flex flex-col gap-[20px] p-[20px] mobile:p-[10px]">
+        <DAppDetailDrawer.Disclaimer />
+        <Image
           src={bannerUrl}
           alt="dapp-detail"
-          style={{
-            width: '100%',
-            height: 'auto',
-            aspectRatio: '620/280',
-            borderRadius: '10px',
-          }}
+          className="aspect-[620/280] h-auto w-full rounded-[10px] object-cover"
         />
+        {isInstallable === '1' && (
+          <div className="flex items-center gap-[10px]">
+            <div className="flex items-center justify-center gap-[5px] rounded-[8px] border border-[#7dffd1]/10 bg-[#7dffd1]/10 p-[4px_8px] text-[13px] text-[#7DFFD1]">
+              <Plugs size={16} color="#7DFFD1" weight="fill" />
+              Integrated App
+            </div>
+            <p className="flex items-center gap-[5px] rounded-[8px] bg-white/5 p-[4px_8px] text-[13px]">
+              <BoxArrowDown size={16} weight="fill" />
+              Installable to Space
+            </p>
+          </div>
+        )}
+        <div className="flex flex-row items-center gap-[10px]">
+          <Image
+            src={appLogoUrl || ''}
+            alt={appName}
+            className="size-[60px] rounded-[10px] border border-[rgba(255,255,255,0.1)]"
+            classNames={{
+              wrapper: 'shrink-0',
+            }}
+          />
+          <div className="flex flex-col gap-[5px]">
+            <p className="text-[18px] font-bold leading-[1.4]">{appName}</p>
+            <p className="text-[13px] leading-[1.4] opacity-80">{tagline}</p>
+          </div>
+        </div>
         <Stack
           direction="row"
           gap="10px"
@@ -60,7 +87,7 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
             gap="10px"
             borderRadius="10px"
             border="1px solid rgba(255, 255, 255, 0.10)"
-            bgcolor="rgba(255, 255, 255, 0.10)"
+            bgcolor="rgba(255, 255, 255, 0.05)"
             p="10px 14px"
             sx={{
               cursor: appUrl ? 'pointer' : 'not-allowed',
@@ -85,7 +112,7 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
               justifyContent="center"
               gap="10px"
               borderRadius="10px"
-              bgcolor="rgba(255, 255, 255, 0.05)"
+              bgcolor="rgba(255, 255, 255, 0.1)"
               p="10px 14px"
               flex={1}
               sx={{ cursor: websiteUrl ? 'pointer' : 'not-allowed' }}
@@ -104,7 +131,7 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
               justifyContent="center"
               gap="10px"
               borderRadius="10px"
-              bgcolor="rgba(255, 255, 255, 0.05)"
+              bgcolor="rgba(255, 255, 255, 0.1)"
               p="10px 14px"
               flex={1}
               sx={{ cursor: docsUrl ? 'pointer' : 'not-allowed' }}
@@ -118,14 +145,6 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
               </Typography>
             </Stack>
           </Stack>
-        </Stack>
-        <Stack gap="10px">
-          <Typography fontSize={18} fontWeight={800} lineHeight={1.4}>
-            {appName}
-          </Typography>
-          <Typography fontSize={13} lineHeight={1.4} sx={{ opacity: 0.8 }}>
-            {tagline}
-          </Typography>
         </Stack>
         <Stack direction="column" gap="10px">
           <Stack direction="row" alignItems="center" gap="10px" flexWrap="wrap">
@@ -159,52 +178,12 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
         </Typography>
         <ShowMoreEdit value={description} />
         <Divider />
-        <Stack direction="column" gap="10px">
-          <Stack direction="row" alignItems="center" gap="10px">
-            <Typography fontSize={13} lineHeight={1.4} sx={{ opacity: 0.5 }}>
-              Status:
-            </Typography>
-            <Typography fontSize={13} lineHeight={1.4} sx={{ opacity: 0.8 }}>
-              {devStatus}
-            </Typography>
-          </Stack>
-          {Number(openSource) === 1 && (
-            <>
-              <Stack direction="row" alignItems="center" gap="10px">
-                <Typography
-                  fontSize={13}
-                  lineHeight={1.4}
-                  sx={{ opacity: 0.5 }}
-                >
-                  Repository Link:
-                </Typography>
-                <Link
-                  href={repositoryUrl || ''}
-                  target="_blank"
-                  style={{
-                    fontSize: 13,
-                    lineHeight: 1.4,
-                    opacity: 0.8,
-                    textDecorationLine: 'underline',
-                    textDecorationStyle: 'solid',
-                  }}
-                >
-                  View Repository
-                </Link>
-              </Stack>
-              <Typography
-                p="4px 8px"
-                fontSize={13}
-                borderRadius="4px"
-                bgcolor="rgba(255, 255, 255, 0.05)"
-                width="fit-content"
-              >
-                Open-Source
-              </Typography>
-            </>
-          )}
-        </Stack>
-      </Stack>
+        <DAppDetailDrawer.Status
+          devStatus={devStatus}
+          openSource={openSource}
+          repositoryUrl={repositoryUrl}
+        />
+      </div>
     </Box>
   );
 }

@@ -1,6 +1,6 @@
 import { AkashaProfile } from '@akashaorg/typings/lib/ui';
 import akashaSdk from '../akasha';
-import { AkashaProfileStats, ZulandProfileInput } from '../akasha.d';
+import { AkashaProfileStats, ZulandProfileInput } from '@/types/akasha';
 import { SetOptionsInput } from '@akashaorg/typings/lib/sdk/graphql-types-new';
 import { getAppByEventId } from '../app';
 import { AccessControlCondition } from '@/utils/lit/types';

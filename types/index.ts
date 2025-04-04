@@ -197,26 +197,25 @@ export interface Space {
   name: string;
   profileId?: string;
   tagline: string;
-  website?: string;
-  twitter?: string;
-  telegram?: string;
-  nostr?: string;
-  lens?: string;
-  github?: string;
-  discord?: string;
-  ens?: string;
   category?: string;
-  members?: {
-    id: string;
+  tags?: {
+    tag: string;
   }[];
-  admins?: {
+  owner: {
     id: string;
-  }[];
-  superAdmin?: {
-    id: string;
-  }[];
+    zucityProfile: Profile;
+  };
   customLinks?: Link[];
-  events: {
+  socialLinks?: Link[];
+  announcements?: {
+    edges: {
+      node: {
+        id: string;
+        createdAt: string;
+      };
+    }[];
+  };
+  events?: {
     edges: {
       node: {
         startTime: string;
@@ -224,7 +223,19 @@ export interface Space {
       };
     }[];
   };
+  userRoles?: {
+    edges: {
+      node: UserRole;
+    }[];
+  };
   customAttributes: TBD[];
+  createdAt: string;
+  updatedAt: string;
+  installedApps: {
+    edges: {
+      node: InstalledApp;
+    }[];
+  };
 }
 
 export interface CalendarConfig {
@@ -594,6 +605,7 @@ export interface Dapp {
   developerName: string;
   description: string;
   bannerUrl: string;
+  appLogoUrl: string;
   categories: string;
   devStatus: string;
   openSource: boolean;
@@ -602,9 +614,112 @@ export interface Dapp {
   websiteUrl: string;
   docsUrl: string;
   tagline: string;
+  isInstallable: string;
+  isSCApp: boolean;
+  scAddresses: {
+    address: string;
+    chain: string;
+  }[];
+  auditLogUrl: string;
   profile: {
     author: {
       id: string;
+    };
+    username: string;
+    avatar: string;
+  };
+}
+
+export interface Permission {
+  id: string;
+  name: string;
+  resource: string;
+}
+
+export enum PermissionName {
+  MANAGE_ADMIN_ROLE = 'manage_admin_role',
+  MANAGE_MEMBER_ROLE = 'manage_member_role',
+  CREATE_EVENTS = 'create_events',
+  MANAGE_PROFILE = 'manage_profile',
+  VIEW_EVENTS = 'view_events',
+  INVITE_USERS = 'invite_users',
+  VIEW_LOGS = 'view_logs',
+  VIEW_ANALYTICS = 'view_analytics',
+  MANAGE_APPS = 'manage_apps',
+  VIEW_APPS = 'view_apps',
+  MANAGE_SPACE_ANNOUNCEMENTS = 'manage_space_announcements',
+  VIEW_SPACE_ANNOUNCEMENTS = 'view_space_announcements',
+}
+
+export interface Role {
+  id: string;
+  name: string;
+  level: string;
+  is_vanity: boolean;
+  resource_id: string;
+}
+
+export interface RolePermission {
+  id: string;
+  role: Role;
+  permission_ids: string[];
+}
+
+export interface UserRole {
+  id: string;
+  roleId: string;
+  userId: {
+    zucityProfile: Profile;
+  };
+  customAttributes: TBD[];
+}
+
+export interface UserRoleData {
+  zucityUserRolesIndex: {
+    edges: { node: UserRole }[];
+  };
+}
+
+export interface IProfile {
+  zucityProfileIndex: {
+    edges: { node: Profile }[];
+  };
+}
+
+export interface IUserProfileWithSpaceAndEvent {
+  zucityProfile: {
+    id: string;
+    username: string;
+    spaces: {
+      edges: { node: Space }[];
+    };
+    events: {
+      edges: { node: Event }[];
+    };
+  };
+}
+
+export interface InstalledApp {
+  id: string;
+  installedAppId?: string;
+  nativeAppName?: string;
+  installedApp?: Dapp;
+}
+
+export interface Announcement {
+  id: string;
+  title: string;
+  tags: { tag: string }[];
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  sourceId: string;
+  author: {
+    id: string;
+    zucityProfile: {
+      // FIXME: can not fetch avatar and username from zucityProfile
+      avatar: string;
+      username: string;
     };
   };
 }

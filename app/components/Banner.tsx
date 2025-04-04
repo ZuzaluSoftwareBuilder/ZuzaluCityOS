@@ -13,20 +13,20 @@ const Banner = () => {
   return (
     <>
       <div
-        className="h-[40px] border-b-w-10 border-b-1 bg-[rgb(34,34,34)] hover:bg-[rgb(28,28,28)] cursor-pointer group"
+        className="group h-[40px] cursor-pointer border-b-1 border-b-w-10 bg-[rgb(34,34,34)] hover:bg-[rgb(28,28,28)]"
         onClick={() => router.push('/dapps')}
       >
-        <div className="h-full p-[10px] w-full flex items-center justify-center gap-[10px]">
-          <div className="relative w-[24px] h-[24px]">
-            <ArrowCircleRightIcon className="absolute inset-0 transition-opacity duration-300 opacity-100 group-hover:opacity-0" />
-            <ArrowCircleRightFillIcon className="absolute inset-0 transition-all duration-300 opacity-0 group-hover:opacity-100 transform group-hover:translate-x-[2px]" />
+        <div className="flex size-full items-center justify-center gap-[10px] p-[10px]">
+          <div className="relative size-[24px]">
+            <ArrowCircleRightIcon className="absolute inset-0 opacity-100 transition-opacity duration-300 group-hover:opacity-0" />
+            <ArrowCircleRightFillIcon className="absolute inset-0 opacity-0 transition-all duration-300 group-hover:translate-x-[2px] group-hover:opacity-100" />
           </div>
-          <div className="relative transition-transform duration-300 group-hover:-translate-x-[2px]">
+          <div className="relative transition-transform duration-300 group-hover:translate-x-[-2px]">
             <p className="text-[14px] font-[600] leading-[1.2] text-white/80">
               dApp Explore Open! List your dApps now!
             </p>
             <p
-              className="text-[14px] font-[600] leading-[1.2] text-transparent animate-gradient absolute top-0 left-0 z-10"
+              className="absolute left-0 top-0 z-10 text-[14px] font-[600] leading-[1.2] text-transparent"
               style={{
                 animationTimeline: 'auto',
                 animationRangeStart: 'normal',
@@ -41,16 +41,16 @@ const Banner = () => {
           </div>
         </div>
       </div>
-      <div className="border-b-w-10 border-b-1 px-[42px] py-[32px] bg-[url('/banner/banner_bg.png')] bg-lightgray bg-center bg-cover bg-no-repeat mobile:p-[20px]">
-        <p className="text-[49px] font-[900] leading-[1.2] mb-[10px] font-[merriweather] mobile:text-[42px] mobile:mb-0">
+      <div className="border-b-1 border-b-w-10 bg-[url('/banner/banner_bg.png')] bg-cover bg-center bg-no-repeat px-[42px] py-[32px] mobile:p-[20px]">
+        <p className="mb-[10px] font-merriweather text-[49px] font-black leading-[1.2] mobile:mb-0 mobile:text-[42px]">
           Zuzalu City
         </p>
-        <p className="text-[16px] font-[500] leading-[1.2] opacity-80 mb-[20px]">
+        <p className="mb-[20px] text-[16px] font-[500] leading-[1.2] opacity-80">
           Welcome to the new Zuzalu City! Stay up to date below.
         </p>
         <div className="flex items-center gap-[10px] mobile:flex-col mobile:items-start">
           <Button
-            border
+            color="functional"
             startContent={<RightArrowIcon />}
             className="bg-[#383838] font-[600] mobile:w-full"
           >

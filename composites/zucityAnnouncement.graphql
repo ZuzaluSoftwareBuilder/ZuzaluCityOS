@@ -1,0 +1,35 @@
+type ZucityAnnouncement
+  @createModel(
+    accountRelation: LIST
+    description: "Announcements for Zuzalu.city beta version"
+  )
+  @createIndex(fields: [{ path: "sourceId" }]) {
+  author: DID! @documentAccount
+  title: String! @string(minLength: 1, maxLength: 100000)   
+  description: String @string(minLength: 1, maxLength: 100000)
+  eventId: StreamID @documentReference(model: "ZucityEvent")
+  event: ZucityEvent @relationDocument(property: "eventId")
+  spaceId: StreamID @documentReference(model: "ZucitySpace")
+  space: ZucitySpace @relationDocument(property: "spaceId")
+  sourceId: String! @string(minLength: 1, maxLength: 100000)
+  tags: [Tag] @list(maxLength: 1000)
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  customAttributes: [TBD] @list(maxLength: 10000)
+}
+
+type ZucitySpace @loadModel(id: "$Space_ID") {
+  id: ID!
+}
+
+type ZucityEvent @loadModel(id: "$Event_ID") {
+  id: ID!
+}
+
+type Tag {
+  tag: String! @string(minLength: 1, maxLength: 10000)
+}
+
+type TBD {
+  tbd: String @string(minLength: 1, maxLength: 10000)
+}

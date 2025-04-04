@@ -13,7 +13,7 @@ import { NextRequest } from 'next/server';
  * event config (public key, event ID, product ID).
  */
 export async function POST(req: NextRequest) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const body = await req.json();
   if (!body.pcd || !(typeof body.pcd === 'string')) {
     console.error(`[ERROR] No PCD specified`);
