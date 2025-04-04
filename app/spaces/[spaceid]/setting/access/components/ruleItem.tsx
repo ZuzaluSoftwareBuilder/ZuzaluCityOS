@@ -68,6 +68,9 @@ RuleItem.Edit = memo(function Edit() {
 
   const rule = form.watch('rule');
   const poap = form.watch('poap');
+  const zupassPublicKey = form.watch('zupass.publicKey');
+  const zupassEventId = form.watch('zupass.eventId');
+  const zupassEventName = form.watch('zupass.eventName');
 
   const [manualIsValid, setManualIsValid] = useState(false);
 
@@ -78,12 +81,16 @@ RuleItem.Edit = memo(function Edit() {
     if (rule === 'poap') {
       isValid = Array.isArray(values.poap) && values.poap.length > 0;
     } else if (rule === 'zupass') {
-      const zupass = values.zupass;
-      isValid = !!(zupass?.publicKey && zupass?.eventId && zupass?.eventName);
+      const zupass = values.zupass || {};
+      const publicKey = (zupass.publicKey || '').trim();
+      const eventId = (zupass.eventId || '').trim();
+      const eventName = (zupass.eventName || '').trim();
+
+      isValid = !!(publicKey && eventId && eventName);
     }
 
     setManualIsValid(isValid);
-  }, [form, rule, poap]);
+  }, [form, rule, poap, zupassPublicKey, zupassEventId, zupassEventName]);
 
   return (
     <FormProvider {...form}>
