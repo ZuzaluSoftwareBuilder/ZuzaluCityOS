@@ -1,7 +1,7 @@
 import { Button, Divider, Select, SelectItem } from '@/components/base';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ArrowUpRight } from '@phosphor-icons/react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { memo } from 'react';
 import * as yup from 'yup';
 import { POAP } from './rule';
@@ -25,25 +25,42 @@ const RuleItem = ({ title, tags, isActive, onEdit }: AccessRuleProps) => {
 
 const editSchema = yup.object({
   rule: yup.string().required(),
+  poap: yup
+    .array()
+    .of(yup.number().required())
+    .when('rule', {
+      is: 'poap',
+      then: (schema) =>
+        schema
+          .min(1, 'At least one POAP is required')
+          .required('POAP is required'),
+      otherwise: (schema) => schema.optional(),
+    }),
+  zupass: yup
+    .object({
+      publicKey: yup.string().required('Public key is required'),
+      eventId: yup.string().required('Event ID is required'),
+      eventName: yup.string().required('Event name is required'),
+    })
+    .when('rule', {
+      is: 'zupass',
+      then: (schema) => schema.required(),
+      otherwise: (schema) => schema.optional(),
+    }),
 });
 
 RuleItem.Edit = memo(function Edit() {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    watch,
-  } = useForm<yup.InferType<typeof editSchema>>({
+  const form = useForm<yup.InferType<typeof editSchema>>({
     resolver: yupResolver(editSchema),
     defaultValues: {
       rule: 'poap',
     },
   });
 
-  const rule = watch('rule');
+  const rule = form.watch('rule');
 
   return (
-    <>
+    <FormProvider {...form}>
       <div className="flex items-center gap-2 p-5">
         <Select
           classNames={{ trigger: 'p-[4px_10px] min-h-[35px] h-[35px]' }}
@@ -55,7 +72,7 @@ RuleItem.Edit = memo(function Edit() {
         </Select>
         <span className="text-[16px] text-white/60">with</span>
         <Controller
-          control={control}
+          control={form.control}
           name="rule"
           render={({ field }) => (
             <Select
@@ -73,7 +90,15 @@ RuleItem.Edit = memo(function Edit() {
         />
       </div>
       <Divider />
-      {rule === 'poap' && <POAP />}
+      {rule === 'poap' && (
+        <Controller
+          control={form.control}
+          name="poap"
+          render={({ field }) => (
+            <POAP initialValue={field.value} onChange={field.onChange} />
+          )}
+        />
+      )}
       {rule === 'zupass' && <ZuPass />}
       <Divider />
       <div
@@ -102,7 +127,7 @@ RuleItem.Edit = memo(function Edit() {
           </Button>
         </div>
       </div>
-    </>
+    </FormProvider>
   );
 });
 

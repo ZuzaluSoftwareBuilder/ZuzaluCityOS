@@ -96,7 +96,6 @@ const CategorySelection: React.FC<{
               selected={category === type.value}
               onClick={() => {
                 field.onChange(type.value);
-                console.log('category', type.value);
               }}
             />
           ))}
