@@ -16,6 +16,8 @@ import {
 import { cn } from '@heroui/react';
 import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import { Button, Input } from '@/components/base';
+import { MarkdownLinkPlugin } from './mdLinkPlugin';
+import { MarkdownPastePlugin } from './mdPasteHandler';
 
 interface EditorValue {
   content: string;
@@ -24,7 +26,7 @@ interface EditorValue {
 }
 
 interface EditorProProps {
-  value?: string; // JSON string
+  _value?: string; // JSON string
   onChange?: (value: string) => void; // JSON string
   placeholder?: string;
   className?: string;
@@ -32,14 +34,19 @@ interface EditorProProps {
   onClick?: () => void;
   collapsable?: boolean;
   collapseHeight?: number;
-  collapsed?: boolean;
+  _collapsed?: boolean;
   onCollapse?: (collapsed: boolean) => void;
 }
 
 // Check if content is empty
 const isContentEmpty = (content: string): boolean => {
-  // Remove HTML tags and whitespace
-  const plainText = content.replace(/<[^>]*>/g, '').trim();
+  // Remove all HTML tags, keep text content only
+  const plainText = content
+    .replace(/<br\s*\/?>/g, '') // Remove all line break tags
+    .replace(/<[^>]+>/g, '') // Remove all other HTML tags
+    .replace(/&nbsp;/g, ' ') // Replace &nbsp; with regular space
+    .replace(/\s+/g, ' ') // Replace multiple whitespace characters with a single space
+    .trim();
   return plainText.length === 0;
 };
 
@@ -66,20 +73,53 @@ const LinkInput = ({ editor, isOpen }: { editor: any; isOpen: boolean }) => {
   }, [isOpen, editor]);
 
   const addLink = () => {
-    // Check if there is selected text
-    const hasSelection = !editor.state.selection.empty;
+    if (!url || !editor) return;
 
-    if (url) {
-      if (hasSelection) {
-        // If text is selected, add the link directly
-        editor.chain().focus().setLink({ href: url }).run();
-      } else {
-        // If no text is selected, prompt the user
-        alert('Please select the text you want to link');
-        return;
-      }
-      setUrl('');
+    // Process URL
+    let processedUrl = url.trim();
+    if (processedUrl.startsWith('www.')) {
+      processedUrl = `https://${processedUrl}`;
     }
+
+    // Check if text is selected
+    const { empty, from, to } = editor.state.selection;
+    if (empty) {
+      alert('Please select the text you want to link');
+      return;
+    }
+
+    // Check if updating existing link
+    const isUpdatingLink = editor.isActive('link');
+
+    // Use low-level ProseMirror API to manipulate document
+    const { state, view } = editor;
+    const { tr } = state;
+    const linkMark = state.schema.marks.link.create({ href: processedUrl });
+
+    // Step 1: Apply link mark to selected text
+    let transaction = tr.addMark(from, to, linkMark);
+
+    if (!isUpdatingLink) {
+      // Step 2: Move cursor to end of link
+      transaction = transaction.setSelection(
+        state.selection.constructor.near(transaction.doc.resolve(to)),
+      );
+
+      // Step 3: Insert space
+      transaction = transaction.insertText(' ', to);
+
+      // Step 4: Ensure cursor is after space and not inside link
+      transaction = transaction.removeStoredMark(linkMark);
+    }
+
+    // Apply transaction
+    view.dispatch(transaction);
+
+    // Refocus editor
+    view.focus();
+
+    // Clear URL input
+    setUrl('');
   };
 
   const removeLink = () => {
@@ -265,22 +305,24 @@ const defaultValue = JSON.stringify({
 });
 
 const EditorPro: React.FC<EditorProProps> = ({
-  value,
+  _value = '',
   onChange,
-  placeholder = 'Enter content...',
-  className = '',
+  placeholder = 'Start writing...',
+  className,
   isEdit = true,
   onClick,
   collapsable = false,
-  collapseHeight = 200,
-  collapsed = false,
+  collapseHeight = 150,
+  _collapsed = false,
   onCollapse,
 }) => {
+  const [isInitialized, setIsInitialized] = useState(false);
+
   // Parse the JSON string to get the editor value
   const editorValue = React.useMemo(() => {
-    if (!value) return JSON.parse(defaultValue);
+    if (!_value) return JSON.parse(defaultValue);
     try {
-      const parsedValue = JSON.parse(value);
+      const parsedValue = JSON.parse(_value);
 
       // Check if parsed value is a valid EditorValue structure
       if (!isValidEditorValue(parsedValue)) {
@@ -298,39 +340,57 @@ const EditorPro: React.FC<EditorProProps> = ({
       console.error('Failed to parse editor value:', e);
       return JSON.parse(defaultValue);
     }
-  }, [value]);
+  }, [_value]);
 
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3],
-        },
         bulletList: {
-          keepMarks: true,
-          keepAttributes: false,
+          HTMLAttributes: {
+            class: 'custom-bullet-list',
+          },
         },
         orderedList: {
-          keepMarks: true,
-          keepAttributes: false,
+          HTMLAttributes: {
+            class: 'custom-ordered-list',
+          },
+        },
+        blockquote: {
+          HTMLAttributes: {
+            class: 'custom-blockquote',
+          },
+        },
+        code: {
+          HTMLAttributes: {
+            class: 'custom-code',
+          },
+        },
+        codeBlock: {
+          HTMLAttributes: {
+            class: 'custom-code-block',
+          },
+        },
+        heading: {
+          levels: [1, 2, 3],
+          HTMLAttributes: {
+            class: 'custom-heading',
+          },
         },
       }),
       Link.configure({
-        openOnClick: true,
+        openOnClick: false,
         HTMLAttributes: {
-          class: 'text-blue-500 hover:underline cursor-pointer',
-          target: '_blank',
+          class: 'custom-link',
           rel: 'noopener noreferrer',
+          target: '_blank',
         },
-        validate: (href) =>
-          /^https?:\/\//.test(href) ||
-          href.startsWith('/') ||
-          href.startsWith('#'),
-        protocols: ['http', 'https', 'mailto', 'tel'],
+        autolink: true,
       }),
+      MarkdownPastePlugin,
+      MarkdownLinkPlugin,
     ],
     content: editorValue.content,
-    editable: isEdit, // Control editable state
+    editable: isEdit,
     editorProps: {
       attributes: {
         class: cn(
@@ -349,13 +409,37 @@ const EditorPro: React.FC<EditorProProps> = ({
           '[&_pre_code]:bg-transparent [&_pre_code]:text-[0.8rem] [&_pre_code]:p-0',
           '[&_blockquote]:border-l-[3px] [&_blockquote]:border-white/20 [&_blockquote]:my-6 [&_blockquote]:pl-4',
           '[&_hr]:border-none [&_hr]:border-t [&_hr]:border-white/20 [&_hr]:my-8',
+          // Custom link styles, override default blue
+          '[&_a]:text-primary-500 [&_a]:no-underline [&_a:hover]:text-primary-400 [&_a]:cursor-pointer [&_a]:transition-colors',
           !isEdit && 'cursor-default', // Add cursor-default in read-only mode
           className,
         ),
       },
+      // Add custom event handler
+      handleClick: (view, pos, event) => {
+        // Check if clicked element is a link
+        const dom = event.target as HTMLElement;
+        if (dom.tagName === 'A') {
+          // Prevent default behavior
+          event.preventDefault();
+
+          // Add custom link click logic here if needed
+          // For example, open link under specific conditions
+          const href = dom.getAttribute('href');
+          if (
+            href &&
+            window.confirm(`Do you want to open this link: ${href}?`)
+          ) {
+            window.open(href, '_blank', 'noopener,noreferrer');
+          }
+
+          return true;
+        }
+        return false;
+      },
     },
     onUpdate: ({ editor }) => {
-      if (!isEdit) return; // Prevent updates in read-only mode
+      if (!isEdit || !isInitialized) return;
       const html = editor.getHTML();
       const contentIsEmpty = isContentEmpty(html);
       const jsonValue: EditorValue = {
@@ -365,7 +449,7 @@ const EditorPro: React.FC<EditorProProps> = ({
       };
       onChange?.(JSON.stringify(jsonValue));
     },
-    immediatelyRender: false, // Fix SSR warning
+    immediatelyRender: false,
   });
 
   // Update editor content when external value changes
@@ -374,6 +458,13 @@ const EditorPro: React.FC<EditorProProps> = ({
       editor.commands.setContent(editorValue.content);
     }
   }, [editorValue.content, editor]);
+
+  // Set initialized after first mount
+  useEffect(() => {
+    if (editor) {
+      setIsInitialized(true);
+    }
+  }, [editor]);
 
   // Update editable state when isEdit changes
   useEffect(() => {
@@ -385,7 +476,7 @@ const EditorPro: React.FC<EditorProProps> = ({
   const [canCollapse, setCanCollapse] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // 检查内容是否足够高以支持折叠
+  // Check if content height is sufficient to support collapsing
   useEffect(() => {
     if (!collapsable || isEdit || !contentRef.current) return;
 
@@ -395,16 +486,16 @@ const EditorPro: React.FC<EditorProProps> = ({
 
       setCanCollapse(shouldCollapse);
 
-      // 只通知外部内容是否可折叠，但不主动设置折叠状态
+      // Only notify external component about collapsibility, but don't actively set collapse state
       if (shouldCollapse) {
         onCollapse?.(shouldCollapse);
       }
     };
 
-    // 检查完成后通知外部
+    // Check after content is rendered
     setTimeout(checkHeight, 100);
 
-    // 监听窗口大小变化
+    // Listen for window resize events
     window.addEventListener('resize', checkHeight);
     return () => window.removeEventListener('resize', checkHeight);
   }, [
@@ -424,12 +515,12 @@ const EditorPro: React.FC<EditorProProps> = ({
           collapsable &&
             !isEdit &&
             canCollapse &&
-            collapsed &&
+            _collapsed &&
             'overflow-hidden',
         )}
         onClick={onClick}
         style={
-          collapsable && !isEdit && canCollapse && collapsed
+          collapsable && !isEdit && canCollapse && _collapsed
             ? { maxHeight: `${collapseHeight}px` }
             : undefined
         }
