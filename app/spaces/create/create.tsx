@@ -422,6 +422,7 @@ const Create = () => {
               installedApps: { edges: [] },
               createdAt: '',
               updatedAt: '',
+              gated: '0',
             }}
             isJoined={false}
             isFollowed={false}
