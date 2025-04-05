@@ -2,11 +2,15 @@ import { Button, Divider, Select, SelectItem } from '@/components/base';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import * as yup from 'yup';
 import { POAP } from './rule';
 import { ZuPass } from './rule';
 import { cn } from '@heroui/react';
+import { useMutation } from '@tanstack/react-query';
+import { executeQuery } from '@/utils/ceramic';
+import { CREATE_SPACE_GATING_RULE } from '@/services/graphql/spaceGating';
+import { useParams } from 'next/navigation';
 
 interface AccessRuleProps {
   title: string;
@@ -34,11 +38,11 @@ const editSchema = yup.object({
         schema
           .min(1, 'At least one POAP is required')
           .required('POAP is required'),
-      otherwise: (schema) => schema.optional(),
+      otherwise: (schema) => schema.strip(),
     }),
   zupass: yup
     .object({
-      publicKey: yup.string().required('Public key is required'),
+      registration: yup.string().required('Public key is required'),
       eventId: yup.string().required('Event ID is required'),
       eventName: yup.string().required('Event name is required'),
     })
@@ -56,7 +60,7 @@ RuleItem.Edit = memo(function Edit() {
       rule: 'poap',
       poap: [],
       zupass: {
-        publicKey: '',
+        registration: '',
         eventId: '',
         eventName: '',
       },
@@ -65,9 +69,42 @@ RuleItem.Edit = memo(function Edit() {
     shouldUnregister: false,
   });
 
+  const spaceId = useParams().spaceid;
+
+  const createRuleMutation = useMutation({
+    mutationFn: (data: yup.InferType<typeof editSchema>) => {
+      return executeQuery(CREATE_SPACE_GATING_RULE, {
+        input: {
+          content: {
+            spaceId: spaceId as string,
+            ...(data.rule === 'poap' && {
+              PoapsId: data.poap?.map((id) => ({ poapId: id.toString() })),
+            }),
+            ...(data.rule === 'zupass' && {
+              zuPassInfo: [
+                {
+                  registration: data.zupass.registration,
+                  eventId: data.zupass.eventId,
+                  eventName: data.zupass.eventName,
+                },
+              ],
+            }),
+          },
+        },
+      });
+    },
+  });
+
   const { isValid } = form.formState;
 
   const rule = form.watch('rule');
+
+  const handleSubmit = useCallback(
+    (data: yup.InferType<typeof editSchema>) => {
+      createRuleMutation.mutate(data);
+    },
+    [createRuleMutation],
+  );
 
   return (
     <FormProvider {...form}>
@@ -136,14 +173,8 @@ RuleItem.Edit = memo(function Edit() {
             color="submit"
             className="h-[30px] font-medium"
             isDisabled={!isValid}
-            onPress={() => {
-              form.handleSubmit(
-                () => {},
-                (errors) => {
-                  console.log('errors', errors);
-                },
-              )();
-            }}
+            isLoading={createRuleMutation.isPending}
+            onPress={(_e) => form.handleSubmit(handleSubmit)()}
           >
             Create Rule
           </Button>

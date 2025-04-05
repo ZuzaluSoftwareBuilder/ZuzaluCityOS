@@ -75,14 +75,14 @@ export default function POAPAutocomplete({
   useEffect(() => {
     if (initialValue?.length) {
       const getData = async () => {
+        setIsInitialLoading(true);
         const data = await Promise.all(
           initialValue.map((id) => getPOAPs({ queryKey: ['poaps', id] })),
         );
         setSelectedPOAP(data.flatMap((item) => item.items));
+        setIsInitialLoading(false);
       };
-      setIsInitialLoading(true);
       getData();
-      setIsInitialLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

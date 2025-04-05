@@ -23,7 +23,7 @@ const ZuPass = () => {
         <p className="text-[16px] font-medium leading-[1.2]">Public Key</p>
         <Controller
           control={control}
-          name="zupass.publicKey"
+          name="zupass.registration"
           render={({ field }) => (
             <Textarea
               {...field}

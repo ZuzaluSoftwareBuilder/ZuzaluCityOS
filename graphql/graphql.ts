@@ -3983,6 +3983,27 @@ export type UpdateZucitySpaceMutationVariables = Exact<{
 
 export type UpdateZucitySpaceMutation = { __typename?: 'Mutation', updateZucitySpace?: { __typename?: 'UpdateZucitySpacePayload', document: { __typename?: 'ZucitySpace', id: string, name: string, description: string, avatar?: string | null, banner?: string | null, category?: string | null } } | null };
 
+export type CreateSpaceGatingRuleMutationVariables = Exact<{
+  input: CreateZucitySpaceGatingInput;
+}>;
+
+
+export type CreateSpaceGatingRuleMutation = { __typename?: 'Mutation', createZucitySpaceGating?: { __typename?: 'CreateZucitySpaceGatingPayload', document: { __typename?: 'ZucitySpaceGating', id: string, spaceId: any, PoapsId?: Array<{ __typename?: 'ZucitySpaceGatingPoapid', poapId?: string | null } | null> | null, zuPassInfo?: Array<{ __typename?: 'ZucitySpaceGatingZuPass', registration?: string | null, eventId?: string | null, eventName?: string | null } | null> | null } } | null };
+
+export type UpdateSpaceGatingRuleMutationVariables = Exact<{
+  input: UpdateZucitySpaceGatingInput;
+}>;
+
+
+export type UpdateSpaceGatingRuleMutation = { __typename?: 'Mutation', updateZucitySpaceGating?: { __typename?: 'UpdateZucitySpaceGatingPayload', document: { __typename?: 'ZucitySpaceGating', id: string } } | null };
+
+export type DeleteSpaceGatingRuleMutationVariables = Exact<{
+  input: EnableIndexingZucitySpaceGatingInput;
+}>;
+
+
+export type DeleteSpaceGatingRuleMutation = { __typename?: 'Mutation', enableIndexingZucitySpaceGating?: { __typename?: 'EnableIndexingZucitySpaceGatingPayload', document?: { __typename?: 'ZucitySpaceGating', id: string } | null } | null };
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -4970,3 +4991,39 @@ export const UpdateZucitySpaceDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpdateZucitySpaceMutation, UpdateZucitySpaceMutationVariables>;
+export const CreateSpaceGatingRuleDocument = new TypedDocumentString(`
+    mutation CreateSpaceGatingRule($input: CreateZucitySpaceGatingInput!) {
+  createZucitySpaceGating(input: $input) {
+    document {
+      id
+      spaceId
+      PoapsId {
+        poapId
+      }
+      zuPassInfo {
+        registration
+        eventId
+        eventName
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CreateSpaceGatingRuleMutation, CreateSpaceGatingRuleMutationVariables>;
+export const UpdateSpaceGatingRuleDocument = new TypedDocumentString(`
+    mutation UpdateSpaceGatingRule($input: UpdateZucitySpaceGatingInput!) {
+  updateZucitySpaceGating(input: $input) {
+    document {
+      id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateSpaceGatingRuleMutation, UpdateSpaceGatingRuleMutationVariables>;
+export const DeleteSpaceGatingRuleDocument = new TypedDocumentString(`
+    mutation DeleteSpaceGatingRule($input: EnableIndexingZucitySpaceGatingInput!) {
+  enableIndexingZucitySpaceGating(input: $input) {
+    document {
+      id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<DeleteSpaceGatingRuleMutation, DeleteSpaceGatingRuleMutationVariables>;
