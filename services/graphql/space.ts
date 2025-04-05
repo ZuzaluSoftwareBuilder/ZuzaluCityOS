@@ -76,6 +76,22 @@ export const GET_SPACE_QUERY_BY_ID = graphql(`
             }
           }
         }
+        spaceGating(first: 100) {
+          edges {
+            node {
+              id
+              PoapsId {
+                poapId
+              }
+              zuPassInfo {
+                registration
+                eventId
+                eventName
+              }
+              gatingStatus
+            }
+          }
+        }
       }
     }
   }

@@ -238,6 +238,11 @@ export interface Space {
   };
   gated: string;
   isLegacy?: boolean;
+  spaceGating: {
+    edges: {
+      node: SpaceGating;
+    }[];
+  };
 }
 
 export interface CalendarConfig {
@@ -728,6 +733,7 @@ export interface Announcement {
 }
 
 export interface SpaceGating {
+  id: string;
   gatingStatus: string;
   PoapsId: { poapId: string }[];
   zuPassInfo: ZuPassInfo[];

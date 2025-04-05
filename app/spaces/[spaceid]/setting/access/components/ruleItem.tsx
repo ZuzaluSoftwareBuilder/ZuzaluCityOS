@@ -1,28 +1,45 @@
 import { Button, Divider, Select, SelectItem } from '@/components/base';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { ArrowUpRight } from '@phosphor-icons/react';
+import { ArrowUpRight, PencilSimple, Trash } from '@phosphor-icons/react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useState } from 'react';
 import * as yup from 'yup';
 import { POAP } from './rule';
 import { ZuPass } from './rule';
-import { cn } from '@heroui/react';
+import { addToast, CircularProgress, cn, Switch } from '@heroui/react';
 import { useMutation } from '@tanstack/react-query';
 import { executeQuery } from '@/utils/ceramic';
-import { CREATE_SPACE_GATING_RULE } from '@/services/graphql/spaceGating';
+import {
+  CREATE_SPACE_GATING_RULE,
+  UPDATE_SPACE_GATING_RULE,
+} from '@/services/graphql/spaceGating';
 import { useParams } from 'next/navigation';
+import { SpaceGating } from '@/types';
+import { useSpaceData } from '../../../components/context/spaceData';
 
 interface AccessRuleProps {
-  title: string;
-  tags: string[];
-  isActive: boolean;
+  data: SpaceGating;
   onEdit: () => void;
 }
 
-const RuleItem = ({ title, tags, isActive, onEdit }: AccessRuleProps) => {
+const RuleItem = ({ data, onEdit }: AccessRuleProps) => {
+  const [isEdit, setIsEdit] = useState(false);
+
+  const handleEdit = useCallback(() => {
+    setIsEdit((v) => !v);
+  }, []);
+
   return (
-    <div className="w-full rounded-[10px] border border-white/10 bg-white/5">
-      <RuleItem.Edit />
+    <div
+      className={cn(
+        'w-full rounded-[10px] border border-white/10 bg-white/5 overflow-hidden',
+      )}
+    >
+      {isEdit ? (
+        <RuleItem.Edit />
+      ) : (
+        <RuleItem.Normal data={data} onEdit={handleEdit} />
+      )}
     </div>
   );
 };
@@ -184,25 +201,105 @@ RuleItem.Edit = memo(function Edit() {
   );
 });
 
-RuleItem.Normal = memo(function Normal() {
+interface NormalProps {
+  data: SpaceGating;
+  onEdit: () => void;
+}
+
+RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
+  const { gatingStatus, zuPassInfo, PoapsId } = data;
+  const [isActive, setIsActive] = useState(gatingStatus === '1');
+
+  const { refreshSpaceData } = useSpaceData();
+  const toggleActiveMutation = useMutation({
+    mutationFn: (v: boolean) => {
+      return executeQuery(UPDATE_SPACE_GATING_RULE, {
+        input: {
+          id: data.id,
+          content: {
+            gatingStatus: v ? '1' : '0',
+          },
+        },
+      });
+    },
+    onError: (error) => {
+      addToast({
+        title: 'Failed to toggle',
+        description: error.message,
+        severity: 'danger',
+      });
+      setIsActive((v) => !v);
+    },
+    onSuccess: () => {
+      refreshSpaceData();
+    },
+  });
+
+  const handleToggleActive = useCallback(
+    (v: boolean) => {
+      setIsActive(v);
+      toggleActiveMutation.mutate(v);
+    },
+    [toggleActiveMutation],
+  );
+
+  const hasZuPass = zuPassInfo?.length > 0;
+
   return (
-    <>
-      <div className="flex items-center gap-2 p-5">
-        <Select
-          classNames={{ trigger: 'p-[4px_10px] min-h-[35px] h-[35px]' }}
-          isDisabled
-          selectedKeys={['member']}
-        >
-          <SelectItem key="member">Become Member</SelectItem>
-        </Select>
-        <span className="text-[16px] text-white/60">with</span>
-        <Select classNames={{ trigger: 'p-[4px_10px] min-h-[35px] h-[35px]' }}>
-          <SelectItem key="poap">POAP</SelectItem>
-          <SelectItem key="zupass">ZuPass</SelectItem>
-        </Select>
+    <div
+      className={cn(
+        isActive &&
+          'bg-[rgba(255,255,255,0.05)] bg-gradient-to-l from-transparent to-[rgba(55,179,135,0.1)] to-[110%]',
+      )}
+    >
+      <div className="flex items-center justify-between gap-2 p-[10px]">
+        <div className="flex items-center gap-2">
+          <div className="rounded-lg border border-white/10 bg-white/10 p-[4px_10px] text-[14px] font-bold opacity-60">
+            Become Member
+          </div>
+          <span className="text-[16px] text-white/60">with</span>
+          <div className="rounded-lg border border-white/10 bg-white/10 p-[4px_10px] text-[14px] font-bold opacity-60">
+            {hasZuPass ? 'ZuPass' : 'POAP'}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            isIconOnly
+            radius="full"
+            className="size-10 bg-[rgba(255,255,255,0.05)]"
+            variant="flat"
+          >
+            <Trash size={20} weight="fill" color="#ff5e5e" />
+          </Button>
+          <Button
+            isIconOnly
+            radius="full"
+            className="size-10 bg-[rgba(255,255,255,0.05)]"
+            variant="flat"
+            onPress={onEdit}
+          >
+            <PencilSimple size={20} weight="fill" />
+          </Button>
+        </div>
       </div>
       <Divider />
-    </>
+      <div className="flex items-center gap-2 bg-white/5 p-[10px]">
+        <Switch
+          color="success"
+          isSelected={isActive}
+          onValueChange={handleToggleActive}
+          isReadOnly={toggleActiveMutation.isPending}
+          thumbIcon={
+            toggleActiveMutation.isPending && (
+              <CircularProgress color="primary" size="sm" />
+            )
+          }
+        />
+        <span className="text-[16px] font-bold text-white/60">
+          {isActive ? 'Active' : 'Inactive'}
+        </span>
+      </div>
+    </div>
   );
 });
 

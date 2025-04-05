@@ -30,7 +30,6 @@ function executeQuery<TResult, TVariables extends Record<string, any>>(
   document: TypedDocumentNode<TResult, TVariables>,
   variables?: TVariables,
 ): Promise<{ data: TResult; errors: any }> {
-  console.log('executeQuery', document.toString(), variables);
   return composeClient.executeQuery(document.toString(), variables);
 }
 

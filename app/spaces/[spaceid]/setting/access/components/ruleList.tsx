@@ -1,29 +1,15 @@
-import { useState } from 'react';
 import RuleItem from './ruleItem';
 import { Button } from '@/components/base';
 import { Plus } from '@phosphor-icons/react';
 import { useSpacePermissions } from '../../../components/permission';
+import { useSpaceData } from '../../../components/context/spaceData';
 
 function RuleList() {
   const { checkPermission } = useSpacePermissions();
-  const [accessRules, setAccessRules] = useState<
-    {
-      title: string;
-      tags: string[];
-      isActive: boolean;
-    }[]
-  >([
-    {
-      title: 'Become Member',
-      tags: ['DevCon 5'],
-      isActive: true,
-    },
-    {
-      title: 'Become Member',
-      tags: ['DevCon 5'],
-      isActive: false,
-    },
-  ]);
+  const { spaceData } = useSpaceData();
+
+  const accessRules =
+    spaceData?.spaceGating.edges.map((edge) => edge.node) || [];
 
   const handleEditRule = (index: number) => {
     // 编辑规则的逻辑
@@ -39,10 +25,8 @@ function RuleList() {
     <div className="flex flex-col gap-5">
       {accessRules.map((rule, index) => (
         <RuleItem
-          key={index}
-          title={rule.title}
-          tags={rule.tags}
-          isActive={rule.isActive}
+          key={rule.id}
+          data={rule}
           onEdit={() => handleEditRule(index)}
         />
       ))}
