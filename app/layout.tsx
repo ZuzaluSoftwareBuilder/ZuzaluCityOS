@@ -27,6 +27,7 @@ import { usePathname } from 'next/navigation';
 import { useMediaQuery } from '@mui/material';
 import NewAuthPrompt from '@/app/components/auth/NewAuthPrompt';
 import { BuildInRoleProvider } from '@/context/BuildInRoleContext';
+import { ModalProvider } from '@/context/ModalContext';
 
 const queryClient = new QueryClient();
 
@@ -75,39 +76,43 @@ function RootLayout({
                           <BuildInRoleProvider>
                             <WalletProvider>
                               <ZupassProvider>
-                                <AppContextProvider>
-                                  <ReactQueryDevtools initialIsOpen={false} />
-                                  <HeroToastProvider
-                                    placement={'bottom-left'}
-                                    toastOffset={20}
-                                    toastProps={{
-                                      classNames: {
-                                        base: 'max-w-[350px]',
-                                      },
-                                      variant: 'flat',
-                                    }}
-                                    regionProps={{
-                                      classNames: { base: 'z-[1500]' },
-                                    }}
-                                  />
-                                  {!shouldHideHeader && <Header />}
-                                  {isClient && <NewAuthPrompt />}
-                                  <GlobalDialog />
-                                  {isClient && ceramicDown && (
-                                    <Dialog
-                                      title="Upgrading Ceramic Node"
-                                      message="We are currently upgrading our Ceramic node. Some data may be temporarily unavailable or inconsistent. We apologize for any inconvenience."
-                                      showModal={show}
-                                      onClose={() => setShow(false)}
-                                      onConfirm={() => setShow(false)}
+                                <ModalProvider>
+                                  <AppContextProvider>
+                                    <ReactQueryDevtools initialIsOpen={false} />
+                                    <HeroToastProvider
+                                      placement={'bottom-left'}
+                                      toastOffset={20}
+                                      toastProps={{
+                                        classNames: {
+                                          base: 'max-w-[350px]',
+                                        },
+                                        variant: 'flat',
+                                      }}
+                                      regionProps={{
+                                        classNames: { base: 'z-[1500]' },
+                                      }}
                                     />
-                                  )}
-                                  <div
-                                    style={{ minHeight: `calc(100vh - 50px)` }}
-                                  >
-                                    {children}
-                                  </div>
-                                </AppContextProvider>
+                                    {!shouldHideHeader && <Header />}
+                                    {isClient && <NewAuthPrompt />}
+                                    <GlobalDialog />
+                                    {isClient && ceramicDown && (
+                                      <Dialog
+                                        title="Upgrading Ceramic Node"
+                                        message="We are currently upgrading our Ceramic node. Some data may be temporarily unavailable or inconsistent. We apologize for any inconvenience."
+                                        showModal={show}
+                                        onClose={() => setShow(false)}
+                                        onConfirm={() => setShow(false)}
+                                      />
+                                    )}
+                                    <div
+                                      style={{
+                                        minHeight: `calc(100vh - 50px)`,
+                                      }}
+                                    >
+                                      {children}
+                                    </div>
+                                  </AppContextProvider>
+                                </ModalProvider>
                               </ZupassProvider>
                             </WalletProvider>
                           </BuildInRoleProvider>

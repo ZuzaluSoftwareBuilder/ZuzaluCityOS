@@ -17,12 +17,14 @@ import { useMutation, useQueries } from '@tanstack/react-query';
 import { executeQuery } from '@/utils/ceramic';
 import {
   CREATE_SPACE_GATING_RULE,
+  DELETE_SPACE_GATING_RULE,
   UPDATE_SPACE_GATING_RULE,
 } from '@/services/graphql/spaceGating';
 import { useParams } from 'next/navigation';
 import { SpaceGating } from '@/types';
 import { useSpaceData } from '../../../components/context/spaceData';
 import { getPOAPs } from '@/services/poap';
+import { useModal } from '@/context/ModalContext';
 
 interface AccessRuleProps {
   data: SpaceGating;
@@ -267,6 +269,7 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
   const { gatingStatus, zuPassInfo, PoapsId } = data;
   const [isActive, setIsActive] = useState(gatingStatus === '1');
 
+  const { showModal } = useModal();
   const { refreshSpaceData } = useSpaceData();
   const toggleActiveMutation = useMutation({
     mutationFn: (v: boolean) => {
@@ -316,6 +319,22 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
     [toggleActiveMutation],
   );
 
+  const handleDelete = useCallback(() => {
+    showModal({
+      title: 'Delete Rule',
+      contentText: 'Are you sure you want to delete this rule?',
+      confirmAction: async () => {
+        await executeQuery(DELETE_SPACE_GATING_RULE, {
+          input: {
+            id: data.id,
+            shouldIndex: false,
+          },
+        });
+        refreshSpaceData();
+      },
+    });
+  }, [showModal, data.id, refreshSpaceData]);
+
   const hasZuPass = zuPassInfo?.length > 0;
 
   return (
@@ -342,6 +361,7 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
               radius="full"
               className="size-10 bg-[rgba(255,255,255,0.05)]"
               variant="flat"
+              onPress={handleDelete}
             >
               <Trash size={20} weight="fill" color="#ff5e5e" />
             </Button>
