@@ -30,11 +30,11 @@ interface AccessRuleProps {
 const RuleItem = ({ data, handleAddRule }: AccessRuleProps) => {
   const [isEdit, setIsEdit] = useState(false);
 
-  const handleEdit = useCallback(() => {
-    setIsEdit((v) => !v);
-  }, []);
-
   const isNew = data.id === 'new';
+  const handleEdit = useCallback(() => {
+    if (isNew) handleAddRule();
+    setIsEdit((v) => !v);
+  }, [handleAddRule, isNew]);
 
   return (
     <div
@@ -176,7 +176,7 @@ RuleItem.Edit = memo(function Edit({
         updateRuleMutation.mutate(value);
       }
     },
-    [],
+    [createRuleMutation, isNew, updateRuleMutation],
   );
 
   return (
@@ -333,7 +333,7 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
         refreshSpaceData();
       },
     });
-  }, [showModal, data.id, refreshSpaceData]);
+  }, [showModal, spaceId, data.id, refreshSpaceData]);
 
   const hasZuPass = (poapsId ?? [])?.length === 0;
 

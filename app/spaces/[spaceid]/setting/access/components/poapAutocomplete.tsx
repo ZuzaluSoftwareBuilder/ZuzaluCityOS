@@ -15,7 +15,7 @@ interface POAP {
 
 interface IPOAPAutocompleteProps {
   initialValue?: number[];
-  onChange: (value: number[]) => void;
+  onChange: (_value: number[]) => void;
 }
 
 export default function POAPAutocomplete({

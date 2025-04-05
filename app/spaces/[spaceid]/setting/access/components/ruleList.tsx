@@ -19,8 +19,6 @@ function RuleList() {
   const accessRules =
     spaceData?.spaceGating.edges.map((edge) => edge.node) || [];
 
-  console.log(accessRules);
-
   return (
     <div className="flex flex-col gap-5">
       {[
@@ -43,7 +41,7 @@ function RuleList() {
           className="p-[12px]"
           fullWidth
           endContent={<Plus size={18} />}
-          isDisabled={!hasPermission}
+          isDisabled={!hasPermission || isCreateRule}
           onPress={handleAddRule}
         >
           Create a Rule

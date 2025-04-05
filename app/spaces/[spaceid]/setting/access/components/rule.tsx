@@ -4,7 +4,7 @@ import { Input, Textarea } from '@/components/base';
 
 interface POAPProps {
   initialValue?: number[];
-  onChange: (value: number[]) => void;
+  onChange: (_value: number[]) => void;
 }
 
 const POAP = ({ initialValue, onChange }: POAPProps) => {
