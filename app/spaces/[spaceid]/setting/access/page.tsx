@@ -37,8 +37,8 @@ export default function AccessSettingPage() {
   const hasGated = spaceData?.gated === '1';
 
   return (
-    <div className="size-full p-[20px_40px]">
-      <div className="mx-auto w-[600px] p-[20px]">
+    <div className="size-full p-0 pc:p-[20px_40px]">
+      <div className="mx-auto w-[600px] p-[20px] mobile:w-full">
         <div className="flex w-full flex-col gap-5">
           <div className="flex h-[50px] w-full items-center gap-2.5 rounded-[10px] border border-white/10 p-2.5">
             {hasGated ? (

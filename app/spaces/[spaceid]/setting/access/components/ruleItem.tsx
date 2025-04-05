@@ -225,13 +225,13 @@ RuleItem.Edit = memo(function Edit({
       <div
         className={cn(
           'flex justify-end p-2.5 w-full',
-          rule === 'poap' && 'justify-between',
+          rule === 'poap' && 'justify-between mobile:justify-end',
         )}
       >
         {rule === 'poap' && (
           <Button
             endContent={<ArrowUpRight size={18} />}
-            className="h-[30px] gap-[5px] bg-transparent p-[2px_10px]"
+            className="h-[30px] gap-[5px] bg-transparent p-[2px_10px] mobile:hidden"
             onPress={() => {
               window.open('https://poap.gallery', '_blank');
             }}
@@ -348,7 +348,7 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
       )}
     >
       <div className="flex flex-col gap-[10px] p-[10px]">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mobile:flex-col mobile:items-start mobile:gap-2">
           <div className="flex items-center gap-2">
             <div className="rounded-lg border border-white/10 bg-white/10 p-[4px_10px] text-[14px] font-bold opacity-60">
               Become Member

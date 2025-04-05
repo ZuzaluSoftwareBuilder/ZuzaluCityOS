@@ -147,7 +147,7 @@ export default function POAPAutocomplete({
               size="sm"
               color="functional"
               endContent={<X size={16} />}
-              className="h-[30px] p-[4px_8px]"
+              className="h-auto whitespace-normal p-[4px_8px]"
               onPress={() => {
                 const newSelectedPOAP = selectedPOAP.filter(
                   (i) => i.id !== item.id,
