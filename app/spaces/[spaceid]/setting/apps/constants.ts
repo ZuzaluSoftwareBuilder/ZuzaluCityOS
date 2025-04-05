@@ -46,7 +46,6 @@ export const NATIVE_APPS: NativeDApp[] = [
     },
   },
   {
-    isComingSoon: true,
     appIdentifier: 'zuland',
 
     appName: 'Zuland',
@@ -64,7 +63,7 @@ export const NATIVE_APPS: NativeDApp[] = [
       username: 'Urbe.eth',
     },
   },
-  {
+  /*{
     isComingSoon: true,
     appIdentifier: 'announcements',
 
@@ -82,7 +81,7 @@ export const NATIVE_APPS: NativeDApp[] = [
       avatar: '/user/official.jpg',
       username: 'Zuzalu City',
     },
-  },
+  },*/
 ].map((app) => ({
   ...app,
   isNative: true,
