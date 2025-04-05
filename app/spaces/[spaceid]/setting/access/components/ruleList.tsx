@@ -3,43 +3,52 @@ import { Button } from '@/components/base';
 import { Plus } from '@phosphor-icons/react';
 import { useSpacePermissions } from '../../../components/permission';
 import { useSpaceData } from '../../../components/context/spaceData';
+import { PermissionName, SpaceGating } from '@/types';
+import { useCallback, useState } from 'react';
 
 function RuleList() {
   const { checkPermission } = useSpacePermissions();
   const { spaceData } = useSpaceData();
+  const [isCreateRule, setIsCreateRule] = useState(false);
 
+  const handleAddRule = useCallback(() => {
+    setIsCreateRule((v) => !v);
+  }, []);
+
+  const hasPermission = checkPermission(PermissionName.MANAGE_ACCESS);
   const accessRules =
     spaceData?.spaceGating.edges.map((edge) => edge.node) || [];
 
-  const handleEditRule = (index: number) => {
-    // 编辑规则的逻辑
-    console.log('编辑规则:', index);
-  };
-
-  const handleAddRule = () => {
-    // 添加新规则的逻辑
-    console.log('添加新规则');
-  };
+  console.log(accessRules);
 
   return (
     <div className="flex flex-col gap-5">
-      {accessRules.map((rule, index) => (
-        <RuleItem
-          key={rule.id}
-          data={rule}
-          onEdit={() => handleEditRule(index)}
-        />
+      {[
+        ...accessRules,
+        ...(isCreateRule
+          ? [
+              {
+                id: 'new',
+              } as unknown as SpaceGating,
+            ]
+          : []),
+      ].map((rule) => (
+        <RuleItem key={rule.id} data={rule} handleAddRule={handleAddRule} />
       ))}
 
-      <Button
-        size="lg"
-        color="functional"
-        className="p-[12px]"
-        fullWidth
-        endContent={<Plus size={18} />}
-      >
-        Create a Rule
-      </Button>
+      {hasPermission && (
+        <Button
+          size="lg"
+          color="functional"
+          className="p-[12px]"
+          fullWidth
+          endContent={<Plus size={18} />}
+          isDisabled={!hasPermission}
+          onPress={handleAddRule}
+        >
+          Create a Rule
+        </Button>
+      )}
     </div>
   );
 }

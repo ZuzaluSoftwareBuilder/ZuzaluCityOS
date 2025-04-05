@@ -14,29 +14,27 @@ import {
   Switch,
 } from '@heroui/react';
 import { useMutation, useQueries } from '@tanstack/react-query';
-import { executeQuery } from '@/utils/ceramic';
-import {
-  CREATE_SPACE_GATING_RULE,
-  DELETE_SPACE_GATING_RULE,
-  UPDATE_SPACE_GATING_RULE,
-} from '@/services/graphql/spaceGating';
+
 import { useParams } from 'next/navigation';
 import { SpaceGating } from '@/types';
 import { useSpaceData } from '../../../components/context/spaceData';
 import { getPOAPs } from '@/services/poap';
 import { useModal } from '@/context/ModalContext';
+import { createRule, deleteRule, updateRule } from '@/services/space/rule';
 
 interface AccessRuleProps {
   data: SpaceGating;
-  onEdit: () => void;
+  handleAddRule: () => void;
 }
 
-const RuleItem = ({ data, onEdit }: AccessRuleProps) => {
+const RuleItem = ({ data, handleAddRule }: AccessRuleProps) => {
   const [isEdit, setIsEdit] = useState(false);
 
   const handleEdit = useCallback(() => {
     setIsEdit((v) => !v);
   }, []);
+
+  const isNew = data.id === 'new';
 
   return (
     <div
@@ -44,8 +42,12 @@ const RuleItem = ({ data, onEdit }: AccessRuleProps) => {
         'w-full rounded-[10px] border border-white/10 bg-white/5 overflow-hidden',
       )}
     >
-      {isEdit ? (
-        <RuleItem.Edit data={data} onClose={handleEdit} />
+      {isEdit || isNew ? (
+        <RuleItem.Edit
+          data={data}
+          onClose={handleEdit}
+          handleAddRule={handleAddRule}
+        />
       ) : (
         <RuleItem.Normal data={data} onEdit={handleEdit} />
       )}
@@ -56,6 +58,7 @@ const RuleItem = ({ data, onEdit }: AccessRuleProps) => {
 interface EditProps {
   data?: SpaceGating;
   onClose: () => void;
+  handleAddRule: () => void;
 }
 
 const editSchema = yup.object({
@@ -84,12 +87,22 @@ const editSchema = yup.object({
     }),
 });
 
-RuleItem.Edit = memo(function Edit({ data, onClose }: EditProps) {
+RuleItem.Edit = memo(function Edit({
+  data,
+  onClose,
+  handleAddRule,
+}: EditProps) {
   const { refreshSpaceData } = useSpaceData();
+  const isNew = data?.id === 'new';
+
   const form = useForm<yup.InferType<typeof editSchema>>({
     resolver: yupResolver(editSchema),
     defaultValues: {
-      rule: data?.id ? (data?.poapsId?.length > 0 ? 'poap' : 'zupass') : 'poap',
+      rule: isNew
+        ? 'poap'
+        : data?.poapsId && data.poapsId.length > 0
+          ? 'poap'
+          : 'zupass',
       poap: data?.poapsId?.map((item) => Number(item.poapId)) || [],
       zupass: {
         registration: data?.zuPassInfo?.registration || '',
@@ -105,52 +118,48 @@ RuleItem.Edit = memo(function Edit({ data, onClose }: EditProps) {
 
   const createRuleMutation = useMutation({
     mutationFn: (value: yup.InferType<typeof editSchema>) => {
-      return executeQuery(CREATE_SPACE_GATING_RULE, {
-        input: {
-          content: {
-            spaceId: spaceId as string,
-            ...(value.rule === 'poap' && {
-              poapsId: value.poap?.map((id) => ({ poapId: Number(id) })),
-            }),
-            ...(value.rule === 'zupass' && {
-              zuPassInfo: {
-                registration: value.zupass.registration,
-                eventId: value.zupass.eventId,
-                eventName: value.zupass.eventName,
-              },
-            }),
+      return createRule({
+        id: spaceId as string,
+        ...(value.rule === 'poap' && {
+          poapsId: value.poap,
+        }),
+        ...(value.rule === 'zupass' && {
+          zuPassInfo: {
+            registration: value.zupass.registration,
+            eventId: value.zupass.eventId,
+            eventName: value.zupass.eventName,
           },
-        },
+        }),
       });
     },
-    onSuccess: () => {
-      refreshSpaceData();
+    onSuccess: async () => {
+      await refreshSpaceData();
       onClose();
+      handleAddRule();
     },
   });
 
   const updateRuleMutation = useMutation({
     mutationFn: (value: yup.InferType<typeof editSchema>) => {
-      return executeQuery(UPDATE_SPACE_GATING_RULE, {
-        input: {
-          id: data!.id,
-          content: {
-            ...(value.rule === 'poap' && {
-              poapsId: value.poap?.map((id) => ({ poapId: Number(id) })),
-            }),
-            ...(value.rule === 'zupass' && {
-              zuPassInfo: {
-                registration: value.zupass.registration,
-                eventId: value.zupass.eventId,
-                eventName: value.zupass.eventName,
-              },
-            }),
+      return updateRule({
+        id: spaceId as string,
+        ruleId: data!.id,
+        poapsId: null,
+        zuPassInfo: null,
+        ...(value.rule === 'poap' && {
+          poapsId: value.poap,
+        }),
+        ...(value.rule === 'zupass' && {
+          zuPassInfo: {
+            registration: value.zupass.registration,
+            eventId: value.zupass.eventId,
+            eventName: value.zupass.eventName,
           },
-        },
+        }),
       });
     },
-    onSuccess: () => {
-      refreshSpaceData();
+    onSuccess: async () => {
+      await refreshSpaceData();
       onClose();
     },
   });
@@ -161,13 +170,13 @@ RuleItem.Edit = memo(function Edit({ data, onClose }: EditProps) {
 
   const handleSubmit = useCallback(
     (value: yup.InferType<typeof editSchema>) => {
-      if (data?.id) {
-        updateRuleMutation.mutate(value);
-      } else {
+      if (isNew) {
         createRuleMutation.mutate(value);
+      } else {
+        updateRuleMutation.mutate(value);
       }
     },
-    [createRuleMutation, data?.id, updateRuleMutation],
+    [],
   );
 
   return (
@@ -242,13 +251,13 @@ RuleItem.Edit = memo(function Edit({ data, onClose }: EditProps) {
             className="h-[30px] font-medium"
             isDisabled={!isValid || !isDirty}
             isLoading={
-              data?.id
+              !isNew
                 ? updateRuleMutation.isPending
                 : createRuleMutation.isPending
             }
             onPress={(_e) => form.handleSubmit(handleSubmit)()}
           >
-            {data?.id ? 'Update Rule' : 'Create Rule'}
+            {isNew ? 'Create Rule' : 'Update Rule'}
           </Button>
         </div>
       </div>
@@ -262,22 +271,19 @@ interface NormalProps {
 }
 
 RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
-  const { gatingStatus, zuPassInfo, poapsId } = data;
+  const { gatingStatus, zuPassInfo, poapsId, spaceId } = data;
   const [isActive, setIsActive] = useState(gatingStatus === '1');
 
   const { showModal } = useModal();
   const { refreshSpaceData } = useSpaceData();
+
   const toggleActiveMutation = useMutation({
-    mutationFn: (v: boolean) => {
-      return executeQuery(UPDATE_SPACE_GATING_RULE, {
-        input: {
-          id: data.id,
-          content: {
-            gatingStatus: v ? '1' : '0',
-          },
-        },
-      });
-    },
+    mutationFn: (v: boolean) =>
+      updateRule({
+        id: spaceId,
+        ruleId: data.id,
+        gatingStatus: v ? '1' : '0',
+      }),
     onError: (error) => {
       addToast({
         title: 'Failed to toggle',
@@ -320,18 +326,16 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
       title: 'Delete Rule',
       contentText: 'Are you sure you want to delete this rule?',
       confirmAction: async () => {
-        await executeQuery(DELETE_SPACE_GATING_RULE, {
-          input: {
-            id: data.id,
-            shouldIndex: false,
-          },
+        await deleteRule({
+          id: spaceId,
+          ruleId: data.id,
         });
         refreshSpaceData();
       },
     });
   }, [showModal, data.id, refreshSpaceData]);
 
-  const hasZuPass = poapsId?.length === 0;
+  const hasZuPass = (poapsId ?? [])?.length === 0;
 
   return (
     <div
@@ -401,19 +405,19 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
               <span className="text-[13px] font-medium opacity-50">
                 Public Key:
               </span>
-              <span className="text-[13px]">{zuPassInfo.registration}</span>
+              <span className="text-[13px]">{zuPassInfo?.registration}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[13px] font-medium opacity-50">
                 Event ID:
               </span>
-              <span className="text-[13px]">{zuPassInfo.eventId}</span>
+              <span className="text-[13px]">{zuPassInfo?.eventId}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[13px] font-medium opacity-50">
                 Event Name:
               </span>
-              <span className="text-[13px]">{zuPassInfo.eventName}</span>
+              <span className="text-[13px]">{zuPassInfo?.eventName}</span>
             </div>
           </div>
         )}

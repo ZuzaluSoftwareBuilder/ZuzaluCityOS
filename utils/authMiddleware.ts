@@ -36,7 +36,7 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
     }
 
     const body = await request.json();
-    const { id, resource } = body;
+    const { id, resource = 'space' } = body;
 
     if (!id || !resource) {
       return {
