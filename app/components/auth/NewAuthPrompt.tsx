@@ -42,7 +42,7 @@ const NewAuthPrompt: React.FC = () => {
   const { disconnect } = useDisconnect();
   const [authState, setAuthState] = useState<IAuthState | undefined>(undefined);
   const authenticateCalled = useRef(false);
-  const maxUsernameLength = 20;
+  const maxUsernameLength = Infinity;
   const [isContinueLoading, setIsContinueLoading] = useState(false);
   const [isSkipLoading, setIsSkipLoading] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -262,9 +262,6 @@ const NewAuthPrompt: React.FC = () => {
               }}
               isDisabled={isSkipLoading || isContinueLoading}
             />
-            <div className="mt-[10px] flex w-full justify-end">
-              <p className="text-xs text-white/50">{`${maxUsernameLength - inputUsername.length} characters left`}</p>
-            </div>
           </div>
         </ModalBody>
         <ModalFooter className="flex justify-between gap-[10px] pt-[20px]">

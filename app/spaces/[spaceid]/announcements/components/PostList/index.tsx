@@ -85,7 +85,7 @@ PostList.Empty = memo(function Empty() {
       )}
     >
       {(isAdmin || isOwner) && <PlusCircleIcon size={15} color="#6c6c6c" />}
-      <span className="text-normal font-bold leading-[180%] tracking-[0.01em]">
+      <span className="font-bold leading-[180%] tracking-[0.01em]">
         No Posts
       </span>
       {(isAdmin || isOwner) && (

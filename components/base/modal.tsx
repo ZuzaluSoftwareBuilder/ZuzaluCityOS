@@ -5,9 +5,9 @@ import {
   ModalBody,
   ModalFooter,
   type ModalProps,
-  Button,
   cn,
 } from '@heroui/react';
+import { Button } from '@/components/base';
 import React, { forwardRef } from 'react';
 import { X } from '@phosphor-icons/react';
 

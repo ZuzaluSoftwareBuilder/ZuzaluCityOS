@@ -76,7 +76,7 @@ const Item = ({ item }: { item: SidebarItem }) => {
 
 const SpaceSidebar = () => {
   return (
-    <div className="g-2.5 fixed bottom-0 left-0 top-[50px] h-[calc(100vh-50px)] w-[62px] border-r border-[rgba(255,255,255,0.1)] bg-[#2C2C2C] py-2.5 mobile:hidden ">
+    <div className="fixed bottom-0 left-0 top-[50px] h-[calc(100vh-50px)] w-[62px] border-r border-[rgba(255,255,255,0.1)] bg-[#2C2C2C] py-2.5 mobile:hidden ">
       <div className="flex w-full flex-col items-center gap-2.5 border-b border-[rgba(255,255,255,0.1)] pb-2.5">
         {SidebarList.map((item) => (
           <Item key={item.name} item={item} />

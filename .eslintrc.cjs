@@ -23,8 +23,8 @@ module.exports = {
         argsIgnorePattern: '^_',
       },
     ],
-    'tailwindcss/no-custom-classname': 'warn',
-    'tailwindcss/classnames-order': 'warn',
+    'tailwindcss/no-custom-classname': 'error',
+    'tailwindcss/classnames-order': ['warn', { fixable: true }],
 
     'prettier/prettier': ['error', {}, { usePrettierrc: true }],
   },

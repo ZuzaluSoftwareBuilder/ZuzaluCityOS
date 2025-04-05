@@ -11,6 +11,8 @@ import { useGraphQL } from '@/hooks/useGraphQL';
 import { Space } from '@/types';
 import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/utils/supabase/client';
 
 export default function Communities() {
   const router = useRouter();
@@ -44,14 +46,32 @@ export default function Communities() {
     },
   );
 
+  const { data: legacySpacesData, isLoading: isLegacyLoading } = useQuery({
+    queryKey: ['GET_LEGACY_SPACES_DATA'],
+    queryFn: () => {
+      return supabase.from('betaSpaces').select('*');
+    },
+    select: (data: any) => {
+      if (!data.data) {
+        return [];
+      }
+      return data.data.map((item: any) => ({
+        ...item,
+        isLegacy: true,
+      })) as Space[];
+    },
+  });
+
   const filteredSpacesData = useMemo(() => {
-    if (!spacesData) {
+    if (!spacesData || !legacySpacesData) {
       return [];
     }
-    return spacesData.sort((a, b) => {
-      return dayjs(b.createdAt).diff(dayjs(a.createdAt));
-    });
-  }, [spacesData]);
+    return spacesData
+      .sort((a, b) => {
+        return dayjs(b.createdAt).diff(dayjs(a.createdAt));
+      })
+      .concat(legacySpacesData);
+  }, [spacesData, legacySpacesData]);
 
   return (
     <div className="flex flex-col gap-[10px] border-b border-b-w-10 pb-[20px]">
@@ -68,7 +88,7 @@ export default function Communities() {
         className="flex-1 overflow-auto"
       >
         <div className="flex gap-[20px] overflow-auto px-[20px]">
-          {isLoading || isRoleLoading
+          {isLoading || isRoleLoading || isLegacyLoading
             ? Array.from({ length: 5 }).map((_, index) => (
                 <SpaceCardSkeleton key={index} />
               ))

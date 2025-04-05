@@ -236,6 +236,7 @@ export interface Space {
       node: InstalledApp;
     }[];
   };
+  isLegacy?: boolean;
 }
 
 export interface CalendarConfig {
