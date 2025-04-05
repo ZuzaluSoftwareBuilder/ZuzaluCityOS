@@ -16,11 +16,12 @@ import {
 import { useMutation, useQueries } from '@tanstack/react-query';
 
 import { useParams } from 'next/navigation';
-import { SpaceGating } from '@/types';
+import { PermissionName, SpaceGating } from '@/types';
 import { useSpaceData } from '../../../components/context/spaceData';
 import { getPOAPs } from '@/services/poap';
 import { useModal } from '@/context/ModalContext';
 import { createRule, deleteRule, updateRule } from '@/services/space/rule';
+import { useSpacePermissions } from '../../../components/permission';
 
 interface AccessRuleProps {
   data: SpaceGating;
@@ -181,7 +182,7 @@ RuleItem.Edit = memo(function Edit({
 
   return (
     <FormProvider {...form}>
-      <div className="flex items-center gap-2 p-5">
+      <div className="flex items-center gap-2 p-[10px]">
         <Select
           classNames={{ trigger: 'p-[4px_10px] min-h-[35px] h-[35px]' }}
           isDisabled
@@ -276,6 +277,7 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
 
   const { showModal } = useModal();
   const { refreshSpaceData } = useSpaceData();
+  const { checkPermission } = useSpacePermissions();
 
   const toggleActiveMutation = useMutation({
     mutationFn: (v: boolean) =>
@@ -336,6 +338,7 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
   }, [showModal, spaceId, data.id, refreshSpaceData]);
 
   const hasZuPass = (poapsId ?? [])?.length === 0;
+  const hasPermission = checkPermission(PermissionName.MANAGE_ACCESS);
 
   return (
     <div
@@ -355,26 +358,28 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
               {hasZuPass ? 'ZuPass' : 'POAP'}
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              isIconOnly
-              radius="full"
-              className="size-10 bg-[rgba(255,255,255,0.05)]"
-              variant="flat"
-              onPress={handleDelete}
-            >
-              <Trash size={20} weight="fill" color="#ff5e5e" />
-            </Button>
-            <Button
-              isIconOnly
-              radius="full"
-              className="size-10 bg-[rgba(255,255,255,0.05)]"
-              variant="flat"
-              onPress={onEdit}
-            >
-              <PencilSimple size={20} weight="fill" />
-            </Button>
-          </div>
+          {hasPermission && (
+            <div className="flex items-center gap-2">
+              <Button
+                isIconOnly
+                radius="full"
+                className="size-10 bg-[rgba(255,255,255,0.05)]"
+                variant="flat"
+                onPress={handleDelete}
+              >
+                <Trash size={20} weight="fill" color="#ff5e5e" />
+              </Button>
+              <Button
+                isIconOnly
+                radius="full"
+                className="size-10 bg-[rgba(255,255,255,0.05)]"
+                variant="flat"
+                onPress={onEdit}
+              >
+                <PencilSimple size={20} weight="fill" />
+              </Button>
+            </div>
+          )}
         </div>
         {!hasZuPass ? (
           <div className="flex flex-wrap gap-2">
@@ -428,7 +433,7 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
           color="success"
           isSelected={isActive}
           onValueChange={handleToggleActive}
-          isReadOnly={toggleActiveMutation.isPending}
+          isReadOnly={toggleActiveMutation.isPending || !hasPermission}
           thumbIcon={
             toggleActiveMutation.isPending && (
               <CircularProgress color="primary" size="sm" />

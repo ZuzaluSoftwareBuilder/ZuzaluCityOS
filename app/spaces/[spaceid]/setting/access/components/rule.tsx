@@ -9,7 +9,7 @@ interface POAPProps {
 
 const POAP = ({ initialValue, onChange }: POAPProps) => {
   return (
-    <div className="p-5">
+    <div className="p-[10px]">
       <POAPAutocomplete initialValue={initialValue} onChange={onChange} />
     </div>
   );
@@ -18,7 +18,7 @@ const POAP = ({ initialValue, onChange }: POAPProps) => {
 const ZuPass = () => {
   const { control } = useFormContext();
   return (
-    <div className="flex flex-col gap-5 p-5">
+    <div className="flex flex-col gap-5 p-[10px]">
       <div className="flex flex-col gap-2.5">
         <p className="text-[16px] font-medium leading-[1.2]">Public Key</p>
         <Controller
