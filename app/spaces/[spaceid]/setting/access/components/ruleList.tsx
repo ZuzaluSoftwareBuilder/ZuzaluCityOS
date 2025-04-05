@@ -17,7 +17,7 @@ function RuleList() {
 
   const hasPermission = checkPermission(PermissionName.MANAGE_ACCESS);
   const accessRules =
-    spaceData?.spaceGating.edges.map((edge) => edge.node) || [];
+    spaceData?.spaceGating?.edges.map((edge) => edge.node) || [];
 
   return (
     <div className="flex flex-col gap-5">
