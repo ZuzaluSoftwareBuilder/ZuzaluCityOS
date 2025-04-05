@@ -2,7 +2,7 @@ import { Button, Divider, Select, SelectItem } from '@/components/base';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 import * as yup from 'yup';
 import { POAP } from './rule';
 import { ZuPass } from './rule';
@@ -45,7 +45,7 @@ const editSchema = yup.object({
     .when('rule', {
       is: 'zupass',
       then: (schema) => schema.required(),
-      otherwise: (schema) => schema.optional(),
+      otherwise: (schema) => schema.strip(),
     }),
 });
 
@@ -62,35 +62,12 @@ RuleItem.Edit = memo(function Edit() {
       },
     },
     mode: 'all',
-    reValidateMode: 'onChange',
     shouldUnregister: false,
   });
 
+  const { isValid } = form.formState;
+
   const rule = form.watch('rule');
-  const poap = form.watch('poap');
-  const zupassPublicKey = form.watch('zupass.publicKey');
-  const zupassEventId = form.watch('zupass.eventId');
-  const zupassEventName = form.watch('zupass.eventName');
-
-  const [manualIsValid, setManualIsValid] = useState(false);
-
-  useEffect(() => {
-    const values = form.getValues();
-    let isValid = false;
-
-    if (rule === 'poap') {
-      isValid = Array.isArray(values.poap) && values.poap.length > 0;
-    } else if (rule === 'zupass') {
-      const zupass = values.zupass || {};
-      const publicKey = (zupass.publicKey || '').trim();
-      const eventId = (zupass.eventId || '').trim();
-      const eventName = (zupass.eventName || '').trim();
-
-      isValid = !!(publicKey && eventId && eventName);
-    }
-
-    setManualIsValid(isValid);
-  }, [form, rule, poap, zupassPublicKey, zupassEventId, zupassEventName]);
 
   return (
     <FormProvider {...form}>
@@ -158,10 +135,14 @@ RuleItem.Edit = memo(function Edit() {
           <Button
             color="submit"
             className="h-[30px] font-medium"
-            isDisabled={!manualIsValid}
+            isDisabled={!isValid}
             onPress={() => {
-              console.log('Create Rule clicked, form state:', form.formState);
-              console.log('Form values:', form.getValues());
+              form.handleSubmit(
+                () => {},
+                (errors) => {
+                  console.log('errors', errors);
+                },
+              )();
             }}
           >
             Create Rule

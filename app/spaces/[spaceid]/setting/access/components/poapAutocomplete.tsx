@@ -1,7 +1,7 @@
 import { Autocomplete, AutocompleteItem, Button } from '@/components/base';
 import { MagnifyingGlass, X } from '@phosphor-icons/react';
 import { Key, useState, useEffect, useCallback } from 'react';
-import { useInfiniteQuery, useQueries } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { Image, Skeleton } from '@heroui/react';
 import { useInfiniteScroll } from '@heroui/use-infinite-scroll';
 import useDebounce from '@/hooks/useDebounce';
@@ -27,6 +27,7 @@ export default function POAPAutocomplete({
   const [items, setItems] = useState<POAP[]>([]);
   const [selectedPOAP, setSelectedPOAP] = useState<POAP[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(false);
   const debouncedQuery = useDebounce(searchQuery, 300);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
@@ -41,21 +42,6 @@ export default function POAPAutocomplete({
       },
       staleTime: 5 * 60 * 1000,
     });
-
-  const initialPOAPs = useQueries({
-    queries:
-      initialValue?.map((id) => ({
-        queryKey: ['poaps', id],
-        queryFn: () => getPOAPs({ queryKey: ['poaps', id] }),
-        enabled: !!id,
-      })) || [],
-    combine: (results) => {
-      return {
-        data: results.map((result) => result.data?.items),
-        isLoading: results.some((result) => result.isLoading),
-      };
-    },
-  });
 
   const [, scrollerRef] = useInfiniteScroll({
     hasMore: hasNextPage,
@@ -80,17 +66,26 @@ export default function POAPAutocomplete({
   );
 
   useEffect(() => {
-    if (!initialPOAPs.isLoading && initialPOAPs.data) {
-      setSelectedPOAP(initialPOAPs.data.flatMap((item) => item));
-    }
-  }, [initialPOAPs.isLoading, initialPOAPs.data]);
-
-  useEffect(() => {
     if (data) {
       const allItems = data.pages.flatMap((page) => page.items);
       setItems(allItems);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (initialValue?.length) {
+      const getData = async () => {
+        const data = await Promise.all(
+          initialValue.map((id) => getPOAPs({ queryKey: ['poaps', id] })),
+        );
+        setSelectedPOAP(data.flatMap((item) => item.items));
+      };
+      setIsInitialLoading(true);
+      getData();
+      setIsInitialLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (selectedKey) {
@@ -140,7 +135,7 @@ export default function POAPAutocomplete({
         }}
       </Autocomplete>
       <div className="flex flex-wrap gap-2">
-        {initialPOAPs.isLoading ? (
+        {isInitialLoading ? (
           <>
             <Skeleton className="h-[30px] w-[100px] rounded-lg" />
             <Skeleton className="h-[30px] w-[100px] rounded-lg" />
