@@ -2,11 +2,17 @@ import { Button, Divider, Select, SelectItem } from '@/components/base';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ArrowUpRight, PencilSimple, Trash } from '@phosphor-icons/react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import * as yup from 'yup';
 import { POAP } from './rule';
 import { ZuPass } from './rule';
-import { addToast, CircularProgress, cn, Switch } from '@heroui/react';
+import {
+  addToast,
+  CircularProgress,
+  cn,
+  Skeleton,
+  Switch,
+} from '@heroui/react';
 import { useMutation } from '@tanstack/react-query';
 import { executeQuery } from '@/utils/ceramic';
 import {
@@ -16,6 +22,7 @@ import {
 import { useParams } from 'next/navigation';
 import { SpaceGating } from '@/types';
 import { useSpaceData } from '../../../components/context/spaceData';
+import { getPOAPs } from '@/services/poap';
 
 interface AccessRuleProps {
   data: SpaceGating;
@@ -209,6 +216,8 @@ interface NormalProps {
 RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
   const { gatingStatus, zuPassInfo, PoapsId } = data;
   const [isActive, setIsActive] = useState(gatingStatus === '1');
+  const [isLoading, setIsLoading] = useState(false);
+  const [poapData, setPoapData] = useState<string[]>([]);
 
   const { refreshSpaceData } = useSpaceData();
   const toggleActiveMutation = useMutation({
@@ -245,6 +254,23 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
 
   const hasZuPass = zuPassInfo?.length > 0;
 
+  useEffect(() => {
+    if (PoapsId?.length) {
+      const getData = async () => {
+        setIsLoading(true);
+        const data = await Promise.all(
+          PoapsId.map((item) => getPOAPs({ queryKey: ['poaps', item.poapId] })),
+        );
+        setPoapData(
+          data.flatMap((item) => item.items.map((item: any) => item.name)),
+        );
+        setIsLoading(false);
+      };
+      getData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div
       className={cn(
@@ -252,35 +278,79 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
           'bg-[rgba(255,255,255,0.05)] bg-gradient-to-l from-transparent to-[rgba(55,179,135,0.1)] to-[110%]',
       )}
     >
-      <div className="flex items-center justify-between gap-2 p-[10px]">
-        <div className="flex items-center gap-2">
-          <div className="rounded-lg border border-white/10 bg-white/10 p-[4px_10px] text-[14px] font-bold opacity-60">
-            Become Member
+      <div className="flex flex-col gap-[10px] p-[10px]">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="rounded-lg border border-white/10 bg-white/10 p-[4px_10px] text-[14px] font-bold opacity-60">
+              Become Member
+            </div>
+            <span className="text-[16px] text-white/60">with</span>
+            <div className="rounded-lg border border-white/10 bg-white/10 p-[4px_10px] text-[14px] font-bold opacity-60">
+              {hasZuPass ? 'ZuPass' : 'POAP'}
+            </div>
           </div>
-          <span className="text-[16px] text-white/60">with</span>
-          <div className="rounded-lg border border-white/10 bg-white/10 p-[4px_10px] text-[14px] font-bold opacity-60">
-            {hasZuPass ? 'ZuPass' : 'POAP'}
+          <div className="flex items-center gap-2">
+            <Button
+              isIconOnly
+              radius="full"
+              className="size-10 bg-[rgba(255,255,255,0.05)]"
+              variant="flat"
+            >
+              <Trash size={20} weight="fill" color="#ff5e5e" />
+            </Button>
+            <Button
+              isIconOnly
+              radius="full"
+              className="size-10 bg-[rgba(255,255,255,0.05)]"
+              variant="flat"
+              onPress={onEdit}
+            >
+              <PencilSimple size={20} weight="fill" />
+            </Button>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            isIconOnly
-            radius="full"
-            className="size-10 bg-[rgba(255,255,255,0.05)]"
-            variant="flat"
-          >
-            <Trash size={20} weight="fill" color="#ff5e5e" />
-          </Button>
-          <Button
-            isIconOnly
-            radius="full"
-            className="size-10 bg-[rgba(255,255,255,0.05)]"
-            variant="flat"
-            onPress={onEdit}
-          >
-            <PencilSimple size={20} weight="fill" />
-          </Button>
-        </div>
+        {!hasZuPass ? (
+          <div className="flex flex-wrap gap-2">
+            {isLoading ? (
+              <>
+                <Skeleton className="h-[20px] w-[100px] rounded-lg" />
+                <Skeleton className="h-[20px] w-[100px] rounded-lg" />
+              </>
+            ) : (
+              poapData.map((item, index) => (
+                <div key={item} className="flex items-center gap-2">
+                  <span className="text-[13px]">{item}</span>
+                  {index !== poapData.length - 1 && (
+                    <span className="text-[14px] font-medium opacity-50">
+                      OR
+                    </span>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-[13px] font-medium opacity-50">
+                Public Key:
+              </span>
+              <span className="text-[13px]">{zuPassInfo[0].registration}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[13px] font-medium opacity-50">
+                Event ID:
+              </span>
+              <span className="text-[13px]">{zuPassInfo[0].eventId}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[13px] font-medium opacity-50">
+                Event Name:
+              </span>
+              <span className="text-[13px]">{zuPassInfo[0].eventName}</span>
+            </div>
+          </div>
+        )}
       </div>
       <Divider />
       <div className="flex items-center gap-2 bg-white/5 p-[10px]">
