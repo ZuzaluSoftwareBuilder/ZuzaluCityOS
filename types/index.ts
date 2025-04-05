@@ -231,14 +231,14 @@ export interface Space {
   customAttributes: TBD[];
   createdAt: string;
   updatedAt: string;
-  installedApps: {
+  installedApps?: {
     edges: {
       node: InstalledApp;
     }[];
   };
   gated: string;
   isLegacy?: boolean;
-  spaceGating: {
+  spaceGating?: {
     edges: {
       node: SpaceGating;
     }[];

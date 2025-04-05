@@ -420,12 +420,8 @@ const Create = () => {
               userRoles: { edges: [] },
               customAttributes: [],
               installedApps: { edges: [] },
-              spaceGating: {
-                edges: [],
-              },
               createdAt: '',
               updatedAt: '',
-              gated: '0',
             }}
             isJoined={false}
             isFollowed={false}
