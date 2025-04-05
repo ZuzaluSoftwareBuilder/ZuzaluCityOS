@@ -1468,12 +1468,13 @@ export type PartialZucitySpaceGatingInput = {
   ERC20ContractAddress?: InputMaybe<Scalars['String']['input']>;
   ERC721ContractAddress?: InputMaybe<Scalars['String']['input']>;
   ERC1155ContractAddress?: InputMaybe<Scalars['String']['input']>;
-  PoapsId?: InputMaybe<Array<InputMaybe<ZucitySpaceGatingPoapidInput>>>;
   customAttributes?: InputMaybe<Array<InputMaybe<TbdInput>>>;
   gatingCondition?: InputMaybe<Scalars['String']['input']>;
   gatingStatus?: InputMaybe<Scalars['String']['input']>;
+  poapsId?: InputMaybe<Array<InputMaybe<ZucitySpaceGatingPoapidInput>>>;
+  roleId?: InputMaybe<Scalars['String']['input']>;
   spaceId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
-  zuPassInfo?: InputMaybe<Array<InputMaybe<ZucitySpaceGatingZuPassInput>>>;
+  zuPassInfo?: InputMaybe<ZucitySpaceGatingZuPassInput>;
 };
 
 export type PartialZucitySpaceInput = {
@@ -3556,16 +3557,17 @@ export type ZucitySpaceGating = Node & {
   ERC20ContractAddress?: Maybe<Scalars['String']['output']>;
   ERC721ContractAddress?: Maybe<Scalars['String']['output']>;
   ERC1155ContractAddress?: Maybe<Scalars['String']['output']>;
-  PoapsId?: Maybe<Array<Maybe<ZucitySpaceGatingPoapid>>>;
   /** Account controlling the document */
   author: CeramicAccount;
   customAttributes?: Maybe<Array<Maybe<Tbd>>>;
   gatingCondition?: Maybe<Scalars['String']['output']>;
   gatingStatus?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
+  poapsId?: Maybe<Array<Maybe<ZucitySpaceGatingPoapid>>>;
+  roleId?: Maybe<Scalars['String']['output']>;
   space?: Maybe<ZucitySpace>;
   spaceId: Scalars['CeramicStreamID']['output'];
-  zuPassInfo?: Maybe<Array<Maybe<ZucitySpaceGatingZuPass>>>;
+  zuPassInfo?: Maybe<ZucitySpaceGatingZuPass>;
 };
 
 /** A connection to a list of items. */
@@ -3590,21 +3592,22 @@ export type ZucitySpaceGatingInput = {
   ERC20ContractAddress?: InputMaybe<Scalars['String']['input']>;
   ERC721ContractAddress?: InputMaybe<Scalars['String']['input']>;
   ERC1155ContractAddress?: InputMaybe<Scalars['String']['input']>;
-  PoapsId?: InputMaybe<Array<InputMaybe<ZucitySpaceGatingPoapidInput>>>;
   customAttributes?: InputMaybe<Array<InputMaybe<TbdInput>>>;
   gatingCondition?: InputMaybe<Scalars['String']['input']>;
   gatingStatus?: InputMaybe<Scalars['String']['input']>;
+  poapsId?: InputMaybe<Array<InputMaybe<ZucitySpaceGatingPoapidInput>>>;
+  roleId?: InputMaybe<Scalars['String']['input']>;
   spaceId: Scalars['CeramicStreamID']['input'];
-  zuPassInfo?: InputMaybe<Array<InputMaybe<ZucitySpaceGatingZuPassInput>>>;
+  zuPassInfo?: InputMaybe<ZucitySpaceGatingZuPassInput>;
 };
 
 export type ZucitySpaceGatingPoapid = {
   __typename?: 'ZucitySpaceGatingPoapid';
-  poapId?: Maybe<Scalars['String']['output']>;
+  poapId: Scalars['Int']['output'];
 };
 
 export type ZucitySpaceGatingPoapidInput = {
-  poapId?: InputMaybe<Scalars['String']['input']>;
+  poapId: Scalars['Int']['input'];
 };
 
 export type ZucitySpaceGatingZuPass = {
@@ -3914,7 +3917,7 @@ export type GetSpaceQueryVariables = Exact<{
 }>;
 
 
-export type GetSpaceQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount' } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityInvitation' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace', id: string, avatar?: string | null, banner?: string | null, description: string, name: string, profileId: any, tagline?: string | null, category?: string | null, color?: string | null, createdAt: any, updatedAt: any, gated?: string | null, tags?: Array<{ __typename?: 'ZucitySpaceTag', tag: string } | null> | null, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, socialLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, customLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, owner: { __typename?: 'CeramicAccount', id: string, zucityProfile?: { __typename?: 'ZucityProfile', id: string, avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null }, announcements: { __typename?: 'ZucityAnnouncementConnection', edges?: Array<{ __typename?: 'ZucityAnnouncementEdge', node?: { __typename?: 'ZucityAnnouncement', id: string, createdAt: any } | null } | null> | null }, installedApps: { __typename?: 'ZucityInstalledAppConnection', edges?: Array<{ __typename?: 'ZucityInstalledAppEdge', node?: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, nativeAppName?: string | null, installedAppId?: any | null, createdAt: any, updatedAt: any, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string, appType: string, description: string, tagline: string, bannerUrl: string, appUrl?: string | null, openSource: string, devStatus: string, developerName: string, categories: string, appLogoUrl: string } | null } | null } | null> | null }, spaceGating: { __typename?: 'ZucitySpaceGatingConnection', edges?: Array<{ __typename?: 'ZucitySpaceGatingEdge', node?: { __typename?: 'ZucitySpaceGating', id: string, gatingStatus?: string | null, PoapsId?: Array<{ __typename?: 'ZucitySpaceGatingPoapid', poapId?: string | null } | null> | null, zuPassInfo?: Array<{ __typename?: 'ZucitySpaceGatingZuPass', registration?: string | null, eventId?: string | null, eventName?: string | null } | null> | null } | null } | null> | null } } | { __typename?: 'ZucitySpaceGating' } | { __typename?: 'ZucityUserRoles' } | null };
+export type GetSpaceQuery = { __typename?: 'Query', node?: { __typename?: 'CeramicAccount' } | { __typename?: 'ZucityAnnouncement' } | { __typename?: 'ZucityApplicationForm' } | { __typename?: 'ZucityDappInfo' } | { __typename?: 'ZucityEvent' } | { __typename?: 'ZucityEventPost' } | { __typename?: 'ZucityEventRegistrationAndAccess' } | { __typename?: 'ZucityInstalledApp' } | { __typename?: 'ZucityInvitation' } | { __typename?: 'ZucityPermission' } | { __typename?: 'ZucityProfile' } | { __typename?: 'ZucityRole' } | { __typename?: 'ZucityRolePermission' } | { __typename?: 'ZucitySession' } | { __typename?: 'ZucitySpace', id: string, avatar?: string | null, banner?: string | null, description: string, name: string, profileId: any, tagline?: string | null, category?: string | null, color?: string | null, createdAt: any, updatedAt: any, gated?: string | null, tags?: Array<{ __typename?: 'ZucitySpaceTag', tag: string } | null> | null, customAttributes?: Array<{ __typename?: 'TBD', tbd?: string | null } | null> | null, socialLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, customLinks?: Array<{ __typename?: 'ZucitySpaceLink', title: string, links: string } | null> | null, owner: { __typename?: 'CeramicAccount', id: string, zucityProfile?: { __typename?: 'ZucityProfile', id: string, avatar?: string | null, username: string, author: { __typename?: 'CeramicAccount', id: string } } | null }, announcements: { __typename?: 'ZucityAnnouncementConnection', edges?: Array<{ __typename?: 'ZucityAnnouncementEdge', node?: { __typename?: 'ZucityAnnouncement', id: string, createdAt: any } | null } | null> | null }, installedApps: { __typename?: 'ZucityInstalledAppConnection', edges?: Array<{ __typename?: 'ZucityInstalledAppEdge', node?: { __typename?: 'ZucityInstalledApp', id: string, sourceId: string, spaceId?: any | null, nativeAppName?: string | null, installedAppId?: any | null, createdAt: any, updatedAt: any, installedApp?: { __typename?: 'ZucityDappInfo', id: string, appName: string, appType: string, description: string, tagline: string, bannerUrl: string, appUrl?: string | null, openSource: string, devStatus: string, developerName: string, categories: string, appLogoUrl: string } | null } | null } | null> | null }, spaceGating: { __typename?: 'ZucitySpaceGatingConnection', edges?: Array<{ __typename?: 'ZucitySpaceGatingEdge', node?: { __typename?: 'ZucitySpaceGating', id: string, gatingStatus?: string | null, poapsId?: Array<{ __typename?: 'ZucitySpaceGatingPoapid', poapId: number } | null> | null, zuPassInfo?: { __typename?: 'ZucitySpaceGatingZuPass', registration?: string | null, eventId?: string | null, eventName?: string | null } | null } | null } | null> | null } } | { __typename?: 'ZucitySpaceGating' } | { __typename?: 'ZucityUserRoles' } | null };
 
 export type GetSpaceByIdsQueryVariables = Exact<{
   ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
@@ -3988,7 +3991,7 @@ export type CreateSpaceGatingRuleMutationVariables = Exact<{
 }>;
 
 
-export type CreateSpaceGatingRuleMutation = { __typename?: 'Mutation', createZucitySpaceGating?: { __typename?: 'CreateZucitySpaceGatingPayload', document: { __typename?: 'ZucitySpaceGating', id: string, spaceId: any, PoapsId?: Array<{ __typename?: 'ZucitySpaceGatingPoapid', poapId?: string | null } | null> | null, zuPassInfo?: Array<{ __typename?: 'ZucitySpaceGatingZuPass', registration?: string | null, eventId?: string | null, eventName?: string | null } | null> | null } } | null };
+export type CreateSpaceGatingRuleMutation = { __typename?: 'Mutation', createZucitySpaceGating?: { __typename?: 'CreateZucitySpaceGatingPayload', document: { __typename?: 'ZucitySpaceGating', id: string, spaceId: any, poapsId?: Array<{ __typename?: 'ZucitySpaceGatingPoapid', poapId: number } | null> | null, zuPassInfo?: { __typename?: 'ZucitySpaceGatingZuPass', registration?: string | null, eventId?: string | null, eventName?: string | null } | null } } | null };
 
 export type UpdateSpaceGatingRuleMutationVariables = Exact<{
   input: UpdateZucitySpaceGatingInput;
@@ -4671,7 +4674,7 @@ export const GetSpaceDocument = new TypedDocumentString(`
         edges {
           node {
             id
-            PoapsId {
+            poapsId {
               poapId
             }
             zuPassInfo {
@@ -5013,7 +5016,7 @@ export const CreateSpaceGatingRuleDocument = new TypedDocumentString(`
     document {
       id
       spaceId
-      PoapsId {
+      poapsId {
         poapId
       }
       zuPassInfo {

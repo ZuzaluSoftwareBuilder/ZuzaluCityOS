@@ -6,7 +6,7 @@ export const CREATE_SPACE_GATING_RULE = graphql(`
       document {
         id
         spaceId
-        PoapsId {
+        poapsId {
           poapId
         }
         zuPassInfo {

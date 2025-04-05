@@ -89,12 +89,12 @@ RuleItem.Edit = memo(function Edit({ data, onClose }: EditProps) {
   const form = useForm<yup.InferType<typeof editSchema>>({
     resolver: yupResolver(editSchema),
     defaultValues: {
-      rule: data?.id ? (data?.PoapsId?.length > 0 ? 'poap' : 'zupass') : 'poap',
-      poap: data?.PoapsId?.map((item) => Number(item.poapId)) || [],
+      rule: data?.id ? (data?.poapsId?.length > 0 ? 'poap' : 'zupass') : 'poap',
+      poap: data?.poapsId?.map((item) => Number(item.poapId)) || [],
       zupass: {
-        registration: data?.zuPassInfo?.[0]?.registration || '',
-        eventId: data?.zuPassInfo?.[0]?.eventId || '',
-        eventName: data?.zuPassInfo?.[0]?.eventName || '',
+        registration: data?.zuPassInfo?.registration || '',
+        eventId: data?.zuPassInfo?.eventId || '',
+        eventName: data?.zuPassInfo?.eventName || '',
       },
     },
     mode: 'all',
@@ -110,16 +110,14 @@ RuleItem.Edit = memo(function Edit({ data, onClose }: EditProps) {
           content: {
             spaceId: spaceId as string,
             ...(value.rule === 'poap' && {
-              PoapsId: value.poap?.map((id) => ({ poapId: id.toString() })),
+              poapsId: value.poap?.map((id) => ({ poapId: Number(id) })),
             }),
             ...(value.rule === 'zupass' && {
-              zuPassInfo: [
-                {
-                  registration: value.zupass.registration,
-                  eventId: value.zupass.eventId,
-                  eventName: value.zupass.eventName,
-                },
-              ],
+              zuPassInfo: {
+                registration: value.zupass.registration,
+                eventId: value.zupass.eventId,
+                eventName: value.zupass.eventName,
+              },
             }),
           },
         },
@@ -138,16 +136,14 @@ RuleItem.Edit = memo(function Edit({ data, onClose }: EditProps) {
           id: data!.id,
           content: {
             ...(value.rule === 'poap' && {
-              PoapsId: value.poap?.map((id) => ({ poapId: id.toString() })),
+              poapsId: value.poap?.map((id) => ({ poapId: Number(id) })),
             }),
             ...(value.rule === 'zupass' && {
-              zuPassInfo: [
-                {
-                  registration: value.zupass.registration,
-                  eventId: value.zupass.eventId,
-                  eventName: value.zupass.eventName,
-                },
-              ],
+              zuPassInfo: {
+                registration: value.zupass.registration,
+                eventId: value.zupass.eventId,
+                eventName: value.zupass.eventName,
+              },
             }),
           },
         },
@@ -266,7 +262,7 @@ interface NormalProps {
 }
 
 RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
-  const { gatingStatus, zuPassInfo, PoapsId } = data;
+  const { gatingStatus, zuPassInfo, poapsId } = data;
   const [isActive, setIsActive] = useState(gatingStatus === '1');
 
   const { showModal } = useModal();
@@ -297,7 +293,7 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
 
   const poapsData = useQueries({
     queries:
-      PoapsId?.map((id) => ({
+      poapsId?.map((id) => ({
         queryKey: ['ruleNormalPoaps', id.poapId],
         queryFn: () => getPOAPs({ queryKey: ['ruleNormalPoaps', id.poapId] }),
         enabled: !!id.poapId,
@@ -335,7 +331,7 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
     });
   }, [showModal, data.id, refreshSpaceData]);
 
-  const hasZuPass = zuPassInfo?.length > 0;
+  const hasZuPass = poapsId?.length === 0;
 
   return (
     <div
@@ -405,19 +401,19 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
               <span className="text-[13px] font-medium opacity-50">
                 Public Key:
               </span>
-              <span className="text-[13px]">{zuPassInfo[0].registration}</span>
+              <span className="text-[13px]">{zuPassInfo.registration}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[13px] font-medium opacity-50">
                 Event ID:
               </span>
-              <span className="text-[13px]">{zuPassInfo[0].eventId}</span>
+              <span className="text-[13px]">{zuPassInfo.eventId}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[13px] font-medium opacity-50">
                 Event Name:
               </span>
-              <span className="text-[13px]">{zuPassInfo[0].eventName}</span>
+              <span className="text-[13px]">{zuPassInfo.eventName}</span>
             </div>
           </div>
         )}
