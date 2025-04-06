@@ -222,9 +222,14 @@ const Create = () => {
         );
       }
       const spaceId = result.data?.createZucitySpace?.document?.id || '';
+
       if (!spaceId) {
         throw new Error('Result data is empty');
       }
+
+      // Prefetch the space page
+      router.prefetch(`/spaces/${spaceId}`);
+
       const urlName = covertNameToUrlName(content.name);
       // @ts-ignore
       await createUrl(

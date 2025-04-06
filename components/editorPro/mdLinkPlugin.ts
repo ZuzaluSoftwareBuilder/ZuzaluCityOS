@@ -26,107 +26,47 @@ export const MarkdownLinkPlugin = Extension.create({
                 ' ',
               );
 
+              // Process URL links
               const urlRegex = /(https?:\/\/[^\s]+)$/;
               const urlMatch = textBefore.match(urlRegex);
               if (urlMatch) {
-                const [fullMatch] = urlMatch;
-                const start = $head.pos - fullMatch.length;
-
-                const tr = state.tr;
-
-                const linkMark = state.schema.marks.link.create({
-                  href: fullMatch,
-                });
-                tr.addMark(start, $head.pos, linkMark);
-
-                tr.insertText(' ', $head.pos);
-
-                const newPos = $head.pos + 1;
-                tr.setSelection(TextSelection.create(tr.doc, newPos));
-
-                tr.removeStoredMark(linkMark);
-
-                dispatch(tr);
-                return true;
+                return processLink(
+                  urlMatch[0],
+                  urlMatch[0],
+                  $head.pos,
+                  state,
+                  dispatch,
+                );
               }
 
+              // Process markdown links [text](url)
               const linkMatch = textBefore.match(/\[([^\]]+)\]\(([^)]+)\)$/);
               if (linkMatch) {
                 const [fullMatch, linkText, linkUrl] = linkMatch;
-                const start = $head.pos - fullMatch.length;
-
-                let processedUrl = linkUrl.trim();
-
-                if (
-                  !processedUrl.startsWith('http://') &&
-                  !processedUrl.startsWith('https://')
-                ) {
-                  if (processedUrl.startsWith('www.')) {
-                    processedUrl = `https://${processedUrl}`;
-                  } else {
-                    processedUrl = `https://${processedUrl}`;
-                  }
-                }
-
-                const tr = state.tr;
-
-                tr.delete(start, $head.pos);
-
-                tr.insertText(linkText, start);
-
-                const linkMark = state.schema.marks.link.create({
-                  href: processedUrl,
-                });
-                tr.addMark(start, start + linkText.length, linkMark);
-
-                tr.insertText(' ', start + linkText.length);
-
-                const newPos = start + linkText.length + 1;
-                tr.setSelection(TextSelection.create(tr.doc, newPos));
-
-                tr.removeStoredMark(linkMark);
-
-                dispatch(tr);
-                return true;
+                const processedUrl = processUrl(linkUrl);
+                return processMarkdownLink(
+                  fullMatch,
+                  linkText,
+                  processedUrl,
+                  $head.pos,
+                  state,
+                  dispatch,
+                );
               }
 
+              // Process markdown image links ![alt](url)
               const imageMatch = textBefore.match(/!\[([^\]]*)\]\(([^)]+)\)$/);
               if (imageMatch) {
                 const [fullMatch, altText, imageUrl] = imageMatch;
-                const start = $head.pos - fullMatch.length;
-
-                let processedUrl = imageUrl.trim();
-                if (
-                  !processedUrl.startsWith('http://') &&
-                  !processedUrl.startsWith('https://')
-                ) {
-                  if (processedUrl.startsWith('www.')) {
-                    processedUrl = `https://${processedUrl}`;
-                  } else {
-                    processedUrl = `https://${processedUrl}`;
-                  }
-                }
-
-                const tr = state.tr;
-
-                tr.delete(start, $head.pos);
-
-                tr.insertText(altText, start);
-
-                const linkMark = state.schema.marks.link.create({
-                  href: processedUrl,
-                });
-                tr.addMark(start, start + altText.length, linkMark);
-
-                tr.insertText(' ', start + altText.length);
-
-                const newPos = start + altText.length + 1;
-                tr.setSelection(TextSelection.create(tr.doc, newPos));
-
-                tr.removeStoredMark(linkMark);
-
-                dispatch(tr);
-                return true;
+                const processedUrl = processUrl(imageUrl);
+                return processMarkdownLink(
+                  fullMatch,
+                  altText,
+                  processedUrl,
+                  $head.pos,
+                  state,
+                  dispatch,
+                );
               }
             }
 
@@ -137,3 +77,64 @@ export const MarkdownLinkPlugin = Extension.create({
     ];
   },
 });
+
+// Helper functions
+
+function processUrl(url: string): string {
+  let processedUrl = url.trim();
+  if (
+    !processedUrl.startsWith('http://') &&
+    !processedUrl.startsWith('https://')
+  ) {
+    if (processedUrl.startsWith('www.')) {
+      processedUrl = `https://${processedUrl}`;
+    } else if (processedUrl.indexOf('.') > 0) {
+      processedUrl = `https://${processedUrl}`;
+    }
+  }
+  return processedUrl;
+}
+
+function processLink(
+  fullUrl: string,
+  url: string,
+  pos: number,
+  state: any,
+  dispatch: any,
+): boolean {
+  const start = pos - fullUrl.length;
+  const tr = state.tr;
+
+  const linkMark = state.schema.marks.link.create({ href: url });
+  tr.addMark(start, pos, linkMark);
+  tr.insertText(' ', pos);
+  tr.setSelection(TextSelection.create(tr.doc, pos + 1));
+  tr.removeStoredMark(linkMark);
+
+  dispatch(tr);
+  return true;
+}
+
+function processMarkdownLink(
+  fullMatch: string,
+  text: string,
+  url: string,
+  pos: number,
+  state: any,
+  dispatch: any,
+): boolean {
+  const start = pos - fullMatch.length;
+  const tr = state.tr;
+
+  tr.delete(start, pos);
+  tr.insertText(text, start);
+
+  const linkMark = state.schema.marks.link.create({ href: url });
+  tr.addMark(start, start + text.length, linkMark);
+  tr.insertText(' ', start + text.length);
+  tr.setSelection(TextSelection.create(tr.doc, start + text.length + 1));
+  tr.removeStoredMark(linkMark);
+
+  dispatch(tr);
+  return true;
+}

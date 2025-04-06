@@ -483,8 +483,7 @@ const EditorPro: React.FC<EditorProProps> = ({
         <div
           ref={contentRef}
           className={cn(
-            'relative min-h-[50px] p-[10px]',
-            !isEdit && 'pt-[10px]',
+            'relative p-[10px]',
             collapsable &&
               !isEdit &&
               canCollapse &&
