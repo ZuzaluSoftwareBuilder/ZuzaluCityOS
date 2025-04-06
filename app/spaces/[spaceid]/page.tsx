@@ -8,18 +8,31 @@ import { Event, Space } from '@/types';
 import { useEffect, useMemo } from 'react';
 import SpaceEventList from '@/app/spaces/[spaceid]/components/home/spaceEventList';
 import SideNav from '@/app/spaces/[spaceid]/components/home/sideNav';
+import { useBuildInRole } from '@/context/BuildInRoleContext';
 const SpaceHomePage: React.FC = () => {
   const params = useParams();
   const spaceId = params?.spaceid?.toString() ?? '';
+  const { adminRole, memberRole } = useBuildInRole();
 
   const { data: spaceData, isLoading } = useGraphQL(
     ['getSpaceAndEvents', spaceId],
     GET_SPACE_AND_EVENTS_QUERY_BY_ID,
-    { id: spaceId },
+    {
+      id: spaceId,
+      first: 100,
+      userRolesFilters: {
+        where: {
+          roleId: {
+            in: [adminRole, memberRole].map((role) => role?.id ?? ''),
+          },
+        },
+      },
+    },
     {
       select: (data) => {
         return data?.data?.node as Space;
       },
+      enabled: !!adminRole && !!memberRole,
     },
   );
 
@@ -40,7 +53,7 @@ const SpaceHomePage: React.FC = () => {
     <div className="flex h-full">
       <div className="flex-1">
         <SpaceSection spaceData={spaceData} isLoading={isLoading} />
-        {/* TODO remain old logic code for now, wait for new design */}
+        {/* TODO: remain old logic code (but use new EventCard component) for now, wait for new design */}
         <SpaceEventList eventsData={eventsData} isLoading={isLoading} />
       </div>
 

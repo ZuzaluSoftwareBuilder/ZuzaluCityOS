@@ -18,6 +18,7 @@ import { useEffect, useMemo } from 'react';
 import { getWalletAddressFromDid } from '@/utils/did';
 import { Avatar, cn } from '@heroui/react';
 import { formatAddressString } from '@/components/layout/UserProfileSection';
+import { formatMemberCount } from '@/app/components/SpaceCard';
 
 export interface ISideNavProps {
   spaceData?: Space;
@@ -33,6 +34,12 @@ const ShowRoleOrder: Record<string, number> = {
 const SideNav = ({ spaceData }: ISideNavProps) => {
   const spaceId = useParams()?.spaceid;
   const { owner, members, roles } = useGetSpaceMember(spaceId as string);
+
+  const formattedMemberCount = useMemo(() => {
+    const totalMembers =
+      spaceData?.userRoles?.edges.map((item) => item.node).length ?? 0;
+    return formatMemberCount(totalMembers + 1);
+  }, [spaceData?.userRoles]);
 
   const roleData = useMemo(() => {
     if (!roles?.data) return [];
@@ -134,7 +141,7 @@ const SideNav = ({ spaceData }: ISideNavProps) => {
             Members
           </span>
           <span className="text-[14px] font-[600] leading-[1.6] text-white opacity-60">
-            {formatedMembers.length}
+            {formattedMemberCount}
           </span>
         </div>
 

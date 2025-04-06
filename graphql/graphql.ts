@@ -1392,12 +1392,13 @@ export type PartialZucitySpaceGatingInput = {
   ERC20ContractAddress?: InputMaybe<Scalars['String']['input']>;
   ERC721ContractAddress?: InputMaybe<Scalars['String']['input']>;
   ERC1155ContractAddress?: InputMaybe<Scalars['String']['input']>;
-  PoapsId?: InputMaybe<Array<InputMaybe<ZucitySpaceGatingPoapidInput>>>;
   customAttributes?: InputMaybe<Array<InputMaybe<TbdInput>>>;
   gatingCondition?: InputMaybe<Scalars['String']['input']>;
   gatingStatus?: InputMaybe<Scalars['String']['input']>;
+  poapsId?: InputMaybe<Array<InputMaybe<ZucitySpaceGatingPoapidInput>>>;
+  roleId?: InputMaybe<Scalars['String']['input']>;
   spaceId?: InputMaybe<Scalars['CeramicStreamID']['input']>;
-  zuPassInfo?: InputMaybe<Array<InputMaybe<ZucitySpaceGatingZuPassInput>>>;
+  zuPassInfo?: InputMaybe<ZucitySpaceGatingZuPassInput>;
 };
 
 export type PartialZucitySpaceInput = {
@@ -3435,16 +3436,17 @@ export type ZucitySpaceGating = Node & {
   ERC20ContractAddress?: Maybe<Scalars['String']['output']>;
   ERC721ContractAddress?: Maybe<Scalars['String']['output']>;
   ERC1155ContractAddress?: Maybe<Scalars['String']['output']>;
-  PoapsId?: Maybe<Array<Maybe<ZucitySpaceGatingPoapid>>>;
   /** Account controlling the document */
   author: CeramicAccount;
   customAttributes?: Maybe<Array<Maybe<Tbd>>>;
   gatingCondition?: Maybe<Scalars['String']['output']>;
   gatingStatus?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
+  poapsId?: Maybe<Array<Maybe<ZucitySpaceGatingPoapid>>>;
+  roleId?: Maybe<Scalars['String']['output']>;
   space?: Maybe<ZucitySpace>;
   spaceId: Scalars['CeramicStreamID']['output'];
-  zuPassInfo?: Maybe<Array<Maybe<ZucitySpaceGatingZuPass>>>;
+  zuPassInfo?: Maybe<ZucitySpaceGatingZuPass>;
 };
 
 /** A connection to a list of items. */
@@ -3469,21 +3471,22 @@ export type ZucitySpaceGatingInput = {
   ERC20ContractAddress?: InputMaybe<Scalars['String']['input']>;
   ERC721ContractAddress?: InputMaybe<Scalars['String']['input']>;
   ERC1155ContractAddress?: InputMaybe<Scalars['String']['input']>;
-  PoapsId?: InputMaybe<Array<InputMaybe<ZucitySpaceGatingPoapidInput>>>;
   customAttributes?: InputMaybe<Array<InputMaybe<TbdInput>>>;
   gatingCondition?: InputMaybe<Scalars['String']['input']>;
   gatingStatus?: InputMaybe<Scalars['String']['input']>;
+  poapsId?: InputMaybe<Array<InputMaybe<ZucitySpaceGatingPoapidInput>>>;
+  roleId?: InputMaybe<Scalars['String']['input']>;
   spaceId: Scalars['CeramicStreamID']['input'];
-  zuPassInfo?: InputMaybe<Array<InputMaybe<ZucitySpaceGatingZuPassInput>>>;
+  zuPassInfo?: InputMaybe<ZucitySpaceGatingZuPassInput>;
 };
 
 export type ZucitySpaceGatingPoapid = {
   __typename?: 'ZucitySpaceGatingPoapid';
-  poapId?: Maybe<Scalars['String']['output']>;
+  poapId: Scalars['Int']['output'];
 };
 
 export type ZucitySpaceGatingPoapidInput = {
-  poapId?: InputMaybe<Scalars['String']['input']>;
+  poapId: Scalars['Int']['input'];
 };
 
 export type ZucitySpaceGatingZuPass = {
@@ -4780,6 +4783,8 @@ export type GetSpacesQuery = {
 
 export type GetSpaceAndEventsQueryVariables = Exact<{
   id: Scalars['ID']['input'];
+  userRolesFirst?: InputMaybe<Scalars['Int']['input']>;
+  userRolesFilters?: InputMaybe<ZucityUserRolesFiltersInput>;
 }>;
 
 export type GetSpaceAndEventsQuery = {
@@ -4871,6 +4876,13 @@ export type GetSpaceAndEventsQuery = {
                 avatar?: string | null;
               } | null;
             } | null;
+          } | null> | null;
+        };
+        userRoles: {
+          __typename?: 'ZucityUserRolesConnection';
+          edges?: Array<{
+            __typename?: 'ZucityUserRolesEdge';
+            node?: { __typename?: 'ZucityUserRoles'; roleId: string } | null;
           } | null> | null;
         };
       }
@@ -5903,7 +5915,7 @@ export const GetSpacesDocument = new TypedDocumentString(`
   GetSpacesQueryVariables
 >;
 export const GetSpaceAndEventsDocument = new TypedDocumentString(`
-    query GetSpaceAndEvents($id: ID!) {
+    query GetSpaceAndEvents($id: ID!, $userRolesFirst: Int = 100, $userRolesFilters: ZucityUserRolesFiltersInput) {
   node(id: $id) {
     ... on ZucitySpace {
       id
@@ -5967,6 +5979,13 @@ export const GetSpaceAndEventsDocument = new TypedDocumentString(`
               name
               avatar
             }
+          }
+        }
+      }
+      userRoles(filters: $userRolesFilters, first: $userRolesFirst) {
+        edges {
+          node {
+            roleId
           }
         }
       }

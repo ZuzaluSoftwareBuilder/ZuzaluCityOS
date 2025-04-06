@@ -29,6 +29,7 @@ import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_SPACE_AND_EVENTS_QUERY_BY_ID } from '@/services/graphql/space';
 import EditorPro from '@/components/editorPro';
 import { cn } from '@heroui/react';
+import { useBuildInRole } from '@/context/BuildInRoleContext';
 
 const EditorPreview = dynamic(
   () => import('@/components/editor/EditorPreview'),
@@ -43,17 +44,29 @@ export default function SpaceDetailPage() {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
   const [showCopyToast, setShowCopyToast] = useState(false);
+  const { adminRole, memberRole } = useBuildInRole();
 
   const spaceId = params?.spaceid?.toString() ?? '';
 
   const { data: spaceData, isLoading } = useGraphQL(
     ['getSpaceAndEvents', spaceId],
     GET_SPACE_AND_EVENTS_QUERY_BY_ID,
-    { id: spaceId },
+    {
+      id: spaceId,
+      first: 100,
+      userRolesFilters: {
+        where: {
+          roleId: {
+            in: [adminRole, memberRole].map((role) => role?.id ?? ''),
+          },
+        },
+      },
+    },
     {
       select: (data) => {
         return data?.data?.node as Space;
       },
+      enabled: !!adminRole && !!memberRole,
     },
   );
 

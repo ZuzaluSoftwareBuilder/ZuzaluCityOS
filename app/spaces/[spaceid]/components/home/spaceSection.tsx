@@ -11,8 +11,10 @@ import {
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { useParams } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import EditorPro from '@/components/editorPro';
+import useUserSpace from '@/hooks/useUserSpace';
+import { CheckCircleIcon } from '@/components/icons';
 
 export interface SpaceSectionProps {
   spaceData?: Space;
@@ -26,7 +28,24 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
 
+  const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
+
+  const { isUserJoined, isUserFollowed } = useMemo(() => {
+    const isUserJoined = userJoinedSpaceIds.has(spaceId);
+    const isUserFollowed = userFollowedSpaceIds.has(spaceId);
+    return { isUserJoined, isUserFollowed };
+  }, [spaceId, userJoinedSpaceIds, userFollowedSpaceIds]);
+
   const { shareUrl } = useGetShareLink({ id: spaceId, name: spaceData?.name });
+
+  const onJoin = () => {
+    //   TODO join event
+    console.log('join event');
+  };
+  const onFollow = () => {
+    //   TODO follow event
+    console.log('follow event');
+  };
 
   const onCopy = useCallback(() => {
     addToast({
@@ -42,20 +61,8 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
         <Skeleton className="aspect-[3.4] rounded-[10px] object-cover mobile:aspect-[2.4]" />
 
         <div className="flex justify-end gap-[10px]">
-          <Button disabled>Follow</Button>
-          <Button
-            disabled
-            startContent={
-              <ArrowSquareRight weight="fill" format="Stroke" size={20} />
-            }
-          >
-            Join Community
-          </Button>
-          <Button
-            disabled
-            startContent={<ShareFat weight="fill" format="Stroke" size={20} />}
-            isIconOnly
-          ></Button>
+          <Skeleton className="h-[40px] w-[178px] rounded-[8px]" />
+          <Skeleton className="size-[40px] rounded-[8px]" />
         </div>
       </div>
     );
@@ -86,18 +93,25 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
       </div>
 
       <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
-        {/* TODO: check if user is following the space */}
-        <Button
-          startContent={<Heart weight="fill" format="Stroke" size={20} />}
-        >
-          Follow
-        </Button>
+        {!isUserJoined && (
+          <Button
+            startContent={<Heart weight="fill" format="Stroke" size={20} />}
+            onPress={onFollow}
+          >
+            {isUserFollowed ? 'Following' : 'Follow'}
+          </Button>
+        )}
         <Button
           startContent={
-            <ArrowSquareRight weight="fill" format="Stroke" size={20} />
+            isUserJoined ? (
+              <CheckCircleIcon size={4} />
+            ) : (
+              <ArrowSquareRight weight="fill" format="Stroke" size={20} />
+            )
           }
+          onPress={onJoin}
         >
-          Join Community
+          {isUserJoined ? 'Joined' : 'Join Community'}
         </Button>
         <CopyToClipboard text={shareUrl!} onCopy={onCopy}>
           <Button
@@ -165,7 +179,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
           }
           className="w-full"
         >
-          Join Community
+          {isUserJoined ? 'Joined' : 'Join Community'}
         </Button>
         <CopyToClipboard text={shareUrl!} onCopy={onCopy}>
           <Button
