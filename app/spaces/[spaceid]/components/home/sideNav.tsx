@@ -23,44 +23,70 @@ export interface ISideNavProps {
   spaceData?: Space;
 }
 
+const ShowRoles = ['owner', 'admin', 'member'];
+const ShowRoleOrder: Record<string, number> = {
+  owner: 30,
+  admin: 20,
+  member: 10,
+};
+
 const SideNav = ({ spaceData }: ISideNavProps) => {
   const spaceId = useParams()?.spaceid;
   const { owner, members, roles } = useGetSpaceMember(spaceId as string);
-  const roleData = roles?.data || [];
+
+  const roleData = useMemo(() => {
+    if (!roles?.data) return [];
+    return roles.data.filter((role) => ShowRoles.includes(role.role.level));
+  }, [roles?.data]);
 
   useEffect(() => {
-    console.log('owner, members, roles', owner, members, roles);
+    console.log('owner', owner);
+    console.log('members', members);
+    console.log('roles', roles);
   }, [owner, members, roles]);
 
   const formatedMembers = useMemo(() => {
-    if (!owner) return [];
-    const { username, avatar, author } = owner;
-    const ownerProfile = {
-      name: username,
-      avatarUrl: avatar || '',
-      address: getWalletAddressFromDid(author?.id),
-      roleName: 'Owner',
-    };
-    let res = [ownerProfile];
+    let res = [];
+    if (owner) {
+      const { username, avatar, author } = owner;
+      const ownerProfile = {
+        name: username,
+        avatarUrl: avatar || '',
+        address: getWalletAddressFromDid(author?.id),
+        roleName: 'Owner',
+        order: ShowRoleOrder.owner,
+      };
+      res.push(ownerProfile);
+    }
+
     if (!members || !members.length) return res;
 
     members.forEach((member) => {
       const profile = member.userId.zucityProfile;
-      if (!profile) return null;
-      const roleId = member.roleId;
-      const roleName =
-        roleData.find((role) => role.id === roleId)?.role.name || 'Member';
+      if (!profile) return;
+      const memberRoleId = member.roleId;
+
+      const matchedRole = roleData.find(
+        (role) => role.role.id === memberRoleId,
+      );
+
+      if (!matchedRole) return;
+
+      const roleName = matchedRole.role.name || 'Member';
+      const roleLevel = matchedRole.role.level || 'member';
+
       const did = profile.author?.id;
       const item = {
         name: profile.username,
         avatarUrl: profile.avatar || '',
         address: getWalletAddressFromDid(did),
         roleName: roleName,
+        order: ShowRoleOrder[roleLevel],
       };
       res.push(item);
     });
-    return res.filter((v) => !!v);
-  }, [members, owner]);
+    return res.filter((v) => !!v).sort((a, b) => b.order - a.order);
+  }, [members, owner, roleData]);
 
   return (
     <div className="flex w-[330px] flex-col gap-[10px] border-l border-[rgba(255,255,255,0.1)] bg-[#222] tablet:hidden mobile:hidden">
