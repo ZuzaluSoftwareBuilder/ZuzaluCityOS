@@ -6,7 +6,7 @@ import {
   groupEventsByMonth,
 } from '@/components/cards/EventCard';
 import React, { Fragment } from 'react';
-import { EventCard } from '@/components/cards';
+import { EventCard } from '@/app/components/EventCard';
 import { Event } from '@/types';
 
 export interface ISpaceEventListProps {
@@ -73,7 +73,7 @@ const SpaceEventList = ({ isLoading, eventsData }: ISpaceEventListProps) => {
                 <Fragment key={key + index}>
                   <EventCardMonthGroup>{key}</EventCardMonthGroup>
                   {value.map((event) => {
-                    return <EventCard key={event.id} event={event} />;
+                    return <EventCard key={event.id} data={event} />;
                   })}
                 </Fragment>
               );
