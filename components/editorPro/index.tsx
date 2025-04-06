@@ -329,13 +329,12 @@ const EditorPro: React.FC<EditorProProps> = ({
       StarterKit.configure({
         bulletList: {
           HTMLAttributes: {
-            class: 'custom-bullet-list pl-4 my-[10px] list-disc text-white/80',
+            class: 'custom-bullet-list pl-4 my-[10px] list-disc',
           },
         },
         orderedList: {
           HTMLAttributes: {
-            class:
-              'custom-ordered-list pl-4 my-[10px] list-decimal text-white/80',
+            class: 'custom-ordered-list pl-4 my-[10px] list-decimal',
           },
         },
         blockquote: {
@@ -363,7 +362,7 @@ const EditorPro: React.FC<EditorProProps> = ({
       }),
       Text.configure({
         HTMLAttributes: {
-          class: 'text-[14px]',
+          class: `text-${isEdit ? '14px' : '16px'}`,
         },
       }),
       Bold.configure({
@@ -374,8 +373,7 @@ const EditorPro: React.FC<EditorProProps> = ({
       Link.configure({
         openOnClick: true,
         HTMLAttributes: {
-          class:
-            'custom-link text-primary-500 hover:text-primary-400 cursor-pointer transition-colors',
+          class: 'custom-link underline cursor-pointer transition-colors',
           rel: 'noopener noreferrer',
           target: '_blank',
         },
@@ -389,11 +387,12 @@ const EditorPro: React.FC<EditorProProps> = ({
     editorProps: {
       attributes: {
         class: cn(
-          'tiptap prose prose-invert max-w-none focus:outline-none text-[14px]',
+          'tiptap prose prose-invert max-w-none focus:outline-none',
           '[&_.tiptap]:first:mt-0',
           '[&_h1]:text-[2rem] [&_h1]:leading-[1.4]',
           '[&_h2]:text-[1.6rem] [&_h2]:leading-[1.4]',
           '[&_h3]:text-[1.4rem] [&_h3]:leading-[1.4]',
+          isEdit ? 'text-[14px]' : 'text-[16px]',
           !isEdit && 'cursor-default',
           className,
         ),
