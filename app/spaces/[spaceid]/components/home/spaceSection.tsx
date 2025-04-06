@@ -95,7 +95,13 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
       <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
         {!isUserJoined && (
           <Button
-            startContent={<Heart weight="fill" format="Stroke" size={20} />}
+            startContent={
+              <Heart
+                weight={isUserFollowed ? 'fill' : 'light'}
+                format="Stroke"
+                size={20}
+              />
+            }
             onPress={onFollow}
           >
             {isUserFollowed ? 'Following' : 'Follow'}
@@ -173,11 +179,30 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
       </div>
 
       <div className="mt-[10px] hidden gap-[10px] mobile:flex">
+        {!isUserJoined && (
+          <Button
+            startContent={
+              <Heart
+                weight={isUserFollowed ? 'fill' : 'light'}
+                format="Stroke"
+                size={20}
+              />
+            }
+            onPress={onFollow}
+            className="w-full flex-1 shrink-0"
+          >
+            {isUserFollowed ? 'Following' : 'Follow'}
+          </Button>
+        )}
         <Button
           startContent={
-            <ArrowSquareRight weight="fill" format="Stroke" size={20} />
+            isUserJoined ? (
+              <CheckCircleIcon size={4} />
+            ) : (
+              <ArrowSquareRight weight="fill" format="Stroke" size={20} />
+            )
           }
-          className="w-full"
+          className="w-full flex-1 shrink-0"
         >
           {isUserJoined ? 'Joined' : 'Join Community'}
         </Button>
