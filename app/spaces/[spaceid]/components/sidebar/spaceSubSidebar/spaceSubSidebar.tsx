@@ -76,6 +76,10 @@ const SpaceSubSidebar = ({
       (app) => app.nativeAppName === 'calendar',
     );
 
+    const hasZuland = installedAppsData?.some(
+      (app) => app.nativeAppName === 'zuland',
+    );
+
     installedAppsData
       ?.filter((app) => app.nativeAppName)
       .map((app) => (
@@ -96,6 +100,15 @@ const SpaceSubSidebar = ({
           href={`/spaces/${spaceId}/calendar`}
           icon={<CalendarDots />}
           isActive={isRouteActive('calendar')}
+          onClick={onCloseDrawer}
+        />
+      ) : null,
+      hasZuland ? (
+        <TabItem
+          label="Zuland"
+          href={`/spaces/${spaceId}/zuland`}
+          icon={<CalendarDots />}
+          isActive={isRouteActive('zuland')}
           onClick={onCloseDrawer}
         />
       ) : null,
