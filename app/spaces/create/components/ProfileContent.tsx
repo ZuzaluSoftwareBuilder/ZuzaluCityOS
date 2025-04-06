@@ -143,6 +143,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                   value={value}
                   onChange={onChange}
                   className="min-h-[190px]"
+                  placeholder="This space is about whatever"
                 />
               )}
             />

@@ -1,6 +1,8 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
+import Bold from '@tiptap/extension-bold';
+import Text from '@tiptap/extension-text';
 import React, { useEffect, useState, useRef } from 'react';
 import {
   TextHOne,
@@ -26,31 +28,28 @@ interface EditorValue {
 }
 
 interface EditorProProps {
-  _value?: string; // JSON string
-  onChange?: (value: string) => void; // JSON string
+  value?: string;
+  onChange?: (value: string) => void;
   placeholder?: string;
   className?: string;
   isEdit?: boolean;
   onClick?: () => void;
   collapsable?: boolean;
   collapseHeight?: number;
-  _collapsed?: boolean;
+  collapsed?: boolean;
   onCollapse?: (collapsed: boolean) => void;
 }
 
-// Check if content is empty
 const isContentEmpty = (content: string): boolean => {
-  // Remove all HTML tags, keep text content only
   const plainText = content
-    .replace(/<br\s*\/?>/g, '') // Remove all line break tags
-    .replace(/<[^>]+>/g, '') // Remove all other HTML tags
-    .replace(/&nbsp;/g, ' ') // Replace &nbsp; with regular space
-    .replace(/\s+/g, ' ') // Replace multiple whitespace characters with a single space
+    .replace(/<br\s*\/?>/g, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
   return plainText.length === 0;
 };
 
-// Check if object is a valid EditorValue structure
 const isValidEditorValue = (value: any): value is EditorValue => {
   return (
     typeof value === 'object' &&
@@ -64,7 +63,6 @@ const isValidEditorValue = (value: any): value is EditorValue => {
 const LinkInput = ({ editor, isOpen }: { editor: any; isOpen: boolean }) => {
   const [url, setUrl] = useState('');
 
-  // When the popup opens, fill in the existing link URL if there is one
   useEffect(() => {
     if (isOpen) {
       const previousUrl = editor.getAttributes('link').href;
@@ -75,50 +73,39 @@ const LinkInput = ({ editor, isOpen }: { editor: any; isOpen: boolean }) => {
   const addLink = () => {
     if (!url || !editor) return;
 
-    // Process URL
     let processedUrl = url.trim();
     if (processedUrl.startsWith('www.')) {
       processedUrl = `https://${processedUrl}`;
     }
 
-    // Check if text is selected
     const { empty, from, to } = editor.state.selection;
     if (empty) {
       alert('Please select the text you want to link');
       return;
     }
 
-    // Check if updating existing link
     const isUpdatingLink = editor.isActive('link');
 
-    // Use low-level ProseMirror API to manipulate document
     const { state, view } = editor;
     const { tr } = state;
     const linkMark = state.schema.marks.link.create({ href: processedUrl });
 
-    // Step 1: Apply link mark to selected text
     let transaction = tr.addMark(from, to, linkMark);
 
     if (!isUpdatingLink) {
-      // Step 2: Move cursor to end of link
       transaction = transaction.setSelection(
         state.selection.constructor.near(transaction.doc.resolve(to)),
       );
 
-      // Step 3: Insert space
       transaction = transaction.insertText(' ', to);
 
-      // Step 4: Ensure cursor is after space and not inside link
       transaction = transaction.removeStoredMark(linkMark);
     }
 
-    // Apply transaction
     view.dispatch(transaction);
 
-    // Refocus editor
     view.focus();
 
-    // Clear URL input
     setUrl('');
   };
 
@@ -305,7 +292,7 @@ const defaultValue = JSON.stringify({
 });
 
 const EditorPro: React.FC<EditorProProps> = ({
-  _value = '',
+  value = '',
   onChange,
   placeholder = 'Start writing...',
   className,
@@ -313,61 +300,58 @@ const EditorPro: React.FC<EditorProProps> = ({
   onClick,
   collapsable = false,
   collapseHeight = 150,
-  _collapsed = false,
+  collapsed = false,
   onCollapse,
 }) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Parse the JSON string to get the editor value
   const editorValue = React.useMemo(() => {
-    if (!_value) return JSON.parse(defaultValue);
+    if (!value) return JSON.parse(defaultValue);
     try {
-      const parsedValue = JSON.parse(_value);
+      const parsedValue = JSON.parse(value);
 
-      // Check if parsed value is a valid EditorValue structure
       if (!isValidEditorValue(parsedValue)) {
-        console.error('Invalid editor value structure');
         return JSON.parse(defaultValue);
       }
 
-      // Check if content is empty
       const contentIsEmpty = isContentEmpty(parsedValue.content);
       return {
         ...parsedValue,
         isEmpty: contentIsEmpty,
       };
     } catch (e) {
-      console.error('Failed to parse editor value:', e);
       return JSON.parse(defaultValue);
     }
-  }, [_value]);
+  }, [value]);
 
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
         bulletList: {
           HTMLAttributes: {
-            class: 'custom-bullet-list',
+            class: 'custom-bullet-list pl-4 my-[10px] list-disc text-white/80',
           },
         },
         orderedList: {
           HTMLAttributes: {
-            class: 'custom-ordered-list',
+            class:
+              'custom-ordered-list pl-4 my-[10px] list-decimal text-white/80',
           },
         },
         blockquote: {
           HTMLAttributes: {
-            class: 'custom-blockquote',
+            class: 'custom-blockquote border-l-[3px] border-white/20 my-6 pl-4',
           },
         },
         code: {
           HTMLAttributes: {
-            class: 'custom-code',
+            class:
+              'custom-code bg-[#1f1f1f] rounded-[0.4rem] text-[0.85rem] px-[0.3em] py-[0.25em]',
           },
         },
         codeBlock: {
           HTMLAttributes: {
-            class: 'custom-code-block',
+            class: 'custom-code-block bg-[#1f1f1f] rounded-[0.5rem] my-6 p-4',
           },
         },
         heading: {
@@ -377,10 +361,21 @@ const EditorPro: React.FC<EditorProProps> = ({
           },
         },
       }),
-      Link.configure({
-        openOnClick: false,
+      Text.configure({
         HTMLAttributes: {
-          class: 'custom-link',
+          class: 'text-[14px]',
+        },
+      }),
+      Bold.configure({
+        HTMLAttributes: {
+          class: 'font-bold font-[800]',
+        },
+      }),
+      Link.configure({
+        openOnClick: true,
+        HTMLAttributes: {
+          class:
+            'custom-link text-primary-500 hover:text-primary-400 cursor-pointer transition-colors',
           rel: 'noopener noreferrer',
           target: '_blank',
         },
@@ -394,48 +389,14 @@ const EditorPro: React.FC<EditorProProps> = ({
     editorProps: {
       attributes: {
         class: cn(
-          'tiptap prose prose-invert max-w-none focus:outline-none',
+          'tiptap prose prose-invert max-w-none focus:outline-none text-[14px]',
           '[&_.tiptap]:first:mt-0',
           '[&_h1]:text-[2rem] [&_h1]:leading-[1.4]',
           '[&_h2]:text-[1.6rem] [&_h2]:leading-[1.4]',
           '[&_h3]:text-[1.4rem] [&_h3]:leading-[1.4]',
-          '[&_h6]:text-[1rem] [&_h6]:leading-[1.1] [&_h6]:mt-1 [&_h6]:mb-1',
-          '[&_strong]:font-[800]',
-          '[&_ul]:pl-4 [&_ul]:my-5 [&_ul]:list-disc [&_ul]:text-white/80',
-          '[&_ol]:pl-4 [&_ol]:my-5 [&_ol]:list-decimal [&_ol]:text-white/80',
-          '[&_li_p]:mt-1 [&_li_p]:mb-1',
-          '[&_code]:bg-[#1f1f1f] [&_code]:rounded-[0.4rem] [&_code]:text-[0.85rem] [&_code]:px-[0.3em] [&_code]:py-[0.25em]',
-          '[&_pre]:bg-[#1f1f1f] [&_pre]:rounded-[0.5rem] [&_pre]:my-6 [&_pre]:p-4',
-          '[&_pre_code]:bg-transparent [&_pre_code]:text-[0.8rem] [&_pre_code]:p-0',
-          '[&_blockquote]:border-l-[3px] [&_blockquote]:border-white/20 [&_blockquote]:my-6 [&_blockquote]:pl-4',
-          '[&_hr]:border-none [&_hr]:border-t [&_hr]:border-white/20 [&_hr]:my-8',
-          // Custom link styles, override default blue
-          '[&_a]:text-primary-500 [&_a]:no-underline [&_a:hover]:text-primary-400 [&_a]:cursor-pointer [&_a]:transition-colors',
-          !isEdit && 'cursor-default', // Add cursor-default in read-only mode
+          !isEdit && 'cursor-default',
           className,
         ),
-      },
-      // Add custom event handler
-      handleClick: (view, pos, event) => {
-        // Check if clicked element is a link
-        const dom = event.target as HTMLElement;
-        if (dom.tagName === 'A') {
-          // Prevent default behavior
-          event.preventDefault();
-
-          // Add custom link click logic here if needed
-          // For example, open link under specific conditions
-          const href = dom.getAttribute('href');
-          if (
-            href &&
-            window.confirm(`Do you want to open this link: ${href}?`)
-          ) {
-            window.open(href, '_blank', 'noopener,noreferrer');
-          }
-
-          return true;
-        }
-        return false;
       },
     },
     onUpdate: ({ editor }) => {
@@ -452,21 +413,18 @@ const EditorPro: React.FC<EditorProProps> = ({
     immediatelyRender: false,
   });
 
-  // Update editor content when external value changes
   useEffect(() => {
     if (editor && editorValue.content !== editor.getHTML()) {
       editor.commands.setContent(editorValue.content);
     }
   }, [editorValue.content, editor]);
 
-  // Set initialized after first mount
   useEffect(() => {
     if (editor) {
       setIsInitialized(true);
     }
   }, [editor]);
 
-  // Update editable state when isEdit changes
   useEffect(() => {
     if (editor) {
       editor.setEditable(isEdit);
@@ -476,7 +434,6 @@ const EditorPro: React.FC<EditorProProps> = ({
   const [canCollapse, setCanCollapse] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Check if content height is sufficient to support collapsing
   useEffect(() => {
     if (!collapsable || isEdit || !contentRef.current) return;
 
@@ -486,16 +443,13 @@ const EditorPro: React.FC<EditorProProps> = ({
 
       setCanCollapse(shouldCollapse);
 
-      // Only notify external component about collapsibility, but don't actively set collapse state
       if (shouldCollapse) {
         onCollapse?.(shouldCollapse);
       }
     };
 
-    // Check after content is rendered
     setTimeout(checkHeight, 100);
 
-    // Listen for window resize events
     window.addEventListener('resize', checkHeight);
     return () => window.removeEventListener('resize', checkHeight);
   }, [
@@ -515,12 +469,12 @@ const EditorPro: React.FC<EditorProProps> = ({
           collapsable &&
             !isEdit &&
             canCollapse &&
-            _collapsed &&
+            collapsed &&
             'overflow-hidden',
         )}
         onClick={onClick}
         style={
-          collapsable && !isEdit && canCollapse && _collapsed
+          collapsable && !isEdit && canCollapse && collapsed
             ? { maxHeight: `${collapseHeight}px` }
             : undefined
         }
@@ -539,7 +493,7 @@ const EditorPro: React.FC<EditorProProps> = ({
         >
           <EditorContent editor={editor} />
           {editorValue.isEmpty && isEdit && (
-            <div className="pointer-events-none absolute left-[10px] top-[10px] text-gray-500">
+            <div className="pointer-events-none absolute left-[10px] top-[10px] text-[16px] text-white/50">
               {placeholder}
             </div>
           )}
