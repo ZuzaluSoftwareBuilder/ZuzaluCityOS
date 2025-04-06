@@ -1,6 +1,6 @@
 'use client';
 import { Space } from '@/types';
-import { addToast, Avatar, Image, Skeleton } from '@heroui/react';
+import { addToast, Avatar, cn, Image, Skeleton } from '@heroui/react';
 import { Button } from '@/components/base';
 import {
   ArrowSquareRight,
@@ -11,7 +11,8 @@ import {
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { useParams } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import EditorPro from '@/components/editorPro';
 
 export interface SpaceSectionProps {
   spaceData?: Space;
@@ -21,6 +22,9 @@ export interface SpaceSectionProps {
 const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
   const params = useParams();
   const spaceId = params?.spaceid?.toString() ?? '';
+
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
+  const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
 
   const { shareUrl } = useGetShareLink({ id: spaceId, name: spaceData?.name });
 
@@ -125,9 +129,22 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
           {spaceData.name}
         </p>
 
-        <p className="text-[14px] leading-[1.6] text-white opacity-80 drop-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] mobile:text-[13px]">
-          {spaceData.description}
-        </p>
+        <EditorPro
+          value={spaceData.description}
+          isEdit={false}
+          className={cn('bg-w-5')}
+          collapsable={true}
+          collapseHeight={150}
+          collapsed={isCollapsed}
+          onCollapse={(canCollapse) => {
+            setIsCanCollapse(canCollapse);
+          }}
+        />
+
+        {/*<p className="text-[14px] leading-[1.6] text-white opacity-80 drop-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] mobile:text-[13px]">*/}
+        {/*  {spaceData.description}*/}
+        {/*  */}
+        {/*</p>*/}
       </div>
 
       <div className="mt-[20px] flex flex-wrap gap-[6px]">
