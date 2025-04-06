@@ -10,6 +10,7 @@ const Input = extendVariants(HInput, {
           'bg-white/[0.05]',
           'focus-within:border-white/30',
           'rounded-[8px]',
+          'px-[10px]',
         ],
         input: ['!text-white', 'placeholder:text-white/50'],
         errorMessage: ['text-error'],
