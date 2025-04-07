@@ -7,16 +7,16 @@ const CustomLink = ({ link }: { link: ILink }) => {
     <Link
       href={link.links}
       className={
-        'flex cursor-pointer items-start rounded-[10px] p-[10px] opacity-80 hover:bg-[rgba(255,255,255,0.05)]'
+        'cursor-pointer items-start rounded-[10px] p-[10px] opacity-80 hover:bg-[rgba(255,255,255,0.05)] active:bg-[rgba(255,255,255,0.05)]'
       }
     >
-      <div className="flex-1">
+      <div className="flex items-center justify-between">
         <p className="text-[14px] leading-[1.6] text-white">{link.title}</p>
-        <p className="mt-[5px] text-[12px] leading-[1.6] text-white opacity-50">
-          {link.links}
-        </p>
+        <ArrowUpRight weight="light" size={20} format="Stroke" />
       </div>
-      <ArrowUpRight weight="light" size={20} format="Stroke" />
+      <p className="mt-[5px] text-[12px] leading-[1.6] text-white opacity-50">
+        {link.links}
+      </p>
     </Link>
   );
 };

@@ -23,7 +23,12 @@ const IconMap: Record<ISocialType, React.ReactNode> = {
 const SocialLink = ({ link }: { link: ILink }) => {
   const icon = IconMap[link.title.toLowerCase() as ISocialType] || null;
   return icon ? (
-    <Link href={link.links} className={'size-[20px] cursor-pointer opacity-80'}>
+    <Link
+      href={link.links}
+      className={
+        'flex size-[40px] cursor-pointer items-center justify-center rounded-[8px] p-[10px] opacity-80 hover:bg-[rgba(255,255,255,0.05)] active:bg-[rgba(255,255,255,0.05)]'
+      }
+    >
       {icon}
     </Link>
   ) : null;
