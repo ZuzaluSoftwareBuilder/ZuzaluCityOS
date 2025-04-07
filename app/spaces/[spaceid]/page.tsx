@@ -92,7 +92,7 @@ const SpaceHomePage: React.FC = () => {
         <DrawerContent className="max-h-[600px] rounded-t-[20px]  border-t-2 shadow-[0px_-6px_24px_0px_rgba(0,0,0,0.25)]">
           <CommonDrawerHeader title={'About Community'} onClose={handleClose} />
 
-          <DrawerBody className="p-[20px]">
+          <DrawerBody className="p-0">
             <div className="hidden w-full flex-col  gap-[10px] tablet:flex mobile:flex">
               <SideNav spaceData={spaceData} inDrawer={true} />
             </div>

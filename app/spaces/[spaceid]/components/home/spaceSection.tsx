@@ -63,43 +63,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
   }, []);
 
   if (!spaceData) {
-    // TODO: show skeleton
-    return (
-      <div className="flex flex-col gap-[20px] border-b border-[rgba(255,255,255,0.10)] bg-[#2C2C2C] p-[20px] backdrop-blur-[20px] mobile:p-[14px]">
-        <Skeleton className="aspect-[3.4] rounded-[10px] object-cover mobile:aspect-[2.4]" />
-
-        <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
-          <Skeleton className="h-[40px] w-[178px] rounded-[8px]" />
-          <Skeleton className="size-[40px] rounded-[8px]" />
-        </div>
-
-        <div className="mt-[20px] flex flex-col gap-[10px] mobile:mt-[50px]">
-          <div className="flex items-center justify-start gap-[10px]">
-            <div className="flex h-[30px] items-center gap-[10px] rounded-[8px] bg-[rgba(255,255,255,0.1)] px-[10px]">
-              <Buildings weight="fill" format="Stroke" size={20} />
-              <span className="text-[14px] font-[600] leading-[1.2] text-white drop-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] ">
-                Community
-              </span>
-            </div>
-          </div>
-
-          <Skeleton className="h-[30px] w-4/5" />
-
-          <Skeleton className="h-[22px] w-2/5" />
-        </div>
-
-        <div className="mt-[20px] flex flex-wrap gap-[6px]">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-[12px] w-[30px]" />
-          ))}
-        </div>
-
-        <div className="mt-[10px] hidden gap-[10px] mobile:flex">
-          <Skeleton className="h-[22px] w-full rounded-[8px]" />
-          <Skeleton className="size-[40px] rounded-[8px]" />
-        </div>
-      </div>
-    );
+    return <SpaceHomeSkeleton />;
   }
 
   return (
@@ -244,6 +208,46 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
             isIconOnly
           ></Button>
         </CopyToClipboard>
+      </div>
+    </div>
+  );
+};
+
+const SpaceHomeSkeleton = () => {
+  return (
+    <div className="flex flex-col border-b border-[rgba(255,255,255,0.10)] bg-[#2C2C2C] p-[20px] backdrop-blur-[20px] mobile:p-[14px]">
+      <Skeleton className="aspect-[3.4] rounded-[10px] object-cover mobile:aspect-[2.4]" />
+
+      <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
+        <Skeleton className="h-[40px] w-[178px] rounded-[8px]" />
+        <Skeleton className="size-[40px] rounded-[8px]" />
+      </div>
+
+      <div className="mt-[20px] flex flex-col gap-[10px] mobile:mt-[50px]">
+        {/*<Skeleton className="h-[30px] w-[178px] rounded-[8px]" />*/}
+        <div className="flex items-center justify-start gap-[10px]">
+          <div className="flex h-[30px] items-center gap-[10px] rounded-[8px] bg-[rgba(255,255,255,0.1)] px-[10px]">
+            <Buildings weight="fill" format="Stroke" size={20} />
+            <span className="text-[14px] font-[600] leading-[1.2] text-white drop-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] ">
+              Community
+            </span>
+          </div>
+        </div>
+
+        <Skeleton className="h-[30px] w-4/5" />
+
+        <Skeleton className="h-[22px] w-2/5" />
+      </div>
+
+      <div className="mt-[20px] flex flex-wrap gap-[6px]">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-[12px] w-[30px]" />
+        ))}
+      </div>
+
+      <div className="mt-[10px] hidden gap-[10px] mobile:flex">
+        <Skeleton className="h-[40px] w-full rounded-[8px]" />
+        <Skeleton className="size-[40px] rounded-[8px]" />
       </div>
     </div>
   );
