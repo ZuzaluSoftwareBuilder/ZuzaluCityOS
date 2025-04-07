@@ -92,7 +92,7 @@ const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
   return (
     <>
       {!inDrawer && (
-        <div className="flex h-[42px] items-center border-b border-[rgba(255,255,255,0.10)] px-[20px] backdrop-blur-[20px]">
+        <div className="flex h-[42px] shrink-0 items-center border-b border-[rgba(255,255,255,0.10)] px-[20px] backdrop-blur-[20px]">
           <p className="text-[16px] font-bold leading-[1.4] drop-shadow-[0px_5px_10px_rgba(0,0,0,0.15)]">
             About Community
           </p>

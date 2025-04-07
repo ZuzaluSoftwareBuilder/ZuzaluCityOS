@@ -61,7 +61,7 @@ const SpaceHomePage: React.FC = () => {
 
   return (
     <div className="flex h-full">
-      <div className="flex-1">
+      <div className="h-full flex-1 overflow-y-auto">
         <SpaceSection spaceData={spaceData} isLoading={isLoading} />
 
         {/* mobile: drawer trigger */}
@@ -79,7 +79,7 @@ const SpaceHomePage: React.FC = () => {
         <SpaceEventList eventsData={eventsData} isLoading={isLoading} />
       </div>
 
-      <div className="flex w-[330px] flex-col gap-[10px] border-l border-[rgba(255,255,255,0.1)] bg-[#222] tablet:hidden mobile:hidden">
+      <div className="flex h-full w-[330px] flex-col gap-[10px] overflow-y-auto border-l border-[rgba(255,255,255,0.1)] bg-[#222] tablet:hidden mobile:hidden">
         <SideNav spaceData={spaceData} />
       </div>
 

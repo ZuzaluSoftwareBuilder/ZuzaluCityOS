@@ -14,7 +14,7 @@ const SpaceLayout = () => {
       <SpaceSidebar />
 
       {isSettingPage ? null : (
-        <div className="tablet:hidden mobile:hidden">
+        <div className="border-r border-[rgba(255,255,255,0.1)] tablet:hidden mobile:hidden">
           <SpaceSubSidebar />
         </div>
       )}
