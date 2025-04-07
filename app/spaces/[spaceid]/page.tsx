@@ -7,7 +7,7 @@ import { GET_SPACE_AND_EVENTS_QUERY_BY_ID } from '@/services/graphql/space';
 import { Event, Space } from '@/types';
 import { useEffect, useMemo } from 'react';
 import SpaceEventList from '@/app/spaces/[spaceid]/components/home/spaceEventList';
-import SideNav from '@/app/spaces/[spaceid]/components/home/sideNav';
+import SideNav from '@/app/spaces/[spaceid]/components/home/sideNav/sideNav';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
 const SpaceHomePage: React.FC = () => {
   const params = useParams();

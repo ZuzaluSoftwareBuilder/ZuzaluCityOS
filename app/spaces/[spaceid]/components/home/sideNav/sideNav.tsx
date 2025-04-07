@@ -1,25 +1,17 @@
 'use client';
 
-import Link from 'next/link';
-import { Link as ILink, Space } from '@/types';
-import {
-  XLogo,
-  GithubLogo,
-  TelegramLogo,
-  DiscordLogo,
-  ArrowUpRight,
-} from '@phosphor-icons/react';
-import { NostrIcon } from '@/components/icons/Nostr';
+import { Space } from '@/types';
 import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 import { useParams } from 'next/navigation';
-import { MemberProps } from '@/app/spaces/[spaceid]/setting/roles/components/members/memberItem';
 import { useEffect, useMemo } from 'react';
 import { getWalletAddressFromDid } from '@/utils/did';
-import { Avatar, cn, Skeleton } from '@heroui/react';
-import { formatAddressString } from '@/components/layout/UserProfileSection';
+import { Skeleton } from '@heroui/react';
 import { formatMemberCount } from '@/app/components/SpaceCard';
 import dayjs from 'dayjs';
-import { ISocialType } from '@/constant';
+import DetailItem from './detailItem';
+import SocialLink from './socialLink';
+import MemberItem, { MemberItemSkeleton } from './memberItem';
+import CustomLink from './customLink';
 
 export interface ISideNavProps {
   spaceData?: Space;
@@ -183,113 +175,6 @@ const SideNav = ({ spaceData }: ISideNavProps) => {
           )}
         </div>
       </div>
-    </div>
-  );
-};
-
-const DetailItem = ({
-  title,
-  value,
-  noBorderBottom,
-}: {
-  title: string;
-  value: string;
-  noBorderBottom?: boolean;
-}) => {
-  return (
-    <div
-      className={`flex items-center justify-between border-b border-[rgba(255,255,255,0.1)] pb-[10px] text-[14px] leading-[1.6] text-white ${noBorderBottom ? 'border-none' : ''}`}
-    >
-      <span>{title}</span>
-      {value ? (
-        <span>{value}</span>
-      ) : (
-        <Skeleton className="h-[22px] w-[50px]" />
-      )}
-    </div>
-  );
-};
-
-const SocialLink = ({ link }: { link: ILink }) => {
-  const iconMap: Record<ISocialType, React.ReactNode> = {
-    telegram: <TelegramLogo size={20} weight="fill" format="Stroke" />,
-    github: <GithubLogo size={20} weight="fill" format="Stroke" />,
-    twitter: <XLogo size={20} weight="fill" format="Stroke" />,
-    discord: <DiscordLogo size={20} weight="fill" format="Stroke" />,
-    nostr: <NostrIcon />,
-    lens: <ArrowUpRight size={20} weight="fill" format="Stroke" />,
-    other: <ArrowUpRight size={20} weight="fill" format="Stroke" />,
-  };
-  const icon = iconMap[link.title.toLowerCase() as ISocialType] || null;
-  return icon ? (
-    <Link href={link.links} className={'size-[20px] cursor-pointer opacity-80'}>
-      {icon}
-    </Link>
-  ) : null;
-};
-
-const CustomLink = ({ link }: { link: ILink }) => {
-  return (
-    <Link
-      href={link.links}
-      className={
-        'flex cursor-pointer items-start rounded-[10px] p-[10px] opacity-80 hover:bg-[rgba(255,255,255,0.05)]'
-      }
-    >
-      <div className="flex-1">
-        <p className="text-[14px] leading-[1.6] text-white">{link.title}</p>
-        <p className="mt-[5px] text-[12px] leading-[1.6] text-white opacity-50">
-          {link.links}
-        </p>
-      </div>
-      <ArrowUpRight weight="light" size={20} format="Stroke" />
-    </Link>
-  );
-};
-
-export interface IMemberItemProps extends MemberProps {
-  roleName: string;
-}
-
-const MemberItem: React.FC<IMemberItemProps> = ({
-  avatarUrl,
-  name,
-  address,
-  color,
-  roleName,
-}) => {
-  return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-[10px]">
-        <Avatar
-          src={avatarUrl || '/user/avatar_p.png'}
-          alt={name}
-          className="size-[32px]"
-        />
-        <span
-          className={cn(
-            'text-[14px] font-semibold',
-            color ? `text-[${color}]` : 'text-white',
-          )}
-        >
-          {name ? name : formatAddressString(address)}
-        </span>
-      </div>
-      <span className="text-[12px] leading-[1.6] text-white opacity-60">
-        {roleName}
-      </span>
-    </div>
-  );
-};
-
-const MemberItemSkeleton = () => {
-  return (
-    <div className="flex w-full items-center justify-between gap-[10px]">
-      <div className="flex flex-1 items-center gap-[10px]">
-        <Skeleton className="size-8 rounded-full" />
-        <Skeleton className="h-[22px] flex-1 rounded-[4px]" />
-      </div>
-      <Skeleton className="h-[22px] w-[50px] rounded-[4px]" />
     </div>
   );
 };
