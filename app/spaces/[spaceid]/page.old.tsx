@@ -28,7 +28,6 @@ import useGetShareLink from '@/hooks/useGetShareLink';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_SPACE_AND_EVENTS_QUERY_BY_ID } from '@/services/graphql/space';
 import EditorPro from '@/components/editorPro';
-import { cn } from '@heroui/react';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
 
 const EditorPreview = dynamic(
@@ -283,7 +282,6 @@ export default function SpaceDetailPage() {
                   <EditorPro
                     value={spaceData.description}
                     isEdit={false}
-                    className={cn('bg-w-5')}
                     collapsable={true}
                     collapseHeight={150}
                     collapsed={isCollapsed}
