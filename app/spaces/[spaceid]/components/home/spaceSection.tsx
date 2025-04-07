@@ -68,7 +68,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
       <div className="flex flex-col gap-[20px] border-b border-[rgba(255,255,255,0.10)] bg-[#2C2C2C] p-[20px] backdrop-blur-[20px] mobile:p-[14px]">
         <Skeleton className="aspect-[3.4] rounded-[10px] object-cover mobile:aspect-[2.4]" />
 
-        <div className="mt-[20px] flex justify-end gap-[10px]">
+        <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
           <Skeleton className="h-[40px] w-[178px] rounded-[8px]" />
           <Skeleton className="size-[40px] rounded-[8px]" />
         </div>
@@ -92,6 +92,11 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
           {Array.from({ length: 5 }).map((_, i) => (
             <Skeleton key={i} className="h-[12px] w-[30px]" />
           ))}
+        </div>
+
+        <div className="mt-[10px] hidden gap-[10px] mobile:flex">
+          <Skeleton className="h-[22px] w-full rounded-[8px]" />
+          <Skeleton className="size-[40px] rounded-[8px]" />
         </div>
       </div>
     );
@@ -121,6 +126,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
         />
       </div>
 
+      {/* join/follow actions */}
       <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
         {!isUserJoined && (
           <Button
@@ -156,6 +162,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
         </CopyToClipboard>
       </div>
 
+      {/* space info: name/desc */}
       <div className="mt-[20px] flex flex-col gap-[10px] mobile:mt-[50px]">
         <div className="flex items-center justify-start gap-[10px]">
           <div className="flex h-[30px] items-center gap-[10px] rounded-[8px] bg-[rgba(255,255,255,0.1)] px-[10px]">
@@ -188,13 +195,9 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
             setIsCanCollapse(canCollapse);
           }}
         />
-
-        {/*<p className="text-[14px] leading-[1.6] text-white opacity-80 drop-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] mobile:text-[13px]">*/}
-        {/*  {spaceData.description}*/}
-        {/*  */}
-        {/*</p>*/}
       </div>
 
+      {/*tags*/}
       <div className="mt-[20px] flex flex-wrap gap-[6px]">
         {spaceData?.tags?.map((tag) => (
           <span
@@ -206,6 +209,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
         ))}
       </div>
 
+      {/*Mobile join/share actions*/}
       <div className="mt-[10px] hidden gap-[10px] mobile:flex">
         {!isUserJoined && (
           <Button

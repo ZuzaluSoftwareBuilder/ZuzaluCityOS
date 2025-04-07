@@ -15,6 +15,7 @@ import CustomLink from './customLink';
 
 export interface ISideNavProps {
   spaceData?: Space;
+  inDrawer?: boolean;
 }
 
 const ShowRoles = ['owner', 'admin', 'member'];
@@ -24,7 +25,7 @@ const ShowRoleOrder: Record<string, number> = {
   member: 10,
 };
 
-const SideNav = ({ spaceData }: ISideNavProps) => {
+const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
   const spaceId = useParams()?.spaceid;
   const { owner, members, roles } = useGetSpaceMember(spaceId as string);
 
@@ -89,12 +90,14 @@ const SideNav = ({ spaceData }: ISideNavProps) => {
   }, [members, owner, roleData]);
 
   return (
-    <div className="flex w-[330px] flex-col gap-[10px] border-l border-[rgba(255,255,255,0.1)] bg-[#222] tablet:hidden mobile:hidden">
-      <div className="flex h-[42px] items-center border-b border-[rgba(255,255,255,0.10)] px-[20px] backdrop-blur-[20px]">
-        <p className="text-[16px] font-bold leading-[1.4] drop-shadow-[0px_5px_10px_rgba(0,0,0,0.15)]">
-          About Community
-        </p>
-      </div>
+    <>
+      {!inDrawer && (
+        <div className="flex h-[42px] items-center border-b border-[rgba(255,255,255,0.10)] px-[20px] backdrop-blur-[20px]">
+          <p className="text-[16px] font-bold leading-[1.4] drop-shadow-[0px_5px_10px_rgba(0,0,0,0.15)]">
+            About Community
+          </p>
+        </div>
+      )}
 
       <div className="border-b border-[rgba(255,255,255,0.10)] px-[20px] py-[10px]">
         <p className="text-[13px] font-[500] leading-[1.4] text-white opacity-60">
@@ -175,7 +178,7 @@ const SideNav = ({ spaceData }: ISideNavProps) => {
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
