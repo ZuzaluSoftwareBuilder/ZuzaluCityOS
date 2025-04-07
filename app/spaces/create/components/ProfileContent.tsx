@@ -142,7 +142,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 <EditorPro
                   value={value}
                   onChange={onChange}
-                  className="min-h-[190px]"
+                  className={{ base: 'min-h-[190px]' }}
                   placeholder="This space is about whatever"
                 />
               )}
