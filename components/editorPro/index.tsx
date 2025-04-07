@@ -31,7 +31,11 @@ interface EditorProProps {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
-  className?: string;
+  className?: {
+    base?: string;
+    menuBar?: string;
+    editor?: string;
+  };
   isEdit?: boolean;
   onClick?: () => void;
   collapsable?: boolean;
@@ -142,7 +146,13 @@ const LinkInput = ({ editor, isOpen }: { editor: any; isOpen: boolean }) => {
   );
 };
 
-const MenuBar = ({ editor }: { editor: any }) => {
+const MenuBar = ({
+  editor,
+  className,
+}: {
+  editor: any;
+  className?: string;
+}) => {
   const [isLinkOpen, setIsLinkOpen] = useState(false);
 
   if (!editor) {
@@ -150,7 +160,12 @@ const MenuBar = ({ editor }: { editor: any }) => {
   }
 
   return (
-    <div className="flex flex-wrap gap-1 border-b border-white/10 p-[10px]">
+    <div
+      className={cn(
+        'flex flex-wrap gap-1 border-b border-white/10 p-[10px]',
+        className,
+      )}
+    >
       <Button
         isIconOnly
         size="sm"
@@ -470,6 +485,7 @@ const EditorPro: React.FC<EditorProProps> = ({
             canCollapse &&
             collapsed &&
             'overflow-hidden',
+          className?.base,
         )}
         onClick={onClick}
         style={
@@ -478,7 +494,7 @@ const EditorPro: React.FC<EditorProProps> = ({
             : undefined
         }
       >
-        {isEdit && <MenuBar editor={editor} />}
+        {isEdit && <MenuBar editor={editor} className={className?.menuBar} />}
         <div
           ref={contentRef}
           className={cn(
@@ -489,7 +505,7 @@ const EditorPro: React.FC<EditorProProps> = ({
               'transition-all duration-300',
           )}
         >
-          <EditorContent editor={editor} />
+          <EditorContent editor={editor} className={className?.editor} />
           {editorValue.isEmpty && isEdit && (
             <div className="pointer-events-none absolute left-[10px] top-[10px] text-[16px] text-white/50">
               {placeholder}
