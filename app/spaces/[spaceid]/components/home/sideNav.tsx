@@ -9,7 +9,6 @@ import {
   DiscordLogo,
   ArrowUpRight,
 } from '@phosphor-icons/react';
-import FarcasterIcon from '../../../../../components/icons/Farcaster';
 import { NostrIcon } from '@/components/icons/Nostr';
 import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 import { useParams } from 'next/navigation';
@@ -19,6 +18,8 @@ import { getWalletAddressFromDid } from '@/utils/did';
 import { Avatar, cn } from '@heroui/react';
 import { formatAddressString } from '@/components/layout/UserProfileSection';
 import { formatMemberCount } from '@/app/components/SpaceCard';
+import dayjs from 'dayjs';
+import { ISocialType } from '@/constant';
 
 export interface ISideNavProps {
   spaceData?: Space;
@@ -108,8 +109,14 @@ const SideNav = ({ spaceData }: ISideNavProps) => {
           Details:
         </p>
         <div className="mt-[20px] flex flex-col gap-[10px]">
-          <DetailItem title={'Created:'} value={'Created value'} />
-          <DetailItem title={'Access:'} value={'Access vale'} />
+          <DetailItem
+            title={'Created:'}
+            value={dayjs(spaceData?.createdAt).format('YYYY-MM-DD HH:MM')}
+          />
+          <DetailItem
+            title={'Access:'}
+            value={spaceData?.gated ? 'Gated' : 'Open'}
+          />
           <DetailItem
             title={'Tags:'}
             value={'Tags value'}
@@ -182,17 +189,18 @@ const DetailItem = ({
 };
 
 const SocialLink = ({ link }: { link: ILink }) => {
-  const iconMap: Record<string, React.ReactNode> = {
+  const iconMap: Record<ISocialType, React.ReactNode> = {
     telegram: <TelegramLogo size={20} weight="fill" format="Stroke" />,
     github: <GithubLogo size={20} weight="fill" format="Stroke" />,
     twitter: <XLogo size={20} weight="fill" format="Stroke" />,
     discord: <DiscordLogo size={20} weight="fill" format="Stroke" />,
     nostr: <NostrIcon />,
-    farcaster: <FarcasterIcon />,
+    lens: <ArrowUpRight size={20} weight="fill" format="Stroke" />,
+    other: <ArrowUpRight size={20} weight="fill" format="Stroke" />,
   };
-  const icon = iconMap[link.title.toLowerCase()] || null;
+  const icon = iconMap[link.title.toLowerCase() as ISocialType] || null;
   return icon ? (
-    <Link href={link.links} className={'cursor-pointer opacity-80'}>
+    <Link href={link.links} className={'size-[20px] cursor-pointer opacity-80'}>
       {icon}
     </Link>
   ) : null;

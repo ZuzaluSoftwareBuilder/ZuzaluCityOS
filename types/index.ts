@@ -237,6 +237,7 @@ export interface Space {
     }[];
   };
   isLegacy?: boolean;
+  gated?: boolean;
 }
 
 export interface CalendarConfig {

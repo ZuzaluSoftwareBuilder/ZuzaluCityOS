@@ -292,6 +292,7 @@ export const GET_SPACE_AND_EVENTS_QUERY_BY_ID = graphql(`
         color
         createdAt
         updatedAt
+        gated
         tags {
           tag
         }
