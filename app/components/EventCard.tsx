@@ -84,7 +84,7 @@ export function EventCard({ data }: EventCardProps) {
           </span>
         </div>
         <div className="flex flex-col gap-[6px]">
-          <p className="text-[20px] font-bold leading-[1.2]">{title}</p>
+          <p className="text-[18px] font-bold leading-[1.2]">{title}</p>
           <p className="text-[14px] leading-[1.4] opacity-60">{title}</p>
         </div>
         <div className="flex items-center gap-[6px] opacity-50">
