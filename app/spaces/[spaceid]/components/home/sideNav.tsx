@@ -15,7 +15,7 @@ import { useParams } from 'next/navigation';
 import { MemberProps } from '@/app/spaces/[spaceid]/setting/roles/components/members/memberItem';
 import { useEffect, useMemo } from 'react';
 import { getWalletAddressFromDid } from '@/utils/did';
-import { Avatar, cn } from '@heroui/react';
+import { Avatar, cn, Skeleton } from '@heroui/react';
 import { formatAddressString } from '@/components/layout/UserProfileSection';
 import { formatMemberCount } from '@/app/components/SpaceCard';
 import dayjs from 'dayjs';
@@ -111,7 +111,11 @@ const SideNav = ({ spaceData }: ISideNavProps) => {
         <div className="mt-[20px] flex flex-col gap-[10px]">
           <DetailItem
             title={'Created:'}
-            value={dayjs(spaceData?.createdAt).format('YYYY-MM-DD HH:MM')}
+            value={
+              spaceData?.createdAt
+                ? dayjs(spaceData?.createdAt).format('YYYY-MM-DD HH:MM')
+                : ''
+            }
           />
           <DetailItem
             title={'Access:'}
@@ -119,7 +123,7 @@ const SideNav = ({ spaceData }: ISideNavProps) => {
           />
           <DetailItem
             title={'Tags:'}
-            value={'Tags value'}
+            value={spaceData?.tags?.map((tag) => tag.tag).join(', ') || ''}
             noBorderBottom={true}
           />
         </div>
@@ -130,15 +134,25 @@ const SideNav = ({ spaceData }: ISideNavProps) => {
           Links:
         </p>
         <div className="flex gap-[20px] p-[10px]">
-          {spaceData?.socialLinks?.map((link) => (
-            <SocialLink key={link.title} link={link} />
-          ))}
+          {spaceData?.socialLinks && spaceData?.socialLinks?.length > 0 ? (
+            spaceData?.socialLinks?.map((link) => (
+              <SocialLink key={link.title} link={link} />
+            ))
+          ) : (
+            <>
+              <Skeleton className="size-[20px]" />
+              <Skeleton className="size-[20px]" />
+              <Skeleton className="size-[20px]" />
+            </>
+          )}
         </div>
 
         <div className="flex flex-col gap-[10px]">
-          {spaceData?.customLinks?.map((link) => (
-            <CustomLink key={link.title} link={link} />
-          ))}
+          {spaceData?.customLinks && spaceData?.customLinks?.length > 0
+            ? spaceData?.customLinks?.map((link) => (
+                <CustomLink key={link.title} link={link} />
+              ))
+            : null}
         </div>
       </div>
 
@@ -153,16 +167,20 @@ const SideNav = ({ spaceData }: ISideNavProps) => {
         </div>
 
         <div className="mt-[20px] flex flex-col gap-[4px]">
-          {formatedMembers?.map((member) => (
-            <div key={member.address} className="px-[8px] py-[4px]">
-              <MemberItem
-                name={member.name}
-                avatarUrl={member.avatarUrl}
-                address={member.address}
-                roleName={member.roleName}
-              />
-            </div>
-          ))}
+          {formatedMembers && formatedMembers.length > 0 ? (
+            formatedMembers.map((member) => (
+              <div key={member.address} className="px-[8px] py-[4px]">
+                <MemberItem
+                  name={member.name}
+                  avatarUrl={member.avatarUrl}
+                  address={member.address}
+                  roleName={member.roleName}
+                />
+              </div>
+            ))
+          ) : (
+            <MemberItemSkeleton />
+          )}
         </div>
       </div>
     </div>
@@ -183,7 +201,11 @@ const DetailItem = ({
       className={`flex items-center justify-between border-b border-[rgba(255,255,255,0.1)] pb-[10px] text-[14px] leading-[1.6] text-white ${noBorderBottom ? 'border-none' : ''}`}
     >
       <span>{title}</span>
-      <span>{value}</span>
+      {value ? (
+        <span>{value}</span>
+      ) : (
+        <Skeleton className="h-[22px] w-[50px]" />
+      )}
     </div>
   );
 };
@@ -242,7 +264,7 @@ const MemberItem: React.FC<IMemberItemProps> = ({
         <Avatar
           src={avatarUrl || '/user/avatar_p.png'}
           alt={name}
-          className="size-8"
+          className="size-[32px]"
         />
         <span
           className={cn(
@@ -256,6 +278,18 @@ const MemberItem: React.FC<IMemberItemProps> = ({
       <span className="text-[12px] leading-[1.6] text-white opacity-60">
         {roleName}
       </span>
+    </div>
+  );
+};
+
+const MemberItemSkeleton = () => {
+  return (
+    <div className="flex w-full items-center justify-between gap-[10px]">
+      <div className="flex flex-1 items-center gap-[10px]">
+        <Skeleton className="size-8 rounded-full" />
+        <Skeleton className="h-[22px] flex-1 rounded-[4px]" />
+      </div>
+      <Skeleton className="h-[22px] w-[50px] rounded-[4px]" />
     </div>
   );
 };
