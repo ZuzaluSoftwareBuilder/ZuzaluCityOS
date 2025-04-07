@@ -34,6 +34,7 @@ interface EditorProProps {
   className?: {
     base?: string;
     menuBar?: string;
+    editorWrapper?: string;
     editor?: string;
   };
   isEdit?: boolean;
@@ -503,6 +504,7 @@ const EditorPro: React.FC<EditorProProps> = ({
               !isEdit &&
               canCollapse &&
               'transition-all duration-300',
+            className?.editorWrapper,
           )}
         >
           <EditorContent editor={editor} className={className?.editor} />
