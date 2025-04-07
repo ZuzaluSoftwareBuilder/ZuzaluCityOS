@@ -17,7 +17,7 @@ const DetailItem = ({
       {value ? (
         <span className="text-right">{value}</span>
       ) : (
-        <Skeleton className="h-[22px] w-[50px]" />
+        <Skeleton className="h-[22px] w-[50px] rounded-[4px]" />
       )}
     </div>
   );

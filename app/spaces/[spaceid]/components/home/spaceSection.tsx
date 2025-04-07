@@ -110,7 +110,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
         <Button
           startContent={
             isUserJoined ? (
-              <CheckCircleIcon size={4} />
+              <CheckCircleIcon size={5} />
             ) : (
               <ArrowSquareRight weight="fill" format="Stroke" size={20} />
             )
@@ -154,6 +154,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
           isEdit={false}
           className={{
             base: 'bg-transparent',
+            editorWrapper: 'p-0',
           }}
           collapsable={true}
           collapseHeight={150}
@@ -196,7 +197,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
         <Button
           startContent={
             isUserJoined ? (
-              <CheckCircleIcon size={4} />
+              <CheckCircleIcon size={5} />
             ) : (
               <ArrowSquareRight weight="fill" format="Stroke" size={20} />
             )
@@ -236,14 +237,14 @@ const SpaceHomeSkeleton = () => {
           </div>
         </div>
 
-        <Skeleton className="h-[30px] w-4/5" />
+        <Skeleton className="h-[30px] w-4/5 rounded-[4px]" />
 
-        <Skeleton className="h-[22px] w-2/5" />
+        <Skeleton className="h-[22px] w-2/5 rounded-[4px]" />
       </div>
 
       <div className="mt-[20px] flex flex-wrap gap-[6px]">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-[12px] w-[30px]" />
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-[12px] w-[80px] rounded-[4px]" />
         ))}
       </div>
 

@@ -126,16 +126,14 @@ const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
         <p className="text-[13px] font-[500] leading-[1.4] text-white opacity-60">
           Links:
         </p>
-        <div className="flex gap-[20px] p-[10px]">
+        <div className="flex gap-0">
           {spaceData?.socialLinks && spaceData?.socialLinks?.length > 0 ? (
             spaceData?.socialLinks?.map((link) => (
               <SocialLink key={link.title} link={link} />
             ))
           ) : (
             <>
-              <Skeleton className="size-[20px]" />
-              <Skeleton className="size-[20px]" />
-              <Skeleton className="size-[20px]" />
+              <Skeleton className="size-[40px] rounded-[8px]" />
             </>
           )}
         </div>
