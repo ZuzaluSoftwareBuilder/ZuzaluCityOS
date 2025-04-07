@@ -3,7 +3,7 @@
 import { Space } from '@/types';
 import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 import { useParams } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { getWalletAddressFromDid } from '@/utils/did';
 import { Skeleton } from '@heroui/react';
 import { formatMemberCount } from '@/app/components/SpaceCard';
@@ -39,12 +39,6 @@ const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
     if (!roles?.data) return [];
     return roles.data.filter((role) => ShowRoles.includes(role.role.level));
   }, [roles?.data]);
-
-  useEffect(() => {
-    console.log('owner', owner);
-    console.log('members', members);
-    console.log('roles', roles);
-  }, [owner, members, roles]);
 
   const formatedMembers = useMemo(() => {
     let res = [];
@@ -114,7 +108,11 @@ const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
           />
           <DetailItem
             title={'Access:'}
-            value={spaceData?.gated ? 'Gated' : 'Open'}
+            value={
+              spaceData?.gated && String(spaceData?.gated) === '1'
+                ? 'Gated'
+                : 'Open'
+            }
           />
           <DetailItem
             title={'Tags:'}
