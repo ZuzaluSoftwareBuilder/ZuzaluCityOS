@@ -30,7 +30,8 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
 
-  const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
+  const { userJoinedSpaceIds, userFollowedSpaceIds, isUserSpaceFetched } =
+    useUserSpace();
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers =
@@ -92,7 +93,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
 
       {/* join/follow actions */}
       <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
-        {!isUserJoined && (
+        {!isUserJoined && isUserSpaceFetched && (
           <Button
             startContent={
               <Heart
@@ -177,7 +178,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
 
       {/*Mobile join/share actions*/}
       <div className="mt-[10px] hidden gap-[10px] mobile:flex">
-        {!isUserJoined && (
+        {isUserSpaceFetched && !isUserJoined && (
           <Button
             startContent={
               <Heart
