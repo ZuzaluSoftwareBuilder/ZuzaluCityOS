@@ -1080,12 +1080,13 @@ input PartialZucitySpaceGatingInput {
   ERC20ContractAddress: String
   ERC721ContractAddress: String
   ERC1155ContractAddress: String
-  PoapsId: [ZucitySpaceGatingPoapidInput]
   customAttributes: [TBDInput]
   gatingCondition: String
   gatingStatus: String
+  poapsId: [ZucitySpaceGatingPoapidInput]
+  roleId: String
   spaceId: CeramicStreamID
-  zuPassInfo: [ZucitySpaceGatingZuPassInput]
+  zuPassInfo: ZucitySpaceGatingZuPassInput
 }
 
 input PartialZucitySpaceInput {
@@ -3052,16 +3053,17 @@ type ZucitySpaceGating implements Node {
   ERC20ContractAddress: String
   ERC721ContractAddress: String
   ERC1155ContractAddress: String
-  PoapsId: [ZucitySpaceGatingPoapid]
   """Account controlling the document"""
   author: CeramicAccount!
   customAttributes: [TBD]
   gatingCondition: String
   gatingStatus: String
   id: ID!
+  poapsId: [ZucitySpaceGatingPoapid]
+  roleId: String
   space: ZucitySpace
   spaceId: CeramicStreamID!
-  zuPassInfo: [ZucitySpaceGatingZuPass]
+  zuPassInfo: ZucitySpaceGatingZuPass
 }
 
 """A connection to a list of items."""
@@ -3084,20 +3086,21 @@ input ZucitySpaceGatingInput {
   ERC20ContractAddress: String
   ERC721ContractAddress: String
   ERC1155ContractAddress: String
-  PoapsId: [ZucitySpaceGatingPoapidInput]
   customAttributes: [TBDInput]
   gatingCondition: String
   gatingStatus: String
+  poapsId: [ZucitySpaceGatingPoapidInput]
+  roleId: String
   spaceId: CeramicStreamID!
-  zuPassInfo: [ZucitySpaceGatingZuPassInput]
+  zuPassInfo: ZucitySpaceGatingZuPassInput
 }
 
 type ZucitySpaceGatingPoapid {
-  poapId: String
+  poapId: Int!
 }
 
 input ZucitySpaceGatingPoapidInput {
-  poapId: String
+  poapId: Int!
 }
 
 type ZucitySpaceGatingZuPass {

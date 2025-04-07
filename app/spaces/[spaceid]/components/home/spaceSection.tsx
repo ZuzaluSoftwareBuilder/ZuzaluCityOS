@@ -12,11 +12,14 @@ import {
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { useParams } from 'next/navigation';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import EditorPro from '@/components/editorPro';
 import useUserSpace from '@/hooks/useUserSpace';
 import { CheckCircleIcon } from '@/components/icons';
 import { formatMemberCount } from '@/app/components/SpaceCard';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { useQueryClient } from '@tanstack/react-query';
+import { addFollow, removeFollow } from '@/services/member';
 
 export interface SpaceSectionProps {
   spaceData?: Space;
@@ -26,12 +29,19 @@ export interface SpaceSectionProps {
 const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
   const params = useParams();
   const spaceId = params?.spaceid?.toString() ?? '';
-
+  const { profile, isAuthenticated, showAuthPrompt } = useCeramicContext();
+  const queryClient = useQueryClient();
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   const { userJoinedSpaceIds, userFollowedSpaceIds, isUserSpaceFetched } =
     useUserSpace();
+
+  useEffect(() => {
+    console.log('userJoinedSpaceIds', userJoinedSpaceIds);
+    console.log('userFollowedSpaceIds', userFollowedSpaceIds);
+  }, [userJoinedSpaceIds, userFollowedSpaceIds]);
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers =
@@ -40,8 +50,8 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
   }, [spaceData?.userRoles]);
 
   const { isUserJoined, isUserFollowed } = useMemo(() => {
-    const isUserJoined = userJoinedSpaceIds.has(spaceId);
     const isUserFollowed = userFollowedSpaceIds.has(spaceId);
+    const isUserJoined = userJoinedSpaceIds.has(spaceId) && !isUserFollowed;
     return { isUserJoined, isUserFollowed };
   }, [spaceId, userJoinedSpaceIds, userFollowedSpaceIds]);
 
@@ -51,9 +61,36 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
     //   TODO join event
     console.log('join event');
   };
-  const onFollow = () => {
-    //   TODO follow event
-    console.log('follow event');
+
+  const onFollow = async () => {
+    if (!isAuthenticated || !profile?.author?.id) {
+      showAuthPrompt('connectButton');
+      return;
+    }
+
+    if (isFollowing) {
+      return;
+    }
+
+    try {
+      setIsFollowing(true);
+      if (isUserFollowed) {
+        await removeFollow(spaceId, profile.author.id);
+      } else {
+        await addFollow(spaceId, profile.author.id);
+      }
+
+      await queryClient.invalidateQueries({
+        queryKey: ['GET_USER_ROLES_QUERY'],
+      });
+    } catch (error) {
+      addToast({
+        title: error instanceof Error ? error.message : 'Failed to follow',
+        color: 'danger',
+      });
+    } finally {
+      setIsFollowing(false);
+    }
   };
 
   const onCopy = useCallback(() => {
@@ -93,32 +130,39 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
 
       {/* join/follow actions */}
       <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
-        {!isUserJoined && isUserSpaceFetched && (
+        {isAuthenticated && isUserSpaceFetched && !isUserJoined && (
           <Button
             startContent={
-              <Heart
-                weight={isUserFollowed ? 'fill' : 'light'}
-                format="Stroke"
-                size={20}
-              />
+              isFollowing ? null : (
+                <Heart
+                  weight={isUserFollowed ? 'fill' : 'light'}
+                  format="Stroke"
+                  size={20}
+                />
+              )
             }
             onPress={onFollow}
+            isLoading={isFollowing}
+            isDisabled={isFollowing}
           >
             {isUserFollowed ? 'Following' : 'Follow'}
           </Button>
         )}
-        <Button
-          startContent={
-            isUserJoined ? (
-              <CheckCircleIcon size={5} />
-            ) : (
-              <ArrowSquareRight weight="fill" format="Stroke" size={20} />
-            )
-          }
-          onPress={onJoin}
-        >
-          {isUserJoined ? 'Joined' : 'Join Community'}
-        </Button>
+        {isAuthenticated && (
+          <Button
+            startContent={
+              isUserJoined ? (
+                <CheckCircleIcon size={5} />
+              ) : (
+                <ArrowSquareRight weight="fill" format="Stroke" size={20} />
+              )
+            }
+            onPress={onJoin}
+          >
+            {isUserJoined ? 'Joined' : 'Join Community'}
+          </Button>
+        )}
+
         <CopyToClipboard text={shareUrl!} onCopy={onCopy}>
           <Button
             startContent={<ShareFat weight="fill" format="Stroke" size={20} />}
@@ -179,33 +223,40 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
 
       {/*Mobile join/share actions*/}
       <div className="mt-[10px] hidden gap-[10px] mobile:flex">
-        {isUserSpaceFetched && !isUserJoined && (
+        {isAuthenticated && isUserSpaceFetched && !isUserJoined && (
           <Button
             startContent={
-              <Heart
-                weight={isUserFollowed ? 'fill' : 'light'}
-                format="Stroke"
-                size={20}
-              />
+              isFollowing ? null : (
+                <Heart
+                  weight={isUserFollowed ? 'fill' : 'light'}
+                  format="Stroke"
+                  size={20}
+                />
+              )
             }
             onPress={onFollow}
+            isLoading={isFollowing}
+            isDisabled={isFollowing}
             className="w-full flex-1 shrink-0"
           >
             {isUserFollowed ? 'Following' : 'Follow'}
           </Button>
         )}
-        <Button
-          startContent={
-            isUserJoined ? (
-              <CheckCircleIcon size={5} />
-            ) : (
-              <ArrowSquareRight weight="fill" format="Stroke" size={20} />
-            )
-          }
-          className="w-full flex-1 shrink-0"
-        >
-          {isUserJoined ? 'Joined' : 'Join Community'}
-        </Button>
+        {isAuthenticated && (
+          <Button
+            startContent={
+              isUserJoined ? (
+                <CheckCircleIcon size={5} />
+              ) : (
+                <ArrowSquareRight weight="fill" format="Stroke" size={20} />
+              )
+            }
+            className="w-full flex-1 shrink-0"
+          >
+            {isUserJoined ? 'Joined' : 'Join Community'}
+          </Button>
+        )}
+
         <CopyToClipboard text={shareUrl!} onCopy={onCopy}>
           <Button
             startContent={<ShareFat weight="fill" format="Stroke" size={20} />}
