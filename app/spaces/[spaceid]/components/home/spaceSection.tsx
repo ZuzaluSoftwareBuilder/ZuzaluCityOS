@@ -1,6 +1,6 @@
 'use client';
 import { Space } from '@/types';
-import { addToast, Avatar, cn, Image, Skeleton } from '@heroui/react';
+import { addToast, Avatar, Image, Skeleton } from '@heroui/react';
 import { Button } from '@/components/base';
 import {
   ArrowSquareRight,
@@ -151,7 +151,9 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
         <EditorPro
           value={spaceData.description}
           isEdit={false}
-          className={cn('bg-w-5')}
+          className={{
+            base: 'bg-transparent',
+          }}
           collapsable={true}
           collapseHeight={150}
           collapsed={isCollapsed}
@@ -224,7 +226,6 @@ const SpaceHomeSkeleton = () => {
       </div>
 
       <div className="mt-[20px] flex flex-col gap-[10px] mobile:mt-[50px]">
-        {/*<Skeleton className="h-[30px] w-[178px] rounded-[8px]" />*/}
         <div className="flex items-center justify-start gap-[10px]">
           <div className="flex h-[30px] items-center gap-[10px] rounded-[8px] bg-[rgba(255,255,255,0.1)] px-[10px]">
             <Buildings weight="fill" format="Stroke" size={20} />
