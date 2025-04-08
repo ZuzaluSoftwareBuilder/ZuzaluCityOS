@@ -1,8 +1,4 @@
-import {
-  ArrowSquareRightIcon,
-  CheckCircleIcon,
-  XCricleIcon,
-} from '@/components/icons';
+import { ArrowSquareRightIcon } from '@/components/icons';
 import {
   useDisclosure,
   Divider,
@@ -125,13 +121,47 @@ const JoinSpaceNoGate = () => {
   );
 };
 
-const defaultContent =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
-
 const JoinSpaceWithGate = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure({
     isOpen: true,
   });
+
+  const { profile } = useCeramicContext();
+  const { spaceData } = useSpaceData();
+  const { memberRole } = useBuildInRole();
+  const queryClient = useQueryClient();
+
+  const joinMutation = useMutation({
+    mutationFn: joinSpace,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['getSpaceMembers', spaceData?.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['GET_USER_ROLES_QUERY'],
+        }),
+      ]);
+    },
+    onError: (error: any) => {
+      console.error(error);
+      addToast({
+        title: 'Fail to join',
+        color: 'danger',
+      });
+    },
+  });
+
+  const userId = profile?.author?.id ?? '';
+
+  const handleJoinSpace = useCallback(() => {
+    if (!spaceData?.id) return;
+    joinMutation.mutate({
+      id: spaceData?.id,
+      roleId: memberRole?.id ?? '',
+      userId,
+    });
+  }, [spaceData?.id, joinMutation, memberRole?.id, userId]);
 
   return (
     <Modal
@@ -143,31 +173,25 @@ const JoinSpaceWithGate = () => {
       <ModalContent>
         {(onClose) => (
           <>
-            <div className="flex h-[62px] w-full flex-row items-center justify-between p-[20px]">
-              <p className={COMMON_TEXT.title}>Verify to Join</p>
-              <Button
-                isIconOnly
-                variant="flat"
-                className={BUTTON_STYLES.transparent}
-                onPress={onClose}
-              >
-                <XCricleIcon size={5} />
-              </Button>
-            </div>
+            <CommonModalHeader
+              title="Verify to Join"
+              onClose={onClose}
+              isDisabled={false}
+            />
             <Divider />
             <div className="flex flex-col gap-[20px] p-[20px]">
               <div className="flex items-center gap-[10px] rounded-[10px] border border-b-w-10 p-[8px]">
                 <Avatar
-                  name="Junior"
+                  src={spaceData?.avatar}
+                  name={spaceData?.name}
                   classNames={{
                     base: 'min-w-[60px] h-[60px] ',
                   }}
                 />
                 <div className="flex flex-col gap-[6px]">
-                  <span className={COMMON_TEXT.title}>Community Name</span>
+                  <span className={COMMON_TEXT.title}>{spaceData?.name}</span>
                   <span className={COMMON_TEXT.description}>
-                    Community tagline. Kept short, another line for good
-                    measure.
+                    {spaceData?.tagline}
                   </span>
                 </div>
               </div>
@@ -178,25 +202,13 @@ const JoinSpaceWithGate = () => {
                 variant="splitted"
                 className="gap-[10px] p-0"
                 itemClasses={{
-                  base: 'bg-transparent rounded-[10px] border border-white/10 bg-white/5 px-[8px]',
+                  base: 'bg-transparent rounded-[10px] border border-white/10 bg-white/5 px-[10px]',
                   title: 'text-[14px] font-semibold leading-[1.2] opacity-80',
-                  trigger: 'py-[8px] gap-[10px]',
+                  trigger: 'py-[10px] gap-[10px]',
                   content: 'pb-[10px] pt-[2px]',
                 }}
               >
-                <AccordionItem
-                  key="1"
-                  aria-label="Accordion 1"
-                  title="CredentialType"
-                  startContent={
-                    <Avatar
-                      name="Junior"
-                      classNames={{
-                        base: 'w-[30px] h-[30px] ',
-                      }}
-                    />
-                  }
-                >
+                <AccordionItem key="1" aria-label="Accordion 1" title="POAP">
                   <Divider className="mb-[10px]" />
                   <span className="rounded-[60px] bg-b-w-10 px-[10px] py-[5px] text-[13px] leading-[1.4] text-white">
                     DevCon3
@@ -205,18 +217,10 @@ const JoinSpaceWithGate = () => {
                 <AccordionItem
                   key="2"
                   aria-label="Accordion 2"
-                  title="CredentialType"
-                  startContent={
-                    <Avatar
-                      name="Junior"
-                      classNames={{
-                        base: 'w-[30px] h-[30px] ',
-                      }}
-                    />
-                  }
-                  indicator={<CheckCircleIcon color="#7DFFD1" />}
+                  title="ZuPass"
+                  // indicator={<CheckCircleIcon color="#7DFFD1" />}
                   disableIndicatorAnimation
-                  className="border border-[rgba(125,255,209,0.4)] bg-[rgba(125,255,209,0.05)]"
+                  // className="border border-[rgba(125,255,209,0.4)] bg-[rgba(125,255,209,0.05)]"
                 >
                   <Divider className="mb-[10px]" />
                   <span className="rounded-[60px] bg-b-w-10 px-[10px] py-[5px] text-[13px] leading-[1.4] text-white">
@@ -225,10 +229,10 @@ const JoinSpaceWithGate = () => {
                 </AccordionItem>
               </Accordion>
               <Button
-                variant="bordered"
-                className={BUTTON_STYLES.primary}
                 startContent={<ArrowSquareRightIcon />}
                 isDisabled
+                onPress={handleJoinSpace}
+                isLoading={joinMutation.isPending}
               >
                 Confirm & Join
               </Button>
