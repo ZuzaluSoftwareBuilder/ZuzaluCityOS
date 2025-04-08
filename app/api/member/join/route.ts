@@ -86,7 +86,7 @@ export const POST = async (req: Request) => {
     const space = spaceResult.data?.node as Space;
 
     if (space.gated === '1') {
-      return createErrorResponse('Space is not gated', 400);
+      return createErrorResponse('Space is gated', 400);
     }
 
     const error = await authenticateWithSpaceId(spaceId);
