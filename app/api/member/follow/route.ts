@@ -46,9 +46,7 @@ export const POST = async (req: Request) => {
           )
         `,
       )
-      .or(
-        `and(resource.eq.space,resource_id.eq.${spaceId}),and(resource.is.null,resource_id.is.null)`,
-      );
+      .or(`and(resource.is.null,resource_id.is.null)`);
 
     const followerRole = rolePermissionResult?.find(
       (rp) => rp.role.level === 'follower',
