@@ -17,7 +17,7 @@ import { formatMemberCount } from '@/app/components/SpaceCard';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { followSpace, unFollowSpace } from '@/services/member';
-import Copy from '@/components/base/copy';
+import Copy from '@/components/biz/copy';
 import EditorProWithMore from './EditorProWithMore';
 
 export interface SpaceSectionProps {
