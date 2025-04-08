@@ -19,6 +19,7 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { followSpace, unFollowSpace } from '@/services/member';
 import Copy from '@/components/base/copy';
+import { JoinSpaceNoGate } from './modal/joinSpace';
 
 export interface SpaceSectionProps {
   spaceData?: Space;
@@ -111,6 +112,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
 
   return (
     <div className="flex flex-col border-b border-[rgba(255,255,255,0.10)] bg-[#2C2C2C] p-[20px] backdrop-blur-[20px] mobile:p-[14px]">
+      <JoinSpaceNoGate />
       <div className="relative">
         <Image
           src={spaceData.banner}
