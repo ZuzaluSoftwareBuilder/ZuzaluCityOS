@@ -94,7 +94,7 @@ export const POST = async (req: Request) => {
     });
 
     if (result.errors) {
-      return createErrorResponse('Failed to follow space', 500);
+      return createErrorResponse('Failed to unfollow space', 500);
     }
 
     return createSuccessResponse('Successfully followed space');
