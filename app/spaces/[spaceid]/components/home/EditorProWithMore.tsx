@@ -34,24 +34,23 @@ const EditorProWithMore = ({
 
       {isCanCollapse && (
         <Button
-          className="mt-[10px] box-border flex w-full cursor-pointer flex-row items-center justify-center rounded-[10px] bg-[#2b2b2b] p-[10px_14px] hover:bg-[#ffffff1a]"
+          className="mt-[10px] flex h-[34px] w-full rounded-[10px] bg-[#2b2b2b] p-[6px_10px] "
           disableAnimation={true}
           onPress={() => {
             setIsCollapsed((v) => !v);
           }}
         >
           <div className="flex flex-row items-center gap-[10px]">
-            {isCollapsed ? (
-              <>
+            <div className="opacity-50">
+              {isCollapsed ? (
                 <ChevronDownIcon size={4} />
-                <span>Show More</span>
-              </>
-            ) : (
-              <>
+              ) : (
                 <ChevronUpIcon size={4} />
-                <span>Show Less</span>
-              </>
-            )}
+              )}
+            </div>
+            <span className="text-[14px] font-[600] leading-[1.6] text-white">
+              {isCollapsed ? 'Show More' : 'Show Less'}
+            </span>
           </div>
         </Button>
       )}
