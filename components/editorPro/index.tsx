@@ -27,7 +27,7 @@ interface EditorValue {
   isEmpty: boolean;
 }
 
-interface EditorProProps {
+export interface EditorProProps {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
