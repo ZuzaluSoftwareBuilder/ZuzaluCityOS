@@ -1,12 +1,14 @@
-import { Box, Skeleton } from '@mui/material';
+import { Skeleton } from '@heroui/react';
 import {
-  EventCardMonthGroup,
-  EventCardSkeleton,
   filterUpcomingEvents,
   groupEventsByMonth,
 } from '@/components/cards/EventCard';
 import React, { Fragment } from 'react';
-import { EventCard } from '@/app/components/EventCard';
+import {
+  EventCard,
+  EventCardSkeleton,
+  EventCardMonthGroup,
+} from '@/app/components/EventCard';
 import { Event } from '@/types';
 
 export interface ISpaceEventListProps {
@@ -18,54 +20,22 @@ const SpaceEventList = ({ isLoading, eventsData }: ISpaceEventListProps) => {
   return (
     <div className="p-[20px] mobile:p-[10px]">
       {isLoading ? (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
-          }}
-        >
+        <div className="flex flex-col gap-[20px]">
+          <Skeleton className="h-[27px] w-[100px] rounded-[8px]" />
           <EventCardMonthGroup>
-            <Skeleton width={60}></Skeleton>
+            <Skeleton className="h-[24px] w-[60px] rounded-full" />
           </EventCardMonthGroup>
           <EventCardSkeleton />
           <EventCardSkeleton />
-        </Box>
+        </div>
       ) : eventsData.length > 0 ? (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
-          }}
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              width: '100%',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexDirection: 'row',
-            }}
-          >
-            <Box
-              sx={{
-                fontSize: '18px',
-                fontWeight: '700',
-                color: '#919191',
-              }}
-            >
+        <div className="flex flex-col gap-[20px]">
+          <div className="flex w-full flex-row items-center justify-between">
+            <div className="text-[18px] font-[700] text-[#919191]">
               Upcoming Events ({filterUpcomingEvents(eventsData).length})
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '20px',
-            }}
-          >
+            </div>
+          </div>
+          <div className="flex w-full flex-col gap-[20px]">
             {Object.entries(
               groupEventsByMonth(filterUpcomingEvents(eventsData)),
             ).map(([key, value], index) => {
@@ -78,16 +48,9 @@ const SpaceEventList = ({ isLoading, eventsData }: ISpaceEventListProps) => {
                 </Fragment>
               );
             })}
-          </Box>
-          <Box
-            sx={{
-              padding: '20px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '20px',
-            }}
-          ></Box>
-        </Box>
+          </div>
+          <div className="flex flex-col gap-[20px] p-[20px]"></div>
+        </div>
       ) : null}
     </div>
   );
