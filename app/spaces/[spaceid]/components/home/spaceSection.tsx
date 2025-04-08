@@ -12,7 +12,7 @@ import {
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { useParams } from 'next/navigation';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import EditorPro from '@/components/editorPro';
 import useUserSpace from '@/hooks/useUserSpace';
 import { CheckCircleIcon } from '@/components/icons';
@@ -37,11 +37,6 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
 
   const { userJoinedSpaceIds, userFollowedSpaceIds, isUserSpaceFetched } =
     useUserSpace();
-
-  useEffect(() => {
-    console.log('userJoinedSpaceIds', userJoinedSpaceIds);
-    console.log('userFollowedSpaceIds', userFollowedSpaceIds);
-  }, [userJoinedSpaceIds, userFollowedSpaceIds]);
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers =
