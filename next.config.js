@@ -61,6 +61,7 @@ const nextConfig = {
   },
   experimental: {
     turbo: {},
+    webpackMemoryOptimizations: true,
   },
 };
 
