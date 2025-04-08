@@ -34,7 +34,8 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
 
-  const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
+  const { userJoinedSpaceIds, userFollowedSpaceIds, isUserSpaceFetched } =
+    useUserSpace();
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers =
@@ -47,6 +48,14 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
     const isUserJoined = userJoinedSpaceIds.has(spaceId) && !isUserFollowed;
     return { isUserJoined, isUserFollowed };
   }, [spaceId, userJoinedSpaceIds, userFollowedSpaceIds]);
+
+  const showJoinButton = useMemo(() => {
+    return isAuthenticated && !!profile && isUserSpaceFetched;
+  }, [isAuthenticated, profile, isUserSpaceFetched]);
+
+  const showFollowButton = useMemo(() => {
+    return showJoinButton && !isUserJoined;
+  }, [showJoinButton, isUserJoined]);
 
   const { shareUrl } = useGetShareLink({ id: spaceId, name: spaceData?.name });
 
@@ -137,7 +146,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
 
       {/* join/follow actions */}
       <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
-        {isAuthenticated && !isUserJoined && (
+        {showFollowButton && (
           <Button
             startContent={
               isPending ? null : (
@@ -155,7 +164,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
             {isUserFollowed ? 'Following' : 'Follow'}
           </Button>
         )}
-        {isAuthenticated && (
+        {showJoinButton && (
           <Button
             startContent={
               isUserJoined ? (
@@ -225,7 +234,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
 
       {/*Mobile join/share actions*/}
       <div className="mt-[10px] hidden gap-[10px] mobile:flex">
-        {isAuthenticated && !isUserJoined && (
+        {showFollowButton && (
           <Button
             startContent={
               isPending ? null : (
@@ -244,7 +253,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
             {isUserFollowed ? 'Following' : 'Follow'}
           </Button>
         )}
-        {isAuthenticated && (
+        {showJoinButton && (
           <Button
             startContent={
               isUserJoined ? (
