@@ -62,7 +62,7 @@ export const updateMembersRole = async (
   return responses.map((response) => response.data);
 };
 
-export const addFollow = async (spaceId: string, userId: string) => {
+export const followSpace = async (spaceId: string, userId: string) => {
   const response = await axiosInstance.post('/api/member/follow', {
     spaceId,
     userId,
@@ -70,7 +70,7 @@ export const addFollow = async (spaceId: string, userId: string) => {
   return response.data;
 };
 
-export const removeFollow = async (spaceId: string, userId: string) => {
+export const unFollowSpace = async (spaceId: string, userId: string) => {
   const response = await axiosInstance.post('/api/member/unfollow', {
     spaceId,
     userId,

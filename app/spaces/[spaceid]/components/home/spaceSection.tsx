@@ -18,8 +18,8 @@ import useUserSpace from '@/hooks/useUserSpace';
 import { CheckCircleIcon } from '@/components/icons';
 import { formatMemberCount } from '@/app/components/SpaceCard';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useQueryClient } from '@tanstack/react-query';
-import { addFollow, removeFollow } from '@/services/member';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { followSpace, unFollowSpace } from '@/services/member';
 
 export interface SpaceSectionProps {
   spaceData?: Space;
@@ -33,10 +33,8 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
   const queryClient = useQueryClient();
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
-  const [isFollowing, setIsFollowing] = useState(false);
 
-  const { userJoinedSpaceIds, userFollowedSpaceIds, isUserSpaceFetched } =
-    useUserSpace();
+  const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers =
@@ -57,34 +55,54 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
     console.log('join event');
   };
 
+  const followMutation = useMutation({
+    mutationFn: () => followSpace(spaceId, profile!.author!.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['GET_USER_ROLES_QUERY'],
+      });
+    },
+    onError: (error: Error) => {
+      console.error(error);
+      addToast({
+        title: error.message || 'Fail to follow',
+        color: 'danger',
+      });
+    },
+  });
+
+  const unfollowMutation = useMutation({
+    mutationFn: () => unFollowSpace(spaceId, profile!.author!.id),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['GET_USER_ROLES_QUERY'],
+      });
+    },
+    onError: (error: Error) => {
+      console.error(error);
+      addToast({
+        title: error.message || 'Fail to unfollow',
+        color: 'danger',
+      });
+    },
+  });
+
+  const isPending = followMutation.isPending || unfollowMutation.isPending;
+
   const onFollow = async () => {
     if (!isAuthenticated || !profile?.author?.id) {
       showAuthPrompt('connectButton');
       return;
     }
 
-    if (isFollowing) {
+    if (isPending) {
       return;
     }
 
-    try {
-      setIsFollowing(true);
-      if (isUserFollowed) {
-        await removeFollow(spaceId, profile.author.id);
-      } else {
-        await addFollow(spaceId, profile.author.id);
-      }
-
-      await queryClient.invalidateQueries({
-        queryKey: ['GET_USER_ROLES_QUERY'],
-      });
-    } catch (error) {
-      addToast({
-        title: error instanceof Error ? error.message : 'Failed to follow',
-        color: 'danger',
-      });
-    } finally {
-      setIsFollowing(false);
+    if (isUserFollowed) {
+      unfollowMutation.mutate();
+    } else {
+      followMutation.mutate();
     }
   };
 
@@ -125,10 +143,10 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
 
       {/* join/follow actions */}
       <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
-        {isAuthenticated && isUserSpaceFetched && !isUserJoined && (
+        {isAuthenticated && !isUserJoined && (
           <Button
             startContent={
-              isFollowing ? null : (
+              isPending ? null : (
                 <Heart
                   weight={isUserFollowed ? 'fill' : 'light'}
                   format="Stroke"
@@ -137,8 +155,8 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
               )
             }
             onPress={onFollow}
-            isLoading={isFollowing}
-            isDisabled={isFollowing}
+            isLoading={isPending}
+            isDisabled={isPending}
           >
             {isUserFollowed ? 'Following' : 'Follow'}
           </Button>
@@ -218,10 +236,10 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
 
       {/*Mobile join/share actions*/}
       <div className="mt-[10px] hidden gap-[10px] mobile:flex">
-        {isAuthenticated && isUserSpaceFetched && !isUserJoined && (
+        {isAuthenticated && !isUserJoined && (
           <Button
             startContent={
-              isFollowing ? null : (
+              isPending ? null : (
                 <Heart
                   weight={isUserFollowed ? 'fill' : 'light'}
                   format="Stroke"
@@ -230,8 +248,8 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
               )
             }
             onPress={onFollow}
-            isLoading={isFollowing}
-            isDisabled={isFollowing}
+            isLoading={isPending}
+            isDisabled={isPending}
             className="w-full flex-1 shrink-0"
           >
             {isUserFollowed ? 'Following' : 'Follow'}
