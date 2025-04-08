@@ -5,14 +5,12 @@ import { Button } from '@/components/base';
 import {
   ArrowSquareRight,
   Heart,
-  ShareFat,
   Buildings,
   Users,
 } from '@phosphor-icons/react';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { useParams } from 'next/navigation';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import EditorPro from '@/components/editorPro';
 import useUserSpace from '@/hooks/useUserSpace';
 import { CheckCircleIcon } from '@/components/icons';
@@ -20,6 +18,7 @@ import { formatMemberCount } from '@/app/components/SpaceCard';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { followSpace, unFollowSpace } from '@/services/member';
+import Copy from '@/components/base/copy';
 
 export interface SpaceSectionProps {
   spaceData?: Space;
@@ -106,13 +105,6 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
     }
   };
 
-  const onCopy = useCallback(() => {
-    addToast({
-      title: 'Copy share link to clipboard',
-      color: 'success',
-    });
-  }, []);
-
   if (!spaceData) {
     return <SpaceHomeSkeleton />;
   }
@@ -176,12 +168,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
           </Button>
         )}
 
-        <CopyToClipboard text={shareUrl!} onCopy={onCopy}>
-          <Button
-            startContent={<ShareFat weight="fill" format="Stroke" size={20} />}
-            isIconOnly
-          ></Button>
-        </CopyToClipboard>
+        <Copy text={shareUrl!} />
       </div>
 
       {/* space info: name/desc */}
@@ -270,12 +257,7 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
           </Button>
         )}
 
-        <CopyToClipboard text={shareUrl!} onCopy={onCopy}>
-          <Button
-            startContent={<ShareFat weight="fill" format="Stroke" size={20} />}
-            isIconOnly
-          ></Button>
-        </CopyToClipboard>
+        <Copy text={shareUrl!} />
       </div>
     </div>
   );
