@@ -9,6 +9,7 @@ import {
   Avatar,
   Accordion,
   AccordionItem,
+  addToast,
 } from '@heroui/react';
 import {
   Modal,
@@ -17,6 +18,11 @@ import {
   ModalContent,
 } from '@/components/base';
 import { useSpaceData } from '../../context/spaceData';
+import { joinSpace } from '@/services/member';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { useBuildInRole } from '@/context/BuildInRoleContext';
 
 const MODAL_BASE_CLASSES = {
   base: 'rounded-[10px] border-2 border-b-w-10 bg-[rgba(44,44,44,0.80)] backdrop-blur-[20px] text-white',
@@ -38,7 +44,42 @@ const JoinSpaceNoGate = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure({
     isOpen: true,
   });
+  const { profile } = useCeramicContext();
   const { spaceData } = useSpaceData();
+  const { memberRole } = useBuildInRole();
+  const queryClient = useQueryClient();
+
+  const joinMutation = useMutation({
+    mutationFn: joinSpace,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['getSpaceMembers', spaceData?.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['GET_USER_ROLES_QUERY'],
+        }),
+      ]);
+    },
+    onError: (error: any) => {
+      console.error(error);
+      addToast({
+        title: 'Fail to join',
+        color: 'danger',
+      });
+    },
+  });
+
+  const userId = profile?.author?.id ?? '';
+
+  const handleJoinSpace = useCallback(() => {
+    if (!spaceData?.id) return;
+    joinMutation.mutate({
+      id: spaceData?.id,
+      roleId: memberRole?.id ?? '',
+      userId,
+    });
+  }, [spaceData?.id, joinMutation, memberRole?.id, userId]);
 
   return (
     <Modal isOpen={isOpen} hideCloseButton onOpenChange={onOpenChange}>
@@ -71,6 +112,8 @@ const JoinSpaceNoGate = () => {
               <Button
                 color="functional"
                 startContent={<ArrowSquareRightIcon />}
+                onPress={handleJoinSpace}
+                isLoading={joinMutation.isPending}
               >
                 Confirm & Join
               </Button>
