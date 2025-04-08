@@ -10,8 +10,7 @@ import {
 } from '@phosphor-icons/react';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { useParams } from 'next/navigation';
-import React, { useMemo, useState } from 'react';
-import EditorPro from '@/components/editorPro';
+import React, { useMemo } from 'react';
 import useUserSpace from '@/hooks/useUserSpace';
 import { CheckCircleIcon } from '@/components/icons';
 import { formatMemberCount } from '@/app/components/SpaceCard';
@@ -19,20 +18,18 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { followSpace, unFollowSpace } from '@/services/member';
 import Copy from '@/components/base/copy';
-import { JoinSpaceNoGate } from './modal/joinSpace';
+import EditorProWithMore from './EditorProWithMore';
 
 export interface SpaceSectionProps {
   spaceData?: Space;
   isLoading: boolean;
 }
 
-const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
+const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
   const params = useParams();
   const spaceId = params?.spaceid?.toString() ?? '';
   const { profile, isAuthenticated, showAuthPrompt } = useCeramicContext();
   const queryClient = useQueryClient();
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
-  const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
 
   const { userJoinedSpaceIds, userFollowedSpaceIds, isUserSpaceFetched } =
     useUserSpace();
@@ -121,7 +118,6 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
 
   return (
     <div className="flex flex-col border-b border-[rgba(255,255,255,0.10)] bg-[#2C2C2C] p-[20px] backdrop-blur-[20px] mobile:p-[14px]">
-      <JoinSpaceNoGate />
       <div className="relative">
         <Image
           src={spaceData.banner}
@@ -204,19 +200,15 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
           {spaceData.name}
         </p>
 
-        <EditorPro
+        <EditorProWithMore
           value={spaceData.description}
           isEdit={false}
           className={{
             base: 'bg-transparent',
             editorWrapper: 'p-0',
           }}
-          collapsable={true}
           collapseHeight={150}
-          collapsed={isCollapsed}
-          onCollapse={(canCollapse) => {
-            setIsCanCollapse(canCollapse);
-          }}
+          defaultCollapsed={true}
         />
       </div>
 
