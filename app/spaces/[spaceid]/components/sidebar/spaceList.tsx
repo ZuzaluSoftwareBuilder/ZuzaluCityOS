@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Space } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
 import Link from 'next/link';
@@ -23,21 +22,14 @@ const SpaceItemSkeleton = () => {
 };
 
 const SpaceList = () => {
-  const { isAuthenticated, profile, composeClient, ceramic } =
-    useCeramicContext();
-  const [isClientReady, setIsClientReady] = useState(false);
+  const { isAuthenticated, profile } = useCeramicContext();
 
   const { userJoinedSpaces, isUserSpaceLoading, isUserSpaceFetched } =
     useUserSpace();
 
-  useEffect(() => {
-    setIsClientReady(true);
-  }, []);
-
-  const shouldShowSkeleton =
-    isClientReady &&
-    (isUserSpaceLoading || !isUserSpaceFetched || !isAuthenticated) &&
-    !!profile;
+  const isLoggedIn = isAuthenticated && !!profile;
+  const hasNoSpaces = isUserSpaceFetched && userJoinedSpaces.length === 0;
+  const shouldShowSkeleton = isUserSpaceLoading && isLoggedIn && !hasNoSpaces;
 
   return (
     <div className="flex size-full flex-col items-center gap-2.5 overflow-y-auto pt-2.5">
