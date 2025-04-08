@@ -590,17 +590,6 @@ export interface CalEvent {
   rrule?: string;
 }
 
-export const SOCIAL_TYPES = [
-  { key: 'website', value: 'Website' },
-  { key: 'twitter', value: 'Twitter' },
-  { key: 'telegram', value: 'Telegram' },
-  { key: 'nostr', value: 'Nostr' },
-  { key: 'lens', value: 'Lens' },
-  { key: 'github', value: 'Github' },
-  { key: 'discord', value: 'Discord' },
-  { key: 'ens', value: 'ENS' },
-];
-
 export interface Dapp {
   id: string;
   appName: string;
