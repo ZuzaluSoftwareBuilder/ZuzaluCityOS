@@ -1,6 +1,6 @@
 'use client';
 import { Space } from '@/types';
-import { addToast, Avatar, Image, Skeleton } from '@heroui/react';
+import { addToast, Avatar, cn, Image, Skeleton } from '@heroui/react';
 import { Button } from '@/components/base';
 import {
   ArrowSquareRight,
@@ -268,7 +268,16 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
 const SpaceHomeSkeleton = () => {
   return (
     <div className="flex flex-col border-b border-[rgba(255,255,255,0.10)] bg-[#2C2C2C] p-[20px] backdrop-blur-[20px] mobile:p-[14px]">
-      <Skeleton className="aspect-[3.4] rounded-[10px] object-cover mobile:aspect-[2.4]" />
+      <div className="relative">
+        <Skeleton className="relative aspect-[3.4] rounded-[10px] object-cover mobile:aspect-[2.4]" />
+        <Skeleton
+          className={cn(
+            'box-content absolute bottom-[-30px] left-[27px] z-10',
+            'size-[90px] rounded-full border-[4px] border-[#2E2E2E]',
+            'mobile:size-[70px] mobile:bottom-[-40px] mobile:left-[17px]',
+          )}
+        />
+      </div>
 
       <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
         <Skeleton className="h-[40px] w-[178px] rounded-[8px]" />
@@ -276,17 +285,9 @@ const SpaceHomeSkeleton = () => {
       </div>
 
       <div className="mt-[20px] flex flex-col gap-[10px] mobile:mt-[50px]">
-        <div className="flex items-center justify-start gap-[10px]">
-          <div className="flex h-[30px] items-center gap-[10px] rounded-[8px] bg-[rgba(255,255,255,0.1)] px-[10px]">
-            <Buildings weight="fill" format="Stroke" size={20} />
-            <span className="text-[14px] font-[600] leading-[1.2] text-white drop-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] ">
-              Community
-            </span>
-          </div>
-        </div>
-
-        <Skeleton className="h-[30px] w-4/5 rounded-[4px]" />
-
+        <Skeleton className="h-[30px] w-[178px] rounded-[8px]" />
+        <Skeleton className="h-[30px] w-[200px] rounded-[4px]" />
+        <Skeleton className="h-[22px] w-2/5 rounded-[4px]" />
         <Skeleton className="h-[22px] w-2/5 rounded-[4px]" />
       </div>
 
