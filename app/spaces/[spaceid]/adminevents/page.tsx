@@ -9,6 +9,7 @@ import Drawer from '@/components/drawer';
 import { EventForm } from '@/components/form/EventForm';
 import { GET_SPACE_AND_EVENTS_QUERY_BY_ID } from '@/services/graphql/space';
 import { useGraphQL } from '@/hooks/useGraphQL';
+import { useBuildInRole } from '@/context/BuildInRoleContext';
 
 export interface IEventArg {
   args: {
@@ -19,17 +20,29 @@ export interface IEventArg {
 const Home = () => {
   const params = useParams();
   const spaceId = params.spaceid?.toString() ?? '';
+  const { adminRole, memberRole } = useBuildInRole();
 
   const [open, setOpen] = useState(false);
 
   const { data: spaceData, refetch } = useGraphQL(
     ['getSpaceAndEvents', spaceId],
     GET_SPACE_AND_EVENTS_QUERY_BY_ID,
-    { id: spaceId },
+    {
+      id: spaceId,
+      first: 100,
+      userRolesFilters: {
+        where: {
+          roleId: {
+            in: [adminRole, memberRole].map((role) => role?.id ?? ''),
+          },
+        },
+      },
+    },
     {
       select: (data) => {
         return data?.data?.node as Space;
       },
+      enabled: !!adminRole && !!memberRole,
     },
   );
 

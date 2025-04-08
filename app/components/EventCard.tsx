@@ -13,6 +13,24 @@ interface Location {
   eventId: string;
 }
 
+export const EventCardMonthGroup: React.FC<
+  React.PropsWithChildren<{
+    bgColor?: 'transparent' | string;
+  }>
+> = ({ children, bgColor = 'rgba(34, 34, 34, 0.80)' }) => {
+  return (
+    <div
+      className="flex w-full items-center justify-center rounded-[40px] border border-[rgba(255,255,255,0.10)] py-[8px] font-[700] text-[#ccc]"
+      style={{
+        backgroundColor: bgColor,
+        backdropFilter: 'blur(10px)',
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
 export function EventCardSkeleton() {
   return (
     <div className="flex gap-[14px] rounded-[10px] border-1 border-b-w-10 p-[10px] hover:bg-white/5">
@@ -84,7 +102,7 @@ export function EventCard({ data }: EventCardProps) {
           </span>
         </div>
         <div className="flex flex-col gap-[6px]">
-          <p className="text-[20px] font-bold leading-[1.2]">{title}</p>
+          <p className="text-[18px] font-bold leading-[1.2]">{title}</p>
           <p className="text-[14px] leading-[1.4] opacity-60">{title}</p>
         </div>
         <div className="flex items-center gap-[6px] opacity-50">
