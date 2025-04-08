@@ -52,7 +52,7 @@ export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
   );
 }
 
-const formatMemberCount = (count: number): string => {
+export const formatMemberCount = (count: number): string => {
   if (count >= 1000) {
     return `${(count / 1000).toFixed(1)}k`.replace('.0k', 'k');
   }

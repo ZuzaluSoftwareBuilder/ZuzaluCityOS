@@ -159,7 +159,7 @@ const SpaceSubSidebar = ({
   return (
     <div
       className={cn(
-        'w-[260px] h-[calc(100vh-50px)]  border-r border-[rgba(255,255,255,0.1)] flex flex-col relative',
+        'w-[260px] h-[calc(100vh-50px)] flex flex-col relative',
         needBlur ? 'bg-transparent' : 'bg-[#222222]',
       )}
     >
@@ -232,7 +232,7 @@ const SpaceSubSidebar = ({
       </div>
 
       {(isOwner || isAdmin) && (
-        <div className="absolute bottom-0 left-0 h-[90px] w-[260px] border-t border-[rgba(255,255,255,0.1)] px-2.5 pt-5">
+        <div className="fixed bottom-0 left-[61px] h-[90px] w-[260px] border-t border-[rgba(255,255,255,0.1)] px-2.5 pt-5">
           <div className="px-2.5 text-[12px] leading-[14px] text-white">
             ADMINS
           </div>

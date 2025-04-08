@@ -35,7 +35,9 @@ export default function SpacePageLayout({
         <SpaceTopHeader />
         <div className="flex min-h-[calc(100vh-50px)] text-white pc:pl-[62px] tablet:pl-[62px]">
           <SpaceLayout />
-          <div className="flex-1 overflow-auto">{children}</div>
+          <div className="h-[calc(100vh-50px)] flex-1 overflow-y-auto">
+            {children}
+          </div>
         </div>
       </SpaceDataProvider>
     </SpacePermissionProvider>

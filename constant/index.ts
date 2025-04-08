@@ -200,8 +200,17 @@ export const DAPP_TAGS: {
   },
 ];
 
+export type ISocialType =
+  | 'github'
+  | 'discord'
+  | 'twitter'
+  | 'telegram'
+  | 'lens'
+  | 'nostr'
+  | 'other';
+
 export const SOCIAL_TYPES: {
-  key: string;
+  key: ISocialType;
   value: string;
 }[] = [
   {
