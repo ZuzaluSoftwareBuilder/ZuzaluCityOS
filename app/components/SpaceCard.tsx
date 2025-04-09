@@ -1,4 +1,4 @@
-import { Image, Avatar, Skeleton, cn, Chip } from '@heroui/react';
+import { Image, Avatar, Skeleton, cn } from '@heroui/react';
 import { useCallback, useMemo } from 'react';
 import React from 'react';
 import { Space } from '@/types';
@@ -9,8 +9,8 @@ import {
 } from '@/components/icons';
 import { Button } from '@/components/base';
 import { useRouter } from 'next/navigation';
-import { Categories } from '@/app/spaces/create/components/constant';
 import { useCeramicContext } from '@/context/CeramicContext';
+import SpaceChip from '@/app/components/SpaceChip';
 
 export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
   return (
@@ -118,35 +118,6 @@ export function SpaceCard({
     return (owner as unknown as string) === profile?.author?.id;
   }, [isLegacy, owner, profile?.author?.id]);
 
-  const SpaceChip = () => {
-    const categoryInfo = useMemo(
-      () => Categories.find((c) => c.value === category),
-      [],
-    );
-    const chipClass =
-      'bg-white/[0.05] rounded-[4px] text-[10px] px-[4px] py-[8px] gap-[5px]';
-    if (categoryInfo) {
-      const Icon = React.cloneElement(categoryInfo.icon, {
-        size: 16,
-        weight: 'fill',
-      });
-      return (
-        <Chip startContent={Icon} size="sm" className={chipClass}>
-          {categoryInfo.label}
-        </Chip>
-      );
-    }
-    const Icon = React.cloneElement(Categories[0].icon, {
-      size: 16,
-      weight: 'fill',
-    });
-    return (
-      <Chip startContent={Icon} size="sm" className={chipClass}>
-        {Categories[0].label}
-      </Chip>
-    );
-  };
-
   const handleClick = useCallback(() => {
     if (isLegacyOwner) {
       router.push(`/spaces/create`);
@@ -200,8 +171,8 @@ export function SpaceCard({
             {formattedMemberCount}
           </span>
         </div>
-        <div className="mb-[6px]">
-          <SpaceChip />
+        <div className="mb-[6px] flex">
+          <SpaceChip category={category} iconSize={16} />
         </div>
         <p className=" mb-[6px] truncate text-[18px] font-bold leading-[1.2]">
           {name}
