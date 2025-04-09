@@ -56,7 +56,7 @@ const SpaceActions = ({
       if (!isLoggedIn) {
         setShowButtonsSkeleton(false);
       }
-    }, 1500);
+    }, 2000);
   }, []);
 
   useEffect(() => {
