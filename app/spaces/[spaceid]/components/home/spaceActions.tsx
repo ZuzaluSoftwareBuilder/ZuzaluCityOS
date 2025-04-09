@@ -37,28 +37,26 @@ const SpaceActions = ({
   const queryClient = useQueryClient();
   const { showModal } = useModal();
 
-  const [showButtonsSkeleton, setShowButtonsSkeleton] = useState(true);
-  const [showButtons, setShowButtons] = useState(false);
+  const [uiState, setUiState] = useState<'loading' | 'buttons' | 'empty'>(
+    'loading',
+  );
 
   const isLoggedIn = isAuthenticated && !!profile;
 
-  // hack: handle not login case
-  useEffect(() => {
-    setTimeout(() => {
-      if (!isLoggedIn) {
-        setShowButtonsSkeleton(false);
-      }
-    }, 2000);
-  }, []);
-
   useEffect(() => {
     if (isUserSpaceFetched && isLoggedIn && spaceData) {
-      setShowButtons(true);
-    }
-    if (isUserSpaceFetched) {
-      setShowButtonsSkeleton(false);
+      setUiState('buttons');
+    } else if (isUserSpaceFetched) {
+      setUiState('empty');
     }
   }, [isUserSpaceFetched, isLoggedIn, spaceData]);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      const timer = setTimeout(() => setUiState('empty'), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoggedIn]);
 
   const showFollowButton = !isUserJoined;
 
@@ -138,7 +136,7 @@ const SpaceActions = ({
   return (
     <>
       <div className={className}>
-        {showButtons ? (
+        {uiState === 'buttons' ? (
           <>
             {showFollowButton && (
               <Button
@@ -181,7 +179,7 @@ const SpaceActions = ({
               </Button>
             )}
           </>
-        ) : showButtonsSkeleton ? (
+        ) : uiState === 'loading' ? (
           <>
             <Skeleton className="h-[40px] w-[100px] rounded-[8px] mobile:w-full" />
             <Skeleton className="h-[40px] w-[168px] rounded-[8px] mobile:hidden" />
