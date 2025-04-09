@@ -14,7 +14,7 @@ import {
   ModalFooter,
 } from '@/components/base';
 import useOpenDraw from '@/hooks/useOpenDraw';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 interface SpaceActionsProps {
   spaceData?: Space;
@@ -184,6 +184,7 @@ const SpaceActions = ({
         ) : showButtonsSkeleton ? (
           <>
             <Skeleton className="h-[40px] w-[100px] rounded-[8px] mobile:w-full" />
+            <Skeleton className="h-[40px] w-[168px] rounded-[8px] mobile:hidden" />
           </>
         ) : null}
 

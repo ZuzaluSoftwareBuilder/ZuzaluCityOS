@@ -166,6 +166,7 @@ const SpaceHomeSkeleton = () => {
 
       <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
         <Skeleton className="h-[40px] w-[100px] rounded-[8px]" />
+        <Skeleton className="h-[40px] w-[168px] rounded-[8px]" />
         <Skeleton className="size-[40px] rounded-[8px]" />
       </div>
 
