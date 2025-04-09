@@ -22,6 +22,8 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { getPOAPs } from '@/services/poap';
 import { CheckCircle } from '@phosphor-icons/react';
+import { usePOAPVerify } from '@/hooks/useRuleVerify';
+import { ZuPassInfo } from '@/types';
 
 const MODAL_BASE_CLASSES = {
   base: 'rounded-[10px] border-2 border-b-w-10 bg-[rgba(44,44,44,0.80)] backdrop-blur-[20px] text-white',
@@ -33,6 +35,16 @@ const COMMON_TEXT = {
   subtitle: 'text-[16px] font-semibold leading-[1.2] opacity-80',
   description: 'text-[14px] font-normal leading-[1.6] opacity-60',
 };
+
+type VerifyItemData =
+  | {
+      type: 'zuPass';
+      zuPassInfo: ZuPassInfo;
+    }
+  | {
+      type: 'poap';
+      poapsId: number;
+    };
 
 const SpaceInfoCard = () => {
   const { spaceData } = useSpaceData();
@@ -190,6 +202,11 @@ const JoinSpaceWithGate = ({
   const { spaceData } = useSpaceData();
   const { handleJoinSpace, joinMutation } = useJoinSpace();
   const [verifiedRules, setVerifiedRules] = useState<string[]>([]);
+  const [verifyingPoaps, setVerifyingPoaps] = useState<Record<number, boolean>>(
+    {},
+  );
+
+  const { verifyPOAPMutation } = usePOAPVerify();
 
   const rules = useMemo(() => {
     return (
@@ -199,9 +216,28 @@ const JoinSpaceWithGate = ({
     );
   }, [spaceData?.spaceGating?.edges]);
 
-  const handleVerifyItem = useCallback((ruleId: string) => {
-    setVerifiedRules((prev) => [...prev, ruleId]);
-  }, []);
+  const handleVerifyItem = useCallback(
+    async (ruleId: string, data: VerifyItemData) => {
+      try {
+        if (data.type === 'zuPass') {
+          setVerifiedRules((prev) => [...prev, ruleId]);
+        } else if (data.type === 'poap') {
+          try {
+            setVerifyingPoaps((prev) => ({ ...prev, [data.poapsId]: true }));
+            const result = await verifyPOAPMutation(data.poapsId!);
+            if (result.statusCode === 200) {
+              setVerifiedRules((prev) => [...prev, ruleId]);
+            }
+          } finally {
+            setVerifyingPoaps((prev) => ({ ...prev, [data.poapsId]: false }));
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [verifyPOAPMutation],
+  );
 
   const anyRuleVerified = verifiedRules.length > 0;
 
@@ -231,7 +267,12 @@ const JoinSpaceWithGate = ({
             <RuleItem
               name={v.zuPassInfo?.eventName ?? ''}
               isVerified={isRuleVerified}
-              onVerify={() => handleVerifyItem(v.zuPassInfo?.eventId ?? '')}
+              onVerify={() =>
+                handleVerifyItem(v.zuPassInfo?.eventId ?? '', {
+                  type: 'zuPass',
+                  zuPassInfo: v.zuPassInfo!,
+                })
+              }
             />
           ) : (
             <div className="flex flex-wrap items-center gap-2">
@@ -240,7 +281,13 @@ const JoinSpaceWithGate = ({
                   <PoapItem
                     key={p.poapId}
                     poapId={p.poapId}
-                    onVerify={() => handleVerifyItem(p.poapId.toString())}
+                    onVerify={() =>
+                      handleVerifyItem(p.poapId.toString(), {
+                        type: 'poap',
+                        poapsId: p.poapId,
+                      })
+                    }
+                    isVerifying={verifyingPoaps[p.poapId]}
                     isVerified={verifiedRules.includes(p.poapId.toString())}
                   />
                   {index !== (v.poapsId?.length ?? 0) - 1 && (
@@ -255,7 +302,7 @@ const JoinSpaceWithGate = ({
         </AccordionItem>
       );
     });
-  }, [rules, handleVerifyItem, verifiedRules]);
+  }, [rules, handleVerifyItem, verifiedRules, verifyingPoaps]);
 
   return (
     <JoinSpaceModal
@@ -294,16 +341,19 @@ const RuleItem = ({
   name,
   isVerified = false,
   onVerify,
+  isLoading = false,
 }: {
   name: string;
   isVerified?: boolean;
   onVerify: () => void;
+  isLoading?: boolean;
 }) => (
   <Button
     size="sm"
     color={isVerified ? 'success' : 'functional'}
     className={cn('h-auto whitespace-normal p-[4px_8px]')}
     onPress={onVerify}
+    isLoading={isLoading}
   >
     {name}
   </Button>
@@ -313,10 +363,12 @@ const PoapItem = ({
   poapId,
   onVerify,
   isVerified = false,
+  isVerifying = false,
 }: {
   poapId: number;
   onVerify: () => void;
   isVerified?: boolean;
+  isVerifying?: boolean;
 }) => {
   const { data: poapData, isLoading } = useQuery({
     queryKey: ['poaps', poapId],
@@ -332,7 +384,12 @@ const PoapItem = ({
   if (!poap) return null;
 
   return (
-    <RuleItem name={poap.name} isVerified={isVerified} onVerify={onVerify} />
+    <RuleItem
+      name={poap.name}
+      isVerified={isVerified}
+      onVerify={onVerify}
+      isLoading={isVerifying}
+    />
   );
 };
 
