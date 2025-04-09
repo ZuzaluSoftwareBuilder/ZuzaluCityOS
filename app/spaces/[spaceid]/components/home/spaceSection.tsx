@@ -264,6 +264,7 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
                       weight={isUserFollowed ? 'fill' : 'light'}
                       format="Stroke"
                       size={20}
+                      className="shrink-0"
                     />
                   )
                 }
@@ -281,7 +282,12 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
                   isUserJoined ? (
                     <CheckCircleIcon size={5} />
                   ) : (
-                    <ArrowSquareRight weight="fill" format="Stroke" size={20} />
+                    <ArrowSquareRight
+                      weight="fill"
+                      format="Stroke"
+                      size={20}
+                      className="shrink-0"
+                    />
                   )
                 }
                 className="w-full flex-1 shrink-0"
