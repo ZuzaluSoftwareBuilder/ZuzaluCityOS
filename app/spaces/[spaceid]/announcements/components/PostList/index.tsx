@@ -1,12 +1,7 @@
 'use client';
 
-import { memo, useState } from 'react';
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  PlusCircleIcon,
-  PlusIcon,
-} from '@/components/icons';
+import { memo } from 'react';
+import { PlusCircleIcon, PlusIcon } from '@/components/icons';
 import { Button, Card } from '@/components/base';
 import {
   Image,
@@ -23,7 +18,7 @@ import CreateOrEditorPostDrawer, {
   useCreateOrEditorPostDrawer,
 } from '../CreateOrEditorPostDrawer';
 import { Announcement, PermissionName } from '@/types';
-import EditorPreview from '@/components/editor/EditorPreview';
+import EditorProWithMore from '@/app/spaces/[spaceid]/components/home/EditorProWithMore';
 
 import { PostListDataProvider, usePostListData } from './PostListDataContext';
 import { useSpacePermissions } from '../../../components/permission';
@@ -102,8 +97,6 @@ PostList.Empty = memo(function Empty() {
 });
 
 PostList.Post = memo(function Post({ post }: { post: Announcement }) {
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-  const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
   const { startEdit } = useCreateOrEditorPostDrawer();
   const { onDelete } = usePostListData();
   const { ceramic } = useCeramicContext();
@@ -135,35 +128,17 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
             </span>
           </div>
           {/* description */}
-          <EditorPreview
+          <EditorProWithMore
             value={post.description}
-            fontSize={13}
-            collapsed={isCollapsed}
-            onCollapse={(collapsed) => {
-              setIsCanCollapse((v) => {
-                return v || collapsed;
-              });
-              setIsCollapsed(collapsed);
+            isEdit={false}
+            className={{
+              base: 'bg-transparent',
+              editorWrapper: 'p-0',
+              editor: 'text-[13px] opacity-80',
             }}
-            style={{ opacity: 0.8 }}
+            collapseHeight={100}
+            defaultCollapsed={true}
           />
-          {isCanCollapse && (
-            <Button
-              size="sm"
-              color="secondary"
-              startContent={
-                isCollapsed ? (
-                  <ChevronDownIcon size={4} />
-                ) : (
-                  <ChevronUpIcon size={4} />
-                )
-              }
-              className="mt-0 w-full"
-              onClick={() => setIsCollapsed((prev) => !prev)}
-            >
-              {isCollapsed ? 'Show More' : 'Show Less'}
-            </Button>
-          )}
           <div className="text-[10px] font-normal leading-[120%] opacity-50">
             {dayjs(post.createdAt).format('YYYY-MM-DD')} |{' '}
             {post.tags.map((tag) => `# ${tag.tag}`).join(' ')}

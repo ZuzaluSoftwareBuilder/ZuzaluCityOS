@@ -6,11 +6,11 @@ import {
   useImperativeHandle,
   useMemo,
   useRef,
+  useState,
 } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FormHelperText } from '@mui/material';
 import { omit } from 'lodash';
-import dynamic from 'next/dynamic';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import {
@@ -19,15 +19,11 @@ import {
   FormTitle,
 } from '@/components/typography/formTypography';
 import SelectCategories from '@/components/select/selectCategories';
-import { useEditorStore } from '@/components/editor/useEditorStore';
 
 import { POST_TAGS } from '@/constant';
 import Yup from '@/utils/yupExtensions';
 import { Input } from '@/components/base';
-
-const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
-  ssr: false,
-});
+import EditorPro from '@/components/editorPro';
 
 export interface PostFormResult {
   title: string;
@@ -58,6 +54,9 @@ type FormData = Yup.InferType<typeof schema>;
 const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
   const { initialData } = props;
   const formContainerRef = useRef<HTMLDivElement>(null);
+  const [editorValue, setEditorValue] = useState(
+    initialData?.description || '',
+  );
 
   const {
     control,
@@ -74,54 +73,61 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
     },
   });
 
-  const descriptionEditorStore = useEditorStore();
   const initialTags = useMemo(() => {
     if (!initialData) return [];
     return POST_TAGS.filter((item) => initialData?.tags.includes(item.value));
   }, [initialData]);
 
+  const handleEditorChange = useCallback(
+    (val: string) => {
+      setEditorValue(val);
+      try {
+        const parsed = JSON.parse(val);
+        if (parsed.isEmpty) {
+          setError('description', {
+            message: 'Description is required',
+          });
+        } else {
+          setValue('description', val, { shouldValidate: true });
+        }
+      } catch (e) {
+        console.error('Error parsing editor value:', e);
+      }
+    },
+    [setError, setValue],
+  );
+
   const validateDescription = useCallback(() => {
-    if (
-      !descriptionEditorStore.value ||
-      !descriptionEditorStore.value.blocks ||
-      descriptionEditorStore.value.blocks.length === 0
-    ) {
+    try {
+      if (!editorValue || editorValue === '{}') {
+        setError('description', {
+          message: 'Description is required',
+        });
+        return false;
+      }
+      const parsedValue = JSON.parse(editorValue);
+      if (parsedValue.isEmpty) {
+        setError('description', {
+          message: 'Description is required',
+        });
+        return false;
+      }
+      return true;
+    } catch (e) {
       setError('description', {
-        message: 'Description is required',
+        message: 'Invalid description format',
       });
+      return false;
     }
-  }, [descriptionEditorStore.value, setError]);
+  }, [editorValue, setError]);
 
   const resetForm = useCallback(() => {
     reset({
       title: initialData?.title || '',
       tags: initialData?.tags || [],
     });
-    descriptionEditorStore.setValue(initialData?.description || '');
-  }, [reset, initialData, descriptionEditorStore]);
-
-  const submitForm = useCallback(
-    async (data: FormData): Promise<PostFormResult | undefined> => {
-      const description = descriptionEditorStore.value;
-      if (
-        !description ||
-        !description.blocks ||
-        description.blocks.length === 0
-      ) {
-        setError('description', {
-          message: 'Description is required',
-        });
-        onFormError();
-        return undefined;
-      }
-      return {
-        title: data.title,
-        tags: data.tags || [],
-        description: descriptionEditorStore.getValueString(),
-      };
-    },
-    [descriptionEditorStore.value, setError],
-  );
+    setEditorValue(initialData?.description || '');
+  }, [reset, initialData]);
 
   const onFormError = useCallback(() => {
     validateDescription();
@@ -135,7 +141,22 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
         errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
-  }, [errors, setError]);
+  }, [errors, validateDescription]);
+
+  const submitForm = useCallback(
+    async (data: FormData): Promise<PostFormResult | undefined> => {
+      if (!validateDescription()) {
+        onFormError();
+        return undefined;
+      }
+      return {
+        title: data.title,
+        tags: data.tags || [],
+        description: editorValue,
+      };
+    },
+    [editorValue, onFormError, validateDescription],
+  );
 
   useImperativeHandle(
     ref,
@@ -149,7 +170,7 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
         }),
       reset: resetForm,
     }),
-    [handleSubmit, submitForm, resetForm, validateDescription],
+    [handleSubmit, submitForm, resetForm, onFormError],
   );
 
   return (
@@ -205,17 +226,11 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
         </div>
 
         <div data-field="description" className="flex flex-col gap-2.5">
-          <SuperEditor
+          <EditorPro
+            value={editorValue}
+            onChange={handleEditorChange}
+            className={{ base: 'min-h-[190px]' }}
             placeholder="Type post content"
-            value={descriptionEditorStore.value}
-            onChange={(val) => {
-              descriptionEditorStore.setValue(val);
-              if (!val || !val.blocks || val.blocks.length == 0) {
-                setError('description', {
-                  message: 'Description is required',
-                });
-              }
-            }}
           />
           {errors?.description && (
             <FormHelperText error>{errors?.description.message}</FormHelperText>
