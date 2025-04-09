@@ -109,9 +109,11 @@ const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
           <DetailItem
             title={'Access:'}
             value={
-              spaceData?.gated && String(spaceData?.gated) === '1'
-                ? 'Gated'
-                : 'Open'
+              !spaceData
+                ? ''
+                : spaceData?.gated && String(spaceData?.gated) === '1'
+                  ? 'Gated'
+                  : 'Open'
             }
           />
           <DetailItem

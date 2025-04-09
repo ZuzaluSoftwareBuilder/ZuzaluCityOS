@@ -37,9 +37,7 @@ const SpaceActions = ({
   const queryClient = useQueryClient();
   const { showModal } = useModal();
 
-  const [uiState, setUiState] = useState<'loading' | 'buttons' | 'empty'>(
-    'loading',
-  );
+  const [uiState, setUiState] = useState<'loading' | 'buttons' | ''>('loading');
 
   const isLoggedIn = isAuthenticated && !!profile;
 
@@ -47,13 +45,13 @@ const SpaceActions = ({
     if (isUserSpaceFetched && isLoggedIn && spaceData) {
       setUiState('buttons');
     } else if (isUserSpaceFetched) {
-      setUiState('empty');
+      setUiState('');
     }
   }, [isUserSpaceFetched, isLoggedIn, spaceData]);
 
   useEffect(() => {
     if (!isLoggedIn) {
-      const timer = setTimeout(() => setUiState('empty'), 2000);
+      const timer = setTimeout(() => setUiState(''), 2000);
       return () => clearTimeout(timer);
     }
   }, [isLoggedIn]);
