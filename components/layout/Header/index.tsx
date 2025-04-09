@@ -5,7 +5,7 @@ import { MenuIcon } from 'components/icons';
 import SidebarDrawer from '../Sidebar/SidebarDrawer';
 import { useAppContext } from '@/context/AppContext';
 import { Button } from '@/components/base';
-import UserProfileSection from '../UserProfileSection';
+import UserProfileSection from './UserProfileSection';
 import NextImage from 'next/image';
 
 const GreenBlurDataUrl =

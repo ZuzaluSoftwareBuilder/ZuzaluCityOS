@@ -1,5 +1,5 @@
 import { Avatar, cn, Skeleton } from '@heroui/react';
-import { formatAddressString } from '@/components/layout/UserProfileSection';
+import { formatAddressString } from '@/components/layout/Header/UserProfileSection';
 import { MemberProps } from '@/app/spaces/[spaceid]/setting/roles/components/members/memberItem';
 
 export interface IMemberItemProps extends MemberProps {

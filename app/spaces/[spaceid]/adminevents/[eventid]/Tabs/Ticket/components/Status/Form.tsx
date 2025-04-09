@@ -33,7 +33,7 @@ import { isDev } from '@/constant';
 import { sepolia, mainnet } from 'wagmi/chains';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
-import { formatAddressString } from '@/components/layout/UserProfileSection';
+import { formatAddressString } from '@/components/layout/Header/UserProfileSection';
 import { getWalletAddressFromDid } from '@/utils/did';
 
 interface FormProps {

@@ -1,4 +1,4 @@
-import { formatAddressString } from '@/components/layout/UserProfileSection';
+import { formatAddressString } from '@/components/layout/Header/UserProfileSection';
 import { Avatar, Skeleton } from '@heroui/react';
 
 export interface MemberProps {
