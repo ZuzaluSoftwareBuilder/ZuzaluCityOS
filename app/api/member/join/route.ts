@@ -4,6 +4,7 @@ import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
 import {
   CHECK_EXISTING_ROLE_QUERY,
   CREATE_ROLE_QUERY,
+  UPDATE_ROLE_QUERY,
 } from '@/services/graphql/role';
 import { z } from 'zod';
 import {
@@ -63,22 +64,6 @@ export const POST = async (req: Request) => {
       return createErrorResponse('Owner role cannot be added', 400);
     }
 
-    const existingRoleResult = await executeQuery(CHECK_EXISTING_ROLE_QUERY, {
-      userId,
-      resourceId: spaceId,
-      resource: 'space',
-    });
-
-    const data = existingRoleResult.data as any;
-    const existingRoles = (data?.zucityUserRolesIndex?.edges as []) || [];
-
-    if (existingRoles.length > 0) {
-      return createErrorResponse(
-        'User already has role for this resource',
-        409,
-      );
-    }
-
     const spaceResult = await executeQuery(GET_SPACE_QUERY_BY_ID, {
       id: spaceId,
     });
@@ -94,19 +79,41 @@ export const POST = async (req: Request) => {
       return createErrorResponse('Error getting private key', 500);
     }
 
-    const result = await executeQuery(CREATE_ROLE_QUERY, {
-      input: {
-        content: {
-          userId,
-          resourceId: spaceId,
-          source: 'space',
-          roleId,
-          spaceId,
-          created_at: dayjs().utc().toISOString(),
-          updated_at: dayjs().utc().toISOString(),
-        },
-      },
+    const existingRoleResult = await executeQuery(CHECK_EXISTING_ROLE_QUERY, {
+      userId,
+      resourceId: spaceId,
+      resource: 'space',
     });
+
+    const data = existingRoleResult.data;
+    const existingRoles = data?.zucityUserRolesIndex?.edges || [];
+
+    let result;
+    if (existingRoles.length > 0) {
+      result = await executeQuery(UPDATE_ROLE_QUERY, {
+        input: {
+          id: existingRoles[0]?.node?.id ?? '',
+          content: {
+            roleId,
+            updated_at: dayjs().utc().toISOString(),
+          },
+        },
+      });
+    } else {
+      result = await executeQuery(CREATE_ROLE_QUERY, {
+        input: {
+          content: {
+            userId,
+            resourceId: spaceId,
+            source: 'space',
+            roleId,
+            spaceId,
+            created_at: dayjs().utc().toISOString(),
+            updated_at: dayjs().utc().toISOString(),
+          },
+        },
+      });
+    }
 
     if (result.errors) {
       return createErrorResponse('Failed to join space', 500);

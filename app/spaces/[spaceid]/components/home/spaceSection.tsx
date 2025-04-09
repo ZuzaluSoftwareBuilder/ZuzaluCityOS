@@ -26,7 +26,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { followSpace, unFollowSpace } from '@/services/member';
 import Copy from '@/components/biz/copy';
 import EditorProWithMore from './EditorProWithMore';
-import { JoinSpaceWithGate } from './modal/joinSpace';
+import { JoinSpaceNoGate, JoinSpaceWithGate } from './modal/joinSpace';
 
 export interface SpaceSectionProps {
   spaceData?: Space;
@@ -128,11 +128,19 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
 
   return (
     <div className="flex flex-col border-b border-[rgba(255,255,255,0.10)] bg-[#2C2C2C] p-[20px] backdrop-blur-[20px] mobile:p-[14px]">
-      <JoinSpaceWithGate
-        isOpen={isOpen}
-        onClose={onClose}
-        onOpenChange={onOpenChange}
-      />
+      {spaceData.gated === '1' ? (
+        <JoinSpaceWithGate
+          isOpen={isOpen}
+          onClose={onClose}
+          onOpenChange={onOpenChange}
+        />
+      ) : (
+        <JoinSpaceNoGate
+          isOpen={isOpen}
+          onClose={onClose}
+          onOpenChange={onOpenChange}
+        />
+      )}
       <div className="relative">
         <Image
           src={spaceData.banner}
