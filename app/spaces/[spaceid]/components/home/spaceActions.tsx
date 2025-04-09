@@ -4,7 +4,7 @@ import { ArrowSquareRight, Heart } from '@phosphor-icons/react';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { followSpace, unFollowSpace } from '@/services/member';
-import Copy from '@/components/biz/copy';
+import Copy from '@/components/biz/common/Copy';
 import { CheckCircleIcon } from '@/components/icons';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';

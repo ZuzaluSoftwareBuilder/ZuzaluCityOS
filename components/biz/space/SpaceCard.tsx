@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/base';
 import { useRouter } from 'next/navigation';
 import { useCeramicContext } from '@/context/CeramicContext';
-import SpaceChip from '@/app/components/SpaceChip';
+import SpaceChip from '@/components/biz/space/SpaceChip';
 
 export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
   return (
@@ -134,12 +134,6 @@ export function SpaceCard({
       )}
     >
       <div className="relative">
-        {/*
-          xl: width/height = 268/106 = 2.528
-          pc: width/height = 285/113 = 2.522
-          tablet: width/height = 373/148 = 2.520
-          mobile: width/height = 368/146 = 2.520
-        */}
         <Image
           src={banner}
           alt={name}

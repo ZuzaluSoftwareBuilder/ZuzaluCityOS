@@ -19,7 +19,7 @@ import {
   EventCardSkeleton,
   groupEventsByMonth,
 } from '@/components/cards/EventCard';
-import { EventCard } from './EventCard';
+import { EventCard } from '@/components/biz';
 import {
   AccordionItem,
   Accordion,

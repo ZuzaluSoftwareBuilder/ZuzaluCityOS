@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { getWalletAddressFromDid } from '@/utils/did';
 import { Skeleton } from '@heroui/react';
-import { formatMemberCount } from '@/app/components/SpaceCard';
+import { formatMemberCount } from '@/components/biz/space/SpaceCard';
 import dayjs from 'dayjs';
 import DetailItem from './detailItem';
 import SocialLink from './socialLink';

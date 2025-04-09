@@ -7,11 +7,11 @@ import useGetShareLink from '@/hooks/useGetShareLink';
 import { useParams } from 'next/navigation';
 import React, { useMemo } from 'react';
 import useUserSpace from '@/hooks/useUserSpace';
-import { formatMemberCount } from '@/app/components/SpaceCard';
+import { formatMemberCount } from '@/components/biz/space/SpaceCard';
 import EditorProWithMore from './EditorProWithMore';
 import { JoinSpaceNoGate, JoinSpaceWithGate } from './modal/joinSpace';
 import SpaceActions from './spaceActions';
-import SpaceChip from '@/app/components/SpaceChip';
+import SpaceChip from '@/components/biz/space/SpaceChip';
 
 export interface SpaceSectionProps {
   spaceData?: Space;

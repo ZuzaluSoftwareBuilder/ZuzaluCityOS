@@ -1,7 +1,7 @@
 import { Grid, Stack, useMediaQuery, useTheme } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { Space } from '@/types';
-import { SpaceCard, SpaceCardSkeleton } from '@/app/components/SpaceCard';
+import { SpaceCard, SpaceCardSkeleton } from '@/components/biz/space/SpaceCard';
 
 import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
 import ExploreSearch from '@/components/layout/explore/exploreSearch';
