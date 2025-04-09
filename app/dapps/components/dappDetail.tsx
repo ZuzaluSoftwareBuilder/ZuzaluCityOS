@@ -2,13 +2,14 @@ import FormHeader from '@/components/form/FormHeader';
 import { GlobeAltIcon, WindowIcon } from '@/components/icons';
 import { Box, Typography, Stack, Divider } from '@mui/material';
 
-import ShowMoreEdit from '@/components/editor/ShowMoreEdit';
 import { Dapp } from '@/types';
 import theme from '@/theme/theme';
 import DAppDetailDrawer from '@/app/spaces/[spaceid]/setting/apps/components/DAppDetailDrawer';
 import { Image } from '@heroui/react';
 import { BoxArrowDown } from '@phosphor-icons/react';
 import { Plugs } from '@phosphor-icons/react';
+import EditorProWithMore from '@/app/spaces/[spaceid]/components/home/EditorProWithMore';
+
 interface DappDetailProps {
   data?: Dapp;
   handleClose: () => void;
@@ -176,7 +177,16 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
         <Typography fontSize={16} fontWeight={600} lineHeight={1.4}>
           App Description:
         </Typography>
-        <ShowMoreEdit value={description} />
+        <EditorProWithMore
+          value={description}
+          isEdit={false}
+          className={{
+            base: 'bg-transparent',
+            editorWrapper: 'p-0',
+          }}
+          collapseHeight={150}
+          defaultCollapsed={true}
+        />
         <Divider />
         <DAppDetailDrawer.Status
           devStatus={devStatus}

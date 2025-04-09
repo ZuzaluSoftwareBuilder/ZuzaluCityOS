@@ -1,6 +1,6 @@
 'use client';
 import { Box, FormHelperText, Stack, Typography } from '@mui/material';
-import { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import FormHeader from './FormHeader';
 import {
   FormLabel,
@@ -19,15 +19,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dapp, FilmOptionType } from '@/types';
 import SelectCategories from '../select/selectCategories';
 
-import dynamic from 'next/dynamic';
 import FormUploader from './FormUploader';
 import { createDapp, updateDapp } from '@/services/dapp';
 import { Button, Select, SelectItem } from '../base';
 import { Check } from '@phosphor-icons/react';
 import { isAddress } from 'viem';
-const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
-  ssr: false,
-});
+import EditorPro from '@/components/editorPro';
 
 interface DappFormProps {
   handleClose: () => void;
@@ -94,6 +91,7 @@ const DappForm: React.FC<DappFormProps> = ({
   const { profile, composeClient } = useCeramicContext();
   const queryClient = useQueryClient();
   const profileId = profile?.id || '';
+  const [editorValue, setEditorValue] = useState('');
 
   const {
     control,
@@ -134,8 +132,8 @@ const DappForm: React.FC<DappFormProps> = ({
 
   const resetForm = useCallback(() => {
     reset();
-    descriptionEditorStore.clear();
-  }, [descriptionEditorStore, reset]);
+    setEditorValue('');
+  }, [reset]);
 
   const submitMutation = useMutation({
     mutationFn: ({ type, data }: { type: 'create' | 'edit'; data: any }) => {
@@ -155,34 +153,38 @@ const DappForm: React.FC<DappFormProps> = ({
 
   const handlePost = useCallback(
     async (data: FormData) => {
-      if (
-        !descriptionEditorStore.value ||
-        !descriptionEditorStore.value.blocks ||
-        descriptionEditorStore.value.blocks.length == 0
-      ) {
+      try {
+        const editorContent = JSON.parse(editorValue);
+        if (!editorValue || editorValue === '{}' || editorContent.isEmpty) {
+          setError('description', {
+            message: 'Description is required',
+          });
+          window.alert('Description is required');
+          return;
+        }
+
+        if (!initialData) {
+          await submitMutation.mutateAsync({
+            type: 'create',
+            data: {
+              ...data,
+              description: editorValue,
+            },
+          });
+        } else {
+          await submitMutation.mutateAsync({
+            type: 'edit',
+            data: { ...data, description: editorValue, id: initialData.id },
+          });
+        }
+      } catch (error) {
+        console.error('Error processing editor content:', error);
         setError('description', {
-          message: 'Description is required',
-        });
-        window.alert('Description is required');
-        return;
-      }
-      const description = descriptionEditorStore.getValueString();
-      if (!initialData) {
-        await submitMutation.mutateAsync({
-          type: 'create',
-          data: {
-            ...data,
-            description,
-          },
-        });
-      } else {
-        await submitMutation.mutateAsync({
-          type: 'edit',
-          data: { ...data, description, id: initialData.id },
+          message: 'Invalid description format',
         });
       }
     },
-    [descriptionEditorStore, setError, submitMutation, initialData],
+    [editorValue, setError, submitMutation, initialData],
   );
 
   const onFormError = useCallback(() => {
@@ -215,7 +217,7 @@ const DappForm: React.FC<DappFormProps> = ({
 
   useEffect(() => {
     if (initialData?.description) {
-      descriptionEditorStore.setValue(initialData.description);
+      setEditorValue(initialData.description);
     }
   }, [initialData]);
 
@@ -297,12 +299,13 @@ const DappForm: React.FC<DappFormProps> = ({
               App Description*
             </Typography>
             <FormLabelDesc>Write your app description here</FormLabelDesc>
-            <SuperEditor
-              placeholder="Type app description"
-              value={descriptionEditorStore.value}
+            <EditorPro
+              value={editorValue}
               onChange={(val) => {
-                descriptionEditorStore.setValue(val);
+                setEditorValue(val);
               }}
+              className={{ base: 'min-h-[190px]' }}
+              placeholder="Type app description"
             />
             {errors?.description && (
               <FormHelperText error>
