@@ -8,7 +8,7 @@ export const usePOAPVerify = () => {
 
   const { mutateAsync: verifyPOAPMutation, isPending } = useMutation({
     mutationFn: (poapId: number) => {
-      return verifyPOAP(poapId, address!);
+      return verifyPOAP(188484, address!);
     },
     onSuccess: (data) => {
       if (data.statusCode === 404) {

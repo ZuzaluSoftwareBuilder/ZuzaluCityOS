@@ -17,13 +17,14 @@ import {
 import { useSpaceData } from '../../context/spaceData';
 import { joinSpace } from '@/services/member';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import { useCallback, ReactNode, useMemo, useState } from 'react';
+import { useCallback, ReactNode, useMemo, useState, useEffect } from 'react';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { getPOAPs } from '@/services/poap';
 import { CheckCircle } from '@phosphor-icons/react';
 import { usePOAPVerify } from '@/hooks/useRuleVerify';
 import { ZuPassInfo } from '@/types';
+import { useZupassContext } from '@/context/ZupassContext';
 
 const MODAL_BASE_CLASSES = {
   base: 'rounded-[10px] border-2 border-b-w-10 bg-[rgba(44,44,44,0.80)] backdrop-blur-[20px] text-white',
@@ -202,11 +203,12 @@ const JoinSpaceWithGate = ({
   const { spaceData } = useSpaceData();
   const { handleJoinSpace, joinMutation } = useJoinSpace();
   const [verifiedRules, setVerifiedRules] = useState<string[]>([]);
-  const [verifyingPoaps, setVerifyingPoaps] = useState<Record<number, boolean>>(
+  const [verifyingRules, setVerifyingRules] = useState<Record<string, boolean>>(
     {},
   );
 
   const { verifyPOAPMutation } = usePOAPVerify();
+  const { authState, auth } = useZupassContext();
 
   const rules = useMemo(() => {
     return (
@@ -216,27 +218,55 @@ const JoinSpaceWithGate = ({
     );
   }, [spaceData?.spaceGating?.edges]);
 
+  useEffect(() => {
+    if (authState === 'authenticated') {
+      setVerifiedRules((prev) => [...prev, ...rules.map((v) => v.id)]);
+      setVerifyingRules((prev) => ({
+        ...prev,
+        zupass: false,
+      }));
+    } else if (authState === 'error') {
+      setVerifyingRules((prev) => ({
+        ...prev,
+        zupass: false,
+      }));
+    }
+  }, [authState, rules]);
+
   const handleVerifyItem = useCallback(
     async (ruleId: string, data: VerifyItemData) => {
       try {
         if (data.type === 'zuPass') {
-          setVerifiedRules((prev) => [...prev, ruleId]);
+          const zuPassConfig = {
+            pcdType: 'eddsa-ticket-pcd' as const,
+            publicKey: data.zuPassInfo.registration?.split(',') as [
+              string,
+              string,
+            ],
+            eventId: data.zuPassInfo.eventId,
+            eventName: data.zuPassInfo.eventName,
+          };
+          setVerifyingRules((prev) => ({
+            ...prev,
+            zupass: true,
+          }));
+          auth([zuPassConfig]);
         } else if (data.type === 'poap') {
           try {
-            setVerifyingPoaps((prev) => ({ ...prev, [data.poapsId]: true }));
+            setVerifyingRules((prev) => ({ ...prev, [data.poapsId]: true }));
             const result = await verifyPOAPMutation(data.poapsId!);
-            if (result.statusCode === 200) {
+            if (result.tokenId) {
               setVerifiedRules((prev) => [...prev, ruleId]);
             }
           } finally {
-            setVerifyingPoaps((prev) => ({ ...prev, [data.poapsId]: false }));
+            setVerifyingRules((prev) => ({ ...prev, [data.poapsId]: false }));
           }
         }
       } catch (error) {
         console.error(error);
       }
     },
-    [verifyPOAPMutation],
+    [auth, verifyPOAPMutation],
   );
 
   const anyRuleVerified = verifiedRules.length > 0;
@@ -266,6 +296,7 @@ const JoinSpaceWithGate = ({
           {isZuPass ? (
             <RuleItem
               name={v.zuPassInfo?.eventName ?? ''}
+              isLoading={verifyingRules['zupass']}
               isVerified={isRuleVerified}
               onVerify={() =>
                 handleVerifyItem(v.zuPassInfo?.eventId ?? '', {
@@ -287,7 +318,7 @@ const JoinSpaceWithGate = ({
                         poapsId: p.poapId,
                       })
                     }
-                    isVerifying={verifyingPoaps[p.poapId]}
+                    isVerifying={verifyingRules[p.poapId]}
                     isVerified={verifiedRules.includes(p.poapId.toString())}
                   />
                   {index !== (v.poapsId?.length ?? 0) - 1 && (
@@ -302,7 +333,7 @@ const JoinSpaceWithGate = ({
         </AccordionItem>
       );
     });
-  }, [rules, handleVerifyItem, verifiedRules, verifyingPoaps]);
+  }, [rules, verifiedRules, handleVerifyItem, verifyingRules]);
 
   return (
     <JoinSpaceModal

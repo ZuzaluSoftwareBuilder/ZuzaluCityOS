@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   const id = searchParams.get('id');
 
   const response = await fetch(
-    `https://api.poap.tech/actions/scan/${address}/${id}`,
+    `https://api.poap.tech/actions/scan/${address?.toLocaleLowerCase()}/${id}`,
     {
       method: 'GET',
       headers: {
