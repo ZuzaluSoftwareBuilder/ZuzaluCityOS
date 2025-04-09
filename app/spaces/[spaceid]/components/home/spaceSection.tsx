@@ -1,36 +1,17 @@
 'use client';
 import { Space } from '@/types';
-import {
-  addToast,
-  Avatar,
-  cn,
-  Image,
-  Skeleton,
-  useDisclosure,
-} from '@heroui/react';
-import {
-  Button,
-  CommonModalHeader,
-  Modal,
-  ModalFooter,
-  ModalBody,
-} from '@/components/base';
-import { ArrowSquareRight, Heart, Users } from '@phosphor-icons/react';
+import { Avatar, cn, Image, Skeleton, useDisclosure } from '@heroui/react';
+
+import { Users } from '@phosphor-icons/react';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { useParams } from 'next/navigation';
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import useUserSpace from '@/hooks/useUserSpace';
-import { CheckCircleIcon } from '@/components/icons';
 import { formatMemberCount } from '@/app/components/SpaceCard';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { followSpace, unFollowSpace } from '@/services/member';
-import Copy from '@/components/biz/copy';
 import EditorProWithMore from './EditorProWithMore';
 import { Categories } from '@/app/spaces/create/components/constant';
-import { ModalContent } from '@/components/base/modal';
-import useOpenDraw from '@/hooks/useOpenDraw';
 import { JoinSpaceNoGate, JoinSpaceWithGate } from './modal/joinSpace';
+import SpaceActions from './spaceActions';
 
 export interface SpaceSectionProps {
   spaceData?: Space;
@@ -40,13 +21,10 @@ export interface SpaceSectionProps {
 const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
   const params = useParams();
   const spaceId = params?.spaceid?.toString() ?? '';
-  const { profile, isAuthenticated, showAuthPrompt } = useCeramicContext();
-  const queryClient = useQueryClient();
-  const { open, handleOpen, handleClose } = useOpenDraw();
+  const { isOpen, onOpenChange, onClose, onOpen } = useDisclosure();
 
   const { userJoinedSpaceIds, userFollowedSpaceIds, isUserSpaceFetched } =
     useUserSpace();
-  const { isOpen, onOpenChange, onClose, onOpen } = useDisclosure();
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers =
@@ -60,92 +38,7 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
     return { isUserJoined, isUserFollowed };
   }, [spaceId, userJoinedSpaceIds, userFollowedSpaceIds]);
 
-  const isLoggedIn = useMemo(() => {
-    return isAuthenticated && !!profile;
-  }, [isAuthenticated, profile]);
-
-  const showActionButtons = useMemo(() => {
-    if (isLoggedIn) {
-      return true;
-    } else {
-      return isUserSpaceFetched;
-    }
-  }, [isLoggedIn, isUserSpaceFetched]);
-
-  const showFollowButton = useMemo(() => {
-    return !isUserJoined;
-  }, [isUserJoined]);
-
-  const showJoinButton = useMemo(() => {
-    return (
-      spaceData?.gated === '0' ||
-      (spaceData?.spaceGating?.edges?.length ?? 0) > 0
-    );
-  }, [spaceData?.gated, spaceData?.spaceGating?.edges?.length]);
-
   const { shareUrl } = useGetShareLink({ id: spaceId, name: spaceData?.name });
-
-  const onJoin = useCallback(() => {
-    if (!isUserJoined) {
-      onOpen();
-    }
-  }, [onOpen, isUserJoined]);
-
-  const followMutation = useMutation({
-    mutationFn: () => followSpace(spaceId, profile!.author!.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['GET_USER_ROLES_QUERY'],
-      });
-    },
-    onError: (error: Error) => {
-      console.error(error);
-      addToast({
-        title: error.message || 'Fail to follow',
-        color: 'danger',
-      });
-    },
-  });
-
-  const unfollowMutation = useMutation({
-    mutationFn: () => unFollowSpace(spaceId, profile!.author!.id),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['GET_USER_ROLES_QUERY'],
-      });
-      handleClose();
-    },
-    onError: (error: Error) => {
-      console.error(error);
-      addToast({
-        title: error.message || 'Fail to unfollow',
-        color: 'danger',
-      });
-    },
-  });
-
-  const isFollowPending = followMutation.isPending;
-
-  const onFollow = async () => {
-    if (!isAuthenticated || !profile?.author?.id) {
-      showAuthPrompt('connectButton');
-      return;
-    }
-
-    if (isFollowPending) {
-      return;
-    }
-
-    if (isUserFollowed) {
-      handleOpen();
-    } else {
-      followMutation.mutate();
-    }
-  };
-
-  const confirmUnFollow = () => {
-    unfollowMutation.mutate();
-  };
 
   if (!spaceData) {
     return <SpaceHomeSkeleton />;
@@ -188,51 +81,17 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
         />
       </div>
 
-      {/* join/follow actions */}
-      <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
-        {showActionButtons ? (
-          <>
-            {showFollowButton && (
-              <Button
-                startContent={
-                  isFollowPending ? null : (
-                    <Heart
-                      weight={isUserFollowed ? 'fill' : 'light'}
-                      format="Stroke"
-                      size={20}
-                    />
-                  )
-                }
-                onPress={onFollow}
-                isLoading={isFollowPending}
-                isDisabled={isFollowPending}
-              >
-                {isUserFollowed ? 'Following' : 'Follow'}
-              </Button>
-            )}
-            {showJoinButton && (
-              <Button
-                startContent={
-                  isUserJoined ? (
-                    <CheckCircleIcon size={5} />
-                  ) : (
-                    <ArrowSquareRight weight="fill" format="Stroke" size={20} />
-                  )
-                }
-                onPress={onJoin}
-              >
-                {isUserJoined ? 'Joined' : 'Join Community'}
-              </Button>
-            )}
-          </>
-        ) : isLoggedIn ? (
-          <>
-            <Skeleton className="h-[40px] w-[100px] rounded-[8px]" />
-          </>
-        ) : null}
-
-        <Copy text={shareUrl!} />
-      </div>
+      {/* Desktop Actions */}
+      <SpaceActions
+        spaceData={spaceData}
+        spaceId={spaceId}
+        isUserJoined={isUserJoined}
+        isUserFollowed={isUserFollowed}
+        isUserSpaceFetched={isUserSpaceFetched}
+        shareUrl={shareUrl}
+        onJoin={onOpen}
+        className="mt-[20px] flex justify-end gap-[10px] mobile:hidden"
+      />
 
       {/* space info: name/desc */}
       <div className="mt-[20px] flex flex-col gap-[10px] mobile:mt-[50px]">
@@ -275,94 +134,18 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
         ))}
       </div>
 
-      {/*Mobile join/share actions*/}
-      <div className="mt-[10px] hidden justify-end gap-[10px] mobile:flex">
-        {showActionButtons ? (
-          <>
-            {showFollowButton && (
-              <Button
-                startContent={
-                  isFollowPending ? null : (
-                    <Heart
-                      weight={isUserFollowed ? 'fill' : 'light'}
-                      format="Stroke"
-                      size={20}
-                      className="shrink-0"
-                    />
-                  )
-                }
-                onPress={onFollow}
-                isLoading={isFollowPending}
-                isDisabled={isFollowPending}
-                className="w-full flex-1 shrink-0"
-              >
-                {isUserFollowed ? 'Following' : 'Follow'}
-              </Button>
-            )}
-            {showJoinButton && (
-              <Button
-                startContent={
-                  isUserJoined ? (
-                    <CheckCircleIcon size={5} />
-                  ) : (
-                    <ArrowSquareRight
-                      weight="fill"
-                      format="Stroke"
-                      size={20}
-                      className="shrink-0"
-                    />
-                  )
-                }
-                className="w-full flex-1 shrink-0"
-              >
-                {isUserJoined ? 'Joined' : 'Join Community'}
-              </Button>
-            )}
-          </>
-        ) : isLoggedIn ? (
-          <>
-            <Skeleton className="h-[40px] w-full rounded-[8px]" />
-          </>
-        ) : null}
-
-        <Copy text={shareUrl!} />
-      </div>
-
-      <Modal isOpen={open} hideCloseButton onOpenChange={handleOpen}>
-        <ModalContent>
-          <CommonModalHeader
-            title="UnFollow Confirm"
-            onClose={handleClose}
-            isDisabled={unfollowMutation.isPending}
-          />
-          <ModalBody className="gap-5 p-[0_20px]">
-            <p className="text-sm text-white/70">
-              unfollow space {spaceData?.name}
-            </p>
-          </ModalBody>
-          <ModalFooter className="p-[20px]">
-            <div className="flex w-full justify-between gap-2.5">
-              <Button
-                className="h-[38px] flex-1 border border-[rgba(255,255,255,0.1)] bg-transparent font-bold text-white"
-                radius="md"
-                onPress={handleClose}
-                disabled={unfollowMutation.isPending}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="h-[38px] flex-1 border border-[rgba(255,94,94,0.2)] bg-[rgba(255,94,94,0.1)] font-bold text-[#FF5E5E]"
-                radius="md"
-                onPress={confirmUnFollow}
-                isLoading={unfollowMutation.isPending}
-                disabled={unfollowMutation.isPending}
-              >
-                UnFollow
-              </Button>
-            </div>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      {/*Mobile Actions*/}
+      <SpaceActions
+        spaceData={spaceData}
+        spaceId={spaceId}
+        isUserJoined={isUserJoined}
+        isUserFollowed={isUserFollowed}
+        isUserSpaceFetched={isUserSpaceFetched}
+        shareUrl={shareUrl}
+        onJoin={onOpen}
+        className="mt-[10px] hidden justify-end gap-[10px] mobile:flex"
+        isMobile={true}
+      />
     </div>
   );
 };
