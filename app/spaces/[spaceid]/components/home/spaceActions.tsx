@@ -118,18 +118,7 @@ const SpaceActions = ({
       showModal({
         title: 'Unfollow Confirm',
         contentText: `unfollow space ${spaceData?.name}`,
-        confirmAction: () => {
-          return new Promise<void>((resolve, reject) => {
-            unfollowMutation.mutate(undefined, {
-              onSuccess: () => {
-                resolve();
-              },
-              onError: (error) => {
-                reject(error);
-              },
-            });
-          });
-        },
+        confirmAction: () => unfollowMutation.mutateAsync(),
       });
     } else {
       followMutation.mutate();
