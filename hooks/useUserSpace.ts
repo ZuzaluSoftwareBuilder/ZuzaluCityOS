@@ -28,6 +28,7 @@ const useUserSpace = () => {
         return (data.node as IUserProfileWithSpaceAndEvent)?.zucityProfile;
       },
       enabled: !!userDId,
+      placeholderData: (previousData) => previousData,
     },
   );
 
@@ -61,6 +62,7 @@ const useUserSpace = () => {
     {
       select: (data) => data.data?.nodes || [],
       enabled: userJoinedSpaceIdArray.length > 0,
+      placeholderData: (previousData) => previousData,
     },
   );
 
