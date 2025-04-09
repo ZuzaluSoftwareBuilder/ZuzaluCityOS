@@ -17,7 +17,14 @@ import {
 import { useSpaceData } from '../../context/spaceData';
 import { joinSpace } from '@/services/member';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import { useCallback, ReactNode, useMemo, useState, useEffect } from 'react';
+import {
+  useCallback,
+  ReactNode,
+  useMemo,
+  useState,
+  useEffect,
+  Fragment,
+} from 'react';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { getPOAPs } from '@/services/poap';
@@ -25,6 +32,10 @@ import { CheckCircle } from '@phosphor-icons/react';
 import { usePOAPVerify } from '@/hooks/useRuleVerify';
 import { ZuPassInfo } from '@/types';
 import { useZupassContext } from '@/context/ZupassContext';
+import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { dayjs } from '@/utils/dayjs';
+import { CREATE_ROLE_QUERY, UPDATE_ROLE_QUERY } from '@/services/graphql/role';
+import useUserSpace from '@/hooks/useUserSpace';
 
 const MODAL_BASE_CLASSES = {
   base: 'rounded-[10px] border-2 border-b-w-10 bg-[rgba(44,44,44,0.80)] backdrop-blur-[20px] text-white',
@@ -91,15 +102,64 @@ const JoinButton = ({
   </Button>
 );
 
-const useJoinSpace = () => {
+const useJoinSpace = ({
+  onClose,
+  gated = false,
+}: {
+  onClose: () => void;
+  gated?: boolean;
+}) => {
   const { profile } = useCeramicContext();
   const { spaceData } = useSpaceData();
   const { memberRole } = useBuildInRole();
   const queryClient = useQueryClient();
+  const { userFollowedSpaceIds, userFollowedSpaces } = useUserSpace();
   const userId = profile?.author?.id ?? '';
+  const spaceId = spaceData?.id ?? '';
+  const roleId = memberRole?.id ?? '';
+  const isUserFollowed = userFollowedSpaceIds.has(spaceId);
 
   const joinMutation = useMutation({
-    mutationFn: joinSpace,
+    mutationFn: async () => {
+      if (!gated) {
+        return joinSpace({
+          id: spaceId,
+          roleId,
+          userId,
+        });
+      } else {
+        const error = await authenticateWithSpaceId(spaceId);
+        if (error) throw new Error('Failed to authenticate with space id');
+        let result;
+        if (isUserFollowed) {
+          result = await executeQuery(UPDATE_ROLE_QUERY, {
+            input: {
+              id:
+                userFollowedSpaces.find((role) => role?.resourceId === spaceId)
+                  ?.id ?? '',
+              content: {
+                roleId,
+                updated_at: dayjs().utc().toISOString(),
+              },
+            },
+          });
+        }
+        result = await executeQuery(CREATE_ROLE_QUERY, {
+          input: {
+            content: {
+              userId,
+              resourceId: spaceId,
+              source: 'space',
+              roleId,
+              spaceId,
+              created_at: dayjs().utc().toISOString(),
+              updated_at: dayjs().utc().toISOString(),
+            },
+          },
+        });
+        if (result.errors) throw new Error('Failed to join');
+      }
+    },
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({
@@ -109,6 +169,7 @@ const useJoinSpace = () => {
           queryKey: ['GET_USER_ROLES_QUERY'],
         }),
       ]);
+      onClose();
     },
     onError: (error: any) => {
       console.error(error);
@@ -120,13 +181,8 @@ const useJoinSpace = () => {
   });
 
   const handleJoinSpace = useCallback(() => {
-    if (!spaceData?.id) return;
-    joinMutation.mutate({
-      id: spaceData?.id,
-      roleId: memberRole?.id ?? '',
-      userId,
-    });
-  }, [spaceData?.id, joinMutation, memberRole?.id, userId]);
+    joinMutation.mutate();
+  }, [joinMutation]);
 
   return {
     handleJoinSpace,
@@ -177,7 +233,10 @@ interface JoinSpaceProps {
 }
 
 const JoinSpaceNoGate = ({ isOpen, onClose, onOpenChange }: JoinSpaceProps) => {
-  const { handleJoinSpace, joinMutation } = useJoinSpace();
+  const { handleJoinSpace, joinMutation } = useJoinSpace({
+    onClose,
+    gated: false,
+  });
 
   return (
     <JoinSpaceModal
@@ -201,7 +260,10 @@ const JoinSpaceWithGate = ({
   onOpenChange,
 }: JoinSpaceProps) => {
   const { spaceData } = useSpaceData();
-  const { handleJoinSpace, joinMutation } = useJoinSpace();
+  const { handleJoinSpace, joinMutation } = useJoinSpace({
+    onClose,
+    gated: true,
+  });
   const [verifiedRules, setVerifiedRules] = useState<string[]>([]);
   const [verifyingRules, setVerifyingRules] = useState<Record<string, boolean>>(
     {},
@@ -308,9 +370,8 @@ const JoinSpaceWithGate = ({
           ) : (
             <div className="flex flex-wrap items-center gap-2">
               {v.poapsId?.map((p, index) => (
-                <>
+                <Fragment key={p.poapId}>
                   <PoapItem
-                    key={p.poapId}
                     poapId={p.poapId}
                     onVerify={() =>
                       handleVerifyItem(p.poapId.toString(), {
@@ -326,7 +387,7 @@ const JoinSpaceWithGate = ({
                       OR
                     </span>
                   )}
-                </>
+                </Fragment>
               ))}
             </div>
           )}
@@ -361,7 +422,7 @@ const JoinSpaceWithGate = ({
       <JoinButton
         handleJoinSpace={handleJoinSpace}
         isLoading={joinMutation.isPending}
-        isDisabled={!anyRuleVerified}
+        // isDisabled={!anyRuleVerified}
         color={anyRuleVerified ? 'functional' : 'default'}
       />
     </JoinSpaceModal>

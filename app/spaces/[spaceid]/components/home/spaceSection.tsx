@@ -17,7 +17,7 @@ import {
 } from '@phosphor-icons/react';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { useParams } from 'next/navigation';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import useUserSpace from '@/hooks/useUserSpace';
 import { CheckCircleIcon } from '@/components/icons';
 import { formatMemberCount } from '@/app/components/SpaceCard';
@@ -65,9 +65,11 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
 
   const { shareUrl } = useGetShareLink({ id: spaceId, name: spaceData?.name });
 
-  const onJoin = () => {
-    onOpen();
-  };
+  const onJoin = useCallback(() => {
+    if (!isUserJoined) {
+      onOpen();
+    }
+  }, [onOpen, isUserJoined]);
 
   const followMutation = useMutation({
     mutationFn: () => followSpace(spaceId, profile!.author!.id),

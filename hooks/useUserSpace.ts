@@ -64,19 +64,22 @@ const useUserSpace = () => {
     },
   );
 
-  const userFollowedSpaceIds = useMemo(() => {
-    const ids = (userRoles || [])
-      .filter(
-        (role) =>
-          role?.resourceId &&
-          role.roleId === followerRoleId &&
-          role?.source?.toLocaleLowerCase() === 'space',
-      )
-      .map((role) => role?.resourceId);
-    return new Set(ids);
+  const userFollowedSpaces = useMemo(() => {
+    return (userRoles || []).filter(
+      (role) =>
+        role?.resourceId &&
+        role.roleId === followerRoleId &&
+        role?.source?.toLocaleLowerCase() === 'space',
+    );
   }, [userRoles, followerRoleId]);
 
+  const userFollowedSpaceIds = useMemo(() => {
+    const ids = userFollowedSpaces.map((role) => role?.resourceId);
+    return new Set(ids);
+  }, [userFollowedSpaces]);
+
   return {
+    userFollowedSpaces: userFollowedSpaces || [],
     userJoinedSpaces: userJoinedSpaces || [],
     userJoinedSpaceIds,
     userFollowedSpaceIds,

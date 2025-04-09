@@ -3910,7 +3910,7 @@ export type GetUserRolesQueryVariables = Exact<{
 }>;
 
 
-export type GetUserRolesQuery = { __typename?: 'Query', zucityUserRolesIndex?: { __typename?: 'ZucityUserRolesConnection', edges?: Array<{ __typename?: 'ZucityUserRolesEdge', node?: { __typename?: 'ZucityUserRoles', roleId: string, resourceId?: string | null, source?: string | null, userId: { __typename?: 'CeramicAccount', id: string } } | null } | null> | null } | null };
+export type GetUserRolesQuery = { __typename?: 'Query', zucityUserRolesIndex?: { __typename?: 'ZucityUserRolesConnection', edges?: Array<{ __typename?: 'ZucityUserRolesEdge', node?: { __typename?: 'ZucityUserRoles', id: string, roleId: string, resourceId?: string | null, source?: string | null, userId: { __typename?: 'CeramicAccount', id: string } } | null } | null> | null } | null };
 
 export type GetSpaceQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -4585,6 +4585,7 @@ export const GetUserRolesDocument = new TypedDocumentString(`
   ) {
     edges {
       node {
+        id
         roleId
         resourceId
         source
