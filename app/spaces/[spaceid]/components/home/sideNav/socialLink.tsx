@@ -25,6 +25,7 @@ const SocialLink = ({ link }: { link: ILink }) => {
   return icon ? (
     <Link
       href={link.links}
+      target="_blank"
       className={
         'flex size-[40px] cursor-pointer items-center justify-center rounded-[8px] p-[10px] opacity-80 hover:bg-[rgba(255,255,255,0.05)] active:bg-[rgba(255,255,255,0.05)]'
       }
