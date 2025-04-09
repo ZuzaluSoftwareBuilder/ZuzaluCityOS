@@ -76,14 +76,28 @@ const useUserSpace = () => {
     return new Set(ids);
   }, [userRoles, followerRoleId]);
 
+  const isUserSpaceFetched = useMemo(() => {
+    if (isUserOwnSpaceFetched && userJoinedSpaceIdArray.length > 0) {
+      return (
+        isUserRoleFetched && isUserOwnSpaceFetched && isUserJoinedSpaceFetched
+      );
+    } else {
+      return isUserRoleFetched && isUserOwnSpaceFetched;
+    }
+  }, [
+    isUserRoleFetched,
+    isUserOwnSpaceFetched,
+    isUserJoinedSpaceFetched,
+    userJoinedSpaceIdArray,
+  ]);
+
   return {
     userJoinedSpaces: userJoinedSpaces || [],
     userJoinedSpaceIds,
     userFollowedSpaceIds,
     isUserSpaceLoading:
       isUserRoleLoading || isUserOwnSpaceLoading || isUserJoinedSpaceLoading,
-    isUserSpaceFetched:
-      isUserRoleFetched && isUserOwnSpaceFetched && isUserJoinedSpaceFetched,
+    isUserSpaceFetched,
   };
 };
 

@@ -1,7 +1,13 @@
 'use client';
 import { Space } from '@/types';
 import { addToast, Avatar, cn, Image, Skeleton } from '@heroui/react';
-import { Button } from '@/components/base';
+import {
+  Button,
+  CommonModalHeader,
+  Modal,
+  ModalFooter,
+  ModalBody,
+} from '@/components/base';
 import { ArrowSquareRight, Heart, Users } from '@phosphor-icons/react';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { useParams } from 'next/navigation';
@@ -15,6 +21,8 @@ import { followSpace, unFollowSpace } from '@/services/member';
 import Copy from '@/components/biz/copy';
 import EditorProWithMore from './EditorProWithMore';
 import { Categories } from '@/app/spaces/create/components/constant';
+import { ModalContent } from '@/components/base/modal';
+import useOpenDraw from '@/hooks/useOpenDraw';
 
 export interface SpaceSectionProps {
   spaceData?: Space;
@@ -26,6 +34,7 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
   const spaceId = params?.spaceid?.toString() ?? '';
   const { profile, isAuthenticated, showAuthPrompt } = useCeramicContext();
   const queryClient = useQueryClient();
+  const { open, handleOpen, handleClose } = useOpenDraw();
 
   const { userJoinedSpaceIds, userFollowedSpaceIds, isUserSpaceFetched } =
     useUserSpace();
@@ -42,13 +51,28 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
     return { isUserJoined, isUserFollowed };
   }, [spaceId, userJoinedSpaceIds, userFollowedSpaceIds]);
 
-  const showJoinButton = useMemo(() => {
-    return isAuthenticated && !!profile && isUserSpaceFetched;
-  }, [isAuthenticated, profile, isUserSpaceFetched]);
+  const isLoggedIn = useMemo(() => {
+    return isAuthenticated && !!profile;
+  }, [isAuthenticated, profile]);
+
+  const showActionButtons = useMemo(() => {
+    if (isLoggedIn) {
+      return true;
+    } else {
+      return isUserSpaceFetched;
+    }
+  }, [isLoggedIn, isUserSpaceFetched]);
 
   const showFollowButton = useMemo(() => {
-    return showJoinButton && !isUserJoined;
-  }, [showJoinButton, isUserJoined]);
+    return !isUserJoined;
+  }, [isUserJoined]);
+
+  const showJoinButton = useMemo(() => {
+    return (
+      spaceData?.gated === '0' ||
+      (spaceData?.spaceGating?.edges?.length ?? 0) > 0
+    );
+  }, [spaceData?.gated, spaceData?.spaceGating?.edges?.length]);
 
   const { shareUrl } = useGetShareLink({ id: spaceId, name: spaceData?.name });
 
@@ -79,6 +103,7 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
       await queryClient.invalidateQueries({
         queryKey: ['GET_USER_ROLES_QUERY'],
       });
+      handleClose();
     },
     onError: (error: Error) => {
       console.error(error);
@@ -89,7 +114,7 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
     },
   });
 
-  const isPending = followMutation.isPending || unfollowMutation.isPending;
+  const isFollowPending = followMutation.isPending;
 
   const onFollow = async () => {
     if (!isAuthenticated || !profile?.author?.id) {
@@ -97,15 +122,19 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
       return;
     }
 
-    if (isPending) {
+    if (isFollowPending) {
       return;
     }
 
     if (isUserFollowed) {
-      unfollowMutation.mutate();
+      handleOpen();
     } else {
       followMutation.mutate();
     }
+  };
+
+  const confirmUnFollow = () => {
+    unfollowMutation.mutate();
   };
 
   if (!spaceData) {
@@ -138,38 +167,46 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
 
       {/* join/follow actions */}
       <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
-        {showFollowButton && (
-          <Button
-            startContent={
-              isPending ? null : (
-                <Heart
-                  weight={isUserFollowed ? 'fill' : 'light'}
-                  format="Stroke"
-                  size={20}
-                />
-              )
-            }
-            onPress={onFollow}
-            isLoading={isPending}
-            isDisabled={isPending}
-          >
-            {isUserFollowed ? 'Following' : 'Follow'}
-          </Button>
-        )}
-        {showJoinButton && (
-          <Button
-            startContent={
-              isUserJoined ? (
-                <CheckCircleIcon size={5} />
-              ) : (
-                <ArrowSquareRight weight="fill" format="Stroke" size={20} />
-              )
-            }
-            onPress={onJoin}
-          >
-            {isUserJoined ? 'Joined' : 'Join Community'}
-          </Button>
-        )}
+        {showActionButtons ? (
+          <>
+            {showFollowButton && (
+              <Button
+                startContent={
+                  isFollowPending ? null : (
+                    <Heart
+                      weight={isUserFollowed ? 'fill' : 'light'}
+                      format="Stroke"
+                      size={20}
+                    />
+                  )
+                }
+                onPress={onFollow}
+                isLoading={isFollowPending}
+                isDisabled={isFollowPending}
+              >
+                {isUserFollowed ? 'Following' : 'Follow'}
+              </Button>
+            )}
+            {showJoinButton && (
+              <Button
+                startContent={
+                  isUserJoined ? (
+                    <CheckCircleIcon size={5} />
+                  ) : (
+                    <ArrowSquareRight weight="fill" format="Stroke" size={20} />
+                  )
+                }
+                onPress={onJoin}
+              >
+                {isUserJoined ? 'Joined' : 'Join Community'}
+              </Button>
+            )}
+          </>
+        ) : isLoggedIn ? (
+          <>
+            <Skeleton className="h-[40px] w-[100px] rounded-[8px]" />
+          </>
+        ) : null}
 
         <Copy text={shareUrl!} />
       </div>
@@ -216,43 +253,87 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
       </div>
 
       {/*Mobile join/share actions*/}
-      <div className="mt-[10px] hidden gap-[10px] mobile:flex">
-        {showFollowButton && (
-          <Button
-            startContent={
-              isPending ? null : (
-                <Heart
-                  weight={isUserFollowed ? 'fill' : 'light'}
-                  format="Stroke"
-                  size={20}
-                />
-              )
-            }
-            onPress={onFollow}
-            isLoading={isPending}
-            isDisabled={isPending}
-            className="w-full flex-1 shrink-0"
-          >
-            {isUserFollowed ? 'Following' : 'Follow'}
-          </Button>
-        )}
-        {showJoinButton && (
-          <Button
-            startContent={
-              isUserJoined ? (
-                <CheckCircleIcon size={5} />
-              ) : (
-                <ArrowSquareRight weight="fill" format="Stroke" size={20} />
-              )
-            }
-            className="w-full flex-1 shrink-0"
-          >
-            {isUserJoined ? 'Joined' : 'Join Community'}
-          </Button>
-        )}
+      <div className="mt-[10px] hidden justify-end gap-[10px] mobile:flex">
+        {showActionButtons ? (
+          <>
+            {showFollowButton && (
+              <Button
+                startContent={
+                  isFollowPending ? null : (
+                    <Heart
+                      weight={isUserFollowed ? 'fill' : 'light'}
+                      format="Stroke"
+                      size={20}
+                    />
+                  )
+                }
+                onPress={onFollow}
+                isLoading={isFollowPending}
+                isDisabled={isFollowPending}
+                className="w-full flex-1 shrink-0"
+              >
+                {isUserFollowed ? 'Following' : 'Follow'}
+              </Button>
+            )}
+            {showJoinButton && (
+              <Button
+                startContent={
+                  isUserJoined ? (
+                    <CheckCircleIcon size={5} />
+                  ) : (
+                    <ArrowSquareRight weight="fill" format="Stroke" size={20} />
+                  )
+                }
+                className="w-full flex-1 shrink-0"
+              >
+                {isUserJoined ? 'Joined' : 'Join Community'}
+              </Button>
+            )}
+          </>
+        ) : isLoggedIn ? (
+          <>
+            <Skeleton className="h-[40px] w-full rounded-[8px]" />
+          </>
+        ) : null}
 
         <Copy text={shareUrl!} />
       </div>
+
+      <Modal isOpen={open} hideCloseButton onOpenChange={handleOpen}>
+        <ModalContent>
+          <CommonModalHeader
+            title="UnFollow Confirm"
+            onClose={handleClose}
+            isDisabled={unfollowMutation.isPending}
+          />
+          <ModalBody className="gap-5 p-[0_20px]">
+            <p className="text-sm text-white/70">
+              unfollow space {spaceData?.name}
+            </p>
+          </ModalBody>
+          <ModalFooter className="p-[20px]">
+            <div className="flex w-full justify-between gap-2.5">
+              <Button
+                className="h-[38px] flex-1 border border-[rgba(255,255,255,0.1)] bg-transparent font-bold text-white"
+                radius="md"
+                onPress={handleClose}
+                disabled={unfollowMutation.isPending}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="h-[38px] flex-1 border border-[rgba(255,94,94,0.2)] bg-[rgba(255,94,94,0.1)] font-bold text-[#FF5E5E]"
+                radius="md"
+                onPress={confirmUnFollow}
+                isLoading={unfollowMutation.isPending}
+                disabled={unfollowMutation.isPending}
+              >
+                UnFollow
+              </Button>
+            </div>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
@@ -272,7 +353,7 @@ const SpaceHomeSkeleton = () => {
       </div>
 
       <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
-        <Skeleton className="h-[40px] w-[178px] rounded-[8px]" />
+        <Skeleton className="h-[40px] w-[100px] rounded-[8px]" />
         <Skeleton className="size-[40px] rounded-[8px]" />
       </div>
 
