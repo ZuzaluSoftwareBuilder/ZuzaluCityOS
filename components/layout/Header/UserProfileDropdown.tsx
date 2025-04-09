@@ -1,14 +1,13 @@
 'use client';
 
+import { Avatar, Image } from '@heroui/react';
 import {
+  Button,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  Avatar,
-  Image,
-} from '@heroui/react';
-import { Button } from '@/components/base';
+} from '@/components/base';
 import React from 'react';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { formatUserName } from '@/utils/format';
@@ -45,29 +44,6 @@ const UserProfileDropdown = ({
       onOpenChange={onOpen}
       onClose={onClose}
       placement="bottom-end"
-      classNames={{
-        base: [
-          'bg-[rgba(34,34,34,0.8)] backdrop-blur-[12px]',
-          'border-2 border-[rgba(255,255,255,0.1)]',
-          'rounded-[10px]',
-          'p-0',
-        ],
-        content: ['bg-transparent', 'shadow-none', 'p-0', 'rounded-none'],
-      }}
-      motionProps={{
-        variants: {
-          enter: {
-            opacity: 1,
-            scale: 1,
-            transition: { duration: 0.15, ease: 'easeOut' },
-          },
-          exit: {
-            opacity: 0,
-            scale: 0.98,
-            transition: { duration: 0.1, ease: 'easeIn' },
-          },
-        },
-      }}
     >
       <DropdownTrigger>
         <Button className="gap-[6px] bg-transparent text-[16px] font-[500] leading-[1.2] text-white">
@@ -81,30 +57,9 @@ const UserProfileDropdown = ({
           {formattedName}
         </Button>
       </DropdownTrigger>
-      <DropdownMenu
-        aria-label="userProfile"
-        closeOnSelect={true}
-        className="w-[220px] bg-transparent"
-        classNames={{
-          base: ['p-[10px]'],
-          list: ['gap-[10px]'],
-        }}
-        style={{
-          willChange: 'opacity, transform',
-          transform: 'translateZ(0)',
-          backfaceVisibility: 'hidden' as const,
-        }}
-        itemClasses={{
-          base: [
-            'p-0',
-            'data-[hover=true]:bg-transparent',
-            'dark:data-[hover=true]:bg-transparent',
-          ],
-        }}
-      >
+      <DropdownMenu aria-label="userProfile" closeOnSelect={true}>
         <DropdownItem key="profileInfo">
-          {/* eslint-disable-next-line tailwindcss/no-custom-classname */}
-          <div className="rounder-[8px] flex w-[full] items-center gap-[10px] p-[5px] hover:bg-[rgba(255,255,255,0.05)]">
+          <div className="flex w-[full] items-center gap-[10px] rounded-[8px] p-[5px] hover:bg-[rgba(255,255,255,0.05)]">
             <Avatar
               src={profile?.avatar ?? '/user/avatar_p.png'}
               alt="avatar"
@@ -120,6 +75,7 @@ const UserProfileDropdown = ({
             </div>
           </div>
         </DropdownItem>
+
         <DropdownItem key="profileEntry">
           <Button
             onPress={handleProfile}
@@ -131,6 +87,7 @@ const UserProfileDropdown = ({
             My Profile
           </Button>
         </DropdownItem>
+
         <DropdownItem key="passportEntry">
           <Button
             onPress={handlePassport}
@@ -140,6 +97,7 @@ const UserProfileDropdown = ({
             My Passport
           </Button>
         </DropdownItem>
+
         <DropdownItem key="delete">
           <div className="border-t border-[rgba(255,255,255,0.1)] pt-[10px]">
             <Button

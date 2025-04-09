@@ -8,7 +8,7 @@ import { useLitContext } from '@/context/LitContext';
 import { Button } from '@/components/base';
 import Profile from '@/components/profile';
 import { WalletIcon } from '@/components/icons';
-import UserProfileDropdown from '@/components/layout/Header/userProfileDropdown';
+import UserProfileDropdown from '@/components/layout/Header/UserProfileDropdown';
 import useOpenDraw from '@/hooks/useOpenDraw';
 
 export function formatAddressString(
