@@ -2,12 +2,7 @@
 import { Space } from '@/types';
 import { addToast, Avatar, cn, Image, Skeleton } from '@heroui/react';
 import { Button } from '@/components/base';
-import {
-  ArrowSquareRight,
-  Heart,
-  Buildings,
-  Users,
-} from '@phosphor-icons/react';
+import { ArrowSquareRight, Heart, Users } from '@phosphor-icons/react';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { useParams } from 'next/navigation';
 import React, { useMemo } from 'react';
@@ -19,6 +14,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { followSpace, unFollowSpace } from '@/services/member';
 import Copy from '@/components/biz/copy';
 import EditorProWithMore from './EditorProWithMore';
+import { Categories } from '@/app/spaces/create/components/constant';
 
 export interface SpaceSectionProps {
   spaceData?: Space;
@@ -181,12 +177,7 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
       {/* space info: name/desc */}
       <div className="mt-[20px] flex flex-col gap-[10px] mobile:mt-[50px]">
         <div className="flex items-center justify-start gap-[10px]">
-          <div className="flex h-[30px] items-center gap-[10px] rounded-[8px] bg-[rgba(255,255,255,0.1)] px-[10px]">
-            <Buildings weight="fill" format="Stroke" size={20} />
-            <span className="text-[14px] font-[600] leading-[1.2] text-white drop-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] ">
-              Community
-            </span>
-          </div>
+          <SpaceChip category={spaceData?.category} />
 
           <div className="flex items-center gap-[6px] opacity-50">
             <Users weight="fill" format="Stroke" size={20} />
@@ -302,6 +293,30 @@ const SpaceHomeSkeleton = () => {
         <Skeleton className="h-[40px] w-full rounded-[8px]" />
         <Skeleton className="size-[40px] rounded-[8px]" />
       </div>
+    </div>
+  );
+};
+
+const SpaceChip = ({ category }: { category?: string }) => {
+  const categoryInfo = useMemo(
+    () => Categories.find((c) => c.value === category),
+    [category],
+  );
+  const displayIcon = React.cloneElement(
+    categoryInfo ? categoryInfo.icon : Categories[0].icon,
+    {
+      size: 20,
+      weight: 'fill',
+    },
+  );
+  const displayLabel = categoryInfo ? categoryInfo.label : Categories[0].label;
+
+  return (
+    <div className="flex h-[30px] items-center gap-[10px] rounded-[8px] bg-[rgba(255,255,255,0.1)] px-[10px]">
+      {displayIcon}
+      <span className="text-[14px] font-[600] leading-[1.2] text-white drop-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] ">
+        {displayLabel}
+      </span>
     </div>
   );
 };
