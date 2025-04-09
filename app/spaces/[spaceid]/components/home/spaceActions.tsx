@@ -14,7 +14,7 @@ import {
   ModalFooter,
 } from '@/components/base';
 import useOpenDraw from '@/hooks/useOpenDraw';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface SpaceActionsProps {
   spaceData?: Space;
@@ -46,9 +46,7 @@ const SpaceActions = ({
   const [showButtonsSkeleton, setShowButtonsSkeleton] = useState(true);
   const [showButtons, setShowButtons] = useState(false);
 
-  const isLoggedIn = useMemo(() => {
-    return isAuthenticated && !!profile;
-  }, [isAuthenticated, profile]);
+  const isLoggedIn = isAuthenticated && !!profile;
 
   // hack: handle not login case
   useEffect(() => {
@@ -68,9 +66,7 @@ const SpaceActions = ({
     }
   }, [isUserSpaceFetched, isLoggedIn, spaceData]);
 
-  const showFollowButton = useMemo(() => {
-    return !isUserJoined;
-  }, [isUserJoined]);
+  const showFollowButton = !isUserJoined;
 
   const showJoinButton = useMemo(() => {
     return (
@@ -114,7 +110,7 @@ const SpaceActions = ({
 
   const isFollowPending = followMutation.isPending;
 
-  const onFollow = async () => {
+  const onFollow = useCallback(async () => {
     if (!isAuthenticated || !profile?.author?.id) {
       showAuthPrompt('connectButton');
       return;
@@ -129,7 +125,15 @@ const SpaceActions = ({
     } else {
       followMutation.mutate();
     }
-  };
+  }, [
+    followMutation,
+    handleOpen,
+    isAuthenticated,
+    isFollowPending,
+    isUserFollowed,
+    profile?.author?.id,
+    showAuthPrompt,
+  ]);
 
   const confirmUnFollow = () => {
     unfollowMutation.mutate();
