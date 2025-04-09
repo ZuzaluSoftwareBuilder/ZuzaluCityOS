@@ -84,8 +84,7 @@ export const DAppDetailDrawer = ({ children }: PropsWithChildren) => {
                   extra={
                     <Button
                       size="sm"
-                      color="dark"
-                      className="opacity-60"
+                      className="bg-[#222222] text-white opacity-60 hover:bg-[#363636]"
                       endContent={<ArrowUpRightIcon size={4} />}
                       onClick={() => window.open(appData?.appUrl)}
                     >
@@ -297,7 +296,6 @@ DAppDetailDrawer.InstallArea = function InstallArea(props: {
         Install on Space
       </span>
       <Button
-        color="functional"
         isLoading={isLoading}
         startContent={
           !isLoading ? currentIsInstalled ? <Trash /> : <CaretLineDown /> : null

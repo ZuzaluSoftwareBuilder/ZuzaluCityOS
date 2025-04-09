@@ -41,6 +41,8 @@ const config = {
   },
   plugins: [
     heroui({
+      defaultTheme: 'dark',
+      defaultExtendTheme: 'dark',
       layout: {
         borderWidth: {
           small: '1px',
@@ -50,6 +52,41 @@ const config = {
         radius: {
           medium: '10px',
           large: '14px',
+        },
+      },
+      themes: {
+        dark: {
+          colors: {
+            // heroUI
+            secondary: {
+              DEFAULT: 'rgba(255, 255, 255, 0.05)',
+              hover: 'rgba(255,255,255,0.1)',
+              disabled: 'rgba(255, 255, 255, 0.05)',
+            },
+            // follow by figma
+            active: '#7DFFD1',
+            command: '#67DBFF',
+            control: '#FFC77D',
+            important: '#FF9C66',
+            issue: '#FF5E5E',
+            // custom
+            submit: {
+              DEFAULT: 'rgba(103, 219, 255, 0.1)',
+              hover: 'rgba(103,219,255,0.3)',
+              disabled: 'rgba(103, 219, 255, 0.1)',
+            },
+          },
+        },
+        light: {
+          colors: {
+            primary: 'green',
+            active: 'blue',
+            command: '#67DBFF',
+            control: '#FFC77D',
+            important: '#FF9C66',
+            issue: '#FF5E5E',
+            primary: '#7DFFD1',
+          },
         },
       },
     }),

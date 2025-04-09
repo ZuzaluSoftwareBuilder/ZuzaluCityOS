@@ -4,19 +4,15 @@ import { Button as HButton } from '@heroui/react';
 
 const Button = extendVariants(HButton, {
   variants: {
-    // 根据设计稿定义颜色变体
     color: {
       primary:
-        'bg-[#363636] hover:bg-[#404040] text-white disabled:hover:bg-[#363636]',
-      secondary:
-        'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.05)] text-white disabled:hover:bg-[rgba(255,255,255,0.1)]',
-      dark: 'bg-[#222222] hover:bg-[#363636] text-white',
+        'bg-[#363636] hover:bg-[#404040] text-white disabled:hover:bg-[#363636]', // ui wip
+      secondary: 'text-white',
       functional:
-        'bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)] border border-solid border-[rgba(255,255,255,0.1)] text-white disabled:hover:bg-[rgba(255,255,255,0.05)]',
+        'bg-secondary  text-white border border-solid border-[rgba(255,255,255,0.1)]',
       submit:
-        'bg-[rgba(103,219,255,0.2)] hover:bg-[rgba(103,219,255,0.3)] border border-[rgba(103,219,255,0.1)] text-[#67DBFF] disabled:hover:bg-[rgba(103,219,255,0.2)]',
+        'bg-submit border border-solid border-[rgba(103,219,255,0.2)] text-[#67DBFF]',
     },
-    // 根据设计稿定义尺寸变体
     size: {
       sm: 'px-[10px] py-[5px] text-[14px] gap-[10px]',
       md: 'px-[14px] py-[8px] text-[14px] gap-[10px]',
@@ -28,7 +24,6 @@ const Button = extendVariants(HButton, {
       lg: 'rounded-[12px]',
       full: 'rounded-full',
     },
-    // 根据设计稿定义状态变体
     // state: {
     //   active: "opacity-100",
     //   inactive: "opacity-60",

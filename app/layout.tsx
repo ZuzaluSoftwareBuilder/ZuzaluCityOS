@@ -27,6 +27,7 @@ import { usePathname } from 'next/navigation';
 import { useMediaQuery } from '@mui/material';
 import NewAuthPrompt from '@/app/components/auth/NewAuthPrompt';
 import { BuildInRoleProvider } from '@/context/BuildInRoleContext';
+import useTheme, { Theme } from '@/hooks/use-theme';
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ function RootLayout({
   const isMobileAndTablet = useMediaQuery('(max-width: 1199px)');
   const isSpacePage = pathname?.startsWith('/spaces/');
   const shouldHideHeader = isMobileAndTablet && isSpacePage;
+  const [HeroTheme] = useTheme(Theme.Dark);
 
   useEffect(() => {
     setIsClient(true);
@@ -104,6 +106,7 @@ function RootLayout({
                                   )}
                                   <div
                                     style={{ minHeight: `calc(100vh - 50px)` }}
+                                    className={HeroTheme}
                                   >
                                     {children}
                                   </div>
