@@ -1,11 +1,12 @@
 import { ArrowSquareRightIcon } from '@/components/icons';
 import {
-  useDisclosure,
   Divider,
   Avatar,
   Accordion,
   AccordionItem,
   addToast,
+  Skeleton,
+  cn,
 } from '@heroui/react';
 import {
   Modal,
@@ -15,10 +16,12 @@ import {
 } from '@/components/base';
 import { useSpaceData } from '../../context/spaceData';
 import { joinSpace } from '@/services/member';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCallback, ReactNode } from 'react';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { useCallback, ReactNode, useMemo, useState } from 'react';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
+import { getPOAPs } from '@/services/poap';
+import { CheckCircle } from '@phosphor-icons/react';
 
 const MODAL_BASE_CLASSES = {
   base: 'rounded-[10px] border-2 border-b-w-10 bg-[rgba(44,44,44,0.80)] backdrop-blur-[20px] text-white',
@@ -121,46 +124,54 @@ const useJoinSpace = () => {
 
 type JoinSpaceModalProps = {
   children: ReactNode;
-  useBaseClasses?: boolean;
+  isOpen: boolean;
+  onClose: () => void;
+  onOpenChange: () => void;
 };
 
 const JoinSpaceModal = ({
   children,
-  useBaseClasses = false,
+  isOpen,
+  onClose,
+  onOpenChange,
 }: JoinSpaceModalProps) => {
-  const { isOpen, onOpenChange } = useDisclosure({
-    isOpen: true,
-  });
-
   return (
     <Modal
       isOpen={isOpen}
       hideCloseButton
       onOpenChange={onOpenChange}
-      classNames={useBaseClasses ? MODAL_BASE_CLASSES : undefined}
+      classNames={MODAL_BASE_CLASSES}
     >
       <ModalContent>
-        {(onClose) => (
-          <>
-            <CommonModalHeader
-              title="Verify to Join"
-              onClose={onClose}
-              isDisabled={false}
-            />
-            <Divider />
-            <div className="flex flex-col gap-[20px] p-[20px]">{children}</div>
-          </>
-        )}
+        <>
+          <CommonModalHeader
+            title="Verify to Join"
+            onClose={onClose}
+            isDisabled={false}
+          />
+          <Divider />
+          <div className="flex flex-col gap-[20px] p-[20px]">{children}</div>
+        </>
       </ModalContent>
     </Modal>
   );
 };
 
-const JoinSpaceNoGate = () => {
+interface JoinSpaceProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onOpenChange: () => void;
+}
+
+const JoinSpaceNoGate = ({ isOpen, onClose, onOpenChange }: JoinSpaceProps) => {
   const { handleJoinSpace, joinMutation } = useJoinSpace();
 
   return (
-    <JoinSpaceModal>
+    <JoinSpaceModal
+      isOpen={isOpen}
+      onClose={onClose}
+      onOpenChange={onOpenChange}
+    >
       <SpaceInfoCard />
       <JoinButton
         handleJoinSpace={handleJoinSpace}
@@ -171,16 +182,93 @@ const JoinSpaceNoGate = () => {
   );
 };
 
-const JoinSpaceWithGate = () => {
+const JoinSpaceWithGate = ({
+  isOpen,
+  onClose,
+  onOpenChange,
+}: JoinSpaceProps) => {
+  const { spaceData } = useSpaceData();
   const { handleJoinSpace, joinMutation } = useJoinSpace();
+  const [verifiedRules, setVerifiedRules] = useState<string[]>([]);
+
+  const rules = useMemo(() => {
+    return (
+      spaceData?.spaceGating?.edges
+        .map((edge) => edge.node)
+        .filter((v) => v.gatingStatus === '1') ?? []
+    );
+  }, [spaceData?.spaceGating?.edges]);
+
+  const handleVerifyItem = useCallback((ruleId: string) => {
+    setVerifiedRules((prev) => [...prev, ruleId]);
+  }, []);
+
+  const anyRuleVerified = verifiedRules.length > 0;
+
+  const rulesContent = useMemo(() => {
+    return rules?.map((v) => {
+      const isZuPass = v.zuPassInfo?.eventId;
+      const isRuleVerified = isZuPass
+        ? verifiedRules.includes(v.zuPassInfo?.eventId ?? '')
+        : v.poapsId?.some((p) => verifiedRules.includes(p.poapId.toString()));
+
+      return (
+        <AccordionItem
+          key={v.id}
+          aria-label={isZuPass ? 'ZuPass' : 'POAP'}
+          title={isZuPass ? 'ZuPass' : 'POAP'}
+          indicator={
+            isRuleVerified && <CheckCircle color="#7DFFD1" size={20} />
+          }
+          disableIndicatorAnimation
+          className={cn(
+            isRuleVerified &&
+              'border border-[rgba(125,255,209,0.4)] bg-[rgba(125,255,209,0.05)]',
+          )}
+        >
+          <Divider className="mb-[10px]" />
+          {isZuPass ? (
+            <RuleItem
+              name={v.zuPassInfo?.eventName ?? ''}
+              isVerified={isRuleVerified}
+              onVerify={() => handleVerifyItem(v.zuPassInfo?.eventId ?? '')}
+            />
+          ) : (
+            <div className="flex flex-wrap items-center gap-2">
+              {v.poapsId?.map((p, index) => (
+                <>
+                  <PoapItem
+                    key={p.poapId}
+                    poapId={p.poapId}
+                    onVerify={() => handleVerifyItem(p.poapId.toString())}
+                    isVerified={verifiedRules.includes(p.poapId.toString())}
+                  />
+                  {index !== (v.poapsId?.length ?? 0) - 1 && (
+                    <span className="text-[14px] font-medium opacity-50">
+                      OR
+                    </span>
+                  )}
+                </>
+              ))}
+            </div>
+          )}
+        </AccordionItem>
+      );
+    });
+  }, [rules, handleVerifyItem, verifiedRules]);
 
   return (
-    <JoinSpaceModal useBaseClasses>
+    <JoinSpaceModal
+      isOpen={isOpen}
+      onClose={onClose}
+      onOpenChange={onOpenChange}
+    >
       <SpaceInfoCard />
       <p className="text-center text-[14px] font-semibold leading-[1.2] opacity-80">
-        Following credentials are required to join:
+        Meet any of the following conditions to join:
       </p>
       <Accordion
+        keepContentMounted
         variant="splitted"
         className="gap-[10px] p-0"
         itemClasses={{
@@ -190,30 +278,61 @@ const JoinSpaceWithGate = () => {
           content: 'pb-[10px] pt-[2px]',
         }}
       >
-        <AccordionItem key="1" aria-label="Accordion 1" title="POAP">
-          <Divider className="mb-[10px]" />
-          <span className="rounded-[60px] bg-b-w-10 px-[10px] py-[5px] text-[13px] leading-[1.4] text-white">
-            DevCon3
-          </span>
-        </AccordionItem>
-        <AccordionItem
-          key="2"
-          aria-label="Accordion 2"
-          title="ZuPass"
-          disableIndicatorAnimation
-        >
-          <Divider className="mb-[10px]" />
-          <span className="rounded-[60px] bg-b-w-10 px-[10px] py-[5px] text-[13px] leading-[1.4] text-white">
-            DevCon3
-          </span>
-        </AccordionItem>
+        {rulesContent}
       </Accordion>
       <JoinButton
         handleJoinSpace={handleJoinSpace}
         isLoading={joinMutation.isPending}
-        isDisabled
+        isDisabled={!anyRuleVerified}
+        color={anyRuleVerified ? 'functional' : 'default'}
       />
     </JoinSpaceModal>
+  );
+};
+
+const RuleItem = ({
+  name,
+  isVerified = false,
+  onVerify,
+}: {
+  name: string;
+  isVerified?: boolean;
+  onVerify: () => void;
+}) => (
+  <Button
+    size="sm"
+    color={isVerified ? 'success' : 'functional'}
+    className={cn('h-auto whitespace-normal p-[4px_8px]')}
+    onPress={onVerify}
+  >
+    {name}
+  </Button>
+);
+
+const PoapItem = ({
+  poapId,
+  onVerify,
+  isVerified = false,
+}: {
+  poapId: number;
+  onVerify: () => void;
+  isVerified?: boolean;
+}) => {
+  const { data: poapData, isLoading } = useQuery({
+    queryKey: ['poaps', poapId],
+    queryFn: ({ queryKey }) => getPOAPs({ queryKey }),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  if (isLoading) {
+    return <Skeleton className="h-[30px] w-[100px] rounded-lg" />;
+  }
+
+  const poap = poapData?.items?.[0];
+  if (!poap) return null;
+
+  return (
+    <RuleItem name={poap.name} isVerified={isVerified} onVerify={onVerify} />
   );
 };
 

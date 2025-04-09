@@ -1,6 +1,13 @@
 'use client';
 import { Space } from '@/types';
-import { addToast, Avatar, cn, Image, Skeleton } from '@heroui/react';
+import {
+  addToast,
+  Avatar,
+  cn,
+  Image,
+  Skeleton,
+  useDisclosure,
+} from '@heroui/react';
 import { Button } from '@/components/base';
 import {
   ArrowSquareRight,
@@ -19,6 +26,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { followSpace, unFollowSpace } from '@/services/member';
 import Copy from '@/components/biz/copy';
 import EditorProWithMore from './EditorProWithMore';
+import { JoinSpaceWithGate } from './modal/joinSpace';
 
 export interface SpaceSectionProps {
   spaceData?: Space;
@@ -33,6 +41,7 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
 
   const { userJoinedSpaceIds, userFollowedSpaceIds, isUserSpaceFetched } =
     useUserSpace();
+  const { isOpen, onOpenChange, onClose, onOpen } = useDisclosure();
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers =
@@ -57,8 +66,7 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
   const { shareUrl } = useGetShareLink({ id: spaceId, name: spaceData?.name });
 
   const onJoin = () => {
-    //   TODO join event
-    console.log('join event');
+    onOpen();
   };
 
   const followMutation = useMutation({
@@ -118,6 +126,11 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
 
   return (
     <div className="flex flex-col border-b border-[rgba(255,255,255,0.10)] bg-[#2C2C2C] p-[20px] backdrop-blur-[20px] mobile:p-[14px]">
+      <JoinSpaceWithGate
+        isOpen={isOpen}
+        onClose={onClose}
+        onOpenChange={onOpenChange}
+      />
       <div className="relative">
         <Image
           src={spaceData.banner}

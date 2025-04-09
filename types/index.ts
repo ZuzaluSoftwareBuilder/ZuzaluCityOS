@@ -725,6 +725,6 @@ export interface SpaceGating {
   id: string;
   spaceId: string;
   gatingStatus: string;
-  poapsId: { poapId: number }[];
-  zuPassInfo: ZuPassInfo;
+  poapsId?: { poapId: number }[];
+  zuPassInfo?: ZuPassInfo;
 }
