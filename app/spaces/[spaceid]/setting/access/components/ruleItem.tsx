@@ -22,6 +22,7 @@ import { getPOAPs } from '@/services/poap';
 import { useModal } from '@/context/ModalContext';
 import { createRule, deleteRule, updateRule } from '@/services/space/rule';
 import { useSpacePermissions } from '../../../components/permission';
+import { formatAddressString } from '@/components/layout/UserProfileSection';
 
 interface AccessRuleProps {
   data: SpaceGating;
@@ -407,10 +408,12 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
         ) : (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-[13px] font-medium opacity-50">
+              <span className="whitespace-nowrap text-[13px] font-medium opacity-50">
                 Public Key:
               </span>
-              <span className="text-[13px]">{zuPassInfo?.registration}</span>
+              <span className="text-[13px]">
+                {formatAddressString(zuPassInfo?.registration)}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[13px] font-medium opacity-50">

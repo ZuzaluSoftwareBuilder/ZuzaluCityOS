@@ -11,8 +11,8 @@ function RuleList() {
   const { spaceData } = useSpaceData();
   const [isCreateRule, setIsCreateRule] = useState(false);
 
-  const handleAddRule = useCallback(() => {
-    setIsCreateRule((v) => !v);
+  const finishCreateRule = useCallback(() => {
+    setIsCreateRule(false);
   }, []);
 
   const hasPermission = checkPermission(PermissionName.MANAGE_ACCESS);
@@ -31,7 +31,7 @@ function RuleList() {
             ]
           : []),
       ].map((rule) => (
-        <RuleItem key={rule.id} data={rule} handleAddRule={handleAddRule} />
+        <RuleItem key={rule.id} data={rule} handleAddRule={finishCreateRule} />
       ))}
 
       {hasPermission && (
@@ -42,7 +42,7 @@ function RuleList() {
           fullWidth
           endContent={<Plus size={18} />}
           isDisabled={!hasPermission || isCreateRule}
-          onPress={handleAddRule}
+          onPress={() => setIsCreateRule(true)}
         >
           Create a Rule
         </Button>

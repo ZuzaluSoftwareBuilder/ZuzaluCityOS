@@ -1,6 +1,13 @@
 'use client';
 import { Space } from '@/types';
-import { addToast, Avatar, cn, Image, Skeleton } from '@heroui/react';
+import {
+  addToast,
+  Avatar,
+  cn,
+  Image,
+  Skeleton,
+  useDisclosure,
+} from '@heroui/react';
 import {
   Button,
   CommonModalHeader,
@@ -11,7 +18,7 @@ import {
 import { ArrowSquareRight, Heart, Users } from '@phosphor-icons/react';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { useParams } from 'next/navigation';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import useUserSpace from '@/hooks/useUserSpace';
 import { CheckCircleIcon } from '@/components/icons';
 import { formatMemberCount } from '@/app/components/SpaceCard';
@@ -23,6 +30,7 @@ import EditorProWithMore from './EditorProWithMore';
 import { Categories } from '@/app/spaces/create/components/constant';
 import { ModalContent } from '@/components/base/modal';
 import useOpenDraw from '@/hooks/useOpenDraw';
+import { JoinSpaceNoGate, JoinSpaceWithGate } from './modal/joinSpace';
 
 export interface SpaceSectionProps {
   spaceData?: Space;
@@ -38,6 +46,7 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
 
   const { userJoinedSpaceIds, userFollowedSpaceIds, isUserSpaceFetched } =
     useUserSpace();
+  const { isOpen, onOpenChange, onClose, onOpen } = useDisclosure();
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers =
@@ -76,10 +85,11 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
 
   const { shareUrl } = useGetShareLink({ id: spaceId, name: spaceData?.name });
 
-  const onJoin = () => {
-    //   TODO join event
-    console.log('join event');
-  };
+  const onJoin = useCallback(() => {
+    if (!isUserJoined) {
+      onOpen();
+    }
+  }, [onOpen, isUserJoined]);
 
   const followMutation = useMutation({
     mutationFn: () => followSpace(spaceId, profile!.author!.id),
@@ -143,6 +153,19 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
 
   return (
     <div className="flex flex-col border-b border-[rgba(255,255,255,0.10)] bg-[#2C2C2C] p-[20px] backdrop-blur-[20px] mobile:p-[14px]">
+      {spaceData.gated === '1' ? (
+        <JoinSpaceWithGate
+          isOpen={isOpen}
+          onClose={onClose}
+          onOpenChange={onOpenChange}
+        />
+      ) : (
+        <JoinSpaceNoGate
+          isOpen={isOpen}
+          onClose={onClose}
+          onOpenChange={onOpenChange}
+        />
+      )}
       <div className="relative">
         <Image
           src={spaceData.banner}

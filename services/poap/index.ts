@@ -16,4 +16,15 @@ const getPOAPs = async ({
   return response.data?.data;
 };
 
-export { getPOAPs };
+const verifyPOAP = async (id: number, address: string) => {
+  const response = await axiosInstance.get(`/api/poap/verify`, {
+    params: {
+      id,
+      address,
+    },
+  });
+
+  return response.data?.data;
+};
+
+export { getPOAPs, verifyPOAP };
