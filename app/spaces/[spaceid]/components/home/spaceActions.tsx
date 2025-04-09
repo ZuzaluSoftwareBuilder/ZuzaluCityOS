@@ -6,15 +6,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { followSpace, unFollowSpace } from '@/services/member';
 import Copy from '@/components/biz/copy';
 import { CheckCircleIcon } from '@/components/icons';
-import {
-  CommonModalHeader,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-} from '@/components/base';
-import useOpenDraw from '@/hooks/useOpenDraw';
+
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useModal } from '@/context/ModalContext';
 
 interface SpaceActionsProps {
   spaceData?: Space;
@@ -41,7 +35,7 @@ const SpaceActions = ({
 }: SpaceActionsProps) => {
   const { profile, isAuthenticated, showAuthPrompt } = useCeramicContext();
   const queryClient = useQueryClient();
-  const { open, handleOpen, handleClose } = useOpenDraw();
+  const { showModal } = useModal();
 
   const [showButtonsSkeleton, setShowButtonsSkeleton] = useState(true);
   const [showButtons, setShowButtons] = useState(false);
@@ -97,7 +91,6 @@ const SpaceActions = ({
       await queryClient.invalidateQueries({
         queryKey: ['GET_USER_ROLES_QUERY'],
       });
-      handleClose();
     },
     onError: (error: Error) => {
       console.error(error);
@@ -105,6 +98,7 @@ const SpaceActions = ({
         title: error.message || 'Fail to unfollow',
         color: 'danger',
       });
+      return Promise.reject(error);
     },
   });
 
@@ -121,23 +115,36 @@ const SpaceActions = ({
     }
 
     if (isUserFollowed) {
-      handleOpen();
+      showModal({
+        title: 'Unfollow Confirm',
+        contentText: `unfollow space ${spaceData?.name}`,
+        confirmAction: () => {
+          return new Promise<void>((resolve, reject) => {
+            unfollowMutation.mutate(undefined, {
+              onSuccess: () => {
+                resolve();
+              },
+              onError: (error) => {
+                reject(error);
+              },
+            });
+          });
+        },
+      });
     } else {
       followMutation.mutate();
     }
   }, [
     followMutation,
-    handleOpen,
     isAuthenticated,
     isFollowPending,
     isUserFollowed,
     profile?.author?.id,
     showAuthPrompt,
+    showModal,
+    spaceData?.name,
+    unfollowMutation,
   ]);
-
-  const confirmUnFollow = () => {
-    unfollowMutation.mutate();
-  };
 
   return (
     <>
@@ -194,42 +201,6 @@ const SpaceActions = ({
 
         <Copy text={shareUrl!} />
       </div>
-
-      <Modal isOpen={open} hideCloseButton onOpenChange={handleOpen}>
-        <ModalContent>
-          <CommonModalHeader
-            title="UnFollow Confirm"
-            onClose={handleClose}
-            isDisabled={unfollowMutation.isPending}
-          />
-          <ModalBody className="gap-5 p-[0_20px]">
-            <p className="text-sm text-white/70">
-              unfollow space {spaceData?.name}
-            </p>
-          </ModalBody>
-          <ModalFooter className="p-[20px]">
-            <div className="flex w-full justify-between gap-2.5">
-              <Button
-                className="h-[38px] flex-1 border border-[rgba(255,255,255,0.1)] bg-transparent font-bold text-white"
-                radius="md"
-                onPress={handleClose}
-                disabled={unfollowMutation.isPending}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="h-[38px] flex-1 border border-[rgba(255,94,94,0.2)] bg-[rgba(255,94,94,0.1)] font-bold text-[#FF5E5E]"
-                radius="md"
-                onPress={confirmUnFollow}
-                isLoading={unfollowMutation.isPending}
-                disabled={unfollowMutation.isPending}
-              >
-                UnFollow
-              </Button>
-            </div>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </>
   );
 };
