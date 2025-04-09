@@ -22,7 +22,7 @@ import { getPOAPs } from '@/services/poap';
 import { useModal } from '@/context/ModalContext';
 import { createRule, deleteRule, updateRule } from '@/services/space/rule';
 import { useSpacePermissions } from '../../../components/permission';
-import { formatAddressString } from '@/components/layout/UserProfileSection';
+import { formatAddressString } from '@/components/layout/Header/UserProfileSection';
 
 interface AccessRuleProps {
   data: SpaceGating;
