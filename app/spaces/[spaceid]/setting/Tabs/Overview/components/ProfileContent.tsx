@@ -4,11 +4,10 @@ import { Controller, UseFormReturn } from 'react-hook-form';
 import { Image } from '@heroui/react';
 import * as Yup from 'yup';
 import { Input, Avatar } from '@/components/base';
-import SuperEditor from '@/components/editor/SuperEditor';
+import EditorPro from '@/components/editorPro';
 import PhotoUpload from '@/components/form/PhotoUpload';
 import { Image as PhotoIcon } from '@phosphor-icons/react';
 import { MarkdownLogo } from '@phosphor-icons/react';
-import { useEditorStore } from '@/components/editor/useEditorStore';
 
 export interface ProfileFormData {
   name: string;
@@ -25,41 +24,18 @@ export const ProfilValidationSchema = Yup.object().shape({
   tagline: Yup.string()
     .min(3, 'Tagline must be at least 3 characters.')
     .required('Tagline is required.'),
-  description: Yup.string()
-    .test(
-      'is-valid-blocks',
-      'community description is required',
-      function (value) {
-        if (!value) return true;
-        try {
-          const parsed = JSON.parse(value);
-          if (
-            !parsed.blocks ||
-            !Array.isArray(parsed.blocks) ||
-            parsed.blocks.length === 0
-          ) {
-            return false;
-          }
-          return true;
-        } catch (e) {
-          return false;
-        }
-      },
-    )
-    .required(),
-  avatar: Yup.string().required('please upload space avatar'),
-  banner: Yup.string().required('please upload space banner'),
+  description: Yup.string().notEmptyJson('Community description is required'),
+  avatar: Yup.string().required('Please upload space avatar'),
+  banner: Yup.string().required('Please upload space banner'),
 });
 
 interface ProfileContentProps {
   form: UseFormReturn<ProfileFormData>;
-  descriptionEditorStore: ReturnType<typeof useEditorStore>;
   isDisabled?: boolean;
 }
 
 const ProfileContent: React.FC<ProfileContentProps> = ({
   form,
-  descriptionEditorStore,
   isDisabled = false,
 }) => {
   const {
@@ -127,15 +103,11 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
             name="description"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <SuperEditor
-                value={descriptionEditorStore.value}
-                onChange={(value) => {
-                  descriptionEditorStore.setValue(value);
-                  onChange(JSON.stringify(value));
-                }}
-                minHeight={190}
+              <EditorPro
+                value={value}
+                onChange={onChange}
+                className={{ base: 'min-h-[190px]' }}
                 placeholder="This is a description greeting for new members. You can also update descriptions."
-                isDisabled={isDisabled}
               />
             )}
           />

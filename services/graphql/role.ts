@@ -109,6 +109,7 @@ export const GET_USER_ROLES_QUERY = graphql(`
     ) {
       edges {
         node {
+          id
           roleId
           resourceId
           source

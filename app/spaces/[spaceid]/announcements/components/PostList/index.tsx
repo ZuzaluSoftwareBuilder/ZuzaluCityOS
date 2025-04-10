@@ -1,12 +1,7 @@
 'use client';
 
-import { memo, useState } from 'react';
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  PlusCircleIcon,
-  PlusIcon,
-} from '@/components/icons';
+import { memo } from 'react';
+import { PlusCircleIcon, PlusIcon } from '@/components/icons';
 import { Button, Card } from '@/components/base';
 import {
   Image,
@@ -22,8 +17,8 @@ import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
 import CreateOrEditorPostDrawer, {
   useCreateOrEditorPostDrawer,
 } from '../CreateOrEditorPostDrawer';
-import { Announcement } from '@/types';
-import EditorPreview from '@/components/editor/EditorPreview';
+import { Announcement, PermissionName } from '@/types';
+import EditorProWithMore from '@/app/spaces/[spaceid]/components/home/EditorProWithMore';
 
 import { PostListDataProvider, usePostListData } from './PostListDataContext';
 import { useSpacePermissions } from '../../../components/permission';
@@ -33,7 +28,11 @@ import clsx from 'clsx';
 const PostList = () => {
   const { startCreate } = useCreateOrEditorPostDrawer();
   const { posts, loading } = usePostListData();
-  const { isAdmin, isOwner } = useSpacePermissions();
+  const { checkPermission } = useSpacePermissions();
+
+  const hasManageSpaceAccess = checkPermission(
+    PermissionName.MANAGE_ANNOUNCEMENTS,
+  );
 
   return (
     <div className="flex flex-1 flex-col gap-5">
@@ -41,7 +40,7 @@ const PostList = () => {
         <div className="flex items-center gap-2.5">
           <span className="text-[20px] font-bold leading-[140%]">Posts</span>
         </div>
-        {(isOwner || isAdmin) && (
+        {hasManageSpaceAccess && (
           <Button
             color="secondary"
             size="sm"
@@ -98,8 +97,6 @@ PostList.Empty = memo(function Empty() {
 });
 
 PostList.Post = memo(function Post({ post }: { post: Announcement }) {
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-  const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
   const { startEdit } = useCreateOrEditorPostDrawer();
   const { onDelete } = usePostListData();
   const { ceramic } = useCeramicContext();
@@ -112,7 +109,7 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
           <Image
             src={post.author.zucityProfile?.avatar ?? '/user/avatar_p.png'}
             alt="avatar"
-            className="rounded-full"
+            className="rounded-full object-cover"
             width={40}
             height={40}
           />
@@ -131,35 +128,17 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
             </span>
           </div>
           {/* description */}
-          <EditorPreview
+          <EditorProWithMore
             value={post.description}
-            fontSize={13}
-            collapsed={isCollapsed}
-            onCollapse={(collapsed) => {
-              setIsCanCollapse((v) => {
-                return v || collapsed;
-              });
-              setIsCollapsed(collapsed);
+            isEdit={false}
+            className={{
+              base: 'bg-transparent',
+              editorWrapper: 'p-0',
+              editor: 'text-[13px] opacity-80',
             }}
-            style={{ opacity: 0.8 }}
+            collapseHeight={150}
+            defaultCollapsed={true}
           />
-          {isCanCollapse && (
-            <Button
-              size="sm"
-              color="secondary"
-              startContent={
-                isCollapsed ? (
-                  <ChevronDownIcon size={4} />
-                ) : (
-                  <ChevronUpIcon size={4} />
-                )
-              }
-              className="mt-0 w-full"
-              onClick={() => setIsCollapsed((prev) => !prev)}
-            >
-              {isCollapsed ? 'Show More' : 'Show Less'}
-            </Button>
-          )}
           <div className="text-[10px] font-normal leading-[120%] opacity-50">
             {dayjs(post.createdAt).format('YYYY-MM-DD')} |{' '}
             {post.tags.map((tag) => `# ${tag.tag}`).join(' ')}

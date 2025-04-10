@@ -18,6 +18,8 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/utils/supabase/client';
 
 interface ListProps {
   onDetailClick: (data: Dapp) => void;
@@ -50,17 +52,41 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
     },
   );
 
+  const { data: legacyDappData, isLoading: legacyDappLoading } = useQuery({
+    queryKey: ['GET_LEGACY_DAPP_LIST_QUERY'],
+    queryFn: () => supabase.from('betaDapps').select('*'),
+    select: (data: any) => {
+      if (data.data) {
+        return data.data.map((v: any) => ({
+          ...v,
+          description:
+            JSON.stringify({
+              content: v.description,
+              type: 'doc',
+              isEmpty: false,
+            }) || '',
+          categories: ['Legacy', ...v.categories.split(',')].join(','),
+          isLegacy: true,
+        }));
+      }
+      return [];
+    },
+  });
+
   const filterData = useMemo(() => {
-    const tags = data?.map((dapp) => dapp.categories.split(','));
+    const tags = data
+      ?.concat(legacyDappData)
+      ?.map((dapp) => dapp?.categories?.split(','));
     return [...new Set(tags?.flat())];
-  }, [data]);
+  }, [data, legacyDappData]);
 
   const currentData = useMemo(() => {
+    const allData = data?.concat(legacyDappData ?? []);
     if (filter.length === 0 && searchVal === '') {
-      return data;
+      return allData;
     }
 
-    let filteredData = data || [];
+    let filteredData = allData || [];
 
     if (searchVal !== '') {
       filteredData = filteredData.filter((dapp) =>
@@ -70,17 +96,19 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
 
     if (filter.length > 0) {
       filteredData = filteredData.filter((dapp) => {
-        const tags = dapp.categories.split(',');
+        const tags = dapp?.categories.split(',');
         return filter.some((tag) => tags.includes(tag));
       });
     }
 
     return filteredData;
-  }, [data, filter, searchVal]);
+  }, [data, filter, legacyDappData, searchVal]);
 
   const ownedDapps = useMemo(() => {
     return data?.filter((dapp) => dapp.profile.author.id === userDID) || [];
   }, [data, userDID]);
+
+  const isAllLoading = isLoading || legacyDappLoading;
 
   return (
     <Stack
@@ -156,7 +184,7 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
           </Stack>
         )}
       </Stack>
-      {isLoading ? (
+      {isAllLoading ? (
         <Skeleton variant="rounded" height="30px" width="100%" />
       ) : (
         <Filter filterData={filterData} onFilterChange={setFilter} />
@@ -173,7 +201,7 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
           alignContent: 'flex-start',
         }}
       >
-        {isLoading
+        {isAllLoading
           ? Array.from({ length: 4 }).map((_, index) => (
               <ResponsiveGridItem key={index}>
                 <Stack p="10px">

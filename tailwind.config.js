@@ -1,4 +1,5 @@
 import { heroui } from '@heroui/react';
+import { dark } from '@mui/material/styles/createPalette';
 
 /** @type {import('tailwindcss').Config} */
 const config = {
@@ -50,6 +51,14 @@ const config = {
         radius: {
           medium: '10px',
           large: '14px',
+        },
+      },
+      themes: {
+        dark: {
+          colors: {
+            error: '#FF5E5E',
+            success: '#55D7A9',
+          },
         },
       },
     }),

@@ -14,7 +14,7 @@ const Button = extendVariants(HButton, {
       functional:
         'bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)] border border-solid border-[rgba(255,255,255,0.1)] text-white disabled:hover:bg-[rgba(255,255,255,0.05)]',
       submit:
-        'bg-[rgba(103,219,255,0.2)] hover:bg-[rgba(103,219,255,0.3)] border border-[rgba(103,219,255,0.1)] text-[#67DBFF] disabled:hover:bg-[rgba(103,219,255,0.2)]',
+        'bg-[rgba(103,219,255,0.1)] hover:bg-[rgba(103,219,255,0.3)] border border-[rgba(103,219,255,0.1)] text-[#67DBFF] disabled:hover:bg-[rgba(103,219,255,0.2)]',
     },
     // 根据设计稿定义尺寸变体
     size: {
@@ -27,6 +27,9 @@ const Button = extendVariants(HButton, {
       md: 'rounded-[10px]',
       lg: 'rounded-[12px]',
       full: 'rounded-full',
+    },
+    border: {
+      true: 'border border-white/10',
     },
     // 根据设计稿定义状态变体
     // state: {

@@ -64,71 +64,63 @@ const authenticateEthPKH = async (
   ceramic: CeramicClient,
   compose: ComposeClient,
 ) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(async () => {
+  try {
+    const sessionStr = localStorage.getItem('ceramic:eth_did');
+    let session;
+    if (sessionStr) {
       try {
-        const sessionStr = localStorage.getItem('ceramic:eth_did');
-        let session;
-        if (sessionStr) {
-          try {
-            session = await DIDSession.fromSession(sessionStr);
-          } catch (e) {
-            console.error('Failed to restore DIDSession from localStorage:', e);
-            localStorage.removeItem('ceramic:eth_did');
-          }
-        }
-        if (!session || (session.hasSession && session.isExpired)) {
-          const account = getAccount(config as any);
-          if (!account || !account.address) {
-            reject(new Error('No wallet account found'));
-            return;
-          }
+        session = await DIDSession.fromSession(sessionStr);
+      } catch (e) {
+        console.error('Failed to restore DIDSession from localStorage:', e);
+        localStorage.removeItem('ceramic:eth_did');
+      }
+    }
+    if (!session || (session.hasSession && session.isExpired)) {
+      const account = getAccount(config as any);
+      if (!account || !account.address) {
+        throw new Error('No wallet account found');
+      }
 
-          const ethProvider = await account.connector?.getProvider();
-          if (!ethProvider) {
-            reject(new Error('No injected Ethereum provider found.'));
-            return;
-          }
-          try {
-            const accountId = await getAccountId(ethProvider, account.address!);
-            const authMethod = await EthereumWebAuth.getAuthMethod(
-              ethProvider,
-              accountId,
-            );
+      const ethProvider = await account.connector?.getProvider();
+      if (!ethProvider) {
+        throw new Error('No injected Ethereum provider found.');
+      }
+      try {
+        const accountId = await getAccountId(ethProvider, account.address!);
+        const authMethod = await EthereumWebAuth.getAuthMethod(
+          ethProvider,
+          accountId,
+        );
 
-            try {
-              session = await DIDSession.authorize(authMethod, {
-                resources: compose.resources,
-              });
-              localStorage.setItem('ceramic:eth_did', session.serialize());
-            } catch (error) {
-              console.error('DIDSession.authorize failed:', error);
-              reject(error);
-              return;
-            }
-          } catch (error) {
-            console.error('Failed during authentication setup:', error);
-            reject(error);
-            return;
-          }
-        }
-
-        if (
-          session &&
-          session.did &&
-          !(session.did as any)._parentId.includes('did:pkh:eip155:534351')
-        ) {
-          compose.setDID(session.did);
-          ceramic.did = session.did;
-          localStorage.setItem('display did', session.did.toString());
-          resolve(true);
-        } else {
-          reject(new Error('Failed to create valid DID session'));
+        try {
+          session = await DIDSession.authorize(authMethod, {
+            resources: compose.resources,
+          });
+          localStorage.setItem('ceramic:eth_did', session.serialize());
+        } catch (error) {
+          console.error('DIDSession.authorize failed:', error);
+          throw error;
         }
       } catch (error) {
-        console.error('Authentication error in ceramicAuth:', error);
-        reject(error);
+        console.error('Failed during authentication setup:', error);
+        throw error;
       }
-    }, 2000);
-  });
+    }
+
+    if (
+      session &&
+      session.did &&
+      !(session.did as any)._parentId.includes('did:pkh:eip155:534351')
+    ) {
+      compose.setDID(session.did);
+      ceramic.did = session.did;
+      localStorage.setItem('display did', session.did.toString());
+      return true;
+    } else {
+      throw new Error('Failed to create valid DID session');
+    }
+  } catch (error) {
+    console.error('Authentication error in ceramicAuth:', error);
+    throw error;
+  }
 };

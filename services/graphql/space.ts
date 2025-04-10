@@ -15,6 +15,7 @@ export const GET_SPACE_QUERY_BY_ID = graphql(`
         color
         createdAt
         updatedAt
+        gated
         tags {
           tag
         }
@@ -72,6 +73,23 @@ export const GET_SPACE_QUERY_BY_ID = graphql(`
                 categories
                 appLogoUrl
               }
+            }
+          }
+        }
+        spaceGating(first: 100) {
+          edges {
+            node {
+              id
+              poapsId {
+                poapId
+              }
+              zuPassInfo {
+                registration
+                eventId
+                eventName
+              }
+              gatingStatus
+              spaceId
             }
           }
         }
@@ -274,7 +292,11 @@ export const GET_ALL_SPACE_QUERY = graphql(`
 `);
 
 export const GET_SPACE_AND_EVENTS_QUERY_BY_ID = graphql(`
-  query GetSpaceAndEvents($id: ID!) {
+  query GetSpaceAndEvents(
+    $id: ID!
+    $userRolesFirst: Int = 100
+    $userRolesFilters: ZucityUserRolesFiltersInput
+  ) {
     node(id: $id) {
       ... on ZucitySpace {
         id
@@ -288,6 +310,7 @@ export const GET_SPACE_AND_EVENTS_QUERY_BY_ID = graphql(`
         color
         createdAt
         updatedAt
+        gated
         tags {
           tag
         }
@@ -338,6 +361,13 @@ export const GET_SPACE_AND_EVENTS_QUERY_BY_ID = graphql(`
                 name
                 avatar
               }
+            }
+          }
+        }
+        userRoles(filters: $userRolesFilters, first: $userRolesFirst) {
+          edges {
+            node {
+              roleId
             }
           }
         }

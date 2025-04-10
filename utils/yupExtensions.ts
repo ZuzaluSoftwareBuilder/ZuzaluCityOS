@@ -29,4 +29,24 @@ Yup.addMethod(Yup.mixed, 'timezone', function timezoneSchema() {
   });
 });
 
+Yup.addMethod(
+  Yup.string,
+  'notEmptyJson',
+  function (message = 'JSON cannot be empty') {
+    return this.test({
+      name: 'is-not-empty',
+      message,
+      test: function (value) {
+        if (!value) return false;
+        try {
+          const parsed = JSON.parse(value);
+          return !parsed.isEmpty;
+        } catch (e) {
+          return false;
+        }
+      },
+    });
+  },
+);
+
 export default Yup;

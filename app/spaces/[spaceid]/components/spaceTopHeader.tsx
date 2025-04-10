@@ -12,7 +12,7 @@ import {
   cn,
   Skeleton,
 } from '@heroui/react';
-import UserProfileSection from '@/components/layout/UserProfileSection';
+import UserProfileSection from '@/components/layout/Header/UserProfileSection';
 import SpaceSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/spaceSubSidebar';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useSpaceData } from './context/spaceData';

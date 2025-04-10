@@ -80,8 +80,7 @@ export const CommonModalHeader: React.FC<{
       <h3 className="text-base font-bold text-white">{title}</h3>
       <Button
         isIconOnly
-        variant="light"
-        className="min-w-0 px-0"
+        className="min-w-0 bg-transparent px-0"
         onPress={onClose}
         disabled={isDisabled}
       >

@@ -28,6 +28,7 @@ const useUserSpace = () => {
         return (data.node as IUserProfileWithSpaceAndEvent)?.zucityProfile;
       },
       enabled: !!userDId,
+      placeholderData: (previousData) => previousData,
     },
   );
 
@@ -61,29 +62,47 @@ const useUserSpace = () => {
     {
       select: (data) => data.data?.nodes || [],
       enabled: userJoinedSpaceIdArray.length > 0,
+      placeholderData: (previousData) => previousData,
     },
   );
 
-  const userFollowedSpaceIds = useMemo(() => {
-    const ids = (userRoles || [])
-      .filter(
-        (role) =>
-          role?.resourceId &&
-          role.roleId === followerRoleId &&
-          role?.source?.toLocaleLowerCase() === 'space',
-      )
-      .map((role) => role?.resourceId);
-    return new Set(ids);
+  const userFollowedSpaces = useMemo(() => {
+    return (userRoles || []).filter(
+      (role) =>
+        role?.resourceId &&
+        role.roleId === followerRoleId &&
+        role?.source?.toLocaleLowerCase() === 'space',
+    );
   }, [userRoles, followerRoleId]);
 
+  const isUserSpaceFetched = useMemo(() => {
+    if (isUserOwnSpaceFetched && userJoinedSpaceIdArray.length > 0) {
+      return (
+        isUserRoleFetched && isUserOwnSpaceFetched && isUserJoinedSpaceFetched
+      );
+    } else {
+      return isUserRoleFetched && isUserOwnSpaceFetched;
+    }
+  }, [
+    isUserRoleFetched,
+    isUserOwnSpaceFetched,
+    isUserJoinedSpaceFetched,
+    userJoinedSpaceIdArray,
+  ]);
+
+  const userFollowedSpaceIds = useMemo(() => {
+    const ids = userFollowedSpaces.map((role) => role?.resourceId);
+    return new Set(ids);
+  }, [userFollowedSpaces]);
+
   return {
+    userFollowedSpaces: userFollowedSpaces || [],
     userJoinedSpaces: userJoinedSpaces || [],
     userJoinedSpaceIds,
     userFollowedSpaceIds,
     isUserSpaceLoading:
       isUserRoleLoading || isUserOwnSpaceLoading || isUserJoinedSpaceLoading,
-    isUserSpaceFetched:
-      isUserRoleFetched && isUserOwnSpaceFetched && isUserJoinedSpaceFetched,
+    isUserSpaceFetched,
   };
 };
 

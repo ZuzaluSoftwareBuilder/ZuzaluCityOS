@@ -231,12 +231,18 @@ export interface Space {
   customAttributes: TBD[];
   createdAt: string;
   updatedAt: string;
-  installedApps: {
+  installedApps?: {
     edges: {
       node: InstalledApp;
     }[];
   };
+  gated: string;
   isLegacy?: boolean;
+  spaceGating?: {
+    edges: {
+      node: SpaceGating;
+    }[];
+  };
 }
 
 export interface CalendarConfig {
@@ -589,17 +595,6 @@ export interface CalEvent {
   rrule?: string;
 }
 
-export const SOCIAL_TYPES = [
-  { key: 'website', value: 'Website' },
-  { key: 'twitter', value: 'Twitter' },
-  { key: 'telegram', value: 'Telegram' },
-  { key: 'nostr', value: 'Nostr' },
-  { key: 'lens', value: 'Lens' },
-  { key: 'github', value: 'Github' },
-  { key: 'discord', value: 'Discord' },
-  { key: 'ens', value: 'ENS' },
-];
-
 export interface Dapp {
   id: string;
   appName: string;
@@ -629,6 +624,7 @@ export interface Dapp {
     username: string;
     avatar: string;
   };
+  isLegacy?: boolean;
 }
 
 export interface Permission {
@@ -648,8 +644,9 @@ export enum PermissionName {
   VIEW_ANALYTICS = 'view_analytics',
   MANAGE_APPS = 'manage_apps',
   VIEW_APPS = 'view_apps',
-  MANAGE_SPACE_ANNOUNCEMENTS = 'manage_space_announcements',
-  VIEW_SPACE_ANNOUNCEMENTS = 'view_space_announcements',
+  MANAGE_ANNOUNCEMENTS = 'manage_announcements',
+  VIEW_ANNOUNCEMENTS = 'view_announcements',
+  MANAGE_ACCESS = 'manage_access',
 }
 
 export interface Role {
@@ -723,4 +720,12 @@ export interface Announcement {
       username: string;
     };
   };
+}
+
+export interface SpaceGating {
+  id: string;
+  spaceId: string;
+  gatingStatus: string;
+  poapsId?: { poapId: number }[];
+  zuPassInfo?: ZuPassInfo;
 }

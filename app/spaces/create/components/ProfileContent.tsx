@@ -5,11 +5,10 @@ import { Image } from '@heroui/react';
 import * as Yup from 'yup';
 import { Button, Input, Card, Avatar } from '@/components/base';
 import { cn } from '@heroui/react';
-import SuperEditor from '@/components/editor/SuperEditor';
+import EditorPro from '@/components/editorPro';
 import { Image as PhosphorImage, X } from '@phosphor-icons/react';
 import PhotoUpload from '@/components/form/PhotoUpload';
 import { MarkdownLogo, CaretRight } from '@phosphor-icons/react';
-import { useEditorStore } from '@/components/editor/useEditorStore';
 
 export interface ProfileFormData {
   name: string;
@@ -26,36 +25,14 @@ export const ProfilValidationSchema = Yup.object().shape({
   tagline: Yup.string()
     .min(3, 'Tagline must be at least 3 characters.')
     .required('Tagline is required.'),
-  description: Yup.string()
-    .test(
-      'is-valid-blocks',
-      'community description is required',
-      function (value) {
-        if (!value) return true;
-        try {
-          const parsed = JSON.parse(value);
-          if (
-            !parsed.blocks ||
-            !Array.isArray(parsed.blocks) ||
-            parsed.blocks.length === 0
-          ) {
-            return false;
-          }
-          return true;
-        } catch (e) {
-          return false;
-        }
-      },
-    )
-    .required(),
-  avatar: Yup.string().required('please upload space avatar'),
-  banner: Yup.string().required('please upload space banner'),
+  description: Yup.string().notEmptyJson('Community description is required'),
+  avatar: Yup.string().required('Please upload space avatar'),
+  banner: Yup.string().required('Please upload space banner'),
 });
 
 interface ProfileContentProps {
   form: UseFormReturn<ProfileFormData>;
   onSubmit: (data: ProfileFormData) => void;
-  descriptionEditorStore: ReturnType<typeof useEditorStore>;
   onBack: () => void;
 }
 
@@ -63,7 +40,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
   form,
   onSubmit,
   onBack,
-  descriptionEditorStore,
 }) => {
   const {
     control,
@@ -147,15 +123,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
             <Controller
               name="description"
               control={control}
-              render={({ field: { onChange } }) => (
-                <SuperEditor
-                  value={descriptionEditorStore.value}
-                  onChange={(value) => {
-                    descriptionEditorStore.setValue(value);
-                    onChange(JSON.stringify(value));
-                  }}
-                  minHeight={190}
-                  placeholder="This is a description greeting for new members. You can also update descriptions."
+              render={({ field: { onChange, value } }) => (
+                <EditorPro
+                  value={value}
+                  onChange={onChange}
+                  className={{ base: 'min-h-[190px]' }}
+                  placeholder="This space is about whatever"
                 />
               )}
             />

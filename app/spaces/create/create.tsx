@@ -11,7 +11,7 @@ import {
   TabStatus,
   TabContentEnum,
 } from './components';
-import { SpaceCard } from '@/app/components/SpaceCard';
+import { SpaceCard } from '@/components/biz/space/SpaceCard';
 import { cn } from '@heroui/react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -34,7 +34,6 @@ import { createUrl } from '@/services/url';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { CREATE_SPACE_MUTATION } from '@/services/graphql/space';
 import { executeQuery } from '@/utils/ceramic';
-import { useEditorStore } from '@/components/editor/useEditorStore';
 import {
   ZucitySpaceInput,
   CreateZucitySpaceMutationMutation,
@@ -78,7 +77,6 @@ const Create = () => {
       banner: '',
     },
   });
-  const descriptionEditorStore = useEditorStore();
 
   const categoriesForm = useForm<CategoriesFormData>({
     resolver: yupResolver(CategoriesValidationSchema),
@@ -178,7 +176,8 @@ const Create = () => {
   };
 
   const transformFormData = (): ZucitySpaceInput => {
-    const { name, tagline, avatar, banner } = profileForm.getValues();
+    const { name, tagline, avatar, banner, description } =
+      profileForm.getValues();
     const { tags, category } = categoriesForm.getValues();
     const { socialLinks, customLinks } = linksForm.getValues();
     const adminId = ceramic?.did?.parent || '';
@@ -187,8 +186,8 @@ const Create = () => {
       customLinks,
       socialLinks,
       name,
-      description: descriptionEditorStore.getValueString(),
       tagline,
+      description,
       owner: adminId,
       profileId: profileId,
       avatar: avatar || DEFAULT_AVATAR,
@@ -223,9 +222,14 @@ const Create = () => {
         );
       }
       const spaceId = result.data?.createZucitySpace?.document?.id || '';
+
       if (!spaceId) {
         throw new Error('Result data is empty');
       }
+
+      // Prefetch the space page
+      router.prefetch(`/spaces/${spaceId}`);
+
       const urlName = covertNameToUrlName(content.name);
       // @ts-ignore
       await createUrl(
@@ -239,14 +243,12 @@ const Create = () => {
       const did = new DID({ provider, resolver: getResolver() });
       await did.authenticate();
       //TODO: Encrypt this private key
-      const { data: spaceData, error: spaceError } = await supabase
-        .from('spaceAgent')
-        .insert({
-          agentKey: uint8ArrayToBase64(seed),
-          agentDID: did.id,
-          // @ts-ignore
-          spaceId: spaceId,
-        });
+      const { error: spaceError } = await supabase.from('spaceAgent').insert({
+        agentKey: uint8ArrayToBase64(seed),
+        agentDID: did.id,
+        // @ts-ignore
+        spaceId: spaceId,
+      });
 
       if (spaceError) {
         console.error('Error creating space agent:', spaceError);
@@ -331,7 +333,6 @@ const Create = () => {
       <>
         <div className={cn({ hidden: selectedTab !== TabContentEnum.Profile })}>
           <ProfileContent
-            descriptionEditorStore={descriptionEditorStore}
             onBack={() => router.push('/spaces')}
             form={profileForm}
             onSubmit={handleProfileSubmit}
@@ -422,6 +423,7 @@ const Create = () => {
               installedApps: { edges: [] },
               createdAt: '',
               updatedAt: '',
+              gated: '0',
             }}
             isJoined={false}
             isFollowed={false}
