@@ -1,25 +1,24 @@
-import { GearSixIcon, SearchIcon } from '@/components/icons';
+import { GearSixIcon } from '@/components/icons';
 import {
   Grid,
-  InputAdornment,
-  OutlinedInput,
+  useTheme,
+  useMediaQuery,
   Skeleton,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from '@mui/material';
 
-import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
-import { Dapp } from '@/types';
-import { supabase } from '@/utils/supabase/client';
 import { Stack } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Item } from '.';
 import Filter from './filter';
+import { Dapp } from '@/types';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/utils/supabase/client';
+import ExploreSearch from '@/components/layout/explore/exploreSearch';
 
 interface ListProps {
   onDetailClick: (data: Dapp) => void;
@@ -114,29 +113,14 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
     <div className="flex flex-1 flex-col gap-[20px] p-[20px] mobile:gap-[10px] mobile:p-[20px_10px]">
       <div className="flex items-center gap-[10px] mobile:flex-col">
         {/* {!isMobile && <BroadcastIcon />} */}
-        <OutlinedInput
+
+        <ExploreSearch
+          value={searchVal}
+          onChange={setSearchVal}
           placeholder="Search dApps"
-          sx={{
-            backgroundColor: 'var(--Inactive-White, rgba(255, 255, 255, 0.05))',
-            p: '12px 14px',
-            borderRadius: '10px',
-            height: '40px',
-            width: '100%',
-            border: '1px solid var(--Hover-White, rgba(255, 255, 255, 0.10))',
-            opacity: 0.7,
-            color: 'white',
-            fontSize: '16px',
-            '& .MuiOutlinedInput-notchedOutline': {
-              border: 'none',
-            },
-          }}
-          onChange={(e) => setSearchVal(e.target.value)}
-          startAdornment={
-            <InputAdornment position="start" sx={{ opacity: 0.6 }}>
-              <SearchIcon />
-            </InputAdornment>
-          }
+          className="mb-[10px]"
         />
+
         {ownedDapps?.length > 0 && (
           <Stack
             direction="row"
