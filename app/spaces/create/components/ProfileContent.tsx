@@ -25,7 +25,9 @@ export const ProfilValidationSchema = Yup.object().shape({
   tagline: Yup.string()
     .min(3, 'Tagline must be at least 3 characters.')
     .required('Tagline is required.'),
-  description: Yup.string().notEmptyJson('Community description is required'),
+  description: Yup.string()
+    .notEmptyJson('Community description is required')
+    .required('Community Description is required'),
   avatar: Yup.string().required('please upload space avatar'),
   banner: Yup.string().required('please upload space banner'),
 });

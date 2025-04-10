@@ -10,6 +10,7 @@ import Profile from '@/components/profile';
 import { WalletIcon } from '@/components/icons';
 import UserProfileDropdown from '@/components/layout/Header/UserProfileDropdown';
 import useOpenDraw from '@/hooks/useOpenDraw';
+import { getWalletAddressFromDid } from '@/utils/did';
 
 export function formatAddressString(
   str?: string,
@@ -57,10 +58,10 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
     setShowProfile(false);
   }, []);
 
-  const address = profile?.author?.id.split(':');
+  const address = getWalletAddressFromDid(profile?.author?.id);
 
   const formattedAddress = useMemo(
-    () => formatAddressString(address?.[address.length - 1], 10, 6),
+    () => formatAddressString(address, 10, 6),
     [address],
   );
 
@@ -78,7 +79,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
           handlePassport={handlePassport}
           handleLogout={handleLogout}
           displayAddress={formattedAddress || ''}
-          address={address?.[address.length - 1] || ''}
+          address={address || ''}
         />
       ) : (
         <Button
