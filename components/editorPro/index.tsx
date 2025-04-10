@@ -504,8 +504,13 @@ const EditorPro: React.FC<EditorProProps> = ({
               !isEdit &&
               canCollapse &&
               'transition-all duration-300',
+            isEdit && 'min-h-[130px]',
             className?.editorWrapper,
           )}
+          onClick={(e) => {
+            e.stopPropagation();
+            editor?.commands.focus();
+          }}
         >
           <EditorContent editor={editor} className={className?.editor} />
           {editorValue.isEmpty && isEdit && (
