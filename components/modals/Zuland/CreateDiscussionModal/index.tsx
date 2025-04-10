@@ -100,10 +100,12 @@ export default function CreateDiscussionModal({
 
   /* AKASHA login if not logged in */
   useEffect(() => {
-    if (!currentAkashaUser) {
+    if (showModal && !currentAkashaUser) {
+      showToast('Please connect to Akasha to create a discussion', 'info');
       loginAkasha();
+      setShowModal(false);
     }
-  }, [currentAkashaUser, loginAkasha]);
+  }, [showModal, currentAkashaUser, loginAkasha, showToast, setShowModal]);
 
   const handleCreateDiscussion = async () => {
     if (resourceType === 'events') {
@@ -197,6 +199,10 @@ export default function CreateDiscussionModal({
     }
   };
 
+  if (!currentAkashaUser) {
+    return null;
+  }
+
   return (
     <Dialog
       open={showModal}
@@ -204,6 +210,7 @@ export default function CreateDiscussionModal({
       PaperProps={{
         style: {
           width: '692px',
+          maxHeight: '80vh',
           height: 'auto',
           padding: '20px 16px',
           backgroundColor: 'rgba(34, 34, 34, 0.9)',
@@ -217,6 +224,7 @@ export default function CreateDiscussionModal({
           gap: '20px',
           margin: '0px',
           maxWidth: 'unset',
+          overflowY: 'auto',
         },
       }}
     >
@@ -235,7 +243,15 @@ export default function CreateDiscussionModal({
           ? 'Discussion already exists'
           : `Create a Discussion for this ${resourceType === 'events' ? 'event' : 'space'}`}
       </DialogTitle>
-      <DialogContent style={{ width: '100%', color: 'white', padding: '10px' }}>
+      <DialogContent
+        style={{
+          width: '100%',
+          color: 'white',
+          padding: '10px',
+          maxHeight: '50vh',
+          overflowY: 'auto',
+        }}
+      >
         <Stack
           style={{
             color: 'rgba(255, 255, 255, 0.7)',
@@ -277,7 +293,6 @@ export default function CreateDiscussionModal({
             />
           </Stack>
 
-          {/* 根据resourceType显示不同内容 */}
           {resourceType === 'events' ? (
             <>
               <Stack spacing={1}>
@@ -319,15 +334,12 @@ export default function CreateDiscussionModal({
                           },
                         },
                       }}
-                    >
-                      {/* 链选项... */}
-                    </Select>
+                    ></Select>
                   </Stack>
                 </>
               )}
             </>
           ) : (
-            /* Space类型资源的展示内容 */
             <Stack spacing={1}>
               <Typography fontSize={'18px'}>Gated Roles</Typography>
               <Stack
@@ -404,8 +416,12 @@ export default function CreateDiscussionModal({
         style={{
           justifyContent: 'center',
           width: '100%',
-          padding: 0,
+          padding: '10px 0',
           flexDirection: 'column',
+          position: 'sticky',
+          bottom: 0,
+          backgroundColor: 'rgba(34, 34, 34, 0.95)',
+          zIndex: 10,
         }}
       >
         <Stack spacing={1} width="100%">
