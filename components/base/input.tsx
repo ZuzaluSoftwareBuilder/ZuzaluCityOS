@@ -3,47 +3,68 @@ import {
   extendVariants,
   Input as HInput,
   Textarea as HTextarea,
+  InputProps,
+  TextAreaProps,
+  cn,
 } from '@heroui/react';
+import React from 'react';
 
-const Input = extendVariants(HInput, {
-  variants: {
-    input: {
-      default: {
-        inputWrapper: [
-          commonStyle.border,
-          'bg-white/[0.05]',
-          'focus-within:border-white/30',
-          'rounded-[8px]',
-          'px-[10px]',
-        ],
-        input: ['!text-white', 'placeholder:text-white/50'],
-        errorMessage: ['text-error'],
-      },
-    },
+// base UI
+const BaseInput = React.forwardRef<HTMLInputElement, InputProps>(
+  (props, ref) => {
+    return (
+      <HInput
+        {...props}
+        ref={ref}
+        classNames={{
+          inputWrapper: cn(
+            commonStyle.border,
+            'bg-white/[0.05]',
+            'focus-within:border-white/30',
+            'rounded-[8px]',
+            'px-[10px]',
+          ),
+          input: cn('!text-white', 'placeholder:text-white/50'),
+          errorMessage: cn('text-error'),
+        }}
+      />
+    );
   },
+);
+
+BaseInput.displayName = 'BaseInput';
+
+const Input = extendVariants(BaseInput, {
   defaultVariants: {
-    input: 'default',
     size: 'md',
   },
 });
 
-const Textarea = extendVariants(HTextarea, {
-  variants: {
-    input: {
-      default: {
-        inputWrapper: [
-          commonStyle.border,
-          'bg-white/[0.05]',
-          'focus-within:border-white/30',
-          'rounded-[8px]',
-        ],
-        input: ['!text-white', 'placeholder:text-white/50'],
-        errorMessage: ['text-error'],
-      },
-    },
+const BaseTextarea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
+  (props, ref) => {
+    return (
+      <HTextarea
+        {...props}
+        ref={ref}
+        classNames={{
+          inputWrapper: cn(
+            commonStyle.border,
+            'bg-white/[0.05]',
+            'focus-within:border-white/30',
+            'rounded-[8px]',
+          ),
+          input: cn('!text-white', 'placeholder:text-white/50'),
+          errorMessage: cn('text-error'),
+        }}
+      />
+    );
   },
+);
+
+BaseTextarea.displayName = 'BaseTextarea';
+
+const Textarea = extendVariants(BaseTextarea, {
   defaultVariants: {
-    input: 'default',
     size: 'md',
   },
 });

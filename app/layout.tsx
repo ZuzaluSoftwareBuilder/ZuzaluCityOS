@@ -28,6 +28,7 @@ import theme from 'theme/theme';
 import { CeramicProvider } from '../context/CeramicContext';
 import { WalletProvider } from '../context/WalletContext';
 import './globals.css';
+import useTheme, { Theme } from '@/hooks/use-theme';
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ function RootLayout({
   const isMobileAndTablet = useMediaQuery('(max-width: 1199px)');
   const isSpacePage = pathname?.startsWith('/spaces/');
   const shouldHideHeader = isMobileAndTablet && isSpacePage;
+  const [HeroTheme] = useTheme(Theme.Dark);
 
   useEffect(() => {
     setIsClient(true);
@@ -80,6 +82,7 @@ function RootLayout({
             <DialogProvider>
               <ToastProvider>
                 <ThemeProvider theme={theme}>
+                <div className={HeroTheme}>
                   <QueryClientProvider client={queryClient}>
                     <NuqsAdapter>
                       <LitProvider>
@@ -158,6 +161,7 @@ function RootLayout({
                       </LitProvider>
                     </NuqsAdapter>
                   </QueryClientProvider>
+                  </div>
                 </ThemeProvider>
               </ToastProvider>
             </DialogProvider>
