@@ -1,6 +1,24 @@
-import { Avatar as HAvatar, extendVariants } from '@heroui/react';
+import React from 'react';
+import { Avatar as HAvatar, extendVariants, AvatarProps } from '@heroui/react';
 
-const Avatar = extendVariants(HAvatar, {
+// base UI
+const BaseAvatar = React.forwardRef<HTMLImageElement, AvatarProps>(
+  (props, ref) => {
+    return (
+      <HAvatar
+        classNames={{
+          base: 'border-shadow-[0px_0px_0px_1px_rgba(34,34,34,0.10)]',
+        }}
+        {...props}
+        ref={ref}
+      />
+    );
+  },
+);
+
+BaseAvatar.displayName = 'BaseAvatar';
+
+const Avatar = extendVariants(BaseAvatar, {
   variants: {
     size: {
       md: {
@@ -9,9 +27,6 @@ const Avatar = extendVariants(HAvatar, {
       xlg: {
         base: 'w-[140px] h-[140px]',
       },
-    },
-    avatarStyle: {
-      base: 'rounded-full border-shadow-[0px_0px_0px_1px_rgba(34,34,34,0.10)]',
     },
   },
   defaultVariants: {
