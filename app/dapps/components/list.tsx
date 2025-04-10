@@ -111,17 +111,8 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
   const isAllLoading = isLoading || legacyDappLoading;
 
   return (
-    <Stack
-      direction="column"
-      flex={1}
-      p={isMobile ? '20px 10px' : '20px'}
-      gap={isMobile ? '10px' : '20px'}
-    >
-      <Stack
-        direction={isMobile ? 'column' : 'row'}
-        gap="10px"
-        alignItems="center"
-      >
+    <div className="flex flex-1 flex-col gap-[20px] p-[20px] mobile:gap-[10px] mobile:p-[20px_10px]">
+      <div className="flex items-center gap-[10px] mobile:flex-col">
         {/* {!isMobile && <BroadcastIcon />} */}
         <OutlinedInput
           placeholder="Search dApps"
@@ -155,7 +146,9 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
             flexShrink={0}
             p="8px 14px"
             boxSizing="content-box"
-            sx={{ cursor: ownedDapps?.length > 0 ? 'pointer' : 'not-allowed' }}
+            sx={{
+              cursor: ownedDapps?.length > 0 ? 'pointer' : 'not-allowed',
+            }}
             onClick={() => {
               if (ownedDapps?.length > 0) {
                 onOwnedDappsClick();
@@ -183,7 +176,7 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
             </Typography>
           </Stack>
         )}
-      </Stack>
+      </div>
       {isAllLoading ? (
         <Skeleton variant="rounded" height="30px" width="100%" />
       ) : (
@@ -243,6 +236,6 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
               </ResponsiveGridItem>
             ))}
       </Grid>
-    </Stack>
+    </div>
   );
 }

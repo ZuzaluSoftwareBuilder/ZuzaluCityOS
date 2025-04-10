@@ -1,21 +1,19 @@
-import { SpaceCard, SpaceCardSkeleton } from '@/components/biz/space/SpaceCard';
-import { Space } from '@/types';
-import { Grid, Stack, useMediaQuery, useTheme } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useMemo, useState } from 'react';
+import { Space } from '@/types';
+import { SpaceCard, SpaceCardSkeleton } from '@/components/biz/space/SpaceCard';
 
-import ExploreSearch from '@/components/layout/explore/exploreSearch';
 import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
+import ExploreSearch from '@/components/layout/explore/exploreSearch';
+import useUserSpace from '@/hooks/useUserSpace';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { useGraphQL } from '@/hooks/useGraphQL';
-import useUserSpace from '@/hooks/useUserSpace';
 import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
 import dayjs from '@/utils/dayjs';
-import { supabase } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/utils/supabase/client';
 
 const SpaceList = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [searchVal, setSearchVal] = useState<string>('');
 
   const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
@@ -79,12 +77,7 @@ const SpaceList = () => {
   }, [spaces, legacySpacesData, searchVal]);
 
   return (
-    <Stack
-      direction="column"
-      flex={1}
-      p={isMobile ? '20px 10px' : '20px'}
-      gap={isMobile ? '10px' : '20px'}
-    >
+    <div className="flex flex-1 flex-col gap-[20px] p-[20px] mobile:gap-[10px] mobile:p-[20px_10px]">
       <ExploreSearch
         value={searchVal}
         onChange={setSearchVal}
@@ -122,7 +115,7 @@ const SpaceList = () => {
               </ResponsiveGridItem>
             ))}
       </Grid>
-    </Stack>
+    </div>
   );
 };
 

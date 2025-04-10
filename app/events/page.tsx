@@ -1,16 +1,16 @@
 'use client';
 
-import EventListWithCalendar from '@/app/events/components/EventList/EventListWithCalendar';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
-import ExploreHeader from '@/components/layout/explore/exploreHeader';
-import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
-import ExploreSearch from '@/components/layout/explore/exploreSearch';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { Stack, useMediaQuery, useTheme } from '@mui/material';
+import { useMediaQuery, useTheme } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import React, { useCallback, useState } from 'react';
+import ExploreHeader from '@/components/layout/explore/exploreHeader';
 import { CalendarDots, Globe, Ticket } from '@phosphor-icons/react';
-import { useCallback, useState } from 'react';
+import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
+import { useCeramicContext } from '@/context/CeramicContext';
+import ExploreSearch from '@/components/layout/explore/exploreSearch';
+import EventListWithCalendar from '@/app/events/components/EventList/EventListWithCalendar';
+import Dialog from '@/app/spaces/components/Modal/Dialog';
 
 const NavItems: INavItem[] = [
   {
@@ -80,7 +80,7 @@ const EventPage = () => {
 
       <ExploreNav navItems={NavItems} onNavChange={handleNavChange} />
 
-      <Stack direction="column" flex={1} p={isMobile ? '20px 10px' : '20px'}>
+      <div className="flex flex-1 flex-col p-[20px] mobile:p-[20px_10px]">
         <ExploreSearch
           value={searchVal}
           onChange={setSearchVal}
@@ -88,7 +88,7 @@ const EventPage = () => {
         />
 
         <EventListWithCalendar searchVal={searchVal} />
-      </Stack>
+      </div>
     </LocalizationProvider>
   );
 };
