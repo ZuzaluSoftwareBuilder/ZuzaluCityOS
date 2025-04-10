@@ -1,6 +1,6 @@
 'use client';
 import { Box, FormHelperText, Stack, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import FormHeader from './FormHeader';
 import {
   FormLabel,
@@ -9,7 +9,6 @@ import {
 } from '../typography/formTypography';
 import { ZuInput, ZuSwitch } from '../core';
 import FormFooter from './FormFooter';
-import { useEditorStore } from '../editor/useEditorStore';
 import Yup from '@/utils/yupExtensions';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -35,7 +34,19 @@ interface DappFormProps {
 const schema = Yup.object().shape({
   appName: Yup.string().required('App name is required'),
   developerName: Yup.string().required('Developer name is required'),
-  description: Yup.string(),
+  description: Yup.string().test(
+    'is-not-empty',
+    'Description is required',
+    (value) => {
+      if (!value) return false;
+      try {
+        const parsed = JSON.parse(value);
+        return !parsed.isEmpty;
+      } catch (e) {
+        return false;
+      }
+    },
+  ),
   tagline: Yup.string()
     .required('Tagline is required')
     .max(70, 'Maximum 70 characters are allowed'),
@@ -87,11 +98,9 @@ const DappForm: React.FC<DappFormProps> = ({
   initialData,
   refetch,
 }) => {
-  const descriptionEditorStore = useEditorStore();
-  const { profile, composeClient } = useCeramicContext();
+  const { profile } = useCeramicContext();
   const queryClient = useQueryClient();
   const profileId = profile?.id || '';
-  const [editorValue, setEditorValue] = useState('');
 
   const {
     control,
@@ -132,7 +141,6 @@ const DappForm: React.FC<DappFormProps> = ({
 
   const resetForm = useCallback(() => {
     reset();
-    setEditorValue('');
   }, [reset]);
 
   const submitMutation = useMutation({
@@ -154,27 +162,15 @@ const DappForm: React.FC<DappFormProps> = ({
   const handlePost = useCallback(
     async (data: FormData) => {
       try {
-        const editorContent = JSON.parse(editorValue);
-        if (!editorValue || editorValue === '{}' || editorContent.isEmpty) {
-          setError('description', {
-            message: 'Description is required',
-          });
-          window.alert('Description is required');
-          return;
-        }
-
         if (!initialData) {
           await submitMutation.mutateAsync({
             type: 'create',
-            data: {
-              ...data,
-              description: editorValue,
-            },
+            data,
           });
         } else {
           await submitMutation.mutateAsync({
             type: 'edit',
-            data: { ...data, description: editorValue, id: initialData.id },
+            data: { ...data, id: initialData.id },
           });
         }
       } catch (error) {
@@ -184,7 +180,7 @@ const DappForm: React.FC<DappFormProps> = ({
         });
       }
     },
-    [editorValue, setError, submitMutation, initialData],
+    [setError, submitMutation, initialData],
   );
 
   const onFormError = useCallback(() => {
@@ -213,12 +209,6 @@ const DappForm: React.FC<DappFormProps> = ({
       }
     });
     return [...DAPP_TAGS, ...tags];
-  }, [initialData]);
-
-  useEffect(() => {
-    if (initialData?.description) {
-      setEditorValue(initialData.description);
-    }
   }, [initialData]);
 
   return (
@@ -299,13 +289,17 @@ const DappForm: React.FC<DappFormProps> = ({
               App Description*
             </Typography>
             <FormLabelDesc>Write your app description here</FormLabelDesc>
-            <EditorPro
-              value={editorValue}
-              onChange={(val) => {
-                setEditorValue(val);
-              }}
-              className={{ base: 'min-h-[190px]' }}
-              placeholder="Type app description"
+            <Controller
+              name="description"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <EditorPro
+                  value={value}
+                  onChange={onChange}
+                  className={{ base: 'min-h-[190px]' }}
+                  placeholder="Type app description"
+                />
+              )}
             />
             {errors?.description && (
               <FormHelperText error>

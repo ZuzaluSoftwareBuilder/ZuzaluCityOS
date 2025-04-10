@@ -136,7 +136,7 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
               editorWrapper: 'p-0',
               editor: 'text-[13px] opacity-80',
             }}
-            collapseHeight={100}
+            collapseHeight={150}
             defaultCollapsed={true}
           />
           <div className="text-[10px] font-normal leading-[120%] opacity-50">

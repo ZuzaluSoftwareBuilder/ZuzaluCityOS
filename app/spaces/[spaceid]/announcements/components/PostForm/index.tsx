@@ -6,7 +6,6 @@ import {
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
 } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FormHelperText } from '@mui/material';
@@ -46,7 +45,19 @@ const schema = Yup.object().shape({
     1,
     'At least one tag is required',
   ),
-  description: Yup.string(),
+  description: Yup.string().test(
+    'is-not-empty',
+    'Description is required',
+    (value) => {
+      if (!value) return false;
+      try {
+        const parsed = JSON.parse(value);
+        return !parsed.isEmpty;
+      } catch (e) {
+        return false;
+      }
+    },
+  ),
 });
 
 type FormData = Yup.InferType<typeof schema>;
@@ -54,9 +65,6 @@ type FormData = Yup.InferType<typeof schema>;
 const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
   const { initialData } = props;
   const formContainerRef = useRef<HTMLDivElement>(null);
-  const [editorValue, setEditorValue] = useState(
-    initialData?.description || '',
-  );
 
   const {
     control,
@@ -70,6 +78,7 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
     defaultValues: {
       title: initialData?.title || '',
       tags: initialData?.tags || [],
+      description: initialData?.description || '',
     },
   });
 
@@ -78,59 +87,15 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
     return POST_TAGS.filter((item) => initialData?.tags.includes(item.value));
   }, [initialData]);
 
-  const handleEditorChange = useCallback(
-    (val: string) => {
-      setEditorValue(val);
-      try {
-        const parsed = JSON.parse(val);
-        if (parsed.isEmpty) {
-          setError('description', {
-            message: 'Description is required',
-          });
-        } else {
-          setValue('description', val, { shouldValidate: true });
-        }
-      } catch (e) {
-        console.error('Error parsing editor value:', e);
-      }
-    },
-    [setError, setValue],
-  );
-
-  const validateDescription = useCallback(() => {
-    try {
-      if (!editorValue || editorValue === '{}') {
-        setError('description', {
-          message: 'Description is required',
-        });
-        return false;
-      }
-      const parsedValue = JSON.parse(editorValue);
-      if (parsedValue.isEmpty) {
-        setError('description', {
-          message: 'Description is required',
-        });
-        return false;
-      }
-      return true;
-    } catch (e) {
-      setError('description', {
-        message: 'Invalid description format',
-      });
-      return false;
-    }
-  }, [editorValue, setError]);
-
   const resetForm = useCallback(() => {
     reset({
       title: initialData?.title || '',
       tags: initialData?.tags || [],
+      description: initialData?.description || '',
     });
-    setEditorValue(initialData?.description || '');
   }, [reset, initialData]);
 
   const onFormError = useCallback(() => {
-    validateDescription();
     if (!formContainerRef.current) return;
     const firstErrorField = Object.keys(omit(errors, 'root'))[0];
     if (firstErrorField) {
@@ -141,21 +106,17 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
         errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
-  }, [errors, validateDescription]);
+  }, [errors]);
 
   const submitForm = useCallback(
     async (data: FormData): Promise<PostFormResult | undefined> => {
-      if (!validateDescription()) {
-        onFormError();
-        return undefined;
-      }
       return {
         title: data.title,
         tags: data.tags || [],
-        description: editorValue,
+        description: data.description || '',
       };
     },
-    [editorValue, onFormError, validateDescription],
+    [],
   );
 
   useImperativeHandle(
@@ -226,11 +187,17 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
         </div>
 
         <div data-field="description" className="flex flex-col gap-2.5">
-          <EditorPro
-            value={editorValue}
-            onChange={handleEditorChange}
-            className={{ base: 'min-h-[190px]' }}
-            placeholder="Type post content"
+          <Controller
+            name="description"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <EditorPro
+                value={value}
+                onChange={onChange}
+                className={{ base: 'min-h-[190px]' }}
+                placeholder="Type post content"
+              />
+            )}
           />
           {errors?.description && (
             <FormHelperText error>{errors?.description.message}</FormHelperText>
