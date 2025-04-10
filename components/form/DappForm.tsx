@@ -11,7 +11,7 @@ import { ZuInput, ZuSwitch } from '../core';
 import FormFooter from './FormFooter';
 import Yup from '@/utils/yupExtensions';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Controller, useForm, FieldErrors } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { DAPP_TAGS } from '@/constant';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -160,13 +160,6 @@ const DappForm: React.FC<DappFormProps> = ({
       }
     },
     [submitMutation, initialData],
-  );
-
-  const onFormError = useCallback(
-    (errors: FieldErrors<FormData>) => {
-      scrollToError(errors);
-    },
-    [scrollToError],
   );
 
   const initialTags = useMemo(() => {
@@ -720,7 +713,7 @@ const DappForm: React.FC<DappFormProps> = ({
           isLoading={submitMutation.isPending}
           disabled={false}
           handleClose={handleClose}
-          handleConfirm={handleSubmit(handlePost, onFormError)}
+          handleConfirm={handleSubmit(handlePost, scrollToError)}
         />
       </Box>
     </Box>
