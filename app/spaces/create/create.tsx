@@ -11,7 +11,7 @@ import {
   TabStatus,
   TabContentEnum,
 } from './components';
-import { SpaceCard } from '@/app/components/SpaceCard';
+import { SpaceCard } from '@/components/biz/space/SpaceCard';
 import { cn } from '@heroui/react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';

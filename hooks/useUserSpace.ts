@@ -28,6 +28,7 @@ const useUserSpace = () => {
         return (data.node as IUserProfileWithSpaceAndEvent)?.zucityProfile;
       },
       enabled: !!userDId,
+      placeholderData: (previousData) => previousData,
     },
   );
 
@@ -61,6 +62,7 @@ const useUserSpace = () => {
     {
       select: (data) => data.data?.nodes || [],
       enabled: userJoinedSpaceIdArray.length > 0,
+      placeholderData: (previousData) => previousData,
     },
   );
 
@@ -72,6 +74,21 @@ const useUserSpace = () => {
         role?.source?.toLocaleLowerCase() === 'space',
     );
   }, [userRoles, followerRoleId]);
+
+  const isUserSpaceFetched = useMemo(() => {
+    if (isUserOwnSpaceFetched && userJoinedSpaceIdArray.length > 0) {
+      return (
+        isUserRoleFetched && isUserOwnSpaceFetched && isUserJoinedSpaceFetched
+      );
+    } else {
+      return isUserRoleFetched && isUserOwnSpaceFetched;
+    }
+  }, [
+    isUserRoleFetched,
+    isUserOwnSpaceFetched,
+    isUserJoinedSpaceFetched,
+    userJoinedSpaceIdArray,
+  ]);
 
   const userFollowedSpaceIds = useMemo(() => {
     const ids = userFollowedSpaces.map((role) => role?.resourceId);
@@ -85,8 +102,7 @@ const useUserSpace = () => {
     userFollowedSpaceIds,
     isUserSpaceLoading:
       isUserRoleLoading || isUserOwnSpaceLoading || isUserJoinedSpaceLoading,
-    isUserSpaceFetched:
-      isUserRoleFetched && isUserOwnSpaceFetched && isUserJoinedSpaceFetched,
+    isUserSpaceFetched,
   };
 };
 
