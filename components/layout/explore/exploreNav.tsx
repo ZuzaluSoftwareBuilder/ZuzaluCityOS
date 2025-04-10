@@ -25,9 +25,13 @@ export default function ExploreNav({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef(new Map<string, HTMLElement>());
+  const activeTabRef = useRef(activeTab);
 
   const updateIndicatorPosition = useCallback(() => {
-    const activeButton = buttonRefs.current.get(activeTab);
+    const currentActiveTab = activeTabRef.current;
+    if (!currentActiveTab) return;
+
+    const activeButton = buttonRefs.current.get(currentActiveTab);
 
     if (activeButton && containerRef.current) {
       const buttonRect = activeButton.getBoundingClientRect();
@@ -38,17 +42,20 @@ export default function ExploreNav({
         width: `${buttonRect.width}px`,
       });
     }
-  }, [activeTab]);
+  }, []);
 
   useEffect(() => {
-    const timer = setTimeout(updateIndicatorPosition, 0);
-    return () => clearTimeout(timer);
-  }, [updateIndicatorPosition]);
+    activeTabRef.current = activeTab;
+    updateIndicatorPosition();
+  }, [activeTab, updateIndicatorPosition]);
 
   useEffect(() => {
     window.addEventListener('resize', updateIndicatorPosition);
-    return () => window.removeEventListener('resize', updateIndicatorPosition);
-  }, [updateIndicatorPosition]);
+
+    return () => {
+      window.removeEventListener('resize', updateIndicatorPosition);
+    };
+  }, []);
 
   const handleTabClick = useCallback(
     (item: INavItem, index: number) => {
@@ -96,6 +103,8 @@ export default function ExploreNav({
             onPress={() => handleTabClick(item, index)}
             isDisabled={!!item.isComingSoon}
             disableAnimation={true}
+            role="tab"
+            aria-selected={activeTab === item.label}
           >
             {item.label}
             {item.isComingSoon && (
