@@ -4,7 +4,6 @@ import { Button as HButton } from '@heroui/react';
 
 const Button = extendVariants(HButton, {
   variants: {
-    // 根据设计稿定义颜色变体
     color: {
       primary:
         'bg-[#363636] hover:bg-[#404040] text-white disabled:hover:bg-[#363636]', // ui wip
@@ -14,7 +13,6 @@ const Button = extendVariants(HButton, {
       submit:
         'bg-submit border border-solid border-[rgba(103,219,255,0.2)] text-[#67DBFF]',
     },
-    // 根据设计稿定义尺寸变体
     size: {
       sm: 'px-[10px] py-[5px] text-[14px] gap-[10px]',
       md: 'px-[14px] py-[8px] text-[14px] gap-[10px]',
@@ -29,7 +27,6 @@ const Button = extendVariants(HButton, {
     border: {
       true: 'border border-white/10',
     },
-    // 根据设计稿定义状态变体
     // state: {
     //   active: "opacity-100",
     //   inactive: "opacity-60",
