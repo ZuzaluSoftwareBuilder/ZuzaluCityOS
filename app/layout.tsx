@@ -32,6 +32,7 @@ import { ModalProvider } from '@/context/ModalContext';
 const queryClient = new QueryClient();
 
 const ceramicDown = process.env.NEXT_PUBLIC_CERAMIC_DOWN === 'true';
+const betaUpgrade = process.env.NEXT_PUBLIC_BETA_UPGRADE === 'true';
 function RootLayout({
   children,
 }: Readonly<{
@@ -39,7 +40,7 @@ function RootLayout({
 }>) {
   const [isClient, setIsClient] = useState(false);
   const [show, setShow] = useState(ceramicDown);
-
+  const [showBetaUpgrade, setShowBetaUpgrade] = useState(betaUpgrade);
   const pathname = usePathname();
   const isMobileAndTablet = useMediaQuery('(max-width: 1199px)');
   const isSpacePage = pathname?.startsWith('/spaces/');
@@ -98,13 +99,41 @@ function RootLayout({
                                     {!shouldHideHeader && <Header />}
                                     {isClient && <NewAuthPrompt />}
                                     <GlobalDialog />
-                                    {isClient && ceramicDown && (
+                                    {isClient && show && (
                                       <Dialog
                                         title="Upgrading Ceramic Node"
                                         message="We are currently upgrading our Ceramic node. Some data may be temporarily unavailable or inconsistent. We apologize for any inconvenience."
                                         showModal={show}
                                         onClose={() => setShow(false)}
                                         onConfirm={() => setShow(false)}
+                                      />
+                                    )}
+                                    {isClient && showBetaUpgrade && (
+                                      <Dialog
+                                        title="Beta Version Upgrade"
+                                        message={
+                                          <>
+                                            We&apos;ve just rolled out a major
+                                            Beta upgrade—our default chain has
+                                            officially moved from Scroll to
+                                            Mainnet ! 🚀
+                                            <br />
+                                            <br />
+                                            Any data previously created on
+                                            Scroll is now marked as
+                                            &quot;Legacy&quot; and need to be
+                                            recreated on Mainnet now. Thanks for
+                                            your understanding and support as we
+                                            continue to grow and improve! 💫
+                                          </>
+                                        }
+                                        showModal={showBetaUpgrade}
+                                        onClose={() =>
+                                          setShowBetaUpgrade(false)
+                                        }
+                                        onConfirm={() =>
+                                          setShowBetaUpgrade(false)
+                                        }
                                       />
                                     )}
                                     <div
