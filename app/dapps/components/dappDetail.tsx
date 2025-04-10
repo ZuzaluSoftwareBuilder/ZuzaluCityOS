@@ -44,7 +44,10 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
         <Image
           src={bannerUrl}
           alt="dapp-detail"
-          className="aspect-[620/280] h-auto w-full rounded-[10px] object-cover"
+          className="aspect-[620/280] h-auto w-full rounded-[10px] object-fill"
+          classNames={{
+            wrapper: '!max-w-none w-full',
+          }}
         />
         {isInstallable === '1' && (
           <div className="flex items-center gap-[10px]">
