@@ -9,7 +9,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { CeramicProvider } from '../context/CeramicContext';
 import { Header } from '@/components/layout';
 import AppContextProvider from '@/context/AppContext';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ZupassProvider } from '@/context/ZupassContext';
 import '@/utils/yupExtensions';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
@@ -40,7 +40,7 @@ function RootLayout({
 }>) {
   const [isClient, setIsClient] = useState(false);
   const [show, setShow] = useState(ceramicDown);
-  const [showBetaUpgrade, setShowBetaUpgrade] = useState(betaUpgrade);
+  const [showBetaUpgrade, setShowBetaUpgrade] = useState(false);
   const pathname = usePathname();
   const isMobileAndTablet = useMediaQuery('(max-width: 1199px)');
   const isSpacePage = pathname?.startsWith('/spaces/');
@@ -48,6 +48,16 @@ function RootLayout({
 
   useEffect(() => {
     setIsClient(true);
+
+    const betaUpgradeShown =
+      localStorage.getItem('betaUpgradeShown') === 'true';
+
+    setShowBetaUpgrade(!betaUpgradeShown && betaUpgrade);
+  }, []);
+
+  const handleBetaUpgradeClose = useCallback(() => {
+    localStorage.setItem('betaUpgradeShown', 'true');
+    setShowBetaUpgrade(false);
   }, []);
 
   return (
@@ -128,12 +138,8 @@ function RootLayout({
                                           </>
                                         }
                                         showModal={showBetaUpgrade}
-                                        onClose={() =>
-                                          setShowBetaUpgrade(false)
-                                        }
-                                        onConfirm={() =>
-                                          setShowBetaUpgrade(false)
-                                        }
+                                        onClose={handleBetaUpgradeClose}
+                                        onConfirm={handleBetaUpgradeClose}
                                       />
                                     )}
                                     <div
