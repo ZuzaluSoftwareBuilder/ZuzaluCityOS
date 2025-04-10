@@ -59,6 +59,12 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
       if (data.data) {
         return data.data.map((v: any) => ({
           ...v,
+          description:
+            JSON.stringify({
+              content: v.description,
+              type: 'doc',
+              isEmpty: false,
+            }) || '',
           isLegacy: true,
         }));
       }
@@ -69,12 +75,12 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
   const filterData = useMemo(() => {
     const tags = data
       ?.concat(legacyDappData)
-      ?.map((dapp) => dapp.categories.split(','));
+      ?.map((dapp) => dapp?.categories?.split(','));
     return [...new Set(tags?.flat())];
   }, [data, legacyDappData]);
 
   const currentData = useMemo(() => {
-    const allData = data?.concat(legacyDappData);
+    const allData = data?.concat(legacyDappData ?? []);
     if (filter.length === 0 && searchVal === '') {
       return allData;
     }
@@ -89,7 +95,7 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
 
     if (filter.length > 0) {
       filteredData = filteredData.filter((dapp) => {
-        const tags = dapp.categories.split(',');
+        const tags = dapp?.categories.split(',');
         return filter.some((tag) => tags.includes(tag));
       });
     }
