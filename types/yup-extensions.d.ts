@@ -13,6 +13,6 @@ declare module 'yup' {
     TContext = any,
     TOut extends TType = TType,
   > extends Yup.BaseSchema<TType, TContext, TOut> {
-    notEmptyJson(message?: string): this;
+    notEmptyJson(message?: string): StringSchema<string, TContext, string>;
   }
 }
