@@ -41,7 +41,7 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
     <Box>
       <FormHeader title={appName} handleClose={handleClose} />
       <div className="flex flex-col gap-[20px] p-[20px] mobile:p-[10px]">
-        <DAppDetailDrawer.Disclaimer />
+        <DAppDetailDrawer.Disclaimer isLegacy={isLegacy} />
         <Image
           src={bannerUrl}
           alt="dapp-detail"

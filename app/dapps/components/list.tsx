@@ -65,6 +65,7 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
               type: 'doc',
               isEmpty: false,
             }) || '',
+          categories: ['Legacy', ...v.categories.split(',')].join(','),
           isLegacy: true,
         }));
       }

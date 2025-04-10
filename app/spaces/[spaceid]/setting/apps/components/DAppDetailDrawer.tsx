@@ -136,7 +136,12 @@ export const DAppDetailDrawer = ({ children }: PropsWithChildren) => {
   );
 };
 
-DAppDetailDrawer.Disclaimer = memo(function Disclaimer() {
+interface DisclaimerProps {
+  isLegacy?: boolean;
+}
+
+DAppDetailDrawer.Disclaimer = memo(function Disclaimer(props: DisclaimerProps) {
+  const { isLegacy } = props;
   return (
     <div
       className={clsx([
@@ -149,8 +154,9 @@ DAppDetailDrawer.Disclaimer = memo(function Disclaimer() {
         <span className="text-base font-bold leading-[120%]">Disclaimer</span>
       </div>
       <div className="text-sm font-normal leading-[160%] opacity-70">
-        This application has not been audited for space usage. Use at your own
-        risk.
+        {isLegacy
+          ? 'This application is legacy. Please recreate.'
+          : 'This application has not been audited for space usage. Use at your own risk.'}
       </div>
     </div>
   );
