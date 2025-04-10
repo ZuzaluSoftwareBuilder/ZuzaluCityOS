@@ -12,6 +12,7 @@ import React from 'react';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { formatUserName } from '@/utils/format';
 import { UserSquare, Wallet, SignOut } from '@phosphor-icons/react';
+import Copy from '@/components/biz/common/Copy';
 
 export interface IUserProfileDropdown {
   avatarSize?: number;
@@ -22,6 +23,7 @@ export interface IUserProfileDropdown {
   handlePassport: () => void;
   handleLogout: () => void;
   displayAddress: string;
+  address: string;
 }
 
 const UserProfileDropdown = ({
@@ -33,6 +35,7 @@ const UserProfileDropdown = ({
   handlePassport,
   handleLogout,
   displayAddress,
+  address,
 }: IUserProfileDropdown) => {
   const { username, profile } = useCeramicContext();
 
@@ -59,21 +62,27 @@ const UserProfileDropdown = ({
       </DropdownTrigger>
       <DropdownMenu aria-label="userProfile" closeOnSelect={true}>
         <DropdownItem key="profileInfo">
-          <div className="flex w-[full] items-center gap-[10px] rounded-[8px] p-[5px] hover:bg-[rgba(255,255,255,0.05)]">
-            <Avatar
-              src={profile?.avatar ?? '/user/avatar_p.png'}
-              alt="avatar"
-              className="size-[40px] shrink-0"
-            />
-            <div className="w-[128px]">
-              <p className="truncate text-[16px] font-[500] leading-[1.2] text-[white]">
-                {username}
-              </p>
-              <p className="mt-[5px] text-[13px] leading-[1.4] text-[white] opacity-70">
-                {displayAddress}
-              </p>
+          <Copy
+            text={address}
+            message={'Wallet address copied'}
+            useCustomChildren={true}
+          >
+            <div className="flex w-[full] items-center gap-[10px] rounded-[8px] p-[5px] hover:bg-[rgba(255,255,255,0.05)]">
+              <Avatar
+                src={profile?.avatar ?? '/user/avatar_p.png'}
+                alt="avatar"
+                className="size-[40px] shrink-0"
+              />
+              <div className="w-[128px]">
+                <p className="truncate text-[16px] font-[500] leading-[1.2] text-[white]">
+                  {username}
+                </p>
+                <p className="mt-[5px] text-[13px] leading-[1.4] text-[white] opacity-70">
+                  {displayAddress}
+                </p>
+              </div>
             </div>
-          </div>
+          </Copy>
         </DropdownItem>
 
         <DropdownItem key="profileEntry">

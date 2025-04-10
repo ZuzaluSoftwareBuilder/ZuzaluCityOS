@@ -78,6 +78,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
           handlePassport={handlePassport}
           handleLogout={handleLogout}
           displayAddress={formattedAddress || ''}
+          address={address?.[address.length - 1] || ''}
         />
       ) : (
         <Button

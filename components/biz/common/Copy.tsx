@@ -10,6 +10,8 @@ export interface CopyProps {
   startContent?: ReactNode;
   onCopy?: () => void;
   message?: string;
+  useCustomChildren?: boolean;
+  className?: string;
 }
 
 const Copy = ({
@@ -18,6 +20,8 @@ const Copy = ({
   onCopy,
   startContent,
   message = '',
+  useCustomChildren = false,
+  className = '',
 }: CopyProps) => {
   const handleCopy = useCallback(() => {
     addToast({
@@ -29,14 +33,19 @@ const Copy = ({
 
   return (
     <CopyToClipboard text={text} onCopy={handleCopy}>
-      <Button
-        startContent={
-          startContent || <ShareFat weight="fill" format="Stroke" size={20} />
-        }
-        isIconOnly={!children}
-      >
-        {children}
-      </Button>
+      {useCustomChildren ? (
+        children
+      ) : (
+        <Button
+          startContent={
+            startContent || <ShareFat weight="fill" format="Stroke" size={20} />
+          }
+          isIconOnly={!children}
+          className={className}
+        >
+          {children}
+        </Button>
+      )}
     </CopyToClipboard>
   );
 };
