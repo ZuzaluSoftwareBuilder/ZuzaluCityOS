@@ -25,24 +25,9 @@ export const ProfilValidationSchema = Yup.object().shape({
   tagline: Yup.string()
     .min(3, 'Tagline must be at least 3 characters.')
     .required('Tagline is required.'),
-  description: Yup.string()
-    .test(
-      'is-valid-blocks',
-      'community description is required',
-      function (value) {
-        if (!value) return false;
-        try {
-          const parsed = JSON.parse(value);
-          if (parsed.isEmpty) return false;
-          return true;
-        } catch (e) {
-          return false;
-        }
-      },
-    )
-    .required(),
-  avatar: Yup.string().required('please upload space avatar'),
-  banner: Yup.string().required('please upload space banner'),
+  description: Yup.string().notEmptyJson('Community description is required'),
+  avatar: Yup.string().required('Please upload space avatar'),
+  banner: Yup.string().required('Please upload space banner'),
 });
 
 interface ProfileContentProps {

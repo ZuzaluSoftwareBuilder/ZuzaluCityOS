@@ -10,7 +10,6 @@ import {
 import { Controller, useForm } from 'react-hook-form';
 import { FormHelperText } from '@mui/material';
 import { omit } from 'lodash';
-import dynamic from 'next/dynamic';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import {
@@ -19,15 +18,11 @@ import {
   FormTitle,
 } from '@/components/typography/formTypography';
 import SelectCategories from '@/components/select/selectCategories';
-import { useEditorStore } from '@/components/editor/useEditorStore';
 
 import { POST_TAGS } from '@/constant';
 import Yup from '@/utils/yupExtensions';
 import { Input } from '@/components/base';
-
-const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
-  ssr: false,
-});
+import EditorPro from '@/components/editorPro';
 
 export interface PostFormResult {
   title: string;
@@ -50,7 +45,7 @@ const schema = Yup.object().shape({
     1,
     'At least one tag is required',
   ),
-  description: Yup.string(),
+  description: Yup.string().notEmptyJson('Description is required'),
 });
 
 type FormData = Yup.InferType<typeof schema>;
@@ -71,60 +66,24 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
     defaultValues: {
       title: initialData?.title || '',
       tags: initialData?.tags || [],
+      description: initialData?.description || '',
     },
   });
 
-  const descriptionEditorStore = useEditorStore();
   const initialTags = useMemo(() => {
     if (!initialData) return [];
     return POST_TAGS.filter((item) => initialData?.tags.includes(item.value));
   }, [initialData]);
 
-  const validateDescription = useCallback(() => {
-    if (
-      !descriptionEditorStore.value ||
-      !descriptionEditorStore.value.blocks ||
-      descriptionEditorStore.value.blocks.length === 0
-    ) {
-      setError('description', {
-        message: 'Description is required',
-      });
-    }
-  }, [descriptionEditorStore.value, setError]);
-
   const resetForm = useCallback(() => {
     reset({
       title: initialData?.title || '',
       tags: initialData?.tags || [],
+      description: initialData?.description || '',
     });
-    descriptionEditorStore.setValue(initialData?.description || '');
-  }, [reset, initialData, descriptionEditorStore]);
-
-  const submitForm = useCallback(
-    async (data: FormData): Promise<PostFormResult | undefined> => {
-      const description = descriptionEditorStore.value;
-      if (
-        !description ||
-        !description.blocks ||
-        description.blocks.length === 0
-      ) {
-        setError('description', {
-          message: 'Description is required',
-        });
-        onFormError();
-        return undefined;
-      }
-      return {
-        title: data.title,
-        tags: data.tags || [],
-        description: descriptionEditorStore.getValueString(),
-      };
-    },
-    [descriptionEditorStore.value, setError],
-  );
+  }, [reset, initialData]);
 
   const onFormError = useCallback(() => {
-    validateDescription();
     if (!formContainerRef.current) return;
     const firstErrorField = Object.keys(omit(errors, 'root'))[0];
     if (firstErrorField) {
@@ -135,7 +94,18 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
         errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
-  }, [errors, setError]);
+  }, [errors]);
+
+  const submitForm = useCallback(
+    async (data: FormData): Promise<PostFormResult | undefined> => {
+      return {
+        title: data.title,
+        tags: data.tags || [],
+        description: data.description || '',
+      };
+    },
+    [],
+  );
 
   useImperativeHandle(
     ref,
@@ -149,7 +119,7 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
         }),
       reset: resetForm,
     }),
-    [handleSubmit, submitForm, resetForm, validateDescription],
+    [handleSubmit, submitForm, resetForm, onFormError],
   );
 
   return (
@@ -205,17 +175,17 @@ const PostForm = forwardRef<PostFormHandle, PostFormProps>((props, ref) => {
         </div>
 
         <div data-field="description" className="flex flex-col gap-2.5">
-          <SuperEditor
-            placeholder="Type post content"
-            value={descriptionEditorStore.value}
-            onChange={(val) => {
-              descriptionEditorStore.setValue(val);
-              if (!val || !val.blocks || val.blocks.length == 0) {
-                setError('description', {
-                  message: 'Description is required',
-                });
-              }
-            }}
+          <Controller
+            name="description"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <EditorPro
+                value={value}
+                onChange={onChange}
+                className={{ base: 'min-h-[190px]' }}
+                placeholder="Type post content"
+              />
+            )}
           />
           {errors?.description && (
             <FormHelperText error>{errors?.description.message}</FormHelperText>

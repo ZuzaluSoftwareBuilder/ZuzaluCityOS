@@ -1,6 +1,6 @@
 'use client';
 import { Box, FormHelperText, Stack, Typography } from '@mui/material';
-import { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import FormHeader from './FormHeader';
 import {
   FormLabel,
@@ -9,7 +9,6 @@ import {
 } from '../typography/formTypography';
 import { ZuInput, ZuSwitch } from '../core';
 import FormFooter from './FormFooter';
-import { useEditorStore } from '../editor/useEditorStore';
 import Yup from '@/utils/yupExtensions';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -18,16 +17,14 @@ import { useCeramicContext } from '@/context/CeramicContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dapp, FilmOptionType } from '@/types';
 import SelectCategories from '../select/selectCategories';
+import { useFormScrollToError } from '@/hooks/useFormScrollToError';
 
-import dynamic from 'next/dynamic';
 import FormUploader from './FormUploader';
 import { createDapp, updateDapp } from '@/services/dapp';
 import { Button, Select, SelectItem } from '../base';
 import { Check } from '@phosphor-icons/react';
 import { isAddress } from 'viem';
-const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
-  ssr: false,
-});
+import EditorPro from '@/components/editorPro';
 
 interface DappFormProps {
   handleClose: () => void;
@@ -38,7 +35,7 @@ interface DappFormProps {
 const schema = Yup.object().shape({
   appName: Yup.string().required('App name is required'),
   developerName: Yup.string().required('Developer name is required'),
-  description: Yup.string(),
+  description: Yup.string().notEmptyJson('Description is required'),
   tagline: Yup.string()
     .required('Tagline is required')
     .max(70, 'Maximum 70 characters are allowed'),
@@ -90,10 +87,10 @@ const DappForm: React.FC<DappFormProps> = ({
   initialData,
   refetch,
 }) => {
-  const descriptionEditorStore = useEditorStore();
-  const { profile, composeClient } = useCeramicContext();
+  const { profile } = useCeramicContext();
   const queryClient = useQueryClient();
   const profileId = profile?.id || '';
+  const { scrollToError } = useFormScrollToError();
 
   const {
     control,
@@ -132,11 +129,6 @@ const DappForm: React.FC<DappFormProps> = ({
   const tagline = watch('tagline');
   const isInstallable = watch('isInstallable');
 
-  const resetForm = useCallback(() => {
-    reset();
-    descriptionEditorStore.clear();
-  }, [descriptionEditorStore, reset]);
-
   const submitMutation = useMutation({
     mutationFn: ({ type, data }: { type: 'create' | 'edit'; data: any }) => {
       if (type === 'create') {
@@ -146,7 +138,7 @@ const DappForm: React.FC<DappFormProps> = ({
       }
     },
     onSuccess: () => {
-      resetForm();
+      reset();
       refetch?.();
       handleClose();
       queryClient.invalidateQueries({ queryKey: ['GET_DAPP_LIST_QUERY'] });
@@ -155,39 +147,20 @@ const DappForm: React.FC<DappFormProps> = ({
 
   const handlePost = useCallback(
     async (data: FormData) => {
-      if (
-        !descriptionEditorStore.value ||
-        !descriptionEditorStore.value.blocks ||
-        descriptionEditorStore.value.blocks.length == 0
-      ) {
-        setError('description', {
-          message: 'Description is required',
-        });
-        window.alert('Description is required');
-        return;
-      }
-      const description = descriptionEditorStore.getValueString();
       if (!initialData) {
         await submitMutation.mutateAsync({
           type: 'create',
-          data: {
-            ...data,
-            description,
-          },
+          data,
         });
       } else {
         await submitMutation.mutateAsync({
           type: 'edit',
-          data: { ...data, description, id: initialData.id },
+          data: { ...data, id: initialData.id },
         });
       }
     },
-    [descriptionEditorStore, setError, submitMutation, initialData],
+    [submitMutation, initialData],
   );
-
-  const onFormError = useCallback(() => {
-    window.alert('Please input all necessary fields.');
-  }, []);
 
   const initialTags = useMemo(() => {
     if (!initialData) return [];
@@ -211,12 +184,6 @@ const DappForm: React.FC<DappFormProps> = ({
       }
     });
     return [...DAPP_TAGS, ...tags];
-  }, [initialData]);
-
-  useEffect(() => {
-    if (initialData?.description) {
-      descriptionEditorStore.setValue(initialData.description);
-    }
   }, [initialData]);
 
   return (
@@ -297,12 +264,17 @@ const DappForm: React.FC<DappFormProps> = ({
               App Description*
             </Typography>
             <FormLabelDesc>Write your app description here</FormLabelDesc>
-            <SuperEditor
-              placeholder="Type app description"
-              value={descriptionEditorStore.value}
-              onChange={(val) => {
-                descriptionEditorStore.setValue(val);
-              }}
+            <Controller
+              name="description"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <EditorPro
+                  value={value}
+                  onChange={onChange}
+                  className={{ base: 'min-h-[190px]' }}
+                  placeholder="Type app description"
+                />
+              )}
             />
             {errors?.description && (
               <FormHelperText error>
@@ -741,7 +713,7 @@ const DappForm: React.FC<DappFormProps> = ({
           isLoading={submitMutation.isPending}
           disabled={false}
           handleClose={handleClose}
-          handleConfirm={handleSubmit(handlePost, onFormError)}
+          handleConfirm={handleSubmit(handlePost, scrollToError)}
         />
       </Box>
     </Box>

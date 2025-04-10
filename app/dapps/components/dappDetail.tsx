@@ -2,13 +2,14 @@ import FormHeader from '@/components/form/FormHeader';
 import { GlobeAltIcon, WindowIcon } from '@/components/icons';
 import { Box, Typography, Stack, Divider } from '@mui/material';
 
-import ShowMoreEdit from '@/components/editor/ShowMoreEdit';
 import { Dapp } from '@/types';
 import theme from '@/theme/theme';
 import DAppDetailDrawer from '@/app/spaces/[spaceid]/setting/apps/components/DAppDetailDrawer';
 import { Image } from '@heroui/react';
 import { BoxArrowDown } from '@phosphor-icons/react';
 import { Plugs } from '@phosphor-icons/react';
+import EditorProWithMore from '@/app/spaces/[spaceid]/components/home/EditorProWithMore';
+
 interface DappDetailProps {
   data?: Dapp;
   handleClose: () => void;
@@ -43,7 +44,10 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
         <Image
           src={bannerUrl}
           alt="dapp-detail"
-          className="aspect-[620/280] h-auto w-full rounded-[10px] object-cover"
+          className="aspect-[620/280] h-auto w-full rounded-[10px] object-fill"
+          classNames={{
+            wrapper: '!max-w-none w-full',
+          }}
         />
         {isInstallable === '1' && (
           <div className="flex items-center gap-[10px]">
@@ -61,7 +65,7 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
           <Image
             src={appLogoUrl || ''}
             alt={appName}
-            className="size-[60px] rounded-[10px] border border-[rgba(255,255,255,0.1)]"
+            className="size-[60px] rounded-[10px] border border-[rgba(255,255,255,0.1)] object-cover"
             classNames={{
               wrapper: 'shrink-0',
             }}
@@ -176,7 +180,16 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
         <Typography fontSize={16} fontWeight={600} lineHeight={1.4}>
           App Description:
         </Typography>
-        <ShowMoreEdit value={description} />
+        <EditorProWithMore
+          value={description}
+          isEdit={false}
+          className={{
+            base: 'bg-transparent',
+            editorWrapper: 'p-0',
+          }}
+          collapseHeight={150}
+          defaultCollapsed={true}
+        />
         <Divider />
         <DAppDetailDrawer.Status
           devStatus={devStatus}
