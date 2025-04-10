@@ -36,7 +36,7 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
     }
 
     const body = await request.json();
-    const { id, resource } = body;
+    const { id, resource = 'space' } = body;
 
     if (!id || !resource) {
       return {
@@ -118,8 +118,8 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
 
 export function withSessionValidation(
   handler: (
-    request: NextRequest,
-    sessionData: Omit<SessionCheckResult, 'isValid' | 'error'>,
+    _request: NextRequest,
+    _sessionData: Omit<SessionCheckResult, 'isValid' | 'error'>,
   ) => Promise<NextResponse>,
 ) {
   return async (request: NextRequest) => {

@@ -1,5 +1,5 @@
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useAccount } from 'wagmi';
+import { useAccount, useWalletClient } from 'wagmi';
 import { useEffect, useState, useMemo } from 'react';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import { PermissionName } from '@/types';
@@ -78,6 +78,8 @@ const useCheckWalletConnectAndSpacePermission = ({
   const { isOwner, isAdmin, isMember, isLoading, checkPermission } =
     useSpacePermissions();
   const { isConnected, isConnecting, status: walletStatus } = useAccount();
+  const { isSuccess, isError } = useWalletClient();
+  const clientReady = isSuccess || isError;
 
   const { onNoPermission, onWalletNotConnected } = callbacks;
 
@@ -93,7 +95,7 @@ const useCheckWalletConnectAndSpacePermission = ({
   }, [checkStatus]);
 
   const currentStatus = useMemo((): PermissionCheckStatus => {
-    if (!isConnected) {
+    if (!isConnected && clientReady) {
       return PermissionCheckStatus.WALLET_NOT_CONNECTED;
     }
 
@@ -104,7 +106,7 @@ const useCheckWalletConnectAndSpacePermission = ({
     return hasPermission
       ? PermissionCheckStatus.GRANTED
       : PermissionCheckStatus.DENIED;
-  }, [allChecksComplete, isConnected, hasPermission]);
+  }, [isConnected, clientReady, allChecksComplete, hasPermission]);
 
   useEffect(() => {
     if (typeof walletStatus !== 'undefined') {
@@ -163,7 +165,7 @@ const useCheckWalletConnectAndSpacePermission = ({
   ]);
 
   useEffect(() => {
-    if (!isConnected) {
+    if (!isConnected && clientReady) {
       console.log('user is not connected');
       onWalletNotConnected?.() || onNoPermission?.();
       return;
@@ -188,6 +190,8 @@ const useCheckWalletConnectAndSpacePermission = ({
     hasPermission,
     onNoPermission,
     onWalletNotConnected,
+    checkStatus.walletChecked,
+    clientReady,
   ]);
 
   return {

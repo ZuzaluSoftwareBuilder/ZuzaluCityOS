@@ -8,7 +8,7 @@ import {
   EventCard,
   EventCardSkeleton,
   EventCardMonthGroup,
-} from '@/app/components/EventCard';
+} from '@/components/biz/event/EventCard';
 import { Event } from '@/types';
 
 export interface ISpaceEventListProps {

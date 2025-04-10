@@ -36,7 +36,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     }
     const { id, resource, userId } = validationResult.data;
 
-    const { isOwner, permission, role, operatorRole } = sessionData;
+    const { role } = sessionData;
 
     const existingRoleResult = await executeQuery(CHECK_EXISTING_ROLE_QUERY, {
       userId,

@@ -6,6 +6,7 @@ const CustomLink = ({ link }: { link: ILink }) => {
   return (
     <Link
       href={link.links}
+      target="_blank"
       className={
         'cursor-pointer items-start rounded-[10px] p-[10px] opacity-80 hover:bg-[rgba(255,255,255,0.05)] active:bg-[rgba(255,255,255,0.05)]'
       }

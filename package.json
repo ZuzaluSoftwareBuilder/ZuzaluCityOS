@@ -46,6 +46,7 @@
     "@fullcalendar/timegrid": "^6.1.15",
     "@heroicons/react": "^2.2.0",
     "@heroui/react": "^2.7.5",
+    "@heroui/use-infinite-scroll": "^2.2.7",
     "@hookform/resolvers": "^3.9.0",
     "@internationalized/date": "^3.7.0",
     "@irys/sdk": "^0.2.6",

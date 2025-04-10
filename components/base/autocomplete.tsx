@@ -19,7 +19,7 @@ const Autocomplete = extendVariants(HAutocomplete, {
     },
   },
   defaultVariants: {
-    autocomplete: 'default',
+    // autocomplete: 'default',
   },
 });
 
@@ -32,7 +32,7 @@ const AutocompleteItem = extendVariants(HAutocompleteItem, {
     },
   },
   defaultVariants: {
-    item: 'default',
+    // item: 'default',
   },
 });
 

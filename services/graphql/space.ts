@@ -15,6 +15,7 @@ export const GET_SPACE_QUERY_BY_ID = graphql(`
         color
         createdAt
         updatedAt
+        gated
         tags {
           tag
         }
@@ -72,6 +73,23 @@ export const GET_SPACE_QUERY_BY_ID = graphql(`
                 categories
                 appLogoUrl
               }
+            }
+          }
+        }
+        spaceGating(first: 100) {
+          edges {
+            node {
+              id
+              poapsId {
+                poapId
+              }
+              zuPassInfo {
+                registration
+                eventId
+                eventName
+              }
+              gatingStatus
+              spaceId
             }
           }
         }

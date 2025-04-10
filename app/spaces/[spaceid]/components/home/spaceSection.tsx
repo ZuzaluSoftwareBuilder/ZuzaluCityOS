@@ -1,39 +1,30 @@
 'use client';
 import { Space } from '@/types';
-import { addToast, Avatar, Image, Skeleton } from '@heroui/react';
-import { Button } from '@/components/base';
-import {
-  ArrowSquareRight,
-  Heart,
-  Buildings,
-  Users,
-} from '@phosphor-icons/react';
+import { Avatar, cn, Image, Skeleton, useDisclosure } from '@heroui/react';
+
+import { Users } from '@phosphor-icons/react';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { useParams } from 'next/navigation';
-import React, { useMemo, useState } from 'react';
-import EditorPro from '@/components/editorPro';
+import React, { useMemo } from 'react';
 import useUserSpace from '@/hooks/useUserSpace';
-import { CheckCircleIcon } from '@/components/icons';
-import { formatMemberCount } from '@/app/components/SpaceCard';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { followSpace, unFollowSpace } from '@/services/member';
-import Copy from '@/components/base/copy';
+import { formatMemberCount } from '@/components/biz/space/SpaceCard';
+import EditorProWithMore from './EditorProWithMore';
+import { JoinSpaceNoGate, JoinSpaceWithGate } from './modal/joinSpace';
+import SpaceActions from './spaceActions';
+import SpaceChip from '@/components/biz/space/SpaceChip';
 
 export interface SpaceSectionProps {
   spaceData?: Space;
   isLoading: boolean;
 }
 
-const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
+const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
   const params = useParams();
   const spaceId = params?.spaceid?.toString() ?? '';
-  const { profile, isAuthenticated, showAuthPrompt } = useCeramicContext();
-  const queryClient = useQueryClient();
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
-  const [isCanCollapse, setIsCanCollapse] = useState<boolean>(false);
+  const { isOpen, onOpenChange, onClose, onOpen } = useDisclosure();
 
-  const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
+  const { userJoinedSpaceIds, userFollowedSpaceIds, isUserSpaceFetched } =
+    useUserSpace();
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers =
@@ -49,68 +40,25 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
 
   const { shareUrl } = useGetShareLink({ id: spaceId, name: spaceData?.name });
 
-  const onJoin = () => {
-    //   TODO join event
-    console.log('join event');
-  };
-
-  const followMutation = useMutation({
-    mutationFn: () => followSpace(spaceId, profile!.author!.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['GET_USER_ROLES_QUERY'],
-      });
-    },
-    onError: (error: Error) => {
-      console.error(error);
-      addToast({
-        title: error.message || 'Fail to follow',
-        color: 'danger',
-      });
-    },
-  });
-
-  const unfollowMutation = useMutation({
-    mutationFn: () => unFollowSpace(spaceId, profile!.author!.id),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['GET_USER_ROLES_QUERY'],
-      });
-    },
-    onError: (error: Error) => {
-      console.error(error);
-      addToast({
-        title: error.message || 'Fail to unfollow',
-        color: 'danger',
-      });
-    },
-  });
-
-  const isPending = followMutation.isPending || unfollowMutation.isPending;
-
-  const onFollow = async () => {
-    if (!isAuthenticated || !profile?.author?.id) {
-      showAuthPrompt('connectButton');
-      return;
-    }
-
-    if (isPending) {
-      return;
-    }
-
-    if (isUserFollowed) {
-      unfollowMutation.mutate();
-    } else {
-      followMutation.mutate();
-    }
-  };
-
   if (!spaceData) {
     return <SpaceHomeSkeleton />;
   }
 
   return (
     <div className="flex flex-col border-b border-[rgba(255,255,255,0.10)] bg-[#2C2C2C] p-[20px] backdrop-blur-[20px] mobile:p-[14px]">
+      {spaceData.gated === '1' ? (
+        <JoinSpaceWithGate
+          isOpen={isOpen}
+          onClose={onClose}
+          onOpenChange={onOpenChange}
+        />
+      ) : (
+        <JoinSpaceNoGate
+          isOpen={isOpen}
+          onClose={onClose}
+          onOpenChange={onOpenChange}
+        />
+      )}
       <div className="relative">
         <Image
           src={spaceData.banner}
@@ -133,53 +81,29 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
         />
       </div>
 
-      {/* join/follow actions */}
-      <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
-        {isAuthenticated && !isUserJoined && (
-          <Button
-            startContent={
-              isPending ? null : (
-                <Heart
-                  weight={isUserFollowed ? 'fill' : 'light'}
-                  format="Stroke"
-                  size={20}
-                />
-              )
-            }
-            onPress={onFollow}
-            isLoading={isPending}
-            isDisabled={isPending}
-          >
-            {isUserFollowed ? 'Following' : 'Follow'}
-          </Button>
-        )}
-        {isAuthenticated && (
-          <Button
-            startContent={
-              isUserJoined ? (
-                <CheckCircleIcon size={5} />
-              ) : (
-                <ArrowSquareRight weight="fill" format="Stroke" size={20} />
-              )
-            }
-            onPress={onJoin}
-          >
-            {isUserJoined ? 'Joined' : 'Join Community'}
-          </Button>
-        )}
-
-        <Copy text={shareUrl!} />
-      </div>
+      {/* Desktop Actions */}
+      <SpaceActions
+        spaceData={spaceData}
+        spaceId={spaceId}
+        isUserJoined={isUserJoined}
+        isUserFollowed={isUserFollowed}
+        isUserSpaceFetched={isUserSpaceFetched}
+        shareUrl={shareUrl}
+        onJoin={onOpen}
+        className="mt-[20px] flex justify-end gap-[10px] mobile:hidden"
+      />
 
       {/* space info: name/desc */}
       <div className="mt-[20px] flex flex-col gap-[10px] mobile:mt-[50px]">
         <div className="flex items-center justify-start gap-[10px]">
-          <div className="flex h-[30px] items-center gap-[10px] rounded-[8px] bg-[rgba(255,255,255,0.1)] px-[10px]">
-            <Buildings weight="fill" format="Stroke" size={20} />
-            <span className="text-[14px] font-[600] leading-[1.2] text-white drop-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] ">
-              Community
-            </span>
-          </div>
+          <SpaceChip
+            category={spaceData?.category}
+            classNames={{
+              base: ' h-[30px] gap-[10px] rounded-[8px] bg-[rgba(255,255,255,0.1)] px-[10px]',
+              label:
+                'text-[14px] font-[600] drop-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] ',
+            }}
+          />
 
           <div className="flex items-center gap-[6px] opacity-50">
             <Users weight="fill" format="Stroke" size={20} />
@@ -193,19 +117,15 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
           {spaceData.name}
         </p>
 
-        <EditorPro
+        <EditorProWithMore
           value={spaceData.description}
           isEdit={false}
           className={{
             base: 'bg-transparent',
             editorWrapper: 'p-0',
           }}
-          collapsable={true}
           collapseHeight={150}
-          collapsed={isCollapsed}
-          onCollapse={(canCollapse) => {
-            setIsCanCollapse(canCollapse);
-          }}
+          defaultCollapsed={true}
         />
       </div>
 
@@ -221,44 +141,18 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
         ))}
       </div>
 
-      {/*Mobile join/share actions*/}
-      <div className="mt-[10px] hidden gap-[10px] mobile:flex">
-        {isAuthenticated && !isUserJoined && (
-          <Button
-            startContent={
-              isPending ? null : (
-                <Heart
-                  weight={isUserFollowed ? 'fill' : 'light'}
-                  format="Stroke"
-                  size={20}
-                />
-              )
-            }
-            onPress={onFollow}
-            isLoading={isPending}
-            isDisabled={isPending}
-            className="w-full flex-1 shrink-0"
-          >
-            {isUserFollowed ? 'Following' : 'Follow'}
-          </Button>
-        )}
-        {isAuthenticated && (
-          <Button
-            startContent={
-              isUserJoined ? (
-                <CheckCircleIcon size={5} />
-              ) : (
-                <ArrowSquareRight weight="fill" format="Stroke" size={20} />
-              )
-            }
-            className="w-full flex-1 shrink-0"
-          >
-            {isUserJoined ? 'Joined' : 'Join Community'}
-          </Button>
-        )}
-
-        <Copy text={shareUrl!} />
-      </div>
+      {/*Mobile Actions*/}
+      <SpaceActions
+        spaceData={spaceData}
+        spaceId={spaceId}
+        isUserJoined={isUserJoined}
+        isUserFollowed={isUserFollowed}
+        isUserSpaceFetched={isUserSpaceFetched}
+        shareUrl={shareUrl}
+        onJoin={onOpen}
+        className="mt-[10px] hidden justify-end gap-[10px] mobile:flex"
+        isMobile={true}
+      />
     </div>
   );
 };
@@ -266,25 +160,27 @@ const SpaceSection = ({ spaceData, isLoading }: SpaceSectionProps) => {
 const SpaceHomeSkeleton = () => {
   return (
     <div className="flex flex-col border-b border-[rgba(255,255,255,0.10)] bg-[#2C2C2C] p-[20px] backdrop-blur-[20px] mobile:p-[14px]">
-      <Skeleton className="aspect-[3.4] rounded-[10px] object-cover mobile:aspect-[2.4]" />
+      <div className="relative">
+        <Skeleton className="relative aspect-[3.4] rounded-[10px] object-cover mobile:aspect-[2.4]" />
+        <Skeleton
+          className={cn(
+            'box-content absolute bottom-[-30px] left-[27px] z-10',
+            'size-[90px] rounded-full border-[4px] border-[#2E2E2E]',
+            'mobile:size-[70px] mobile:bottom-[-40px] mobile:left-[17px]',
+          )}
+        />
+      </div>
 
       <div className="mt-[20px] flex justify-end gap-[10px] mobile:hidden">
-        <Skeleton className="h-[40px] w-[178px] rounded-[8px]" />
+        <Skeleton className="h-[40px] w-[100px] rounded-[8px]" />
+        <Skeleton className="h-[40px] w-[168px] rounded-[8px]" />
         <Skeleton className="size-[40px] rounded-[8px]" />
       </div>
 
       <div className="mt-[20px] flex flex-col gap-[10px] mobile:mt-[50px]">
-        <div className="flex items-center justify-start gap-[10px]">
-          <div className="flex h-[30px] items-center gap-[10px] rounded-[8px] bg-[rgba(255,255,255,0.1)] px-[10px]">
-            <Buildings weight="fill" format="Stroke" size={20} />
-            <span className="text-[14px] font-[600] leading-[1.2] text-white drop-shadow-[0px_5px_10px_rgba(0,0,0,0.15)] ">
-              Community
-            </span>
-          </div>
-        </div>
-
-        <Skeleton className="h-[30px] w-4/5 rounded-[4px]" />
-
+        <Skeleton className="h-[30px] w-[178px] rounded-[8px]" />
+        <Skeleton className="h-[30px] w-[200px] rounded-[4px]" />
+        <Skeleton className="h-[22px] w-2/5 rounded-[4px]" />
         <Skeleton className="h-[22px] w-2/5 rounded-[4px]" />
       </div>
 

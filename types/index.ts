@@ -231,13 +231,18 @@ export interface Space {
   customAttributes: TBD[];
   createdAt: string;
   updatedAt: string;
-  installedApps: {
+  installedApps?: {
     edges: {
       node: InstalledApp;
     }[];
   };
+  gated: string;
   isLegacy?: boolean;
-  gated?: string;
+  spaceGating?: {
+    edges: {
+      node: SpaceGating;
+    }[];
+  };
 }
 
 export interface CalendarConfig {
@@ -638,8 +643,9 @@ export enum PermissionName {
   VIEW_ANALYTICS = 'view_analytics',
   MANAGE_APPS = 'manage_apps',
   VIEW_APPS = 'view_apps',
-  MANAGE_SPACE_ANNOUNCEMENTS = 'manage_space_announcements',
-  VIEW_SPACE_ANNOUNCEMENTS = 'view_space_announcements',
+  MANAGE_ANNOUNCEMENTS = 'manage_announcements',
+  VIEW_ANNOUNCEMENTS = 'view_announcements',
+  MANAGE_ACCESS = 'manage_access',
 }
 
 export interface Role {
@@ -713,4 +719,12 @@ export interface Announcement {
       username: string;
     };
   };
+}
+
+export interface SpaceGating {
+  id: string;
+  spaceId: string;
+  gatingStatus: string;
+  poapsId?: { poapId: number }[];
+  zuPassInfo?: ZuPassInfo;
 }
