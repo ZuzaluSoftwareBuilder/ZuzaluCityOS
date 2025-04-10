@@ -624,6 +624,7 @@ export interface Dapp {
     username: string;
     avatar: string;
   };
+  isLegacy?: boolean;
 }
 
 export interface Permission {

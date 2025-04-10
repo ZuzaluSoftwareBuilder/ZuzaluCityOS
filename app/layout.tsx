@@ -78,7 +78,10 @@ function RootLayout({
                               <ZupassProvider>
                                 <ModalProvider>
                                   <AppContextProvider>
-                                    <ReactQueryDevtools initialIsOpen={false} />
+                                    <ReactQueryDevtools
+                                      initialIsOpen={false}
+                                      buttonPosition="bottom-left"
+                                    />
                                     <HeroToastProvider
                                       placement={'bottom-left'}
                                       toastOffset={20}

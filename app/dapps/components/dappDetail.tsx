@@ -32,6 +32,7 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
     tagline,
     isInstallable,
     appLogoUrl,
+    isLegacy,
   } = data;
 
   const categoriesArray = categories.split(',');
@@ -63,7 +64,7 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
         )}
         <div className="flex flex-row items-center gap-[10px]">
           <Image
-            src={appLogoUrl || ''}
+            src={isLegacy ? bannerUrl : appLogoUrl || ''}
             alt={appName}
             className="size-[60px] rounded-[10px] border border-[rgba(255,255,255,0.1)] object-cover"
             classNames={{
