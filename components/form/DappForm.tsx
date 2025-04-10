@@ -11,12 +11,13 @@ import { ZuInput, ZuSwitch } from '../core';
 import FormFooter from './FormFooter';
 import Yup from '@/utils/yupExtensions';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, FieldErrors } from 'react-hook-form';
 import { DAPP_TAGS } from '@/constant';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dapp, FilmOptionType } from '@/types';
 import SelectCategories from '../select/selectCategories';
+import { useFormScrollToError } from '@/hooks/useFormScrollToError';
 
 import FormUploader from './FormUploader';
 import { createDapp, updateDapp } from '@/services/dapp';
@@ -89,6 +90,7 @@ const DappForm: React.FC<DappFormProps> = ({
   const { profile } = useCeramicContext();
   const queryClient = useQueryClient();
   const profileId = profile?.id || '';
+  const { scrollToError } = useFormScrollToError();
 
   const {
     control,
@@ -127,10 +129,6 @@ const DappForm: React.FC<DappFormProps> = ({
   const tagline = watch('tagline');
   const isInstallable = watch('isInstallable');
 
-  const resetForm = useCallback(() => {
-    reset();
-  }, [reset]);
-
   const submitMutation = useMutation({
     mutationFn: ({ type, data }: { type: 'create' | 'edit'; data: any }) => {
       if (type === 'create') {
@@ -140,7 +138,7 @@ const DappForm: React.FC<DappFormProps> = ({
       }
     },
     onSuccess: () => {
-      resetForm();
+      reset();
       refetch?.();
       handleClose();
       queryClient.invalidateQueries({ queryKey: ['GET_DAPP_LIST_QUERY'] });
@@ -149,31 +147,27 @@ const DappForm: React.FC<DappFormProps> = ({
 
   const handlePost = useCallback(
     async (data: FormData) => {
-      try {
-        if (!initialData) {
-          await submitMutation.mutateAsync({
-            type: 'create',
-            data,
-          });
-        } else {
-          await submitMutation.mutateAsync({
-            type: 'edit',
-            data: { ...data, id: initialData.id },
-          });
-        }
-      } catch (error) {
-        console.error('Error processing editor content:', error);
-        setError('description', {
-          message: 'Invalid description format',
+      if (!initialData) {
+        await submitMutation.mutateAsync({
+          type: 'create',
+          data,
+        });
+      } else {
+        await submitMutation.mutateAsync({
+          type: 'edit',
+          data: { ...data, id: initialData.id },
         });
       }
     },
-    [setError, submitMutation, initialData],
+    [submitMutation, initialData],
   );
 
-  const onFormError = useCallback(() => {
-    window.alert('Please input all necessary fields.');
-  }, []);
+  const onFormError = useCallback(
+    (errors: FieldErrors<FormData>) => {
+      scrollToError(errors);
+    },
+    [scrollToError],
+  );
 
   const initialTags = useMemo(() => {
     if (!initialData) return [];
