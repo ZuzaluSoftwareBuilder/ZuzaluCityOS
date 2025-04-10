@@ -1,5 +1,5 @@
 import { Space } from '@/types';
-import { addToast, Button, Skeleton } from '@heroui/react';
+import { addToast, Skeleton } from '@heroui/react';
 import { ArrowSquareRight, Heart } from '@phosphor-icons/react';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -9,6 +9,7 @@ import { CheckCircleIcon } from '@/components/icons';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useModal } from '@/context/ModalContext';
+import { Button } from '@/components/base';
 
 interface SpaceActionsProps {
   spaceData?: Space;
