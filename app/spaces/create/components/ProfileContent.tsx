@@ -27,9 +27,9 @@ export const ProfilValidationSchema = Yup.object().shape({
     .required('Tagline is required.'),
   description: Yup.string()
     .notEmptyJson('Community description is required')
-    .required('Community Description is required'),
-  avatar: Yup.string().required('please upload space avatar'),
-  banner: Yup.string().required('please upload space banner'),
+    .required('Community description is required'),
+  avatar: Yup.string().required('Please upload space avatar'),
+  banner: Yup.string().required('Please upload space banner'),
 });
 
 interface ProfileContentProps {
