@@ -109,7 +109,7 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
           <Image
             src={post.author.zucityProfile?.avatar ?? '/user/avatar_p.png'}
             alt="avatar"
-            className="rounded-full"
+            className="rounded-full object-cover"
             width={40}
             height={40}
           />

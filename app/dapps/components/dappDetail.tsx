@@ -62,7 +62,7 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
           <Image
             src={appLogoUrl || ''}
             alt={appName}
-            className="size-[60px] rounded-[10px] border border-[rgba(255,255,255,0.1)]"
+            className="size-[60px] rounded-[10px] border border-[rgba(255,255,255,0.1)] object-cover"
             classNames={{
               wrapper: 'shrink-0',
             }}
