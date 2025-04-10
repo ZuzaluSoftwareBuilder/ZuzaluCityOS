@@ -50,9 +50,9 @@ const SpacePage = () => {
       <ExploreHeader
         icon={
           <Buildings
-            size={isMobile ? 60 : 80}
             weight="duotone"
             format="Stroke"
+            className="size-[80px] mobile:size-[60px]"
           />
         }
         bgImage={'/space/header.png'}

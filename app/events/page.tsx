@@ -51,7 +51,11 @@ const EventPage = () => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <ExploreHeader
         icon={
-          <Ticket size={isMobile ? 60 : 80} weight="duotone" format="Stroke" />
+          <Ticket
+            weight="duotone"
+            format="Stroke"
+            className="size-[80px] mobile:size-[60px]"
+          />
         }
         bgImage={'/events/header.png'}
         bgImageWidth={220}

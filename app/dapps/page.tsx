@@ -64,7 +64,11 @@ export default function DappsPage() {
     <>
       <ExploreHeader
         icon={
-          <Shapes size={isMobile ? 60 : 80} weight="duotone" format="Stroke" />
+          <Shapes
+            weight="duotone"
+            format="Stroke"
+            className="size-[80px] mobile:size-[60px]"
+          />
         }
         bgImage={'/dapps/header.png'}
         title={'Apps'}

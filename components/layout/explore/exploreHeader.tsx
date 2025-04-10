@@ -124,7 +124,7 @@ export default function ExploreHeader({
         <div className="flex flex-col gap-[10px] mobile:gap-[5px]">
           <div className="flex flex-row items-center">
             {titlePrefixIcon}
-            <h1 className="z-[2] text-[40px] font-[800] leading-[1.2] text-white mobile:text-[28px]">
+            <h1 className="z-[2] h-[48px] text-[40px] font-[800] leading-[1.2] text-white mobile:h-[39px] mobile:text-[32px]">
               {title}
             </h1>
           </div>
