@@ -28,6 +28,7 @@ import { useMediaQuery } from '@mui/material';
 import NewAuthPrompt from '@/app/components/auth/NewAuthPrompt';
 import { BuildInRoleProvider } from '@/context/BuildInRoleContext';
 import { ModalProvider } from '@/context/ModalContext';
+import useTheme, { Theme } from '@/hooks/use-theme';
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ function RootLayout({
   const isMobileAndTablet = useMediaQuery('(max-width: 1199px)');
   const isSpacePage = pathname?.startsWith('/spaces/');
   const shouldHideHeader = isMobileAndTablet && isSpacePage;
+  const [HeroTheme] = useTheme(Theme.Dark);
 
   useEffect(() => {
     setIsClient(true);
@@ -66,63 +68,67 @@ function RootLayout({
       <body>
         <AppRouterCacheProvider>
           <HeroUIProvider>
-            <DialogProvider>
-              <ToastProvider>
-                <ThemeProvider theme={theme}>
-                  <QueryClientProvider client={queryClient}>
-                    <NuqsAdapter>
-                      <LitProvider>
-                        <CeramicProvider>
-                          <BuildInRoleProvider>
-                            <WalletProvider>
-                              <ZupassProvider>
-                                <ModalProvider>
-                                  <AppContextProvider>
-                                    <ReactQueryDevtools initialIsOpen={false} />
-                                    <HeroToastProvider
-                                      placement={'bottom-left'}
-                                      toastOffset={20}
-                                      toastProps={{
-                                        classNames: {
-                                          base: 'max-w-[350px]',
-                                        },
-                                        variant: 'flat',
-                                      }}
-                                      regionProps={{
-                                        classNames: { base: 'z-[1500]' },
-                                      }}
-                                    />
-                                    {!shouldHideHeader && <Header />}
-                                    {isClient && <NewAuthPrompt />}
-                                    <GlobalDialog />
-                                    {isClient && ceramicDown && (
-                                      <Dialog
-                                        title="Upgrading Ceramic Node"
-                                        message="We are currently upgrading our Ceramic node. Some data may be temporarily unavailable or inconsistent. We apologize for any inconvenience."
-                                        showModal={show}
-                                        onClose={() => setShow(false)}
-                                        onConfirm={() => setShow(false)}
+            <div className={HeroTheme}>
+              <DialogProvider>
+                <ToastProvider>
+                  <ThemeProvider theme={theme}>
+                    <QueryClientProvider client={queryClient}>
+                      <NuqsAdapter>
+                        <LitProvider>
+                          <CeramicProvider>
+                            <BuildInRoleProvider>
+                              <WalletProvider>
+                                <ZupassProvider>
+                                  <ModalProvider>
+                                    <AppContextProvider>
+                                      <ReactQueryDevtools
+                                        initialIsOpen={false}
                                       />
-                                    )}
-                                    <div
-                                      style={{
-                                        minHeight: `calc(100vh - 50px)`,
-                                      }}
-                                    >
-                                      {children}
-                                    </div>
-                                  </AppContextProvider>
-                                </ModalProvider>
-                              </ZupassProvider>
-                            </WalletProvider>
-                          </BuildInRoleProvider>
-                        </CeramicProvider>
-                      </LitProvider>
-                    </NuqsAdapter>
-                  </QueryClientProvider>
-                </ThemeProvider>
-              </ToastProvider>
-            </DialogProvider>
+                                      <HeroToastProvider
+                                        placement={'bottom-left'}
+                                        toastOffset={20}
+                                        toastProps={{
+                                          classNames: {
+                                            base: 'max-w-[350px]',
+                                          },
+                                          variant: 'flat',
+                                        }}
+                                        regionProps={{
+                                          classNames: { base: 'z-[1500]' },
+                                        }}
+                                      />
+                                      {!shouldHideHeader && <Header />}
+                                      {isClient && <NewAuthPrompt />}
+                                      <GlobalDialog />
+                                      {isClient && ceramicDown && (
+                                        <Dialog
+                                          title="Upgrading Ceramic Node"
+                                          message="We are currently upgrading our Ceramic node. Some data may be temporarily unavailable or inconsistent. We apologize for any inconvenience."
+                                          showModal={show}
+                                          onClose={() => setShow(false)}
+                                          onConfirm={() => setShow(false)}
+                                        />
+                                      )}
+                                      <div
+                                        style={{
+                                          minHeight: `calc(100vh - 50px)`,
+                                        }}
+                                      >
+                                        {children}
+                                      </div>
+                                    </AppContextProvider>
+                                  </ModalProvider>
+                                </ZupassProvider>
+                              </WalletProvider>
+                            </BuildInRoleProvider>
+                          </CeramicProvider>
+                        </LitProvider>
+                      </NuqsAdapter>
+                    </QueryClientProvider>
+                  </ThemeProvider>
+                </ToastProvider>
+              </DialogProvider>
+            </div>
           </HeroUIProvider>
         </AppRouterCacheProvider>
       </body>
