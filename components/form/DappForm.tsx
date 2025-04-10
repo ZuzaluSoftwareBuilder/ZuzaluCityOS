@@ -34,19 +34,7 @@ interface DappFormProps {
 const schema = Yup.object().shape({
   appName: Yup.string().required('App name is required'),
   developerName: Yup.string().required('Developer name is required'),
-  description: Yup.string().test(
-    'is-not-empty',
-    'Description is required',
-    (value) => {
-      if (!value) return false;
-      try {
-        const parsed = JSON.parse(value);
-        return !parsed.isEmpty;
-      } catch (e) {
-        return false;
-      }
-    },
-  ),
+  description: Yup.string().notEmptyJson('Description is required'),
   tagline: Yup.string()
     .required('Tagline is required')
     .max(70, 'Maximum 70 characters are allowed'),

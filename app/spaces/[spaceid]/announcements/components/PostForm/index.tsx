@@ -45,19 +45,7 @@ const schema = Yup.object().shape({
     1,
     'At least one tag is required',
   ),
-  description: Yup.string().test(
-    'is-not-empty',
-    'Description is required',
-    (value) => {
-      if (!value) return false;
-      try {
-        const parsed = JSON.parse(value);
-        return !parsed.isEmpty;
-      } catch (e) {
-        return false;
-      }
-    },
-  ),
+  description: Yup.string().notEmptyJson('Description is required'),
 });
 
 type FormData = Yup.InferType<typeof schema>;
