@@ -95,7 +95,7 @@ export default function ExploreNav({
             key={item.label}
             ref={(el) => setButtonRef(el as HTMLElement | null, item.label)}
             className={cn(
-              'h-[45px] bg-transparent hover:bg-transparent min-w-0 whitespace-nowrap p-[14px] text-[16px] font-[600] leading-[1.4] text-white opacity-[0.34] shrink-0',
+              'h-[45px] bg-transparent hover:bg-transparent min-w-0 whitespace-nowrap p-[14px] text-[16px] uppercase font-[600] leading-[1.4] text-white opacity-[0.34] shrink-0',
               activeTab === item.label ? 'opacity-100' : '',
               item.isComingSoon && 'cursor-not-allowed',
             )}
