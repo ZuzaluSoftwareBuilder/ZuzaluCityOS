@@ -4,3 +4,4 @@ package.json
 composites
 .cursor
 graphql
+schema.graphql
