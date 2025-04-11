@@ -1,6 +1,5 @@
 import { SpaceCard, SpaceCardSkeleton } from '@/components/biz/space/SpaceCard';
 import { Space } from '@/types';
-import { Grid } from '@mui/material';
 import { useMemo, useState } from 'react';
 
 import ExploreSearch from '@/components/layout/explore/exploreSearch';
@@ -107,37 +106,6 @@ const SpaceList = () => {
               </ResponsiveGridItem>
             ))}
       </ResponsiveGrid>
-
-      <Grid
-        container
-        spacing="20px"
-        flex={1}
-        sx={{
-          '& .MuiGrid-item': {
-            width: '100%',
-            maxWidth: '100%',
-          },
-          alignContent: 'flex-start',
-        }}
-      >
-        {isLoading || isRoleLoading || isLegacyLoading
-          ? Array.from({ length: 8 }).map((_, index) => (
-              <ResponsiveGridItem key={index}>
-                <SpaceCardSkeleton autoWidth={true} key={index} />
-              </ResponsiveGridItem>
-            ))
-          : filteredSpacesData?.map((item) => (
-              <ResponsiveGridItem key={item.id}>
-                <SpaceCard
-                  key={item.id}
-                  data={item}
-                  autoWidth={true}
-                  isJoined={userJoinedSpaceIds.has(item.id)}
-                  isFollowed={userFollowedSpaceIds.has(item.id)}
-                />
-              </ResponsiveGridItem>
-            ))}
-      </Grid>
     </div>
   );
 };
