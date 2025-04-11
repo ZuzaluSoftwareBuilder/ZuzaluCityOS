@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { Stack, Box, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { ZuButton } from 'components/core';
 import { InformationIcon, PencilIcon } from 'components/icons';
 

@@ -1,5 +1,4 @@
 import { heroui } from '@heroui/react';
-import { dark } from '@mui/material/styles/createPalette';
 
 /** @type {import('tailwindcss').Config} */
 const config = {

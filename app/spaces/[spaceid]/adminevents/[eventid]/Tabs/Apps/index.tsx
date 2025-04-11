@@ -1,12 +1,11 @@
 'use client';
-import React from 'react';
-import { Stack, Box, Typography, useTheme } from '@mui/material';
-import Image from 'next/image';
-import { useParams } from 'next/navigation';
-import { Event } from '@/types';
 import { ZuButton } from '@/components/core';
 import { useDialog } from '@/components/dialog/DialogContext';
 import { apps } from '@/constant';
+import { Event } from '@/types';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
+import Image from 'next/image';
+import { useParams } from 'next/navigation';
 interface IVenue {
   event?: Event;
 }

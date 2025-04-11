@@ -1,4 +1,15 @@
 import {
+  AkashaGetReflectionsFromBeamResponse,
+  AkashaReflections,
+  AkashaReflectionsFromBeam,
+  ZulandComplexReflectOfReflections,
+  ZulandReadableReflection,
+  ZulandReadableReflectionResult,
+  ZulandReadableReflectionWithChildren,
+} from '@/types/akasha';
+import { ZulandLit } from '@/utils/lit';
+import { AccessControlCondition } from '@/utils/lit/types';
+import {
   AkashaReflectConnection,
   AkashaReflectEdge,
   AkashaReflectInput,
@@ -9,23 +20,12 @@ import {
   SortOrder,
 } from '@akashaorg/typings/lib/sdk/graphql-types-new';
 import akashaSdk from '../akasha';
-import {
-  AkashaGetReflectionsFromBeamResponse,
-  AkashaReflections,
-  AkashaReflectionsFromBeam,
-  ZulandComplexReflectOfReflections,
-  ZulandReadableReflection,
-  ZulandReadableReflectionResult,
-  ZulandReadableReflectionWithChildren,
-} from '@/types/akasha';
+import { getAppReleaseById } from '../appRelease';
+import { getBeamById } from '../beam';
 import {
   extractDecryptedReadableReflections,
   extractReadableReflections,
 } from './utils';
-import { ZulandLit } from '@/utils/lit';
-import { AccessControlCondition } from '@/utils/lit/types';
-import { getBeamById } from '../beam';
-import { getAppReleaseById } from '../appRelease';
 
 const DEFAULT_REFLECTIONS_TAKE = 10;
 

@@ -1,11 +1,11 @@
 import { TimezoneSelectorProps } from '@/types';
 import { Autocomplete, TextField } from '@mui/material';
+import { useEffect, useState } from 'react';
 import {
   allTimezones,
   ITimezoneOption,
   useTimezoneSelect,
 } from 'react-timezone-select';
-import { useEffect, useState } from 'react';
 
 export const TimezoneSelector = ({
   setSelectedTimezone,

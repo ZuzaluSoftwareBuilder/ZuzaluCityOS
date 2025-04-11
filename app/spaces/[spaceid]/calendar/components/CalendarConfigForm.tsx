@@ -1,28 +1,30 @@
+import ZuInput from '@/components/core/Input';
+import FormFooter from '@/components/form/FormFooter';
 import FormHeader from '@/components/form/FormHeader';
+import SelectCategories from '@/components/select/selectCategories';
 import {
   FormLabelDesc,
   FormTitle,
 } from '@/components/typography/formTypography';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { Space } from '@/types';
 import Yup from '@/utils/yupExtensions';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
-  FormLabel,
   FormHelperText,
+  FormLabel,
   Stack,
   Typography,
 } from '@mui/material';
-import ZuInput from '@/components/core/Input';
-import FormFooter from '@/components/form/FormFooter';
-import { useCallback, useMemo } from 'react';
-import SelectCategories from '@/components/select/selectCategories';
-import { ItemType } from '../../adminevents/[eventid]/Tabs/Ticket/components/types';
-import { RegistrationAccess } from '../../adminevents/[eventid]/Tabs/Ticket/components/types';
-import { Item } from '../../adminevents/[eventid]/Tabs/Ticket/components/Common';
 import { useMutation } from '@tanstack/react-query';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { Space } from '@/types';
+import { useCallback, useMemo } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { Item } from '../../adminevents/[eventid]/Tabs/Ticket/components/Common';
+import {
+  ItemType,
+  RegistrationAccess,
+} from '../../adminevents/[eventid]/Tabs/Ticket/components/types';
 
 interface CalendarConfigFormProps {
   space: Space;

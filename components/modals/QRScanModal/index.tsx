@@ -1,9 +1,9 @@
-import { ClickAwayListener, Stack, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
-import { RefreshIcon } from 'components/icons/RefreshIcon';
+import { ClickAwayListener, Stack, Typography } from '@mui/material';
 import { ZuSwitch } from 'components/core';
 import { InformationIcon } from 'components/icons';
+import { RefreshIcon } from 'components/icons/RefreshIcon';
+import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 
 const QrReader = require('react-qr-scanner');
 

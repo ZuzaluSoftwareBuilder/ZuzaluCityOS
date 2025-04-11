@@ -1,10 +1,10 @@
+import { useCeramicContext } from '@/context/CeramicContext';
+import useUserRole from '@/hooks/useUserRole';
 import { GET_USER_OWN_SPACE } from '@/services/graphql/profile';
+import { GET_SPACE_QUERY_BY_IDS } from '@/services/graphql/space';
+import { IUserProfileWithSpaceAndEvent } from '@/types';
 import { useMemo } from 'react';
 import { useGraphQL } from './useGraphQL';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { IUserProfileWithSpaceAndEvent } from '@/types';
-import { GET_SPACE_QUERY_BY_IDS } from '@/services/graphql/space';
-import useUserRole from '@/hooks/useUserRole';
 
 const useUserSpace = () => {
   const { profile } = useCeramicContext();

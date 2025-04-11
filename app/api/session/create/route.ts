@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/utils/supabase/client';
-import { SessionSupabaseData, CeramicResponseType, EventEdge } from '@/types';
-import { RuntimeCompositeDefinition } from '@composedb/types';
 import { definition } from '@/composites/definition.js';
+import { CeramicResponseType, EventEdge, SessionSupabaseData } from '@/types';
+import { supabase } from '@/utils/supabase/client';
 import { ComposeClient } from '@composedb/client';
+import { RuntimeCompositeDefinition } from '@composedb/types';
+import { NextRequest, NextResponse } from 'next/server';
 
 const isDev = process.env.NEXT_PUBLIC_ENV === 'dev';
 const ceramicUrl =

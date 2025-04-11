@@ -1,5 +1,9 @@
 'use client';
-import * as React from 'react';
+import Dialog from '@/app/spaces/components/Modal/Dialog';
+import { useCeramicContext } from '@/context/CeramicContext';
+import useGetShareLink from '@/hooks/useGetShareLink';
+import { Event } from '@/types';
+import { convertDateStringFormat } from '@/utils';
 import {
   Alert,
   Box,
@@ -10,16 +14,12 @@ import {
 } from '@mui/material';
 import { ZuButton } from 'components/core';
 import { LockIcon, MapIcon } from 'components/icons';
-import { Event } from '@/types';
-import { useParams, useRouter } from 'next/navigation';
-import { convertDateStringFormat } from '@/utils';
-import Link from 'next/link';
-import CopyToClipboard from 'react-copy-to-clipboard';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import * as React from 'react';
+import CopyToClipboard from 'react-copy-to-clipboard';
 import { deleteEvent } from 'services/event/deleteEvent';
-import { useCeramicContext } from '@/context/CeramicContext';
-import useGetShareLink from '@/hooks/useGetShareLink';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
 
 const EditorPreview = dynamic(
   () => import('@/components/editor/EditorPreview'),

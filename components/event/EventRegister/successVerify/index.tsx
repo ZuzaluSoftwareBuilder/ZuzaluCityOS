@@ -1,7 +1,7 @@
-import React from 'react';
+import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import { Stack, Typography } from '@mui/material';
 import { ZuButton } from 'components/core';
-import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
+import React from 'react';
 
 interface SuccessVerifyProps {
   handleStep: (step: number) => void;

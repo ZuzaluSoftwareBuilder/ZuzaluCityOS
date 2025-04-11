@@ -1,10 +1,10 @@
-import React from 'react';
+import Drawer from '@/components/drawer';
+import useOpenDraw from '@/hooks/useOpenDraw';
 import { Stack, Typography } from '@mui/material';
 import { SettingIcon } from 'components/icons';
-import Drawer from '@/components/drawer';
-import ConfigForm from './Form';
-import useOpenDraw from '@/hooks/useOpenDraw';
+import React from 'react';
 import { ConfigPanel } from '../Common';
+import ConfigForm from './Form';
 
 interface PanelProps {
   registered: boolean;

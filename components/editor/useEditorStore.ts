@@ -1,6 +1,6 @@
 import { OutputBlockData, OutputData } from '@editorjs/editorjs';
-import { useRef, useState } from 'react';
 import { once } from 'lodash';
+import { useRef, useState } from 'react';
 
 const escapeHtml = (text: string) => {
   return text

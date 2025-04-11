@@ -1,7 +1,6 @@
 'use client';
-import * as React from 'react';
-import { Stack, Typography, useTheme } from '@mui/material';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { Stack, Typography, useTheme } from '@mui/material';
 
 const EventHeader = () => {
   // const [showModal, setShowModal] = React.useState(false);

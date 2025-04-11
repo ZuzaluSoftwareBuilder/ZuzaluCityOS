@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, Dispatch, SetStateAction, useEffect, useMemo } from 'react';
 import { ZuButton, ZuInput, ZuSwitch } from '@/components/core';
+import { useAkashaAuthStore } from '@/hooks/use-akasha-auth-store';
 import {
   createApp,
   createZulandAppRelease,
   getAppByEventId,
 } from '@/utils/akasha';
+import { LIT_CHAINS } from '@lit-protocol/constants';
 import {
   Dialog,
   DialogActions,
@@ -17,10 +18,9 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { LIT_CHAINS } from '@lit-protocol/constants';
-import { useAkashaAuthStore } from '@/hooks/use-akasha-auth-store';
-import { isAddress } from 'viem';
 import Link from 'next/link';
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { isAddress } from 'viem';
 
 interface CreateDiscussionModalProps {
   showModal: boolean;

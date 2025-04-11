@@ -1,6 +1,5 @@
-import { Stack, Box, Typography } from '@mui/material';
-import { useState } from 'react';
-import { useRef } from 'react';
+import { Box, Stack, Typography } from '@mui/material';
+import { useRef, useState } from 'react';
 import TopicChip from './TopicChip';
 
 interface TopicListProps {

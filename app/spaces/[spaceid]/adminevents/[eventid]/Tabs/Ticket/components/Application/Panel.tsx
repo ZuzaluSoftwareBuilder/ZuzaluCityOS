@@ -1,15 +1,15 @@
-import { Box, Stack } from '@mui/material';
-import { TitleWithTag } from '../Common';
 import { ZuButton } from '@/components/core';
+import Drawer from '@/components/drawer';
 import { PlusIcon } from '@/components/icons';
 import useOpenDraw from '@/hooks/useOpenDraw';
-import Drawer from '@/components/drawer';
+import { RegistrationAndAccess } from '@/types';
+import { Box, Stack } from '@mui/material';
+import { useMemo } from 'react';
+import { useEventContext } from '../../../../EventContext';
+import { TitleWithTag } from '../Common';
+import { TagProps } from '../types';
 import Form from './Form';
 import Submissions from './Submissions';
-import { RegistrationAndAccess } from '@/types';
-import { useMemo } from 'react';
-import { TagProps } from '../types';
-import { useEventContext } from '../../../../EventContext';
 
 interface PanelProps {
   regAndAccess?: RegistrationAndAccess;

@@ -1,9 +1,9 @@
-import { Event } from '@/types';
-import { useMemo } from 'react';
-import dayjs from 'dayjs';
-import { Skeleton } from '@heroui/react';
-import { EventCard, EventCardSkeleton } from './EventCard';
 import { groupEventsByMonth } from '@/components/cards/EventCard';
+import { Event } from '@/types';
+import { Skeleton } from '@heroui/react';
+import dayjs from 'dayjs';
+import { useMemo } from 'react';
+import { EventCard, EventCardSkeleton } from './EventCard';
 
 export interface EventListProps {
   events: Event[];

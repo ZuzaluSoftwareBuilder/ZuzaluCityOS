@@ -1,9 +1,9 @@
 import { SwipeableDrawerProps } from '@mui/material';
-import { CSSProperties, Dispatch, SetStateAction } from 'react';
-import { ITimezoneOption } from 'react-timezone-select';
 import { EdDSAPublicKey } from '@pcd/eddsa-pcd';
 import { EdDSATicketPCDTypeName } from '@pcd/eddsa-ticket-pcd';
 import { PipelineEdDSATicketZuAuthConfig } from '@pcd/passport-interface';
+import { CSSProperties, Dispatch, SetStateAction } from 'react';
+import { ITimezoneOption } from 'react-timezone-select';
 
 export type Anchor = 'top' | 'left' | 'bottom' | 'right';
 

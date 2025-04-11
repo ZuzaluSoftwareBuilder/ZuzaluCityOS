@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useSlate } from 'slate-react';
 
-import { CustomEditor, TEXT_ALIGN_TYPES } from './helpers';
 import { Icon } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
+import { CustomEditor, TEXT_ALIGN_TYPES } from './helpers';
 
 export type ToolbarButtonProps = {
   format: string;

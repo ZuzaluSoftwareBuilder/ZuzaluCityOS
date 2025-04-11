@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
+import { useCallback } from 'react';
 import { useDialog } from './DialogContext';
 
 export function GlobalDialog() {

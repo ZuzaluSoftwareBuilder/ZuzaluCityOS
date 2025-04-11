@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer } from 'react-leaflet';
 import getLatLngFromAddress from '@/utils/osm';
 import { LatLngLiteral } from 'leaflet';
+import React, { useEffect, useState } from 'react';
+import { MapContainer, TileLayer } from 'react-leaflet';
 
 interface Coordinates {
   lat: number;

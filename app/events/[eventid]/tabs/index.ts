@@ -1,6 +1,6 @@
 import About from './About';
-import Sessions from './Session';
 import Announcements from './Announcements';
 import PublicSessions from './PublicSession';
+import Sessions from './Session';
 
-export { About, Sessions, Announcements, PublicSessions };
+export { About, Announcements, PublicSessions, Sessions };

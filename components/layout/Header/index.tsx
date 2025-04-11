@@ -1,12 +1,11 @@
 'use client';
-import React from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { MenuIcon } from 'components/icons';
-import SidebarDrawer from '../Sidebar/SidebarDrawer';
-import { useAppContext } from '@/context/AppContext';
 import { Button } from '@/components/base';
-import UserProfileSection from './UserProfileSection';
+import { useAppContext } from '@/context/AppContext';
+import { MenuIcon } from 'components/icons';
 import NextImage from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+import SidebarDrawer from '../Sidebar/SidebarDrawer';
+import UserProfileSection from './UserProfileSection';
 
 const GreenBlurDataUrl =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNc/+mZKQAHnQK+h0UQYgAAAABJRU5ErkJggg==';

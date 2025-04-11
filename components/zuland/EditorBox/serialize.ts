@@ -1,4 +1,4 @@
-import { Text, Element } from 'slate';
+import { Element, Text } from 'slate';
 
 export const serializeToPlainText = (node: any) => {
   if (Text.isText(node)) {

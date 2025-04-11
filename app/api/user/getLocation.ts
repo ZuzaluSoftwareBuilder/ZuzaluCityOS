@@ -1,7 +1,7 @@
-import jwt from 'jsonwebtoken';
-import { ethers } from 'ethers';
-import { JWT_SECRET, PROVIDER, CONTRACT_ADDRESS } from '@/constant';
+import { CONTRACT_ADDRESS, JWT_SECRET, PROVIDER } from '@/constant';
 import { supabase } from '@/utils/supabase/client';
+import { ethers } from 'ethers';
+import jwt from 'jsonwebtoken';
 
 const ABI = [
   {

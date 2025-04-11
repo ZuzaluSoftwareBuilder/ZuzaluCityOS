@@ -1,5 +1,5 @@
-import React from 'react';
 import { cn } from '@heroui/react';
+import React from 'react';
 
 export enum TabContentEnum {
   Profile = 'Profile',

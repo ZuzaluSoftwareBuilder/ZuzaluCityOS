@@ -1,5 +1,5 @@
-import { supabase } from '@/utils/supabase/client';
 import { Post } from '@/types';
+import { supabase } from '@/utils/supabase/client';
 
 type PostData = Omit<Post, 'id' | 'created_at'>;
 

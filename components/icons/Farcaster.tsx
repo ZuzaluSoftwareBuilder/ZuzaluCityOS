@@ -1,4 +1,3 @@
-import React from 'react';
 import { SVGProps } from 'react';
 
 const FarcasterIcon = (props: SVGProps<SVGSVGElement>) => {

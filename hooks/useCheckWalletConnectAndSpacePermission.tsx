@@ -1,8 +1,8 @@
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useAccount, useWalletClient } from 'wagmi';
-import { useEffect, useState, useMemo } from 'react';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
+import { useCeramicContext } from '@/context/CeramicContext';
 import { PermissionName } from '@/types';
+import { useEffect, useMemo, useState } from 'react';
+import { useAccount, useWalletClient } from 'wagmi';
 
 export enum PermissionCheckType {
   /**

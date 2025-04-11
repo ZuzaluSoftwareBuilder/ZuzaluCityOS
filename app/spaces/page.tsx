@@ -1,15 +1,14 @@
 'use client';
-import { useCallback } from 'react';
-import { useTheme, useMediaQuery } from '@mui/material';
-import { useCeramicContext } from '@/context/CeramicContext';
-import ExploreHeader from '@/components/layout/explore/exploreHeader';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
-import * as React from 'react';
-import { useRouter } from 'next/navigation';
-import { Buildings } from '@phosphor-icons/react';
-import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
-import { Globe, CalendarDots } from '@phosphor-icons/react';
 import SpaceList from '@/app/spaces/components/list';
+import Dialog from '@/app/spaces/components/Modal/Dialog';
+import ExploreHeader from '@/components/layout/explore/exploreHeader';
+import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { useMediaQuery, useTheme } from '@mui/material';
+import { Buildings, CalendarDots, Globe } from '@phosphor-icons/react';
+import { useRouter } from 'next/navigation';
+import * as React from 'react';
+import { useCallback } from 'react';
 
 const NavItems: INavItem[] = [
   {

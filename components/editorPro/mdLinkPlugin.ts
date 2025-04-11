@@ -1,6 +1,5 @@
 import { Extension } from '@tiptap/core';
-import { Plugin, PluginKey } from 'prosemirror-state';
-import { TextSelection } from 'prosemirror-state';
+import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 
 export const MarkdownLinkPlugin = Extension.create({
   name: 'markdownLinks',

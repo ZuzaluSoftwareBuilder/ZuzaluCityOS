@@ -1,12 +1,11 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { Stack, useTheme, useMediaQuery } from '@mui/material';
-import { About, Sessions } from './tabs';
-import { IconSidebar, Header, Thumb, Sidebar } from './components';
-import { CeramicResponseType, EventEdge, Event } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { CeramicResponseType, Event, EventEdge } from '@/types';
+import { Stack, useMediaQuery, useTheme } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Header, IconSidebar, Sidebar, Thumb } from './components';
+import { About, Sessions } from './tabs';
 const Home = () => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.down('xl'));

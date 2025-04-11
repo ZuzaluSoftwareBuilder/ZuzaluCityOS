@@ -1,15 +1,15 @@
 'use client';
-import { AddAdminRequest, Event, AddMemberRequest } from '@/types';
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import { Stack, Typography, Box } from '@mui/material';
+import Dialog from '@/app/spaces/components/Modal/Dialog';
 import { ZuButton, ZuInput } from '@/components/core';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { updateAdmin } from '@/services/event/addAdmin';
 import { updateMember } from '@/services/event/addMember';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
 import { tempUpdateTrack } from '@/services/event/tempAddTrack';
+import { AddAdminRequest, AddMemberRequest, Event } from '@/types';
 import { download } from '@/utils/download';
+import { Box, Stack, Typography } from '@mui/material';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface IMember {
   id: string;

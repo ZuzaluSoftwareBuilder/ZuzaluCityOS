@@ -1,4 +1,6 @@
 'use client';
+import EditorJS, { BlockMutationEvent, OutputData } from '@editorjs/editorjs';
+import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import React, {
   createRef,
@@ -7,11 +9,9 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import EditorJS, { BlockMutationEvent, OutputData } from '@editorjs/editorjs';
+import { shallowDiff } from './shallowDiff';
 import { tools } from './tools';
 import { getOutputDataLength } from './useEditorStore';
-import { Global, css } from '@emotion/react';
-import { shallowDiff } from './shallowDiff';
 
 const SuperEditor: React.FC<{
   minHeight?: number;

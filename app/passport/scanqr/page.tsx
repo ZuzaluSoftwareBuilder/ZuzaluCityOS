@@ -1,9 +1,9 @@
 'use client';
-import React, { useState } from 'react';
-import { Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { LeftArrowIcon } from '@/components/icons';
 import { ZuButton } from '@/components/core';
+import { LeftArrowIcon } from '@/components/icons';
+import { Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { ScanQRModal } from '../components/QRScanModal';
 
 const Home = () => {

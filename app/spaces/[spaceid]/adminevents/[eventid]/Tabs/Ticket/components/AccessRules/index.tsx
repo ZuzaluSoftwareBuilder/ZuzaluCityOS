@@ -1,13 +1,13 @@
-import { Box, Stack, Typography } from '@mui/material';
-import { TitleWithTag } from '../Common';
-import useOpenDraw from '@/hooks/useOpenDraw';
-import ZupassForm from './ZupassForm';
 import Drawer from '@/components/drawer';
-import Panel from './Panel';
+import useOpenDraw from '@/hooks/useOpenDraw';
 import { Event, RegistrationAndAccess } from '@/types';
-import ScrollpassForm from './ScrollpassForm';
+import { Box, Stack, Typography } from '@mui/material';
 import { useMemo } from 'react';
+import { TitleWithTag } from '../Common';
 import { TagProps, TicketingMethod } from '../types';
+import Panel from './Panel';
+import ScrollpassForm from './ScrollpassForm';
+import ZupassForm from './ZupassForm';
 
 interface AccessRulesProps {
   regAndAccess?: RegistrationAndAccess;

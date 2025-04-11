@@ -1,10 +1,9 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
-import { Box } from '@mui/material';
-import SpaceCard from './cards/SpaceCard';
-import { useTheme, useMediaQuery } from '@mui/material';
-import { Space } from '@/types';
 import useUserSpace from '@/hooks/useUserSpace';
+import { Space } from '@/types';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
+import SpaceCard from './cards/SpaceCard';
 
 export interface CarouselProps {
   items: Space[];

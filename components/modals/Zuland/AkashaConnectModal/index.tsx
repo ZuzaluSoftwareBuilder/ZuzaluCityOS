@@ -1,6 +1,5 @@
 'use client';
 
-import { Dispatch, SetStateAction } from 'react';
 import { ZuButton } from '@/components/core';
 import {
   Dialog,
@@ -10,6 +9,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { Dispatch, SetStateAction } from 'react';
 
 interface AkashaConnectModalProps {
   showModal: boolean;

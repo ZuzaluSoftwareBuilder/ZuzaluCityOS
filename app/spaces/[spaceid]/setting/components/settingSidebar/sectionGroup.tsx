@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { SettingSection } from './settingsData';
 import SectionItem from './sectionItem';
+import { SettingSection } from './settingsData';
 
 interface SectionGroupProps {
   section: SettingSection;

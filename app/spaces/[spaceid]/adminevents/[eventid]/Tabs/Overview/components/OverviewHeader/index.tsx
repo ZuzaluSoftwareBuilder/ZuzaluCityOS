@@ -1,14 +1,13 @@
-import * as React from 'react';
-import { Stack, Typography, useTheme, Link } from '@mui/material';
-import OverviewButton from './OverviewButton';
-import { Event } from '@/types';
-import { Anchor, ProfileEdge, Profile } from '@/types';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useParams } from 'next/navigation';
-import dayjs, { Dayjs } from 'dayjs';
 import { QRReader } from '@/components/modals/QRScanModal/QRReader';
-import { supabase } from '@/utils/supabase/client';
 import CreateDiscussionModal from '@/components/modals/Zuland/CreateDiscussionModal';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { Anchor, Event, Profile, ProfileEdge } from '@/types';
+import { supabase } from '@/utils/supabase/client';
+import { Link, Stack, Typography, useTheme } from '@mui/material';
+import dayjs, { Dayjs } from 'dayjs';
+import { useParams } from 'next/navigation';
+import * as React from 'react';
+import OverviewButton from './OverviewButton';
 
 interface PropTypes {
   event?: Event;

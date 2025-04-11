@@ -1,6 +1,5 @@
-import * as React from 'react';
 import { Stack, Typography } from '@mui/material';
-import { ThreeHorizonIcon, ShareIcon } from 'components/icons';
+import { ShareIcon, ThreeHorizonIcon } from 'components/icons';
 
 const EventHeader = () => {
   return (

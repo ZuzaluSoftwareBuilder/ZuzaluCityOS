@@ -1,16 +1,15 @@
-import { Image, Avatar, Skeleton, cn } from '@heroui/react';
-import { useCallback, useMemo } from 'react';
-import React from 'react';
-import { Space } from '@/types';
+import { Button } from '@/components/base';
+import SpaceChip from '@/components/biz/space/SpaceChip';
 import {
   ArrowSquareRightIcon,
   CheckCircleIcon,
   UsersIcon,
 } from '@/components/icons';
-import { Button } from '@/components/base';
-import { useRouter } from 'next/navigation';
 import { useCeramicContext } from '@/context/CeramicContext';
-import SpaceChip from '@/components/biz/space/SpaceChip';
+import { Space } from '@/types';
+import { Avatar, Image, Skeleton, cn } from '@heroui/react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useMemo } from 'react';
 
 export function SpaceCardSkeleton({ autoWidth }: { autoWidth?: boolean }) {
   return (

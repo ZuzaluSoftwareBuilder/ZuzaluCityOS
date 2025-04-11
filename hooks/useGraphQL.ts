@@ -1,11 +1,11 @@
+import { useCeramicContext } from '@/context/CeramicContext';
 import { type TypedDocumentNode } from '@graphql-typed-document-node/core';
 import {
   useQuery,
-  type UseQueryResult,
-  type UseQueryOptions,
   type QueryKey,
+  type UseQueryOptions,
+  type UseQueryResult,
 } from '@tanstack/react-query';
-import { useCeramicContext } from '@/context/CeramicContext';
 
 type GraphQLResponse<TData> = {
   data: TData;

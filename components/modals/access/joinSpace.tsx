@@ -4,14 +4,14 @@ import {
   XCricleIcon,
 } from '@/components/icons';
 import {
-  Modal,
-  ModalContent,
-  Button,
-  useDisclosure,
-  Divider,
-  Avatar,
   Accordion,
   AccordionItem,
+  Avatar,
+  Button,
+  Divider,
+  Modal,
+  ModalContent,
+  useDisclosure,
 } from '@heroui/react';
 
 const MODAL_BASE_CLASSES = {

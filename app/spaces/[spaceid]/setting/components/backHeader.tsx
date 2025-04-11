@@ -1,8 +1,8 @@
+import { Button } from '@heroui/react';
+import { useMediaQuery } from '@mui/material';
 import { CaretLeft } from '@phosphor-icons/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Button } from '@heroui/react';
 import { useCallback } from 'react';
-import { useMediaQuery } from '@mui/material';
 
 export interface IBackHeaderProps {
   spaceId: string;

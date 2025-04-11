@@ -1,3 +1,6 @@
+import { ZulandReadableBeam, ZulandReadbleBlock } from '@/types/akasha';
+import { ZulandLit } from '@/utils/lit';
+import { AccessControlCondition } from '@/utils/lit/types';
 import {
   AkashaBeam,
   AkashaBeamEdge,
@@ -6,9 +9,6 @@ import {
 import akashaSdk from '../akasha';
 import { decodeb64SlateContent } from '../akasha-utils';
 import { getProfileByDid } from '../profile';
-import { ZulandReadableBeam, ZulandReadbleBlock } from '@/types/akasha';
-import { AccessControlCondition } from '@/utils/lit/types';
-import { ZulandLit } from '@/utils/lit';
 
 export async function extractBeamReadableContent(
   beam: AkashaBeam,

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { useMediaQuery as useResponsiveMediaQuery } from 'react-responsive';
 
 export const SCREEN_BREAKPOINTS = {

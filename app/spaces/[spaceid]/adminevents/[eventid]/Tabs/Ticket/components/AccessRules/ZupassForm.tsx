@@ -1,21 +1,21 @@
 import FormHeader from '@/components/form/FormHeader';
 import ClockIcon from '@/components/icons/Clock';
-import { Box, Button, Stack, Typography } from '@mui/material';
-import {
-  CommonWrapper,
-  TitleWithTag,
-  ButtonGroup,
-  RoundCheckbox,
-} from '../Common';
-import { useFieldArray, useForm } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useCallback, useMemo } from 'react';
+import { updateRegAndAccess } from '@/services/event/regAndAccess';
 import { RegistrationAndAccess } from '@/types';
 import { shortenAddress } from '@/utils/format';
-import { updateRegAndAccess } from '@/services/event/regAndAccess';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
+import { useCallback, useMemo } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import {
+  ButtonGroup,
+  CommonWrapper,
+  RoundCheckbox,
+  TitleWithTag,
+} from '../Common';
 
 interface FormProps {
   regAndAccess?: RegistrationAndAccess;

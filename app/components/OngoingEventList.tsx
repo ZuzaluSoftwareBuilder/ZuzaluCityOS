@@ -1,18 +1,18 @@
-import { useRouter } from 'next/navigation';
-import CommonHeader from './CommonHeader';
 import { CaretDoubleRightIcon } from '@/components/icons';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { ONGOING_EVENTS_QUERY } from '@/graphql/eventQueries';
+import { useMediaQuery } from '@/hooks';
 import { Event } from '@/types';
-import { SmallEventCard, SmallEventCardSkeleton } from './SmallEventCard';
+import { supabase } from '@/utils/supabase/client';
+import { ScrollShadow } from '@heroui/react';
+import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import minMax from 'dayjs/plugin/minMax';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useQuery } from '@tanstack/react-query';
-import { ONGOING_EVENTS_QUERY } from '@/graphql/eventQueries';
-import { supabase } from '@/utils/supabase/client';
-import { ScrollShadow } from '@heroui/react';
-import { useMediaQuery } from '@/hooks';
+import { useRouter } from 'next/navigation';
+import CommonHeader from './CommonHeader';
+import { SmallEventCard, SmallEventCardSkeleton } from './SmallEventCard';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);

@@ -1,4 +1,4 @@
-import { Permission, RolePermission, PermissionName } from '@/types';
+import { Permission, PermissionName, RolePermission } from '@/types';
 
 type SessionData = {
   isOwner?: boolean;

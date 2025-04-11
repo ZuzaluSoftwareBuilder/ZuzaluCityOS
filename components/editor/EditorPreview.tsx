@@ -1,4 +1,6 @@
 'use client';
+import EditorJS, { OutputData } from '@editorjs/editorjs';
+import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import React, {
   createRef,
@@ -7,11 +9,9 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import EditorJS, { OutputData } from '@editorjs/editorjs';
-import { tools } from './tools';
-import { Global, css } from '@emotion/react';
-import { decodeOutputData } from './useEditorStore';
 import { shallowDiff } from './shallowDiff';
+import { tools } from './tools';
+import { decodeOutputData } from './useEditorStore';
 
 const EditorPreview: React.FC<{
   value: OutputData | string;

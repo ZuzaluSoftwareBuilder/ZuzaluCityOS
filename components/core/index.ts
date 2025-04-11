@@ -1,7 +1,7 @@
-import ZuSwitch from './Switch';
 import ZuButton from './Button';
-import ZuSelect from './Select';
 import ZuCalendar from './Calendar';
 import ZuInput from './Input';
+import ZuSelect from './Select';
+import ZuSwitch from './Switch';
 
-export { ZuSwitch, ZuButton, ZuSelect, ZuCalendar, ZuInput };
+export { ZuButton, ZuCalendar, ZuInput, ZuSelect, ZuSwitch };

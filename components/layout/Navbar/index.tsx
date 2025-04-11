@@ -1,8 +1,7 @@
 'use client';
-import * as React from 'react';
-import { useRouter, useParams } from 'next/navigation';
 import { Box, Button, Typography } from '@mui/material';
 import { LeftArrowIcon } from 'components/icons';
+import { useParams, useRouter } from 'next/navigation';
 
 interface PropTypes {
   spaceName?: string;

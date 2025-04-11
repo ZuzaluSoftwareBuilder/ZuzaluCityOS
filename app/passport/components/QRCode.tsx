@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
 import { ArrowPathIcon, CloseIcon } from '@/components/icons';
-import { useQRCode } from 'next-qrcode';
-import { Stack, Typography } from '@mui/material';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { Stack, Typography } from '@mui/material';
 import dayjs from 'dayjs';
+import { useQRCode } from 'next-qrcode';
+import { useState } from 'react';
 
 interface PropTypes {
   ticketAddress?: string;

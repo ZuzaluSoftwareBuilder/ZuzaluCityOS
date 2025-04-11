@@ -1,19 +1,19 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { PermissionName, Profile, RolePermission, UserRole } from '@/types';
-import { useSpacePermissions } from '../../../../components/permission';
-import { AddMemberDrawer } from './addMemberDrawer';
-import { AddMemberSubHeader } from './addMemberSubHeader';
-import { MemberList } from './memberList';
+import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 import useOpenDraw from '@/hooks/useOpenDraw';
-import { addToast } from '@heroui/react';
-import { useParams } from 'next/navigation';
 import {
   addMembersToRole,
   removeMembersFromRole,
   updateMembersRole,
 } from '@/services/member';
-import useGetSpaceMember from '@/hooks/useGetSpaceMember';
+import { PermissionName, Profile, RolePermission, UserRole } from '@/types';
 import { getWalletAddressFromDid } from '@/utils/did';
+import { addToast } from '@heroui/react';
+import { useParams } from 'next/navigation';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useSpacePermissions } from '../../../../components/permission';
+import { AddMemberDrawer } from './addMemberDrawer';
+import { AddMemberSubHeader } from './addMemberSubHeader';
+import { MemberList } from './memberList';
 
 export interface IMemberItem {
   id: string;

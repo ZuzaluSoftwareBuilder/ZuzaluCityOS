@@ -1,5 +1,5 @@
-import React from 'react';
 import { IconProps } from '@/types';
+import React from 'react';
 
 export const ShareIcon: React.FC<IconProps> = ({ size = 6 }) => {
   return (

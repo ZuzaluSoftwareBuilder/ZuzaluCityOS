@@ -1,10 +1,10 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import { Stack, Typography, Box } from '@mui/material';
 import { ZuButton, ZuInput } from '@/components/core';
 import { PlusCircleIcon, XCricleIcon } from '@/components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { Box, Stack, Typography } from '@mui/material';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface IMember {
   id: string;

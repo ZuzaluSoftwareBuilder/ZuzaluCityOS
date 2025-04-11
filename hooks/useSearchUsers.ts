@@ -1,14 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
-import useDebounce from './useDebounce';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useAccount } from 'wagmi';
-import { isAddress } from 'viem';
 import {
-  GET_PROFILE_BY_NAME_QUERY,
   GET_PROFILE_BY_DID_QUERY,
+  GET_PROFILE_BY_NAME_QUERY,
 } from '@/services/graphql/profile';
 import { IProfile, Profile } from '@/types';
 import { getWalletAddressFromDid } from '@/utils/did';
+import { useCallback, useEffect, useState } from 'react';
+import { isAddress } from 'viem';
+import { useAccount } from 'wagmi';
+import useDebounce from './useDebounce';
 
 export interface SearchUser {
   id: string;

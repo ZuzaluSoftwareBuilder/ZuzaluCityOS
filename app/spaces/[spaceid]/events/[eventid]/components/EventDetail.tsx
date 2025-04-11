@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { Stack, Typography, Box, useTheme } from '@mui/material';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { RightArrowIcon } from 'components/icons';
 
 const EventDetail = () => {

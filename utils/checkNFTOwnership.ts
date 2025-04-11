@@ -1,5 +1,5 @@
-import { Address } from 'viem';
 import { client } from '@/context/WalletContext';
+import { Address } from 'viem';
 
 export const checkNFTOwnership = async (
   address: string,

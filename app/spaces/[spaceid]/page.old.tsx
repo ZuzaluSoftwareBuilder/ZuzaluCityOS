@@ -1,34 +1,34 @@
 'use client';
-import { useParams } from 'next/navigation';
-import { useTheme } from '@mui/material';
-import {
-  Box,
-  Snackbar,
-  Typography,
-  Alert,
-  Skeleton,
-  Stack,
-} from '@mui/material';
 import { EventCard } from '@/components/cards';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { ChevronDownIcon, ShareIcon } from '@/components/icons';
-import SidebarButton from '@/components/layout/Sidebar/SidebarButton';
-import Image from 'next/image';
-import React, { Fragment, useMemo, useState } from 'react';
-import { Space, Event } from '@/types';
 import {
   EventCardMonthGroup,
   EventCardSkeleton,
   filterUpcomingEvents,
   groupEventsByMonth,
 } from '@/components/cards/EventCard';
+import EditorPro from '@/components/editorPro';
+import { ChevronDownIcon, ShareIcon } from '@/components/icons';
 import { ChevronUpIcon } from '@/components/icons/ChevronUp';
-import dynamic from 'next/dynamic';
+import SidebarButton from '@/components/layout/Sidebar/SidebarButton';
+import { useBuildInRole } from '@/context/BuildInRoleContext';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_SPACE_AND_EVENTS_QUERY_BY_ID } from '@/services/graphql/space';
-import EditorPro from '@/components/editorPro';
-import { useBuildInRole } from '@/context/BuildInRoleContext';
+import { Event, Space } from '@/types';
+import {
+  Alert,
+  Box,
+  Skeleton,
+  Snackbar,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+import { useParams } from 'next/navigation';
+import { Fragment, useMemo, useState } from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 const EditorPreview = dynamic(
   () => import('@/components/editor/EditorPreview'),

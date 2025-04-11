@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
+import { Event } from '@/types';
 import { DateValue } from '@heroui/react';
 import { fromAbsolute, getLocalTimeZone, today } from '@internationalized/date';
 import dayjs from 'dayjs';
 import minMax from 'dayjs/plugin/minMax';
-import { Event } from '@/types';
+import { useMemo } from 'react';
 import { ITimeEnum } from './EventListWithCalendar';
 
 dayjs.extend(minMax);

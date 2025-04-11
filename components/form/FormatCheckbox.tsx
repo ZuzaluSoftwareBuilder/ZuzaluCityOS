@@ -1,6 +1,5 @@
 import BpCheckbox from '@/components/event/Checkbox';
 import { Box, Stack, Typography } from '@mui/material';
-import React from 'react';
 
 interface IProps {
   checked: boolean;

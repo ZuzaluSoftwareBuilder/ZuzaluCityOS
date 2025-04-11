@@ -1,4 +1,4 @@
-import { styled, SwitchProps, Switch } from '@mui/material';
+import { styled, Switch, SwitchProps } from '@mui/material';
 
 interface ZuSwitchProps extends SwitchProps {
   width?: number;

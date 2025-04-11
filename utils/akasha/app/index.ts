@@ -1,7 +1,7 @@
-import crypto from 'crypto';
-import akashaSdk from '../akasha';
 import { ZulandCreateAppInput } from '@/types/akasha';
 import { AkashaAppApplicationType } from '@akashaorg/typings/lib/sdk/graphql-types-new';
+import crypto from 'crypto';
+import akashaSdk from '../akasha';
 
 export async function getAppByEventId(eventId: string) {
   const sha1Hash = crypto.createHash('sha1').update(eventId).digest('hex');

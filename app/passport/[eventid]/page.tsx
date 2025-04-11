@@ -1,17 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import {
-  Stack,
-  Typography,
-  Box,
-  Divider,
-  Grid,
-  Modal,
-  Skeleton,
-  IconButton,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
+import { ZuButton } from '@/components/core';
 import {
   ArrowTopRightSquareIcon,
   LeftArrowIcon,
@@ -19,18 +7,30 @@ import {
   ScrollIcon,
   Square2StackIcon,
 } from '@/components/icons';
-import { ZuButton } from '@/components/core';
-import { useParams, useRouter } from 'next/navigation';
-import QRCode from '../components/QRCode';
+import { SCROLL_EXPLORER } from '@/constant';
+import { useCeramicContext } from '@/context/CeramicContext';
 import {
   CeramicResponseType,
-  EventEdge,
   Event,
+  EventEdge,
   ScrollPassTickets,
 } from '@/types';
-import { useCeramicContext } from '@/context/CeramicContext';
+import {
+  Box,
+  Divider,
+  Grid,
+  IconButton,
+  Modal,
+  Skeleton,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import { SCROLL_EXPLORER } from '@/constant';
+import QRCode from '../components/QRCode';
 
 const Home = () => {
   const router = useRouter();

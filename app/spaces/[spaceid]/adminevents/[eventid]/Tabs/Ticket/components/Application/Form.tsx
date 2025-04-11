@@ -1,24 +1,24 @@
+import { ZuButton } from '@/components/core';
+import FormHeader from '@/components/form/FormHeader';
+import { PlusIcon, XCricleIcon } from '@/components/icons';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { updateRegAndAccess } from '@/services/event/regAndAccess';
+import { RegistrationAndAccess } from '@/types';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Box,
-  Stack,
-  Typography,
-  TextField,
-  IconButton,
   Divider,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
 } from '@mui/material';
-import FormHeader from '@/components/form/FormHeader';
-import { CommonWrapper, Title, ButtonGroup } from '../Common';
-import { useCallback, useMemo } from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { PlusIcon, XCricleIcon } from '@/components/icons';
-import { ZuButton } from '@/components/core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateRegAndAccess } from '@/services/event/regAndAccess';
 import { useParams } from 'next/navigation';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { RegistrationAndAccess } from '@/types';
+import { useCallback, useMemo } from 'react';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { ButtonGroup, CommonWrapper, Title } from '../Common';
 import { TicketingMethod } from '../types';
 interface FormProps {
   regAndAccess?: RegistrationAndAccess;

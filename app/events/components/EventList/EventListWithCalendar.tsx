@@ -1,27 +1,27 @@
-import CalendarSelect from './CalendarSelect';
+import MobileNav from '@/app/events/components/EventList/MobileNav';
 import { MapIcon } from '@/components/icons';
-import { DateValue } from '@heroui/react';
-import React, { FC, useMemo, useState } from 'react';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import {
-  UPCOMING_EVENTS_QUERY,
-  PAST_EVENTS_QUERY,
   ONGOING_EVENTS_QUERY,
+  PAST_EVENTS_QUERY,
+  UPCOMING_EVENTS_QUERY,
 } from '@/graphql/eventQueries';
 import { Event } from '@/types';
 import { supabase } from '@/utils/supabase/client';
-import EventList from './EventList';
-import { Ticket } from '@phosphor-icons/react';
-import MobileNav from '@/app/events/components/EventList/MobileNav';
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/20/solid';
+import { DateValue } from '@heroui/react';
+import { Ticket } from '@phosphor-icons/react';
+import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
+import { FC, useMemo, useState } from 'react';
+import CalendarSelect from './CalendarSelect';
+import EventCalendar from './EventCalendar';
 import {
   useCalendarConstraints,
-  useEventsByTimeFilter,
   useDateAvailability,
+  useEventsByTimeFilter,
 } from './EventCalendarHooks';
-import EventCalendar from './EventCalendar';
+import EventList from './EventList';
 
 export enum ITimeEnum {
   UpComing = 'upcoming',

@@ -2,13 +2,13 @@
 
 import { TwitterIcon, WhatsappIcon } from '@/components/icons';
 import { CopyIcon } from '@/components/icons/Copy';
-import { Modal, Typography, TextField, Snackbar } from '@mui/material';
+import { Modal, Snackbar, TextField, Typography } from '@mui/material';
 
 import { FarcasterIcon } from '@/components/icons';
 import { Box, Stack } from '@mui/material';
 
-import { IconButton } from '@mui/material';
 import { ZuButton } from '@/components/core';
+import { IconButton } from '@mui/material';
 
 import { useState } from 'react';
 

@@ -1,7 +1,7 @@
 import Header from './Header';
-import Tabbar from './Tabbar';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import SubSidebar from './SubSidebar';
+import Tabbar from './Tabbar';
 
-export { Header, Tabbar, Navbar, Sidebar, SubSidebar };
+export { Header, Navbar, Sidebar, SubSidebar, Tabbar };

@@ -1,23 +1,23 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import {
-  useTheme,
-  useMediaQuery,
-  Stack,
-  OutlinedInput,
-  InputAdornment,
-} from '@mui/material';
-import debounce from 'lodash/debounce';
-import { Sidebar } from 'components/layout';
-import SidebarLeft from './components/Sidebar';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useCeramicContext } from '../../context/CeramicContext';
-import { Event } from '@/types';
-import { SearchIcon } from '@/components/icons';
-import EventHeader from './components/EventHeader';
-import { supabase } from '@/utils/supabase/client';
 import EventList from '@/components/event/EventList';
+import { SearchIcon } from '@/components/icons';
+import { Event } from '@/types';
+import { supabase } from '@/utils/supabase/client';
+import {
+  InputAdornment,
+  OutlinedInput,
+  Stack,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { Sidebar } from 'components/layout';
+import debounce from 'lodash/debounce';
+import React, { useEffect, useState } from 'react';
+import { useCeramicContext } from '../../context/CeramicContext';
+import EventHeader from './components/EventHeader';
+import SidebarLeft from './components/Sidebar';
 
 const EventsPage: React.FC = () => {
   const theme = useTheme();

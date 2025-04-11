@@ -1,6 +1,6 @@
-import { getResolver } from 'key-did-resolver';
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { Ed25519Provider } from 'key-did-provider-ed25519';
+import { getResolver } from 'key-did-resolver';
 
 import { composeClient } from '@/constant';
 import { DID } from 'dids';

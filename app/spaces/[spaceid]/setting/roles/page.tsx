@@ -1,9 +1,8 @@
 'use client';
-import React from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
-import ViewRole from './components/viewRole';
-import RoleDetail from './components/roleDetail';
 import useGetSpaceMember from '@/hooks/useGetSpaceMember';
+import { useParams, useSearchParams } from 'next/navigation';
+import RoleDetail from './components/roleDetail';
+import ViewRole from './components/viewRole';
 
 export default function RolesPage() {
   const searchParams = useSearchParams();

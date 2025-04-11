@@ -1,10 +1,10 @@
 'use client';
-import React from 'react';
-import { useRouter } from 'next/navigation';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Stack, Typography, useTheme } from '@mui/material';
 import { ZuButton } from 'components/core';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import React from 'react';
 
 interface IThumbnail {
   name?: string;

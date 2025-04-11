@@ -1,19 +1,19 @@
-import * as React from 'react';
 import {
+  Box,
+  InputAdornment,
+  OutlinedInput,
+  Skeleton,
   Stack,
   Typography,
-  OutlinedInput,
-  InputAdornment,
-  Box,
-  Skeleton,
 } from '@mui/material';
 import {
-  SearchIcon,
-  HomeIcon,
-  EventIcon,
   ChevronDownIcon,
+  EventIcon,
+  HomeIcon,
+  SearchIcon,
 } from 'components/icons';
 import { useRouter } from 'next/navigation';
+import * as React from 'react';
 import styles from './Sidebar.module.css';
 
 interface SidebarProps {

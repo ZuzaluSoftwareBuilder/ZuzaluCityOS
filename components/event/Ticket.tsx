@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { Stack, Typography } from '@mui/material';
+import * as React from 'react';
 import BpCheckbox from './Checkbox';
 
 const Ticket = () => {

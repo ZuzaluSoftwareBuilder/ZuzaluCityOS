@@ -1,20 +1,20 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { CaretLeft, List } from '@phosphor-icons/react';
+import SpaceSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/spaceSubSidebar';
+import UserProfileSection from '@/components/layout/Header/UserProfileSection';
+import { useCeramicContext } from '@/context/CeramicContext';
 import {
-  Image,
-  Drawer,
-  DrawerContent,
-  DrawerBody,
   Button,
   cn,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  Image,
   Skeleton,
 } from '@heroui/react';
-import UserProfileSection from '@/components/layout/Header/UserProfileSection';
-import SpaceSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/spaceSubSidebar';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { CaretLeft, List } from '@phosphor-icons/react';
+import { useRouter } from 'next/navigation';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSpaceData } from './context/spaceData';
 
 const SpaceTopHeader: React.FC = () => {

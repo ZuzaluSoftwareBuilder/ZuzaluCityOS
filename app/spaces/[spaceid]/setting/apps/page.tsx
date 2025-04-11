@@ -1,21 +1,21 @@
 'use client';
+import { useQuery } from '@tanstack/react-query';
+import clsx from 'clsx';
+import get from 'lodash/get';
+import Link from 'next/link';
 import React, {
-  useEffect,
-  useRef,
-  useCallback,
+  memo,
   Suspense,
   use,
-  memo,
+  useCallback,
+  useEffect,
+  useRef,
 } from 'react';
-import clsx from 'clsx';
-import Link from 'next/link';
-import get from 'lodash/get';
-import { useQuery } from '@tanstack/react-query';
 
-import { Dapp } from '@/types';
-import { executeQuery } from '@/utils/ceramic';
 import { useScrollSection } from '@/hooks/useScrollSection';
 import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
+import { Dapp } from '@/types';
+import { executeQuery } from '@/utils/ceramic';
 
 import AppItem from './components/AppItem';
 import DAppDetailDrawer from './components/DAppDetailDrawer';

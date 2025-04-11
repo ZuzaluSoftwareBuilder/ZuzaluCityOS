@@ -1,18 +1,18 @@
+import { useEventContext } from '@/app/spaces/[spaceid]/adminevents/[eventid]/EventContext';
+import { useStatusContext } from '@/app/spaces/[spaceid]/adminevents/[eventid]/Tabs/Ticket/components/Common';
 import {
   ApplyOption,
   ApplyRule,
   RegistrationAccess,
   TicketingMethod,
 } from '@/app/spaces/[spaceid]/adminevents/[eventid]/Tabs/Ticket/components/types';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { updateRegAndAccess } from '@/services/event/regAndAccess';
 import { RegistrationAndAccess } from '@/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateRegAndAccess } from '@/services/event/regAndAccess';
 import { debounce } from 'lodash';
-import { useCeramicContext } from '@/context/CeramicContext';
 import { useParams } from 'next/navigation';
-import { useEventContext } from '@/app/spaces/[spaceid]/adminevents/[eventid]/EventContext';
-import { useStatusContext } from '@/app/spaces/[spaceid]/adminevents/[eventid]/Tabs/Ticket/components/Common';
+import { useCallback, useMemo, useRef } from 'react';
 
 interface Props {
   regAndAccess?: RegistrationAndAccess;

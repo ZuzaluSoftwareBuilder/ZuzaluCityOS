@@ -1,25 +1,25 @@
 'use client';
 
-import React, { useEffect, useCallback } from 'react';
-import { Button, Tabs, Tab, cn, Skeleton } from '@heroui/react';
 import {
-  Drawer,
-  DrawerContent,
-  DrawerBody,
   CommonDrawerHeader,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
 } from '@/components/base';
+import useOpenDraw from '@/hooks/useOpenDraw';
+import { Profile, RolePermission, UserRole } from '@/types';
+import { Button, cn, Skeleton, Tab, Tabs } from '@heroui/react';
 import {
   CaretLeft,
-  Info,
-  IdentificationBadge,
   CaretUpDown,
+  IdentificationBadge,
+  Info,
 } from '@phosphor-icons/react';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import React, { useCallback, useEffect } from 'react';
 import Display from './display';
-import { PermissionList } from './permission';
 import MemberManagement from './members/memberManagement';
-import { Profile, RolePermission, UserRole } from '@/types';
-import useOpenDraw from '@/hooks/useOpenDraw';
+import { PermissionList } from './permission';
 
 interface RoleListProps {
   roleData: RolePermission[];

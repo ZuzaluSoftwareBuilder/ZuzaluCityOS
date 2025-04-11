@@ -1,10 +1,10 @@
 'use client';
-import * as React from 'react';
-import { useRouter } from 'next/navigation';
+import { useCeramicContext } from '@/context/CeramicContext';
 import { Stack, Typography, useTheme } from '@mui/material';
 import { ZuButton } from 'components/core';
 import { SpacePlusIcon } from 'components/icons';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useRouter } from 'next/navigation';
+import * as React from 'react';
 import Dialog from '../Modal/Dialog';
 
 const SpaceHeader = () => {

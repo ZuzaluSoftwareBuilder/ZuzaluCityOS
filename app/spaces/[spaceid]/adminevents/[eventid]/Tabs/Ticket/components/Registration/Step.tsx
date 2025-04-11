@@ -1,24 +1,4 @@
 import {
-  Collapse,
-  Divider,
-  Link,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { useMemo, useState, useCallback } from 'react';
-import { CommonWrapper, Title, Item, ButtonGroup } from '../Common';
-import {
-  ItemType,
-  ConfigFormType,
-  RegistrationAccess,
-  TicketingMethod,
-  ApplyRule,
-  ApplyOption,
-} from '../types';
-import { isAddress } from 'viem';
-import { Controller, useFormContext } from 'react-hook-form';
-import {
   ChevronDownIcon,
   ChevronUpIcon,
   ExclamationCircleIcon,
@@ -27,7 +7,27 @@ import {
   ScrollPassIcon,
   ZuPassIcon,
 } from '@/components/icons';
+import {
+  Collapse,
+  Divider,
+  Link,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import Image from 'next/image';
+import { useCallback, useMemo, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
+import { isAddress } from 'viem';
+import { ButtonGroup, CommonWrapper, Item, Title } from '../Common';
+import {
+  ApplyOption,
+  ApplyRule,
+  ConfigFormType,
+  ItemType,
+  RegistrationAccess,
+  TicketingMethod,
+} from '../types';
 
 interface CommonProps {
   isLoading?: boolean;

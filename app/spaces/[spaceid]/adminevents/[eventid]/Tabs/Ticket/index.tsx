@@ -1,45 +1,43 @@
-import React, { useState } from 'react';
-import { Stack, Box } from '@mui/material';
-import {
-  TicketHeader,
-  TicketSetup,
-  CreateTicket,
-  TicketCreationSummary,
-  ProcessingTicket,
-  TicketVault,
-  RegistrationPanel,
-  NoTicketList,
-  ZupassList,
-  ScrollPassList,
-  PGFList,
-} from './components';
-import { sepolia, mainnet } from 'viem/chains';
-import { waitForTransactionReceipt, writeContract } from 'wagmi/actions';
-import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
-import { client, config } from '@/context/WalletContext';
+import Dialog from '@/app/spaces/components/Modal/Dialog';
+import Drawer from '@/components/drawer';
+import FormHeader from '@/components/form/FormHeader';
 import {
   TICKET_FACTORY_ADDRESS,
+  isDev,
   mUSDC_TOKEN,
   mUSDT_TOKEN,
-  isDev,
 } from '@/constant';
-import { Address, parseUnits } from 'viem';
-import dayjs, { Dayjs } from 'dayjs';
+import { client, config } from '@/context/WalletContext';
+import useOpenDraw from '@/hooks/useOpenDraw';
+import { updateTicketContract } from '@/services/event/addTicketContract';
+import { Event } from '@/types';
+import { ERC20_ABI } from '@/utils/erc20_abi';
 import { convertDateToEpoch } from '@/utils/format';
 import { TICKET_ABI } from '@/utils/ticket_abi';
-import { ERC20_ABI } from '@/utils/erc20_abi';
+import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
 import { TICKET_WITH_WHITELIST_ABI } from '@/utils/ticket_with_whitelist_abi';
-import { useEffect } from 'react';
-import { Event } from '@/types';
-import { Abi, AbiItem } from 'viem';
 import { SelectedFile } from '@lxdao/uploader3';
-import { updateTicketContract } from '@/services/event/addTicketContract';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
-import useOpenDraw from '@/hooks/useOpenDraw';
-import Drawer from '@/components/drawer';
-import { TicketingMethod } from './components/types';
+import { Box, Stack } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import FormHeader from '@/components/form/FormHeader';
+import dayjs, { Dayjs } from 'dayjs';
+import { useEffect, useState } from 'react';
+import { Abi, AbiItem, Address, parseUnits } from 'viem';
+import { mainnet, sepolia } from 'viem/chains';
+import { waitForTransactionReceipt, writeContract } from 'wagmi/actions';
+import {
+  CreateTicket,
+  NoTicketList,
+  PGFList,
+  ProcessingTicket,
+  RegistrationPanel,
+  ScrollPassList,
+  TicketCreationSummary,
+  TicketHeader,
+  TicketSetup,
+  TicketVault,
+  ZupassList,
+} from './components';
+import { TicketingMethod } from './components/types';
 
 interface PropTypes {
   event?: Event;

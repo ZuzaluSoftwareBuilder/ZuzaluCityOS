@@ -1,46 +1,46 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
-  Stack,
-  Typography,
   Avatar,
   Box,
+  CircularProgress,
   Divider,
   IconButton,
-  useTheme,
+  Stack,
+  Typography,
   useMediaQuery,
-  CircularProgress,
+  useTheme,
 } from '@mui/material';
 
-import Drawer from '@/components/drawer';
 import { ZuButton } from '@/components/core';
-import TopicChip from './TopicChip';
-import CommentDetails from './CommentDetails';
-import ReplyForm from './ReplyForm';
-import DiscussionSidebar from './DiscussionSidebar';
+import Drawer from '@/components/drawer';
 import ReportPostModal from '@/components/modals/Zuland/ReportPostModal';
 import ShareModal from '@/components/modals/Zuland/ShareModal';
+import CommentDetails from './CommentDetails';
+import DiscussionSidebar from './DiscussionSidebar';
+import ReplyForm from './ReplyForm';
 import SortList from './SortList';
+import TopicChip from './TopicChip';
 
-import { buildIpfsUrl, Post } from '@/utils/akasha/beam-to-post';
+import { ZulandReadableReflection } from '@/types/akasha';
 import {
   createZulandReflection,
   encodeSlateToBase64,
   getTopReadableReflectionsByBeamId,
   standardDateFormat,
 } from '@/utils/akasha';
-import { ZulandReadableReflection } from '@/types/akasha';
+import { buildIpfsUrl, Post } from '@/utils/akasha/beam-to-post';
 
 import {
+  ArrowUpOnSquareIcon,
   ChatBubbleIcon,
   FlagIcon,
-  ArrowUpOnSquareIcon,
 } from '@/components/icons';
-import ReadOnlyEditor from './ReadOnlyEditor';
 import { IPublishData } from '@akashaorg/typings/lib/ui';
+import ReadOnlyEditor from './ReadOnlyEditor';
 
 interface PostDetailsProps {
   postId: string;

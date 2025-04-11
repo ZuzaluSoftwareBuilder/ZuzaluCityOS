@@ -1,5 +1,5 @@
-import { NextRequest } from 'next/server';
 import { isDev } from '@/constant';
+import { NextRequest } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {

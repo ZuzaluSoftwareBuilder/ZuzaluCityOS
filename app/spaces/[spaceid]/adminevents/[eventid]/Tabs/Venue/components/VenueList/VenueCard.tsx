@@ -1,12 +1,12 @@
-import React, { useCallback, useState } from 'react';
-import { Box, Menu, MenuItem, Stack, Typography } from '@mui/material';
-import { ThreeVerticalIcon } from '@/components/icons';
-import { Venue, Event } from '@/types';
-import { supabase } from '@/utils/supabase/client';
-import { useMutation, useQuery } from '@tanstack/react-query';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
-import VenueForm from '@/components/form/VenueForm';
 import Drawer from '@/components/drawer';
+import VenueForm from '@/components/form/VenueForm';
+import { ThreeVerticalIcon } from '@/components/icons';
+import { Event, Venue } from '@/types';
+import { supabase } from '@/utils/supabase/client';
+import { Box, Menu, MenuItem, Stack, Typography } from '@mui/material';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import React, { useCallback, useState } from 'react';
 
 type VenueCardProps = {
   venue: Venue;

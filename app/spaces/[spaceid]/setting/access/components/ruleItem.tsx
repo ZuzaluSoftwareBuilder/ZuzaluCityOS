@@ -1,11 +1,4 @@
 import { Button, Divider, Select, SelectItem } from '@/components/base';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { ArrowUpRight, PencilSimple, Trash } from '@phosphor-icons/react';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { memo, useCallback, useState } from 'react';
-import * as yup from 'yup';
-import { POAP } from './rule';
-import { ZuPass } from './rule';
 import {
   addToast,
   CircularProgress,
@@ -13,16 +6,22 @@ import {
   Skeleton,
   Switch,
 } from '@heroui/react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { ArrowUpRight, PencilSimple, Trash } from '@phosphor-icons/react';
 import { useMutation, useQueries } from '@tanstack/react-query';
+import { memo, useCallback, useState } from 'react';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { POAP, ZuPass } from './rule';
 
-import { useParams } from 'next/navigation';
-import { PermissionName, SpaceGating } from '@/types';
-import { useSpaceData } from '../../../components/context/spaceData';
-import { getPOAPs } from '@/services/poap';
-import { useModal } from '@/context/ModalContext';
-import { createRule, deleteRule, updateRule } from '@/services/space/rule';
-import { useSpacePermissions } from '../../../components/permission';
 import { formatAddressString } from '@/components/layout/Header/UserProfileSection';
+import { useModal } from '@/context/ModalContext';
+import { getPOAPs } from '@/services/poap';
+import { createRule, deleteRule, updateRule } from '@/services/space/rule';
+import { PermissionName, SpaceGating } from '@/types';
+import { useParams } from 'next/navigation';
+import { useSpaceData } from '../../../components/context/spaceData';
+import { useSpacePermissions } from '../../../components/permission';
 
 interface AccessRuleProps {
   data: SpaceGating;

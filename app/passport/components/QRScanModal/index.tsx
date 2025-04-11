@@ -1,22 +1,21 @@
-import React, { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { client } from '@/context/WalletContext';
+import { updateRegAndAccess } from '@/services/event/regAndAccess';
+import { CeramicResponseType, EventEdge } from '@/types';
+import { getWalletAddressFromDid } from '@/utils/did';
+import CloseIcon from '@mui/icons-material/Close';
 import {
-  Typography,
-  IconButton,
   Box,
-  Modal,
   Button,
-  Stack,
   CircularProgress,
+  IconButton,
+  Modal,
+  Stack,
+  Typography,
   useTheme,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import dayjs from 'dayjs';
-import { client } from '@/context/WalletContext';
-import { CeramicResponseType } from '@/types';
-import { EventEdge } from '@/types';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { updateRegAndAccess } from '@/services/event/regAndAccess';
-import { getWalletAddressFromDid } from '@/utils/did';
+import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 const QrReader = require('react-qr-scanner');
 
 // ERC721 ABI (只包含我们需要的函数)

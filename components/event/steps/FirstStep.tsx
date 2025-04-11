@@ -1,6 +1,6 @@
+import { ZuButton } from '@/components/core';
 import { LeftArrowIcon, RightArrowCircleIcon } from '@/components/icons';
 import { Stack, Typography } from '@mui/material';
-import { ZuButton } from '@/components/core';
 import { useState } from 'react';
 
 interface PropTypes {

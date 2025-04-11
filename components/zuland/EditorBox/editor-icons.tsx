@@ -214,14 +214,14 @@ const ExclamationTriangle = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export {
-  Bold,
-  Italic,
   AlignLeft,
   AlignRight,
   AlignTextCenter,
   AlignTextLeft,
   AlignTextRight,
+  Bold,
   ExclamationTriangle,
+  Italic,
   ListBulleted,
   ListNumbered,
   Underline,

@@ -1,5 +1,5 @@
 import { ArrowsCounterClockwiseIcon, CloseIcon } from '@/components/icons';
-import { Typography, Box, Stack } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { useCallback, useState } from 'react';
 
 interface FilterProps {

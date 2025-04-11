@@ -1,10 +1,10 @@
-import React from 'react';
-import { useFieldArray, Controller, UseFormReturn } from 'react-hook-form';
 import { Input, Select, SelectItem } from '@/components/base';
 import { SOCIAL_TYPES } from '@/constant';
-import { XCircle, Plus } from '@phosphor-icons/react';
-import * as yup from 'yup';
 import { Link } from '@/types';
+import { Plus, XCircle } from '@phosphor-icons/react';
+import React from 'react';
+import { Controller, useFieldArray, UseFormReturn } from 'react-hook-form';
+import * as yup from 'yup';
 
 export interface LinksFormData {
   socialLinks: Link[];

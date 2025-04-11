@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Typography, Stack, Snackbar } from '@mui/material';
 import { ZuButton } from '@/components/core';
+import { Snackbar, Stack, Typography } from '@mui/material';
 
 import { useAkashaAuthStore } from '@/hooks/use-akasha-auth-store';
+import { IPublishData } from '@akashaorg/typings/lib/ui';
 import AkashaCreateProfileModal from '../modals/Zuland/AkashaCreateProfileModal';
 import SlateEditorBlock, { SlateEditorBlockRef } from './SlateEditorBlock';
-import { IPublishData } from '@akashaorg/typings/lib/ui';
 
 interface ReplyFormProps {
   eventId: string;

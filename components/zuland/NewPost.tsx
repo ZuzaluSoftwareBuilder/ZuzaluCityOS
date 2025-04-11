@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { useAkashaAuthStore } from '@/hooks/use-akasha-auth-store';
 import {
@@ -8,18 +8,18 @@ import {
   encodeSlateToBase64,
 } from '@/utils/akasha';
 
-import {
-  Typography,
-  TextField,
-  Stack,
-  InputAdornment,
-  Snackbar,
-} from '@mui/material';
 import { ZuButton } from '@/components/core';
 import AkashaCreateProfileModal from '@/components/modals/Zuland/AkashaCreateProfileModal';
-import TopicList from './TopicList';
-import SlateEditorBlock, { SlateEditorBlockRef } from './SlateEditorBlock';
 import { IPublishData } from '@akashaorg/typings/lib/ui';
+import {
+  InputAdornment,
+  Snackbar,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
+import SlateEditorBlock, { SlateEditorBlockRef } from './SlateEditorBlock';
+import TopicList from './TopicList';
 
 interface NewPostProps {
   eventId: string;

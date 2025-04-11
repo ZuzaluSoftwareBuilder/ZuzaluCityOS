@@ -1,5 +1,4 @@
-import { CircularProgress } from '@mui/material';
-import { Backdrop } from '@mui/material';
+import { Backdrop, CircularProgress } from '@mui/material';
 import * as React from 'react';
 
 const Loading: React.FC = () => {

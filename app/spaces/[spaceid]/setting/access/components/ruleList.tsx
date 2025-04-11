@@ -1,10 +1,10 @@
-import RuleItem from './ruleItem';
 import { Button } from '@/components/base';
-import { Plus } from '@phosphor-icons/react';
-import { useSpacePermissions } from '../../../components/permission';
-import { useSpaceData } from '../../../components/context/spaceData';
 import { PermissionName, SpaceGating } from '@/types';
+import { Plus } from '@phosphor-icons/react';
 import { useCallback, useState } from 'react';
+import { useSpaceData } from '../../../components/context/spaceData';
+import { useSpacePermissions } from '../../../components/permission';
+import RuleItem from './ruleItem';
 
 function RuleList() {
   const { checkPermission } = useSpacePermissions();

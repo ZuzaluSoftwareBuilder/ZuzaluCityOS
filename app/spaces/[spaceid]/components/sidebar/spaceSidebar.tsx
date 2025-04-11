@@ -1,5 +1,5 @@
 import SpaceList from '@/app/spaces/[spaceid]/components/sidebar/spaceList';
-import React from 'react';
+import { Tooltip } from '@heroui/react';
 import {
   Buildings,
   House,
@@ -7,8 +7,8 @@ import {
   Shapes,
   Ticket,
 } from '@phosphor-icons/react';
-import { Tooltip } from '@heroui/react';
 import Link from 'next/link';
+import React from 'react';
 
 type SidebarItem = {
   name: string;

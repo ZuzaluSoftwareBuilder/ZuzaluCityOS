@@ -2,6 +2,7 @@
 import SessionCard from '@/app/spaces/[spaceid]/adminevents/[eventid]/Tabs/Sessions/components/SessionList/SessionCard';
 import SlotDates from '@/components/calendar/SlotDate';
 import { ZuButton, ZuCalendar } from '@/components/core';
+import { decodeOutputData } from '@/components/editor/useEditorStore';
 import {
   ArrowDownIcon,
   CalendarIcon,
@@ -19,6 +20,7 @@ import {
 import { useCeramicContext } from '@/context/CeramicContext';
 import { Anchor, Event, Profile, ProfileEdge, Session, Venue } from '@/types';
 import dayjs, { Dayjs } from '@/utils/dayjs';
+import { formatUserName } from '@/utils/format';
 import formatDateAgo from '@/utils/formatDateAgo';
 import { supabase } from '@/utils/supabase/client';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -41,15 +43,13 @@ import {
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useQuery } from '@tanstack/react-query';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
-import { FilterSessionPop } from './FilterSessionPop';
 import { download } from 'utils/download';
-import { decodeOutputData } from '@/components/editor/useEditorStore';
-import dynamic from 'next/dynamic';
-import { formatUserName } from '@/utils/format';
+import { FilterSessionPop } from './FilterSessionPop';
 
 const EditorPreview = dynamic(
   () => import('@/components/editor/EditorPreview'),

@@ -1,6 +1,6 @@
-import * as Yup from 'yup';
 import dayjs from 'dayjs';
 import { ITimezoneOption } from 'react-timezone-select';
+import * as Yup from 'yup';
 
 Yup.addMethod(Yup.mixed, 'dayjs', function dayjsSchema() {
   return this.test(

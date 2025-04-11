@@ -1,8 +1,11 @@
-import { DoorOpen } from '@phosphor-icons/react';
-import { LockLaminated } from '@phosphor-icons/react';
-import { CaretLeft, CaretRight } from '@phosphor-icons/react';
-import { Check } from '@phosphor-icons/react';
 import { Button } from '@/components/base';
+import {
+  CaretLeft,
+  CaretRight,
+  Check,
+  DoorOpen,
+  LockLaminated,
+} from '@phosphor-icons/react';
 
 interface AccessRuleProps {
   onBack: () => void;

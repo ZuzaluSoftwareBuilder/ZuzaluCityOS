@@ -1,59 +1,61 @@
-import { mUSDC_TOKEN, isDev } from '@/constant';
-import { client, config } from '@/context/WalletContext';
-import { ERC20_ABI } from '@/utils/erc20_abi';
-import { TICKET_ABI } from '@/utils/ticket_abi';
-import { TICKET_WITH_WHITELIST_ABI } from '@/utils/ticket_with_whitelist_abi';
-import React, { Dispatch, useEffect, useMemo, useState } from 'react';
-import { Address, isAddress } from 'viem';
-import { mainnet, sepolia } from 'viem/chains';
-import {
-  writeContract,
-  waitForTransactionReceipt,
-  readContract,
-} from 'wagmi/actions';
 import { ZuButton } from '@/components/core';
 import {
   ArrowDownSquare,
-  CloseIcon,
-  RightArrowIcon,
-  SendIcon,
+  ArrowTopRightSquareIcon,
   ChevronDownIcon,
-  XCricleIcon,
+  CloseIcon,
   CopyIcon,
   GoToExplorerIcon,
-  Square2StackIcon,
-  ArrowTopRightSquareIcon,
   PlusIcon,
   RefreshIcon,
+  RightArrowIcon,
+  SendIcon,
+  Square2StackIcon,
+  XCricleIcon,
 } from '@/components/icons';
+import { formatAddressString } from '@/components/layout/Header/UserProfileSection';
+import { useToast } from '@/components/toast/ToastContext';
+import { isDev, mUSDC_TOKEN } from '@/constant';
+import { client, config } from '@/context/WalletContext';
+import { Contract, Event } from '@/types';
+import { fetchEmailJsConfig } from '@/utils/emailService';
+import { ERC20_ABI } from '@/utils/erc20_abi';
+import gaslessFundAndUpload from '@/utils/gaslessFundAndUpload';
+import {
+  createFileFromJSON,
+  generateNFTMetadata,
+} from '@/utils/generateNFTMetadata';
+import { TICKET_ABI } from '@/utils/ticket_abi';
+import { TICKET_WITH_WHITELIST_ABI } from '@/utils/ticket_with_whitelist_abi';
+import { send } from '@emailjs/browser';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Box,
   Button,
+  Collapse,
+  IconButton,
   Input,
+  Modal,
   Stack,
+  Step,
+  StepLabel,
+  Stepper,
   TextField,
   Typography,
-  Step,
-  Stepper,
-  StepLabel,
-  Modal,
-  IconButton,
-  Collapse,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import gaslessFundAndUpload from '@/utils/gaslessFundAndUpload';
-import { generateNFTMetadata } from '@/utils/generateNFTMetadata';
-import { createFileFromJSON } from '@/utils/generateNFTMetadata';
-import { fetchEmailJsConfig } from '@/utils/emailService';
-import { send } from '@emailjs/browser';
-import { Contract, Event } from '@/types';
-import { formatAddressString } from '@/components/layout/Header/UserProfileSection';
+import React, { Dispatch, useEffect, useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import * as yup from 'yup';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { Address, isAddress } from 'viem';
+import { mainnet, sepolia } from 'viem/chains';
+import {
+  readContract,
+  waitForTransactionReceipt,
+  writeContract,
+} from 'wagmi/actions';
+import * as yup from 'yup';
 import { ButtonGroup } from '../Common';
-import { useToast } from '@/components/toast/ToastContext';
 
 interface IProps {
   amount?: string;

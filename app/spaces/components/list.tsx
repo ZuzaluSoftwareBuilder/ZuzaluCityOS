@@ -1,17 +1,17 @@
+import { SpaceCard, SpaceCardSkeleton } from '@/components/biz/space/SpaceCard';
+import { Space } from '@/types';
 import { Grid, Stack, useMediaQuery, useTheme } from '@mui/material';
 import { useMemo, useState } from 'react';
-import { Space } from '@/types';
-import { SpaceCard, SpaceCardSkeleton } from '@/components/biz/space/SpaceCard';
 
-import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
 import ExploreSearch from '@/components/layout/explore/exploreSearch';
-import useUserSpace from '@/hooks/useUserSpace';
+import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { useGraphQL } from '@/hooks/useGraphQL';
+import useUserSpace from '@/hooks/useUserSpace';
 import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
 import dayjs from '@/utils/dayjs';
-import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/utils/supabase/client';
+import { useQuery } from '@tanstack/react-query';
 
 const SpaceList = () => {
   const theme = useTheme();

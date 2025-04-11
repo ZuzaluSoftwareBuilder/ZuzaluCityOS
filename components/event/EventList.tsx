@@ -1,14 +1,13 @@
+import { Event } from '@/types';
+import { Box, Link, Skeleton, Typography, useTheme } from '@mui/material';
 import dayjs from 'dayjs';
 import { Fragment, useMemo } from 'react';
-import { Event } from '@/types';
 import EventCard, {
   EventCardMonthGroup,
   EventCardSkeleton,
   groupEventsByMonth,
 } from '../cards/EventCard';
-import { Box, Link, Skeleton, Typography } from '@mui/material';
 import { EventIcon, RightArrowCircleIcon } from '../icons';
-import { useTheme } from '@mui/material';
 
 interface EventListProps {
   events: Event[];

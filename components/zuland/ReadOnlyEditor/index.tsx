@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { createEditor, Descendant } from 'slate';
-import { Slate, withReact, Editable, RenderElementProps } from 'slate-react';
-import { withMentions, withLinks } from '@/components/zuland/EditorBox/plugins';
+import { editorDefaultValue } from '@/components/zuland/EditorBox/initial-value';
+import { withLinks, withMentions } from '@/components/zuland/EditorBox/plugins';
 import {
   renderElement,
   renderLeaf,
 } from '@/components/zuland/EditorBox/renderers';
-import { editorDefaultValue } from '@/components/zuland/EditorBox/initial-value';
+import * as React from 'react';
+import { createEditor, Descendant } from 'slate';
+import { Editable, RenderElementProps, Slate, withReact } from 'slate-react';
 
 export interface IReadOnlyEditor {
   content: Descendant[];

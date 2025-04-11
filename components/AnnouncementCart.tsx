@@ -1,6 +1,5 @@
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import Image from 'next/image';
-import { useTheme } from '@mui/material';
 
 interface AnnouncementCardProps {
   title: string;

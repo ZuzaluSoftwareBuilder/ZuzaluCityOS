@@ -1,7 +1,7 @@
+import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import { Stack } from '@mui/material';
 import { ZuButton } from 'components/core';
 import React from 'react';
-import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 
 const ExternalTicketingDefault: React.FC = () => {
   return (

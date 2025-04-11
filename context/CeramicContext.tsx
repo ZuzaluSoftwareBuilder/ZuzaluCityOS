@@ -1,16 +1,16 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { CeramicClient } from '@ceramicnetwork/http-client';
-import { ComposeClient } from '@composedb/client';
-import { authenticateCeramic } from '../utils/ceramicAuth';
-import { Profile } from '@/types/index.js';
 import { ceramic, composeClient } from '@/constant';
-import { getAccount } from 'wagmi/actions';
 import { config } from '@/context/WalletContext';
-import { executeQuery } from '@/utils/ceramic';
 import {
   CREATE_PROFILE_MUTATION,
   GET_OWN_PROFILE_QUERY,
 } from '@/services/graphql/profile';
+import { Profile } from '@/types/index.js';
+import { executeQuery } from '@/utils/ceramic';
+import { CeramicClient } from '@ceramicnetwork/http-client';
+import { ComposeClient } from '@composedb/client';
+import { createContext, useCallback, useContext, useState } from 'react';
+import { getAccount } from 'wagmi/actions';
+import { authenticateCeramic } from '../utils/ceramicAuth';
 
 type ConnectSource = 'connectButton' | 'invalidAction';
 

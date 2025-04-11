@@ -1,11 +1,10 @@
 'use client';
 
-import { useMemo } from 'react';
-import { Switch } from '@heroui/react';
 import { getAllPermission } from '@/services/permission';
-import { useQuery } from '@tanstack/react-query';
 import { RolePermission } from '@/types';
-import { Skeleton } from '@heroui/react';
+import { Skeleton, Switch } from '@heroui/react';
+import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 interface PermissionItemProps {
   title: string;

@@ -1,10 +1,9 @@
-import * as React from 'react';
+import { Contract } from '@/types';
 import { Stack, Typography } from '@mui/material';
 import { ZuButton } from 'components/core';
-import TicketCard from './TicketCard';
-import { TicketCardProps } from './TicketCard';
 import { PlusIcon } from 'components/icons';
-import { Contract } from '@/types';
+import * as React from 'react';
+import TicketCard, { TicketCardProps } from './TicketCard';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 

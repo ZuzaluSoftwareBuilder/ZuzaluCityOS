@@ -1,22 +1,22 @@
+import isUrl from 'is-url';
 import React, {
-  useState,
-  useRef,
-  useEffect,
-  RefObject,
-  useImperativeHandle,
   forwardRef,
+  RefObject,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
 } from 'react';
 import {
   createEditor,
-  Editor,
-  Transforms,
-  Text as SlateText,
-  Element,
   Descendant,
+  Editor,
+  Element,
+  Text as SlateText,
+  Transforms,
 } from 'slate';
-import isUrl from 'is-url';
 import { withHistory } from 'slate-history';
-import { Editable, Slate, withReact, RenderElementProps } from 'slate-react';
+import { Editable, RenderElementProps, Slate, withReact } from 'slate-react';
 
 import type {
   IMetadata,
@@ -27,16 +27,14 @@ import type {
 import EditorMeter from './editor-meter';
 
 import { CustomEditor } from './helpers';
-import { serializeToPlainText } from './serialize';
 import { editorDefaultValue } from './initial-value';
+import { withLinks, withMentions } from './plugins';
 import { renderElement, renderLeaf } from './renderers';
-import { withMentions, withLinks } from './plugins';
+import { serializeToPlainText } from './serialize';
 
-import { MarkButton, BlockButton } from './formatting-buttons';
-import { transformSource } from '@/utils/akasha/editor/media-utils';
-import { Avatar, Button, IconButton, Typography } from '@mui/material';
-import { Stack } from '@mui/material';
 import { ArrowPathIcon } from '@/components/icons/ArrowPath';
+import { transformSource } from '@/utils/akasha/editor/media-utils';
+import { Avatar, Button, IconButton, Stack, Typography } from '@mui/material';
 import {
   AlignTextCenter,
   AlignTextLeft,
@@ -48,6 +46,7 @@ import {
   ListNumbered,
   Underline,
 } from './editor-icons';
+import { BlockButton, MarkButton } from './formatting-buttons';
 
 const MAX_TEXT_LENGTH = 500;
 

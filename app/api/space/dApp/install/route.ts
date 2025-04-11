@@ -1,18 +1,18 @@
-import { withSessionValidation } from '@/utils/authMiddleware';
-import { dayjs } from '@/utils/dayjs';
-import utc from 'dayjs/plugin/utc';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
 import {
-  INSTALL_DAPP_TO_SPACE,
   GET_SPACE_INSTALLED_APPS,
+  INSTALL_DAPP_TO_SPACE,
 } from '@/services/graphql/space';
-import { z } from 'zod';
+import { PermissionName } from '@/types';
+import { withSessionValidation } from '@/utils/authMiddleware';
+import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { dayjs } from '@/utils/dayjs';
 import {
   createErrorResponse,
   createSuccessResponse,
 } from '@/utils/service/response';
 import { hasRequiredPermission } from '@/utils/service/role';
-import { PermissionName } from '@/types';
+import utc from 'dayjs/plugin/utc';
+import { z } from 'zod';
 
 dayjs.extend(utc);
 

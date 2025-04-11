@@ -1,9 +1,9 @@
 'use client';
-import { Space } from '@/types';
-import React, { createContext, useContext } from 'react';
-import { useParams } from 'next/navigation';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
+import { Space } from '@/types';
+import { useParams } from 'next/navigation';
+import React, { createContext, useContext } from 'react';
 
 interface SpaceDataContextType {
   isSpaceDataLoading: boolean;

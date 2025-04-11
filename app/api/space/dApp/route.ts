@@ -1,5 +1,5 @@
-import { executeQuery } from '@/utils/ceramic';
 import { GET_SPACE_INSTALLED_APPS } from '@/services/graphql/space';
+import { executeQuery } from '@/utils/ceramic';
 import {
   createErrorResponse,
   createSuccessResponse,

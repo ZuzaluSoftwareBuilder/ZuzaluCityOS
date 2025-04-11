@@ -1,47 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Stack,
-  Typography,
-  Box,
-  Divider,
-  CircularProgress,
-  Snackbar,
-  Alert,
-} from '@mui/material';
+import Dialog from '@/app/spaces/components/Modal/Dialog';
+import { ZuButton } from '@/components/core';
 import {
   ArrowUpLeftIcon,
-  RightArrowIcon,
-  ScrollIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  HeartIcon,
-  GoToExplorerIcon,
   CopyIcon,
+  GoToExplorerIcon,
+  HeartIcon,
+  RightArrowIcon,
+  ScrollIcon,
 } from '@/components/icons';
-import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
-import { client, config } from '@/context/WalletContext';
-import { useAccount, useSwitchChain } from 'wagmi';
 import {
-  TICKET_FACTORY_ADDRESS,
-  mUSDT_TOKEN,
   isDev,
+  mUSDT_TOKEN,
   SCROLL_EXPLORER,
+  TICKET_FACTORY_ADDRESS,
 } from '@/constant';
-import { Address } from 'viem';
-import { TICKET_ABI } from '@/utils/ticket_abi';
-import { TICKET_WITH_WHITELIST_ABI } from '@/utils/ticket_with_whitelist_abi';
-import { Abi, AbiItem } from 'viem';
-import { ERC20_ABI } from '@/utils/erc20_abi';
-import { sepolia, mainnet } from 'viem/chains';
-import { writeContract, waitForTransactionReceipt } from 'wagmi/actions';
-import { ZuButton } from '@/components/core';
-import gaslessFundAndUpload from '@/utils/gaslessFundAndUpload';
-import { generateNFTMetadata } from '@/utils/generateNFTMetadata';
-import { createFileFromJSON } from '@/utils/generateNFTMetadata';
-import { Event, Contract } from '@/types';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
-import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { client, config } from '@/context/WalletContext';
+import { Contract, Event } from '@/types';
+import { ERC20_ABI } from '@/utils/erc20_abi';
+import gaslessFundAndUpload from '@/utils/gaslessFundAndUpload';
+import {
+  createFileFromJSON,
+  generateNFTMetadata,
+} from '@/utils/generateNFTMetadata';
+import { TICKET_ABI } from '@/utils/ticket_abi';
+import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
+import { TICKET_WITH_WHITELIST_ABI } from '@/utils/ticket_with_whitelist_abi';
+import {
+  Alert,
+  Box,
+  CircularProgress,
+  Divider,
+  Snackbar,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+import React, { useEffect, useState } from 'react';
+import { Abi, AbiItem, Address } from 'viem';
+import { mainnet, sepolia } from 'viem/chains';
+import { useAccount, useSwitchChain } from 'wagmi';
+import { waitForTransactionReceipt, writeContract } from 'wagmi/actions';
 
 interface IProps {
   setIsVerify?: React.Dispatch<React.SetStateAction<boolean>> | any;

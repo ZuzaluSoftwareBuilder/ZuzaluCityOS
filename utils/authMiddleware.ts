@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { DIDSession } from 'did-session';
-import { supabase } from './supabase/client';
-import { Permission, UserRole, Space, RolePermission } from '@/types';
 import { CHECK_EXISTING_ROLE_QUERY } from '@/services/graphql/role';
 import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
+import { Permission, RolePermission, Space, UserRole } from '@/types';
+import { DIDSession } from 'did-session';
+import { NextRequest, NextResponse } from 'next/server';
 import { executeQuery } from './ceramic';
+import { supabase } from './supabase/client';
 
 export type SessionCheckResult = {
   isValid: boolean;

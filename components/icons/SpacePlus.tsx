@@ -1,5 +1,5 @@
-import React from 'react';
 import { IconProps } from '@/types';
+import React from 'react';
 
 export const SpacePlusIcon: React.FC<IconProps> = ({
   color = 'white',

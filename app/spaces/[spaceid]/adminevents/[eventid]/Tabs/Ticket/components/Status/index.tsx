@@ -1,15 +1,15 @@
+import Drawer from '@/components/drawer';
+import useOpenDraw from '@/hooks/useOpenDraw';
+import useRegAndAccess from '@/hooks/useRegAndAccess';
+import { Event, RegistrationAndAccess } from '@/types';
 import { Box, Stack, Typography } from '@mui/material';
+import { useMemo } from 'react';
 import {
   StatusIndicatorPanel,
   TitleWithTag,
   useStatusContext,
 } from '../Common';
-import { RegistrationAndAccess, Event } from '@/types';
-import { useMemo } from 'react';
 import { RegistrationAccess, TagProps } from '../types';
-import useRegAndAccess from '@/hooks/useRegAndAccess';
-import useOpenDraw from '@/hooks/useOpenDraw';
-import Drawer from '@/components/drawer';
 import Form from './Form';
 
 interface StatusProps {

@@ -1,11 +1,11 @@
 'use client';
-import React, { useMemo, useState } from 'react';
-import { Box, Stack, Typography } from '@mui/material';
+import { ZuButton } from '@/components/core';
 import { ChevronDownIcon, ChevronUpIcon } from '@/components/icons';
 import { Post } from '@/types';
+import { Box, Stack, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
-import { ZuButton } from '@/components/core';
+import React, { useMemo, useState } from 'react';
 
 const EditorPreview = dynamic(
   () => import('@/components/editor/EditorPreview'),

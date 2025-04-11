@@ -1,8 +1,8 @@
-import * as React from 'react';
+import { Post } from '@/types';
 import { Stack, Typography } from '@mui/material';
 import ZuButton from 'components/core/Button';
-import { PlusIcon, PlusCircleIcon, InformationIcon } from 'components/icons';
-import { Post } from '@/types';
+import { InformationIcon, PlusCircleIcon, PlusIcon } from 'components/icons';
+import * as React from 'react';
 import PostCard from './PostCard';
 
 interface PostListListProps {

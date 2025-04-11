@@ -1,9 +1,9 @@
 'use client';
-import * as React from 'react';
-import Link from 'next/link';
-import { Typography, Box, Stack, Skeleton } from '@mui/material';
-import { CheckCircleIcon } from '../icons';
 import { SPACE_CATEGORIES } from '@/constant';
+import { Box, Skeleton, Stack, Typography } from '@mui/material';
+import Link from 'next/link';
+import * as React from 'react';
+import { CheckCircleIcon } from '../icons';
 
 export type SpaceCardProps = {
   id?: string;

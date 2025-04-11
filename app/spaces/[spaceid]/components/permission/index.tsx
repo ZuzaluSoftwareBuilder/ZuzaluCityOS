@@ -1,11 +1,11 @@
 'use client';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { PermissionName } from '@/types';
-import React, { createContext, useContext, useMemo, useCallback } from 'react';
-import { useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { getAllPermission } from '@/services/permission';
 import useGetSpaceMember from '@/hooks/useGetSpaceMember';
+import { getAllPermission } from '@/services/permission';
+import { PermissionName } from '@/types';
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
+import React, { createContext, useCallback, useContext, useMemo } from 'react';
 
 interface SpacePermissionContextType {
   isOwner: boolean;

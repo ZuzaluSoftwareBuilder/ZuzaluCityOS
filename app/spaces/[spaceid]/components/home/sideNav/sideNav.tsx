@@ -1,17 +1,17 @@
 'use client';
 
-import { Space } from '@/types';
+import { formatMemberCount } from '@/components/biz/space/SpaceCard';
 import useGetSpaceMember from '@/hooks/useGetSpaceMember';
-import { useParams } from 'next/navigation';
-import { useMemo } from 'react';
+import { Space } from '@/types';
 import { getWalletAddressFromDid } from '@/utils/did';
 import { Skeleton } from '@heroui/react';
-import { formatMemberCount } from '@/components/biz/space/SpaceCard';
 import dayjs from 'dayjs';
-import DetailItem from './detailItem';
-import SocialLink from './socialLink';
-import MemberItem, { MemberItemSkeleton } from './memberItem';
+import { useParams } from 'next/navigation';
+import { useMemo } from 'react';
 import CustomLink from './customLink';
+import DetailItem from './detailItem';
+import MemberItem, { MemberItemSkeleton } from './memberItem';
+import SocialLink from './socialLink';
 
 export interface ISideNavProps {
   spaceData?: Space;

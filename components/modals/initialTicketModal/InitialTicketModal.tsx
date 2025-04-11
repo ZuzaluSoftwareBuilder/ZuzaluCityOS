@@ -1,8 +1,8 @@
-import { Box, Stack, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { Box, Stack, Typography } from '@mui/material';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { TokenConfirm } from './TokenConfirm';
 import { TicketDetail } from './TicketDetail';
+import { TokenConfirm } from './TokenConfirm';
 
 interface PropTypes {
   showModal: boolean;

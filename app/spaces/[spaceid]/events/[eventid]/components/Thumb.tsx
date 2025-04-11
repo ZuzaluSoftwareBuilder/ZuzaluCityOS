@@ -1,6 +1,6 @@
+import { Stack, Typography } from '@mui/material';
+import { CalendarIcon, LockIcon, SessionIcon } from 'components/icons';
 import * as React from 'react';
-import { Typography, Stack } from '@mui/material';
-import { CalendarIcon, SessionIcon, LockIcon } from 'components/icons';
 
 interface TabbarProps {
   tabName: string;

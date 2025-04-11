@@ -1,9 +1,9 @@
-import React, { SetStateAction, Dispatch } from 'react';
-import { Stack, Typography, IconButton } from '@mui/material';
-import { ZuButton } from 'components/core';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckinConnectButton from '@/components/checkin/CheckinConnectButton';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
+import { IconButton, Stack, Typography } from '@mui/material';
+import { ZuButton } from 'components/core';
+import React, { Dispatch, SetStateAction } from 'react';
 interface LinkAddressProps {
   handleStep: (step: number) => void;
   address: string;

@@ -1,41 +1,41 @@
-import { ArrowSquareRightIcon } from '@/components/icons';
 import {
-  Divider,
-  Avatar,
+  Button,
+  CommonModalHeader,
+  Modal,
+  ModalContent,
+} from '@/components/base';
+import { ArrowSquareRightIcon } from '@/components/icons';
+import { useBuildInRole } from '@/context/BuildInRoleContext';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { useZupassContext } from '@/context/ZupassContext';
+import { usePOAPVerify } from '@/hooks/useRuleVerify';
+import useUserSpace from '@/hooks/useUserSpace';
+import { CREATE_ROLE_QUERY, UPDATE_ROLE_QUERY } from '@/services/graphql/role';
+import { joinSpace } from '@/services/member';
+import { getPOAPs } from '@/services/poap';
+import { ZuPassInfo } from '@/types';
+import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { dayjs } from '@/utils/dayjs';
+import {
   Accordion,
   AccordionItem,
   addToast,
-  Skeleton,
+  Avatar,
   cn,
+  Divider,
+  Skeleton,
 } from '@heroui/react';
+import { CheckCircle } from '@phosphor-icons/react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  Modal,
-  CommonModalHeader,
-  Button,
-  ModalContent,
-} from '@/components/base';
-import { useSpaceData } from '../../context/spaceData';
-import { joinSpace } from '@/services/member';
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import {
-  useCallback,
+  Fragment,
   ReactNode,
+  useCallback,
+  useEffect,
   useMemo,
   useState,
-  useEffect,
-  Fragment,
 } from 'react';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useBuildInRole } from '@/context/BuildInRoleContext';
-import { getPOAPs } from '@/services/poap';
-import { CheckCircle } from '@phosphor-icons/react';
-import { usePOAPVerify } from '@/hooks/useRuleVerify';
-import { ZuPassInfo } from '@/types';
-import { useZupassContext } from '@/context/ZupassContext';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
-import { dayjs } from '@/utils/dayjs';
-import { CREATE_ROLE_QUERY, UPDATE_ROLE_QUERY } from '@/services/graphql/role';
-import useUserSpace from '@/hooks/useUserSpace';
+import { useSpaceData } from '../../context/spaceData';
 
 const MODAL_BASE_CLASSES = {
   base: 'rounded-[10px] border-2 border-b-w-10 bg-[rgba(44,44,44,0.80)] backdrop-blur-[20px] text-white',

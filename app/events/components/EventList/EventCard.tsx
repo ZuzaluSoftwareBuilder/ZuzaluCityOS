@@ -1,8 +1,8 @@
 import { Event } from '@/types';
-import { Avatar, Skeleton, Image, cn } from '@heroui/react';
+import { Avatar, Image, Skeleton, cn } from '@heroui/react';
+import { MapPin } from '@phosphor-icons/react';
 import dayjs from 'dayjs';
 import Link from 'next/link';
-import { MapPin } from '@phosphor-icons/react';
 
 interface IEventCardProps {
   data: Event;

@@ -1,7 +1,7 @@
 import { Editor, Extension } from '@tiptap/core';
-import { EditorView } from 'prosemirror-view';
-import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 import MarkdownIt from 'markdown-it';
+import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
 
 const md = new MarkdownIt('zero', {
   html: false,

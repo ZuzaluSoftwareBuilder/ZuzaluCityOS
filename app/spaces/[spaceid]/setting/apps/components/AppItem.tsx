@@ -1,12 +1,11 @@
 'use client';
-import React, { memo, useCallback, useMemo } from 'react';
-import clsx from 'clsx';
-import { useParams } from 'next/navigation';
 import { Image, Skeleton } from '@heroui/react';
 import { CaretLineDown, Trash } from '@phosphor-icons/react';
 import { useMutation } from '@tanstack/react-query';
+import clsx from 'clsx';
+import { useParams } from 'next/navigation';
+import { memo, useCallback, useMemo } from 'react';
 
-import { Dapp } from '@/types';
 import { Button } from '@/components/base';
 import {
   installDApp,
@@ -14,11 +13,12 @@ import {
   uninstallDApp,
   UninstallDAppParams,
 } from '@/services/space/apps';
+import { Dapp } from '@/types';
 
+import { USER_AVATAR_URL } from '@/constant';
+import { isNativeDApp, NativeDApp } from '../constants';
 import { useDAppDetailDrawer } from './DAppDetailDrawer';
 import { useInstalledAppsData } from './InstalledAppsData';
-import { isNativeDApp, NativeDApp } from '../constants';
-import { USER_AVATAR_URL } from '@/constant';
 
 interface Props {
   data: Dapp | NativeDApp;

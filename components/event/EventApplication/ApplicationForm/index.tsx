@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
+import { RightArrowIcon } from '@/components/icons';
+import { createApplicationForm } from '@/services/event/createApplicationForm';
+import { Event } from '@/types';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  CircularProgress,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
   Stack,
   TextField,
-  Button,
   Typography,
-  Radio,
-  FormControlLabel,
-  RadioGroup,
-  AccordionDetails,
-  Accordion,
-  AccordionSummary,
-  CircularProgress,
 } from '@mui/material';
-import { Event } from '@/types';
-import { RightArrowIcon } from '@/components/icons';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { createApplicationForm } from '@/services/event/createApplicationForm';
+import * as yup from 'yup';
 
 interface ApplicationFormProps {
   setIsApplicationStep: React.Dispatch<React.SetStateAction<boolean>>;

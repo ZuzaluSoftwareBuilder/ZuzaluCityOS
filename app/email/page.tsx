@@ -1,8 +1,8 @@
 'use client';
-import React, { useState } from 'react';
-import { Stack, Typography, Box } from '@mui/material';
 import { ScrollIcon } from '@/components/icons';
-import { Agree, Email, Code, Mint, Completion } from './Register';
+import { Box, Stack, Typography } from '@mui/material';
+import { useState } from 'react';
+import { Agree, Code, Completion, Email, Mint } from './Register';
 
 const Home = () => {
   const [complete, setComplete] = useState<boolean>(false);

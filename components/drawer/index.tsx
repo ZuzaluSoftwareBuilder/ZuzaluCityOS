@@ -1,5 +1,5 @@
-import React from 'react';
 import { Box, SwipeableDrawer, useTheme } from '@mui/material';
+import React from 'react';
 
 interface EventDrawerProps {
   open: boolean;

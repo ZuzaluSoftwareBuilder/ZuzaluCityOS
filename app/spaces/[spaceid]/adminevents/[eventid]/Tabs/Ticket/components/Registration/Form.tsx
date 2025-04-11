@@ -1,12 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Box } from '@mui/material';
 import FormHeader from '@/components/form/FormHeader';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
-import { StepFour, StepOne, StepThree, StepTwo } from './Step';
-import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { ConfigFormType, schema, TicketingMethod } from '../types';
+import { isDev } from '@/constant';
+import { useCeramicContext } from '@/context/CeramicContext';
 import {
   createRegAndAccess,
   updateRegAndAccess,
@@ -16,11 +10,17 @@ import {
   RegistrationAndAccess,
   UpdateRegAndAccessRequest,
 } from '@/types';
-import { isDev } from '@/constant';
-import { sepolia, mainnet } from 'viem/chains';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useCreateEventId } from '../../hooks/useCreateEventId';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Box } from '@mui/material';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
+import React, { useCallback, useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { mainnet, sepolia } from 'viem/chains';
 import { useEventContext } from '../../../../EventContext';
+import { useCreateEventId } from '../../hooks/useCreateEventId';
+import { ConfigFormType, schema, TicketingMethod } from '../types';
+import { StepFour, StepOne, StepThree, StepTwo } from './Step';
 
 interface RegistrationMethodSelectorProps {
   regAndAccess?: RegistrationAndAccess;

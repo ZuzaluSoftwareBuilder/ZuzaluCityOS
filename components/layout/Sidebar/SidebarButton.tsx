@@ -1,4 +1,4 @@
-import { BoxProps, Box } from '@mui/material';
+import { Box, BoxProps } from '@mui/material';
 import React from 'react';
 
 interface SidebarButtonPropTypes extends BoxProps {

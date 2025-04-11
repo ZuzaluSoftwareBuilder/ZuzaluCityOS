@@ -74,4 +74,4 @@ const withCorrectVoidBehavior = (editor: Editor) => {
   return editor;
 };
 
-export { withMentions, withLinks, withCorrectVoidBehavior };
+export { withCorrectVoidBehavior, withLinks, withMentions };

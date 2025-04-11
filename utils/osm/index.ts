@@ -1,5 +1,5 @@
-import * as Nominatim from 'nominatim-browser';
 import { LatLngLiteral } from 'leaflet';
+import * as Nominatim from 'nominatim-browser';
 
 const getLatLngFromAddress = async (
   address: string,

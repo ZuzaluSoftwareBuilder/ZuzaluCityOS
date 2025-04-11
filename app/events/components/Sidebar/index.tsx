@@ -1,7 +1,5 @@
 import { SearchIcon } from '@/components/icons';
-import { InputAdornment, OutlinedInput, Stack } from '@mui/material';
-import { useTheme } from '@mui/material';
-import React from 'react';
+import { InputAdornment, OutlinedInput, Stack, useTheme } from '@mui/material';
 
 interface SidebarLeftProps {
   onSearch: () => void;

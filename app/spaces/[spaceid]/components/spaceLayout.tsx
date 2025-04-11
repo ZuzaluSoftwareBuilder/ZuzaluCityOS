@@ -1,9 +1,8 @@
 'use client';
 
-import { useSelectedLayoutSegments } from 'next/navigation';
-import React from 'react';
 import SpaceSidebar from '@/app/spaces/[spaceid]/components/sidebar/spaceSidebar';
 import SpaceSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/spaceSubSidebar';
+import { useSelectedLayoutSegments } from 'next/navigation';
 
 const SpaceLayout = () => {
   const segments = useSelectedLayoutSegments();

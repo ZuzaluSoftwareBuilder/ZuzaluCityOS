@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useMemo } from 'react';
-import { Box, Stack, Typography, useMediaQuery } from '@mui/material';
 import { Event } from '@/types';
+import { Box, Stack, Typography, useMediaQuery } from '@mui/material';
+import React, { useEffect, useMemo, useRef } from 'react';
 
 interface TabbarProps {
   tabName: string;

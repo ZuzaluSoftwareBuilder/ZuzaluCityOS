@@ -1,13 +1,13 @@
 'use client';
 
-import clsx from 'clsx';
-import { useEffect, useMemo } from 'react';
-import { useParams } from 'next/navigation';
 import { Divider } from '@/components/base';
+import clsx from 'clsx';
+import { useParams } from 'next/navigation';
+import { useEffect, useMemo } from 'react';
 
-import { setSpaceLastViewTime } from './lastViewTime';
 import AnnouncementsHeader from './components/Header';
 import PostList from './components/PostList';
+import { setSpaceLastViewTime } from './lastViewTime';
 
 export default function Announcements() {
   const todayDate = useMemo(

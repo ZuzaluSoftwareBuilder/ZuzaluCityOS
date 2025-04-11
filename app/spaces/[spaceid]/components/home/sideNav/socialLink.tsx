@@ -1,5 +1,6 @@
-import { Link as ILink } from '@/types';
+import { NostrIcon } from '@/components/icons/Nostr';
 import { ISocialType } from '@/constant';
+import { Link as ILink } from '@/types';
 import {
   ArrowUpRight,
   DiscordLogo,
@@ -7,7 +8,6 @@ import {
   TelegramLogo,
   XLogo,
 } from '@phosphor-icons/react';
-import { NostrIcon } from '@/components/icons/Nostr';
 import Link from 'next/link';
 
 const IconMap: Record<ISocialType, React.ReactNode> = {

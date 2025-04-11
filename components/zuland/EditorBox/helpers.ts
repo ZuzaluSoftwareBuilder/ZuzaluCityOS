@@ -1,22 +1,22 @@
 import {
-  Editor,
-  Transforms,
-  Element,
-  Node,
-  Point,
-  Range,
-  Descendant,
-} from 'slate';
-import { ReactEditor } from 'slate-react';
-import ReactDOM from 'react-dom';
-import {
   type CustomEditor as CustomEditorType,
   CustomElement,
   CustomText,
   LinkElement,
   MentionElement,
+  Profile,
 } from '@akashaorg/typings/lib/ui';
-import { Profile } from '@akashaorg/typings/lib/ui';
+import ReactDOM from 'react-dom';
+import {
+  Descendant,
+  Editor,
+  Element,
+  Node,
+  Point,
+  Range,
+  Transforms,
+} from 'slate';
+import { ReactEditor } from 'slate-react';
 
 export const LIST_TYPES = ['numbered-list', 'bulleted-list'];
 export const TEXT_ALIGN_TYPES = ['left', 'center', 'right'];

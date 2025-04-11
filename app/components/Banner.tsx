@@ -1,11 +1,9 @@
-import React from 'react';
-
+import { Button } from '@/components/base';
 import {
   ArrowCircleRightFillIcon,
   ArrowCircleRightIcon,
   RightArrowIcon,
 } from '@/components/icons';
-import { Button } from '@/components/base';
 import { useRouter } from 'next/navigation';
 
 const Banner = () => {

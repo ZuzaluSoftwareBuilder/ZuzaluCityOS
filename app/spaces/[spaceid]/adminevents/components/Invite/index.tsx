@@ -1,7 +1,6 @@
-import * as React from 'react';
 import { Stack, Typography } from '@mui/material';
 import { ZuButton } from 'components/core';
-import { PlusIcon, InformationIcon } from 'components/icons';
+import { InformationIcon, PlusIcon } from 'components/icons';
 
 const Invite = () => {
   return (

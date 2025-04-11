@@ -1,16 +1,16 @@
 'use client';
 
-import React, { useState, useCallback, useMemo, memo } from 'react';
-import { useRouter } from 'next/navigation';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useDisconnect } from 'wagmi';
-import { useLitContext } from '@/context/LitContext';
 import { Button } from '@/components/base';
-import Profile from '@/components/profile';
 import { WalletIcon } from '@/components/icons';
 import UserProfileDropdown from '@/components/layout/Header/UserProfileDropdown';
+import Profile from '@/components/profile';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { useLitContext } from '@/context/LitContext';
 import useOpenDraw from '@/hooks/useOpenDraw';
 import { getWalletAddressFromDid } from '@/utils/did';
+import { useRouter } from 'next/navigation';
+import React, { memo, useCallback, useMemo, useState } from 'react';
+import { useDisconnect } from 'wagmi';
 
 export function formatAddressString(
   str?: string,

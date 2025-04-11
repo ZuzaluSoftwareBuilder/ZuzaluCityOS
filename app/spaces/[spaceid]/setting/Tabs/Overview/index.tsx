@@ -1,34 +1,33 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  ProfileContent,
-  LinksContent,
-  CategoriesContent,
-  StepTabs,
-  TabContentEnum,
-  ProfileFormData,
-  ProfilValidationSchema,
-  CategoriesFormData,
-  CategoriesValidationSchema,
-  LinksFormData,
-  LinksValidationSchema,
-} from './components';
-import { cn } from '@heroui/react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useParams } from 'next/navigation';
-import { covertNameToUrlName } from '@/utils/format';
-import { useMediaQuery } from '@/hooks';
+import { useSpaceData } from '@/app/spaces/[spaceid]/components/context/spaceData';
+import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import { Button } from '@/components/base';
-import { ArrowLineDown, X as XIcon } from '@phosphor-icons/react';
+import { Categories } from '@/constant';
+import { useMediaQuery } from '@/hooks';
 import { UPDATE_SPACE_MUTATION } from '@/services/graphql/space';
+import { createUrlWhenEdit } from '@/services/url';
 import { Space } from '@/types';
 import { executeQuery } from '@/utils/ceramic';
-import { createUrlWhenEdit } from '@/services/url';
-import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
-import { useSpaceData } from '@/app/spaces/[spaceid]/components/context/spaceData';
-import { Categories } from '@/constant';
-import { addToast } from '@heroui/react';
+import { covertNameToUrlName } from '@/utils/format';
+import { addToast, cn } from '@heroui/react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { ArrowLineDown, X as XIcon } from '@phosphor-icons/react';
+import { useParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import {
+  CategoriesContent,
+  CategoriesFormData,
+  CategoriesValidationSchema,
+  LinksContent,
+  LinksFormData,
+  LinksValidationSchema,
+  ProfileContent,
+  ProfileFormData,
+  ProfilValidationSchema,
+  StepTabs,
+  TabContentEnum,
+} from './components';
 
 const DEFAULT_AVATAR =
   'https://nftstorage.link/ipfs/bafybeifcplhgttja4hoj5vx4u3x7ucft34acdpiaf62fsqrobesg5bdsqe';

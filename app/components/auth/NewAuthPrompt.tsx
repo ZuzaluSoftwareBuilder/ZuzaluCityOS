@@ -1,23 +1,23 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useMemo,
-} from 'react';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useAccount, useEnsName, useDisconnect } from 'wagmi';
-import ConnectWalletButton from './ConnectWalletButton';
-import { Button, Input, Spinner } from '@heroui/react';
 import {
   Modal,
-  ModalContent,
-  ModalHeader,
   ModalBody,
+  ModalContent,
   ModalFooter,
+  ModalHeader,
 } from '@/components/base/modal';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { Button, Input, Spinner } from '@heroui/react';
 import { X } from '@phosphor-icons/react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { useAccount, useDisconnect, useEnsName } from 'wagmi';
 import AuthButton from './AuthButton';
+import ConnectWalletButton from './ConnectWalletButton';
 
 export enum IAuthState {
   ConnectWallet = 'CONNECT_WALLET',

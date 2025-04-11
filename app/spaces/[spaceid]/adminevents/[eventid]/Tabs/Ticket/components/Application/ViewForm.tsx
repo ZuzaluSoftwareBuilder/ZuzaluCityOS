@@ -1,10 +1,10 @@
 import FormHeader from '@/components/form/FormHeader';
 import { CheckIcon, XMarkIcon } from '@/components/icons';
-import { Box, Button, Divider, Stack, Typography } from '@mui/material';
-import { CommonWrapper } from '../Common';
 import { ApplicationForm, RegistrationAndAccess } from '@/types';
-import { TicketingMethod } from '../types';
+import { Box, Button, Divider, Stack, Typography } from '@mui/material';
 import { useMemo } from 'react';
+import { CommonWrapper } from '../Common';
+import { TicketingMethod } from '../types';
 
 interface ViewFormProps {
   regAndAccess?: RegistrationAndAccess;

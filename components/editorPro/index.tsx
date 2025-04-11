@@ -1,23 +1,22 @@
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
-import Bold from '@tiptap/extension-bold';
-import Text from '@tiptap/extension-text';
-import React, { useEffect, useState, useRef } from 'react';
+import { Button, Input } from '@/components/base';
+import { cn, Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import {
-  TextHOne,
-  TextHTwo,
-  TextHThree,
+  Link as LinkIcon,
   ListBullets,
   ListNumbers,
-  TextBolder,
-  TextItalic,
   Quotes,
-  Link as LinkIcon,
+  TextBolder,
+  TextHOne,
+  TextHThree,
+  TextHTwo,
+  TextItalic,
 } from '@phosphor-icons/react';
-import { cn } from '@heroui/react';
-import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
-import { Button, Input } from '@/components/base';
+import Bold from '@tiptap/extension-bold';
+import Link from '@tiptap/extension-link';
+import Text from '@tiptap/extension-text';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import React, { useEffect, useRef, useState } from 'react';
 import { MarkdownLinkPlugin } from './mdLinkPlugin';
 import { MarkdownPastePlugin } from './mdPasteHandler';
 

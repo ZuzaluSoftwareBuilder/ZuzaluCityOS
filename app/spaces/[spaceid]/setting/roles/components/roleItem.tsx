@@ -1,14 +1,6 @@
 import { Key, useMemo } from 'react';
 
-import { usePathname } from 'next/navigation';
 import { Role, RolePermission, UserRole } from '@/types';
-import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
-import {
-  DotsThreeVertical,
-  IdentificationBadge,
-  User,
-} from '@phosphor-icons/react';
 import {
   Button,
   Dropdown,
@@ -17,6 +9,13 @@ import {
   DropdownTrigger,
   Skeleton,
 } from '@heroui/react';
+import {
+  DotsThreeVertical,
+  IdentificationBadge,
+  User,
+} from '@phosphor-icons/react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 
 interface RoleItemProps {
   item: RolePermission;

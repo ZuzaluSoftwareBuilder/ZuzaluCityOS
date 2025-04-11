@@ -1,8 +1,8 @@
-import type { Metadata } from 'next';
 import { AppRouterCacheProvider } from '@/components/emotion/AppRouterCacheProvider';
-import { ThemeProvider } from '@mui/material/styles';
-import theme from 'theme/theme';
 import ExploreLayout from '@/components/layout/explore/exploreLayout';
+import { ThemeProvider } from '@mui/material/styles';
+import type { Metadata } from 'next';
+import theme from 'theme/theme';
 
 export const metadata: Metadata = {
   title: 'Zuzalu City',

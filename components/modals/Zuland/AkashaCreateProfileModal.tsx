@@ -1,26 +1,26 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useAkashaAuthStore } from '@/hooks/use-akasha-auth-store';
+import { useEffect, useState } from 'react';
 
-import { createZulandProfile } from '@/utils/akasha';
 import { AkashaProfileStats } from '@/types/akasha';
+import { createZulandProfile } from '@/utils/akasha';
 
+import { ZuButton } from '@/components/core';
 import {
-  Modal,
-  Typography,
-  TextField,
-  Snackbar,
-  Stack,
   IconButton,
   InputAdornment,
+  Modal,
+  Snackbar,
+  Stack,
+  TextField,
+  Typography,
 } from '@mui/material';
-import { ZuButton } from '@/components/core';
 
+import { getIconFromLink } from '@/components/zuland/DiscussionSidebar';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { getIconFromLink } from '@/components/zuland/DiscussionSidebar';
 
 interface AkashaCreateProfileModalProps {
   eventId: string;

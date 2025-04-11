@@ -1,7 +1,7 @@
-import { Stack } from '@mui/material';
 import { ZuButton } from '@/components/core';
-import { Dispatch, SetStateAction } from 'react';
 import { Anchor } from '@/types';
+import { Stack } from '@mui/material';
+import { Dispatch, SetStateAction } from 'react';
 
 interface PropTypes {
   isOne: boolean;

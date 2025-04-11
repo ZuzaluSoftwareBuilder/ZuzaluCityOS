@@ -1,5 +1,5 @@
-import { Stack, Box, Button, styled, Typography } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { Box, Button, Stack, styled, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 
 const NavButton = styled(Button)(
   ({ isDisabled }: { isDisabled?: boolean }) => ({

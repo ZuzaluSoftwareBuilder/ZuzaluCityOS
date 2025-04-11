@@ -1,9 +1,9 @@
-import React from 'react';
-import type { Metadata } from 'next';
 import SpaceLayout from '@/app/spaces/[spaceid]/components/spaceLayout';
 import SpaceTopHeader from '@/app/spaces/[spaceid]/components/spaceTopHeader';
-import { SpacePermissionProvider } from './components/permission';
+import type { Metadata } from 'next';
+import React from 'react';
 import { SpaceDataProvider } from './components/context/spaceData';
+import { SpacePermissionProvider } from './components/permission';
 
 interface SpacePageLayoutPropTypes {
   children: React.ReactNode;

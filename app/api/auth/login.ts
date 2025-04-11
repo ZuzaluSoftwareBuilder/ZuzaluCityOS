@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '@/constant';
+import jwt from 'jsonwebtoken';
 
 export default async (req: any, res: any) => {
   const address = req.body.address;

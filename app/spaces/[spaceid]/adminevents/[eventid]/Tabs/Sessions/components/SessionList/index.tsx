@@ -1,6 +1,6 @@
-import * as React from 'react';
 import { Divider, Stack, Typography } from '@mui/material';
 import { InformationIcon, PlusCircleIcon } from 'components/icons';
+import * as React from 'react';
 
 import { Session } from '@/types';
 

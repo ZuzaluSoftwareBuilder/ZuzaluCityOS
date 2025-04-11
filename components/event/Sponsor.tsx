@@ -1,29 +1,30 @@
-import { Stack, Typography, Box, Divider } from '@mui/material';
+import { ZuButton } from '@/components/core';
 import {
   ArrowUpLeftIcon,
-  RightArrowIcon,
-  ScrollIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   HeartIcon,
+  RightArrowIcon,
+  ScrollIcon,
 } from '@/components/icons';
-import React, { useState } from 'react';
-import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
-import { client, config } from '@/context/WalletContext';
-import { useAccount } from 'wagmi';
 import { TICKET_FACTORY_ADDRESS } from '@/constant';
-import { Address } from 'viem';
-import { TICKET_ABI } from '@/utils/ticket_abi';
-import { TICKET_WITH_WHITELIST_ABI } from '@/utils/ticket_with_whitelist_abi';
-import { Abi, AbiItem } from 'viem';
+import { client, config } from '@/context/WalletContext';
+import { Contract, IProps } from '@/types';
 import { ERC20_ABI } from '@/utils/erc20_abi';
-import { sepolia } from 'viem/chains';
-import { writeContract, waitForTransactionReceipt } from 'wagmi/actions';
-import { ZuButton } from '@/components/core';
 import gaslessFundAndUpload from '@/utils/gaslessFundAndUpload';
-import { generateNFTMetadata } from '@/utils/generateNFTMetadata';
-import { createFileFromJSON } from '@/utils/generateNFTMetadata';
-import { IProps, Contract } from '@/types';
+import {
+  createFileFromJSON,
+  generateNFTMetadata,
+} from '@/utils/generateNFTMetadata';
+import { TICKET_ABI } from '@/utils/ticket_abi';
+import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
+import { TICKET_WITH_WHITELIST_ABI } from '@/utils/ticket_with_whitelist_abi';
+import { Box, Divider, Stack, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { Abi, AbiItem, Address } from 'viem';
+import { sepolia } from 'viem/chains';
+import { useAccount } from 'wagmi';
+import { waitForTransactionReceipt, writeContract } from 'wagmi/actions';
 
 export const SponsorAgree: React.FC<IProps> = ({
   setIsAgree,

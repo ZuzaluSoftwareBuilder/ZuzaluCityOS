@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import { Funnel, CaretUp, CalendarBlank, Ticket } from '@phosphor-icons/react';
+import { Event } from '@/types';
 import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  Button as HeroButton,
-  cn,
   Accordion,
   AccordionItem,
+  DateValue,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Button as HeroButton,
+  cn,
 } from '@heroui/react';
-import { DateValue } from '@heroui/react';
-import { Event } from '@/types';
-import { ITimeEnum, TimeFilterOptions } from './EventListWithCalendar';
+import { CalendarBlank, CaretUp, Funnel, Ticket } from '@phosphor-icons/react';
+import React, { useState } from 'react';
+import EventCalendar from './EventCalendar';
 import {
   useCalendarConstraints,
-  useEventsByTimeFilter,
   useDateAvailability,
+  useEventsByTimeFilter,
 } from './EventCalendarHooks';
-import EventCalendar from './EventCalendar';
+import { ITimeEnum, TimeFilterOptions } from './EventListWithCalendar';
 
 interface MobileNavProps {
   selectedDate: DateValue | null;

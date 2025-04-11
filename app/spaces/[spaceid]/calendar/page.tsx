@@ -1,31 +1,25 @@
 'use client';
-import React, {
-  useState,
-  useCallback,
-  useMemo,
-  useEffect,
-  useRef,
-} from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { Box, CircularProgress, Stack, Typography } from '@mui/material';
+import { ZuButton } from '@/components/core';
+import Drawer from '@/components/drawer';
+import { PlusCircleIcon } from '@/components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { CalendarConfig } from '@/types';
-import Drawer from '@/components/drawer';
-import { useQuery } from '@tanstack/react-query';
-import ViewEvent from './components/ViewEvent';
-import CreateEventForm from './components/CreateEventForm';
-import CalendarView from './components/CalendarView';
-import { ZuButton } from '@/components/core';
-import dayjs from 'dayjs';
-import { PlusCircleIcon } from '@/components/icons';
-import { ConfigPanel } from '../adminevents/[eventid]/Tabs/Ticket/components/Common';
-import CalendarConfigForm from './components/CalendarConfigForm';
 import { supabase } from '@/utils/supabase/client';
+import { Box, CircularProgress, Stack, Typography } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { rrulestr } from 'rrule';
-import { useSpacePermissions } from '../components/permission';
+import { ConfigPanel } from '../adminevents/[eventid]/Tabs/Ticket/components/Common';
 import { useSpaceData } from '../components/context/spaceData';
+import { useSpacePermissions } from '../components/permission';
+import CalendarConfigForm from './components/CalendarConfigForm';
+import CalendarView from './components/CalendarView';
+import CreateEventForm from './components/CreateEventForm';
+import ViewEvent from './components/ViewEvent';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

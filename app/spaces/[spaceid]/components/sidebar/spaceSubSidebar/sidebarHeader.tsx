@@ -1,3 +1,11 @@
+import { Space } from '@/types';
+import {
+  BellAlertIcon,
+  ChevronDownIcon,
+  Cog8ToothIcon,
+  ShieldCheckIcon,
+  UserPlusIcon,
+} from '@heroicons/react/20/solid';
 import {
   Dropdown,
   DropdownItem,
@@ -6,16 +14,8 @@ import {
   Image,
   Skeleton,
 } from '@heroui/react';
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
-import { Space } from '@/types';
-import { HTMLAttributes, ReactNode, useCallback, useMemo } from 'react';
-import {
-  UserPlusIcon,
-  Cog8ToothIcon,
-  ShieldCheckIcon,
-  BellAlertIcon,
-} from '@heroicons/react/20/solid';
 import { useRouter } from 'next/navigation';
+import { HTMLAttributes, ReactNode, useCallback, useMemo } from 'react';
 
 export interface ISidebarHeaderProps {
   isAdmin?: boolean;

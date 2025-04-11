@@ -1,9 +1,9 @@
-import * as React from 'react';
 import { Box, Button, Skeleton, useMediaQuery, useTheme } from '@mui/material';
-import { LotteryIcon, RightArrowIcon } from '../icons';
-import { useCallback, useEffect } from 'react';
-import abi from './lotteryAbi';
 import { ethers } from 'ethers';
+import * as React from 'react';
+import { useCallback, useEffect } from 'react';
+import { LotteryIcon, RightArrowIcon } from '../icons';
+import abi from './lotteryAbi';
 
 interface IProps {
   inEvent?: boolean;

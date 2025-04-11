@@ -1,6 +1,6 @@
-import type { Metadata } from 'next';
 import { AppRouterCacheProvider } from '@/components/emotion/AppRouterCacheProvider';
 import { ThemeProvider } from '@mui/material/styles';
+import type { Metadata } from 'next';
 import theme from 'theme/theme';
 
 type Props = {

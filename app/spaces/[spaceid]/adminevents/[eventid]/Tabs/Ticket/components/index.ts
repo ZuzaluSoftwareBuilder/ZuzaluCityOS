@@ -1,9 +1,3 @@
-import TicketHeader from './TicketHeader';
-import TicketList from './TicketList';
-import TicketAdd from './TicketAdd';
-import TicketAccess from './TicketAccess';
-import TicketDrawer from './TicketDrawer';
-import TicketVault from './TicketVault';
 import {
   CreateTicket,
   InitialSetup,
@@ -12,30 +6,36 @@ import {
   TicketProcessingProgress,
   TicketSetup,
 } from './CreateTicket';
-import { RegistrationPanel } from './Registration';
-import { RegistrationStatus } from './Status';
 import NoTicketList from './NoTicketList';
-import ZupassList from './ZupassList';
-import ScrollPassList from './ScrollPassList';
 import PGFList from './PGF';
+import { RegistrationPanel } from './Registration';
+import ScrollPassList from './ScrollPassList';
+import { RegistrationStatus } from './Status';
+import TicketAccess from './TicketAccess';
+import TicketAdd from './TicketAdd';
+import TicketDrawer from './TicketDrawer';
+import TicketHeader from './TicketHeader';
+import TicketList from './TicketList';
+import TicketVault from './TicketVault';
+import ZupassList from './ZupassList';
 
 export {
-  TicketHeader,
-  TicketList,
-  TicketAdd,
-  TicketAccess,
-  TicketDrawer,
-  InitialSetup,
-  TicketSetup,
   CreateTicket,
-  TicketCreationSummary,
+  InitialSetup,
+  NoTicketList,
+  PGFList,
   ProcessingTicket,
-  TicketProcessingProgress,
-  TicketVault,
   RegistrationPanel,
   RegistrationStatus,
-  NoTicketList,
-  ZupassList,
   ScrollPassList,
-  PGFList,
+  TicketAccess,
+  TicketAdd,
+  TicketCreationSummary,
+  TicketDrawer,
+  TicketHeader,
+  TicketList,
+  TicketProcessingProgress,
+  TicketSetup,
+  TicketVault,
+  ZupassList,
 };

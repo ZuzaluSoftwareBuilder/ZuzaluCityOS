@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@heroui/react';
 import { Check } from '@phosphor-icons/react';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import React, { useRef } from 'react';
 
 export enum TabContentEnum {
   Profile = 'Profile',

@@ -1,6 +1,6 @@
-import LotteryCard from './LotteryCard';
-import SpaceCard from './SpaceCard';
 import EventCard from './EventCard';
 import EventMCard from './EventMCard';
+import LotteryCard from './LotteryCard';
+import SpaceCard from './SpaceCard';
 
-export { LotteryCard, SpaceCard, EventCard, EventMCard };
+export { EventCard, EventMCard, LotteryCard, SpaceCard };

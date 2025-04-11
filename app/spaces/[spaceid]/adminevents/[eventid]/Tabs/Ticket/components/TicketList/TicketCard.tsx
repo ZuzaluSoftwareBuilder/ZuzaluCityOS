@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Stack, Typography, useMediaQuery } from '@mui/material';
-import { CheckCircleIcon, EyeSlashIcon, CheckIcon } from 'components/icons';
-import Image from 'next/image';
-import { shortenAddress } from '@/utils/format';
 import { mUSDC_TOKEN } from '@/constant';
+import { client } from '@/context/WalletContext';
 import { Contract, RegistrationAndAccess } from '@/types';
 import { ERC20_ABI } from '@/utils/erc20_abi';
-import { client } from '@/context/WalletContext';
+import { shortenAddress } from '@/utils/format';
+import { Stack, Typography, useMediaQuery } from '@mui/material';
+import { CheckCircleIcon, CheckIcon, EyeSlashIcon } from 'components/icons';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
 export type TicketCardProps = {

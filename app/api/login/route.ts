@@ -1,4 +1,4 @@
-import { SessionData, ironOptions, Zuconfig } from '@/constant';
+import { ironOptions, SessionData, Zuconfig } from '@/constant';
 import { authenticate } from '@pcd/zuauth/server';
 import { getIronSession } from 'iron-session';
 import { cookies } from 'next/headers';

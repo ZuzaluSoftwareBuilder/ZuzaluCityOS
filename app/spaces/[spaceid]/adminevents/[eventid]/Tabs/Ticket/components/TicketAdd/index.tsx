@@ -1,7 +1,7 @@
-import * as React from 'react';
 import { Stack, Typography } from '@mui/material';
 import ZuButton from 'components/core/Button';
-import { PlusIcon, PlusCircleIcon } from 'components/icons';
+import { PlusCircleIcon, PlusIcon } from 'components/icons';
+import * as React from 'react';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 

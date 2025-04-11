@@ -1,16 +1,15 @@
+import Dialog from '@/app/spaces/components/Modal/Dialog';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { Box, Button, OutlinedInput } from '@mui/material';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import React, {
-  useState,
+  ReactNode,
+  useCallback,
   useEffect,
   useRef,
-  useCallback,
-  ReactNode,
+  useState,
 } from 'react';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useAccount, useEnsName } from 'wagmi';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Box, Button, OutlinedInput } from '@mui/material';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
-import { useDisconnect } from 'wagmi';
+import { useAccount, useDisconnect, useEnsName } from 'wagmi';
 
 const AuthPrompt: React.FC<{}> = () => {
   const { isConnected, address } = useAccount();

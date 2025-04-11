@@ -1,75 +1,80 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import SessionCard from '@/app/spaces/[spaceid]/adminevents/[eventid]/Tabs/Sessions/components/SessionList/SessionCard';
+import Dialog from '@/app/spaces/components/Modal/Dialog';
+import SlotDates from '@/components/calendar/SlotDate';
+import { ZuButton, ZuCalendar, ZuInput, ZuSwitch } from '@/components/core';
+import { useEditorStore } from '@/components/editor/useEditorStore';
+import BpCheckbox from '@/components/event/Checkbox';
 import {
-  Stack,
-  Typography,
-  SwipeableDrawer,
-  Divider,
-  Box,
-  Select,
-  OutlinedInput,
-  MenuItem,
-  InputAdornment,
-  useTheme,
-  useMediaQuery,
-  Popover,
-} from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DesktopDatePicker } from '@mui/x-date-pickers';
-import { DesktopTimePicker } from '@mui/x-date-pickers';
-import { TimeView } from '@mui/x-date-pickers/models';
-import { TimeStepOptions } from '@mui/x-date-pickers/models';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from '@/utils/dayjs';
-import { ZuInput, ZuButton, ZuSwitch, ZuCalendar } from '@/components/core';
-import {
-  PlusCircleIcon,
-  XMarkIcon,
   ArrowDownIcon,
+  CalendarIcon,
+  ChevronDoubleRightIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  SearchIcon,
-  UserPlusIcon,
   EditIcon,
-  ChevronDoubleRightIcon,
   LeftArrowIcon,
   MapIcon,
-  SessionIcon,
   MicrophoneIcon,
-  TagIcon,
-  PlusIcon,
   MinusIcon,
-  CalendarIcon,
+  PlusCircleIcon,
+  PlusIcon,
+  SearchIcon,
+  SessionIcon,
+  TagIcon,
+  UserPlusIcon,
+  XMarkIcon,
 } from '@/components/icons';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
-import SessionCard from '@/app/spaces/[spaceid]/adminevents/[eventid]/Tabs/Sessions/components/SessionList/SessionCard';
-import BpCheckbox from '@/components/event/Checkbox';
-import { Anchor, Session, ProfileEdge, Profile, Venue, Event } from '@/types';
-import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { supabase } from '@/utils/supabase/client';
-import { SessionSupabaseData } from '@/types';
-import { supaCreateSession } from '@/services/session';
-import Link from 'next/link';
-import formatDateAgo from '@/utils/formatDateAgo';
 import SelectCategories from '@/components/select/selectCategories';
 import SelectSearchUser from '@/components/select/selectSearchUser';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
-import { useEditorStore } from '@/components/editor/useEditorStore';
 import {
   FormLabel,
   FormLabelDesc,
 } from '@/components/typography/formTypography';
-import SlotDates from '@/components/calendar/SlotDate';
-import { v4 as uuidv4 } from 'uuid';
-import { FilterSessionPop } from './FilterSessionPop';
+import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { supaCreateSession } from '@/services/session';
+import {
+  Anchor,
+  Event,
+  Profile,
+  ProfileEdge,
+  Session,
+  SessionSupabaseData,
+  Venue,
+} from '@/types';
+import dayjs, { Dayjs } from '@/utils/dayjs';
+import { formatUserName } from '@/utils/format';
+import formatDateAgo from '@/utils/formatDateAgo';
+import { supabase } from '@/utils/supabase/client';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
+import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
+import {
+  Box,
+  Divider,
+  InputAdornment,
+  MenuItem,
+  OutlinedInput,
+  Popover,
+  Select,
+  Stack,
+  SwipeableDrawer,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { DesktopDatePicker, DesktopTimePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TimeStepOptions, TimeView } from '@mui/x-date-pickers/models';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
-import { formatUserName } from '@/utils/format';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { FilterSessionPop } from './FilterSessionPop';
 
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,

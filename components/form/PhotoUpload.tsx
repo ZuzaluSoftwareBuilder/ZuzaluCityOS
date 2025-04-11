@@ -1,8 +1,7 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { useUpload } from '../../hooks/useUpload';
-import { cn } from '@heroui/react';
-import { Spinner } from '@heroui/react';
 import { PhotoIcon } from '@heroicons/react/24/outline';
+import { cn, Spinner } from '@heroui/react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useUpload } from '../../hooks/useUpload';
 
 interface AvatarUploadProps {
   initialUrl?: string;
