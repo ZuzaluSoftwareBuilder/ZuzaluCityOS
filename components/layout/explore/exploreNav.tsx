@@ -1,34 +1,6 @@
-import { Box, Button, Stack, styled, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
-
-const NavButton = styled(Button)(
-  ({ isDisabled }: { isDisabled?: boolean }) => ({
-    height: '45px',
-    color: '#fff',
-    padding: '14px',
-    minWidth: 'auto',
-    fontSize: '16px',
-    fontWeight: 600,
-    lineHeight: 1.4,
-    opacity: 0.34,
-    whiteSpace: 'nowrap',
-    ...(isDisabled && {
-      cursor: 'not-allowed',
-    }),
-    '&.active': {
-      opacity: 1,
-    },
-  }),
-);
-
-const Indicator = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  bottom: 0,
-  height: '1px',
-  backgroundColor: '#DFDFDF',
-  transition: 'all 0.3s ease',
-  marginLeft: '0 !important',
-}));
+import { Button } from '@/components/base';
+import { cn } from '@heroui/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export interface INavItem {
   label: string;
@@ -51,100 +23,105 @@ export default function ExploreNav({
     width: '0px',
   });
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const activeButton = document.querySelector('.active');
-      if (activeButton) {
-        const buttonRect = activeButton.getBoundingClientRect();
-        const containerRect =
-          activeButton.parentElement?.getBoundingClientRect();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const buttonRefs = useRef(new Map<string, HTMLElement>());
+  const activeTabRef = useRef(activeTab);
 
-        if (containerRect) {
-          setIndicatorStyle({
-            left: `${buttonRect.left - containerRect.left}px`,
-            width: `${buttonRect.width}px`,
-          });
-        }
-      }
-    }, 0);
+  const updateIndicatorPosition = useCallback(() => {
+    const currentActiveTab = activeTabRef.current;
+    if (!currentActiveTab) return;
 
-    return () => clearTimeout(timer);
-  }, []);
+    const activeButton = buttonRefs.current.get(currentActiveTab);
 
-  const handleTabClick = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    item: INavItem,
-    index: number,
-  ) => {
-    if (item.isComingSoon) return;
+    if (activeButton && containerRef.current) {
+      const buttonRect = activeButton.getBoundingClientRect();
+      const containerRect = containerRef.current.getBoundingClientRect();
 
-    const button = event.currentTarget;
-    const buttonRect = button.getBoundingClientRect();
-    const containerRect = button.parentElement?.getBoundingClientRect();
-
-    if (containerRect) {
       setIndicatorStyle({
         left: `${buttonRect.left - containerRect.left}px`,
         width: `${buttonRect.width}px`,
       });
     }
+  }, []);
 
-    setActiveTab(item.label);
-    onNavChange?.(item, index);
-  };
+  useEffect(() => {
+    activeTabRef.current = activeTab;
+    updateIndicatorPosition();
+  }, [activeTab, updateIndicatorPosition]);
+
+  useEffect(() => {
+    window.addEventListener('resize', updateIndicatorPosition);
+
+    return () => {
+      window.removeEventListener('resize', updateIndicatorPosition);
+    };
+  }, []);
+
+  const handleTabClick = useCallback(
+    (item: INavItem, index: number) => {
+      if (item.isComingSoon) return;
+      setActiveTab(item.label);
+      onNavChange?.(item, index);
+    },
+    [onNavChange],
+  );
+
+  const setButtonRef = useCallback(
+    (element: HTMLElement | null, label: string) => {
+      if (element) {
+        buttonRefs.current.set(label, element);
+      }
+    },
+    [],
+  );
 
   return (
-    <Stack
-      direction="row"
-      position="sticky"
-      top="50px"
-      zIndex="1000"
-      sx={{
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-        p: '0 10px',
-        bgcolor: 'rgba(34, 34, 34)',
-        width: '100%',
-        maxWidth: '100%',
-      }}
-    >
-      <Stack
-        direction="row"
-        position="relative"
-        sx={{
-          width: '100%',
-          overflowX: 'auto',
+    <div className="sticky top-[50px] z-[1000] w-full max-w-full border-b border-white/10 bg-[rgba(34,34,34)] p-[0_10px]">
+      <div
+        ref={containerRef}
+        className="relative flex w-full flex-row overflow-x-auto"
+        style={{
           scrollbarWidth: 'none',
-          '&::-webkit-scrollbar': {
-            display: 'none',
-          },
           msOverflowStyle: 'none',
         }}
       >
+        <style jsx>{`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
         {navItems.map((item, index) => (
-          <NavButton
+          <Button
             key={item.label}
-            // eslint-disable-next-line tailwindcss/no-custom-classname
-            className={activeTab === item.label ? 'active' : ''}
-            startIcon={item.icon}
-            onClick={(e) => handleTabClick(e, item, index)}
-            disableRipple
+            ref={(el) => setButtonRef(el as HTMLElement | null, item.label)}
+            className={cn(
+              'h-[45px] bg-transparent hover:bg-transparent min-w-0 whitespace-nowrap p-[14px] text-[16px] uppercase font-[600] leading-[1.4] text-white opacity-[0.34] shrink-0',
+              activeTab === item.label ? 'opacity-100' : '',
+              item.isComingSoon && 'cursor-not-allowed',
+            )}
+            startContent={item.icon}
+            onPress={() => handleTabClick(item, index)}
             isDisabled={!!item.isComingSoon}
+            disableAnimation={true}
+            role="tab"
+            aria-selected={activeTab === item.label}
           >
             {item.label}
             {item.isComingSoon && (
-              <Typography
-                fontSize={13}
-                fontWeight={400}
-                ml="10px"
-                sx={{ whiteSpace: 'nowrap' }}
-              >
+              <span className="whitespace-nowrap text-[13px] font-[400]">
                 (Coming Soon)
-              </Typography>
+              </span>
             )}
-          </NavButton>
+          </Button>
         ))}
-        <Indicator sx={indicatorStyle} />
-      </Stack>
-    </Stack>
+        <div
+          className="absolute bottom-0 m-0 h-px bg-[#DFDFDF] transition-all duration-300 ease-[ease]"
+          style={{
+            left: indicatorStyle.left,
+            width: indicatorStyle.width,
+          }}
+        />
+      </div>
+    </div>
   );
 }

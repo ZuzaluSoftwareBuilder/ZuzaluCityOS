@@ -1,21 +1,15 @@
-import { GearSixIcon, SearchIcon } from '@/components/icons';
+import { GearSixIcon } from '@/components/icons';
+import ExploreSearch from '@/components/layout/explore/exploreSearch';
 import {
-  Grid,
-  InputAdornment,
-  OutlinedInput,
-  Skeleton,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
-
-import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
+  ResponsiveGrid,
+  ResponsiveGridItem,
+} from '@/components/layout/explore/responsiveGridItem';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
 import { Dapp } from '@/types';
 import { supabase } from '@/utils/supabase/client';
-import { Stack } from '@mui/material';
+import { Skeleton } from '@heroui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { Item } from '.';
@@ -27,8 +21,6 @@ interface ListProps {
 }
 
 export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { ceramic } = useCeramicContext();
   const userDID = ceramic.did?.parent;
   const [filter, setFilter] = useState<string[]>([]);
@@ -111,130 +103,61 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
   const isAllLoading = isLoading || legacyDappLoading;
 
   return (
-    <Stack
-      direction="column"
-      flex={1}
-      p={isMobile ? '20px 10px' : '20px'}
-      gap={isMobile ? '10px' : '20px'}
-    >
-      <Stack
-        direction={isMobile ? 'column' : 'row'}
-        gap="10px"
-        alignItems="center"
-      >
+    <div className="flex flex-1 flex-col gap-[20px] p-[20px] mobile:gap-[10px] mobile:p-[20px_10px]">
+      <div className="flex items-center gap-[10px] mobile:flex-col">
         {/* {!isMobile && <BroadcastIcon />} */}
-        <OutlinedInput
+
+        <ExploreSearch
+          value={searchVal}
+          onChange={setSearchVal}
           placeholder="Search dApps"
-          sx={{
-            backgroundColor: 'var(--Inactive-White, rgba(255, 255, 255, 0.05))',
-            p: '12px 14px',
-            borderRadius: '10px',
-            height: '40px',
-            width: '100%',
-            border: '1px solid var(--Hover-White, rgba(255, 255, 255, 0.10))',
-            opacity: 0.7,
-            color: 'white',
-            fontSize: '16px',
-            '& .MuiOutlinedInput-notchedOutline': {
-              border: 'none',
-            },
-          }}
-          onChange={(e) => setSearchVal(e.target.value)}
-          startAdornment={
-            <InputAdornment position="start" sx={{ opacity: 0.6 }}>
-              <SearchIcon />
-            </InputAdornment>
-          }
+          className="mb-[10px]"
         />
+
         {ownedDapps?.length > 0 && (
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            width={isMobile ? '100%' : '210px'}
-            flexShrink={0}
-            p="8px 14px"
-            boxSizing="content-box"
-            sx={{ cursor: ownedDapps?.length > 0 ? 'pointer' : 'not-allowed' }}
+          <div
+            className={`box-content flex w-[210px] shrink-0 items-center justify-between p-[8px_14px] mobile:w-full ${ownedDapps?.length > 0 ? 'cursor-pointer' : 'cursor-not-allowed'}`}
             onClick={() => {
               if (ownedDapps?.length > 0) {
                 onOwnedDappsClick();
               }
             }}
           >
-            <Stack
-              direction="row"
-              gap="10px"
-              alignItems="center"
-              sx={{ opacity: 0.7 }}
-            >
+            <div className="flex flex-row items-center gap-[10px] opacity-70">
               <GearSixIcon />
-              <Typography
-                fontSize={16}
-                lineHeight={1.6}
-                color="white"
-                sx={{ whiteSpace: 'nowrap' }}
-              >
+              <p className="whitespace-nowrap text-[16px] leading-[1.6] text-white">
                 Manage My dApps
-              </Typography>
-            </Stack>
-            <Typography fontSize={13} color="white" sx={{ opacity: 0.4 }}>
+              </p>
+            </div>
+            <p className="text-[13px] text-white opacity-40">
               {ownedDapps?.length || 0}
-            </Typography>
-          </Stack>
+            </p>
+          </div>
         )}
-      </Stack>
+      </div>
       {isAllLoading ? (
-        <Skeleton variant="rounded" height="30px" width="100%" />
+        <Skeleton className="h-[30px] w-full rounded-[10px]" />
       ) : (
         <Filter filterData={filterData} onFilterChange={setFilter} />
       )}
-      <Grid
-        container
-        spacing="20px"
-        flex={1}
-        sx={{
-          '& .MuiGrid-item': {
-            width: '100%',
-            maxWidth: '100%',
-          },
-          alignContent: 'flex-start',
-        }}
-      >
+      <ResponsiveGrid>
         {isAllLoading
           ? Array.from({ length: 4 }).map((_, index) => (
               <ResponsiveGridItem key={index}>
-                <Stack p="10px">
-                  <Skeleton
-                    variant="rounded"
-                    width="100%"
-                    height="auto"
-                    sx={{ aspectRatio: '620/280', mb: '20px' }}
-                  />
-                  <Skeleton
-                    variant="rounded"
-                    width="100%"
-                    height="25px"
-                    sx={{ mb: '10px' }}
-                  />
-                  <Skeleton
-                    variant="rounded"
-                    width="100%"
-                    height="36px"
-                    sx={{ mb: '10px' }}
-                  />
-                  <Stack direction="row" gap="5px" mb="20px">
+                <div className="p-[10px]">
+                  <Skeleton className="mb-[20px] aspect-[620/280] h-auto w-full rounded-[10px]" />
+                  <Skeleton className="mb-[10px] h-[25px] w-full rounded-[6px]" />
+                  <Skeleton className="mb-[10px] h-[36px] w-full rounded-[6px]" />
+                  <div className="mb-[20px] flex flex-row gap-[5px]">
                     {Array.from({ length: 3 }).map((_, index) => (
                       <Skeleton
-                        variant="rounded"
-                        width="56px"
-                        height="18px"
+                        className="h-[18px] w-[56px] rounded-[4px]"
                         key={index}
                       />
                     ))}
-                  </Stack>
-                  <Skeleton variant="rounded" width="100%" height="12px" />
-                </Stack>
+                  </div>
+                  <Skeleton className="h-[12px] w-full rounded-[4px]" />
+                </div>
               </ResponsiveGridItem>
             ))
           : currentData?.map((data, index) => (
@@ -242,7 +165,7 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
                 <Item data={data} onClick={() => onDetailClick(data)} />
               </ResponsiveGridItem>
             ))}
-      </Grid>
-    </Stack>
+      </ResponsiveGrid>
+    </div>
   );
 }

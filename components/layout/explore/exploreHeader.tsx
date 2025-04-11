@@ -1,13 +1,12 @@
-import { ZuButton } from '@/components/core';
+import { Button } from '@/components/base';
 import { HourglassHighIcon } from '@/components/icons';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Image, cn } from '@heroui/react';
 import { Plus } from '@phosphor-icons/react';
-import Image from 'next/image';
+
+import { useCeramicContext } from '@/context/CeramicContext';
 import React, { useCallback } from 'react';
 
 export interface IAddButtonProps {
-  isMobile: boolean;
   isDisabled: boolean;
   isAuthenticated: boolean;
   onClick: () => void;
@@ -16,7 +15,6 @@ export interface IAddButtonProps {
 }
 
 export const AddButton = ({
-  isMobile,
   isDisabled,
   isAuthenticated,
   onClick,
@@ -24,23 +22,16 @@ export const AddButton = ({
   btnText,
 }: IAddButtonProps) => {
   return (
-    <ZuButton
-      sx={{
-        border: '1px solid rgba(255, 255, 255, 0.10)',
-        height: '40px',
-        backgroundColor: '#222',
-        p: '8px 14px',
-        fontSize: '16px',
-        width: isMobile ? '100%' : 'fit-content',
-        margin: isMobile ? '10px 0 0' : 0,
-        zIndex: 2,
-        cursor: isAuthenticated
+    <Button
+      className={cn(
+        'border border-white/10 h-[40px] bg-[#222] p-[8px_14px] text-[16px] z-[2] mobile:w-full w-fit m-0',
+        isAuthenticated
           ? isDisabled
-            ? 'not-allowed'
-            : 'pointer'
-          : 'pointer',
-      }}
-      startIcon={
+            ? 'cursor-not-allowed'
+            : 'cursor-pointer'
+          : 'cursor-pointer',
+      )}
+      startContent={
         isAuthenticated ? (
           isDisabled ? (
             <HourglassHighIcon />
@@ -51,14 +42,14 @@ export const AddButton = ({
           <Image src="/user/wallet.png" alt="wallet" height={24} width={24} />
         )
       }
-      onClick={onClick}
+      onPress={onClick}
     >
       {isAuthenticated
         ? isDisabled
           ? 'Listing Coming Soon'
           : btnText
         : 'Connect'}
-    </ZuButton>
+    </Button>
   );
 };
 
@@ -87,12 +78,10 @@ export default function ExploreHeader({
   addButtonText,
   addButtonIcon,
   titlePrefixIcon,
-  bgImageWidth,
-  bgImageHeight,
+  bgImageWidth = 220,
+  bgImageHeight = 200,
   bgImageTop,
 }: IExploreHeaderProps) {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { isAuthenticated, showAuthPrompt } = useCeramicContext();
 
   const defaultAddButtonIcon = (
@@ -108,113 +97,63 @@ export default function ExploreHeader({
   }, [isAuthenticated, onAdd, showAuthPrompt]);
 
   return (
-    <Stack
-      sx={{
-        width: '100%',
-        height: isMobile ? 'auto' : '222px',
-        position: 'relative',
-        p: isMobile ? '20px' : '20px 0 0',
-        background: 'linear-gradient(272deg, #222 2.52%, #2C2C2C 107.14%)',
-        overflow: 'hidden',
-        '@media (hover: hover)': {
-          '&:hover': {
-            background: 'linear-gradient(272deg, #222 2.52%, #2C2C2C 107.14%)',
-          },
-        },
-        borderBottom: '1px solid rgba(255, 255, 255, 0.10)',
-      }}
-    >
-      <Typography
-        fontSize={13}
-        lineHeight={1.4}
-        sx={{
-          opacity: 0.5,
-          position: 'absolute',
-          top: isMobile ? '10px' : '20px',
-          right: isMobile ? '10px' : '25px',
-          color: '#fff',
-        }}
-      >
+    <div className="relative h-[222px] w-full overflow-hidden border-b border-white/10 bg-[linear-gradient(272deg,_#222_2.52%,_#2C2C2C_107.14%)] p-[20px_0_0] hover:bg-[linear-gradient(272deg,_#222_2.52%,_#2C2C2C_107.14%)] mobile:h-auto mobile:p-[20px]">
+      <p className="absolute right-[25px] top-[20px] text-[13px] leading-[1.4] text-white opacity-50 mobile:right-[10px] mobile:top-[10px]">
         {versionLabel}
-      </Typography>
+      </p>
       <Image
         src={bgImage || '/dapps/header.png'}
         alt="header"
-        width={220}
-        height={200}
-        style={{
-          width: `${bgImageWidth || 220}px`,
-          height: `${bgImageHeight || 200}px`,
-          position: 'absolute',
-          top:
-            bgImageTop || bgImageTop === 0
-              ? `${bgImageTop}px`
-              : isMobile
-                ? '10px'
-                : '20px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 1,
+        width={bgImageWidth}
+        height={bgImageHeight}
+        classNames={{
+          wrapper: cn(
+            `w-[${bgImageWidth}px] h-[${bgImageHeight}px]`,
+            'absolute left-1/2 -translate-x-1/2 z-[1]',
+            bgImageTop !== undefined
+              ? `top-[${bgImageTop}px]`
+              : 'top-[20px] mobile:top-[10px]',
+          ),
+          img: 'object-contain',
         }}
       />
-      <Stack
-        direction="row"
-        p={isMobile ? '0' : '25px 0 0 25px'}
-        gap={isMobile ? '10px' : '20px'}
-        sx={{
-          zIndex: 2,
-        }}
-      >
-        {icon}
+      <div className="z-[2] flex flex-row gap-[20px] p-[25px_0_0_25px] mobile:mt-[20px] mobile:gap-[10px] mobile:p-0">
+        <div className="z-[2] shrink-0">{icon}</div>
 
-        <Stack direction="column" gap={isMobile ? '5px' : '10px'}>
-          <Stack direction="row" alignItems="center">
+        <div className="flex flex-col gap-[10px] mobile:gap-[5px]">
+          <div className="flex flex-row items-center">
             {titlePrefixIcon}
-            <Typography
-              sx={{
-                color: '#fff',
-                fontSize: isMobile ? '28px' : '40px',
-                fontWeight: 800,
-                lineHeight: 1.2,
-              }}
-            >
+            <h1 className="z-[2] h-[48px] text-[40px] font-[800] leading-[1.2] text-white mobile:h-[39px] mobile:text-[32px]">
               {title}
-            </Typography>
-          </Stack>
-          <Typography
-            sx={{
-              color: '#fff',
-              fontSize: isMobile ? '14px' : '18px',
-              fontWeight: 500,
-              opacity: 0.8,
-              textShadow: '0px 6px 14px rgba(0, 0, 0, 0.25)',
-              lineHeight: 1.4,
-            }}
-          >
+            </h1>
+          </div>
+          <p className="z-[2] text-[18px] font-[500] leading-[1.4] text-white opacity-80 drop-shadow-[0px_6px_14px_rgba(0,0,0,0.25)] mobile:text-[14px]">
             {subTitle}
-          </Typography>
-          {!!onAdd && !isMobile && (
-            <AddButton
-              isMobile={isMobile}
-              isDisabled={false}
-              isAuthenticated={isAuthenticated}
-              onClick={handleClick}
-              icon={addButtonIcon ?? defaultAddButtonIcon}
-              btnText={addButtonText}
-            />
+          </p>
+          {!!onAdd && (
+            <div className="z-[2] block mobile:hidden">
+              <AddButton
+                isDisabled={false}
+                isAuthenticated={isAuthenticated}
+                onClick={handleClick}
+                icon={addButtonIcon ?? defaultAddButtonIcon}
+                btnText={addButtonText}
+              />
+            </div>
           )}
-        </Stack>
-      </Stack>
-      {!!onAdd && isMobile && (
-        <AddButton
-          isMobile={isMobile}
-          isDisabled={false}
-          isAuthenticated={isAuthenticated}
-          onClick={handleClick}
-          icon={addButtonIcon ?? defaultAddButtonIcon}
-          btnText={addButtonText}
-        />
-      )}
-    </Stack>
+        </div>
+      </div>
+      <div className="z-[2] hidden min-h-[40px] mobile:mt-[10px] mobile:block">
+        {!!onAdd && (
+          <AddButton
+            isDisabled={false}
+            isAuthenticated={isAuthenticated}
+            onClick={handleClick}
+            icon={addButtonIcon ?? defaultAddButtonIcon}
+            btnText={addButtonText}
+          />
+        )}
+      </div>
+    </div>
   );
 }

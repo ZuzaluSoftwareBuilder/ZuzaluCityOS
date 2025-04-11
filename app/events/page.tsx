@@ -6,7 +6,7 @@ import ExploreHeader from '@/components/layout/explore/exploreHeader';
 import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
 import ExploreSearch from '@/components/layout/explore/exploreSearch';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { Stack, useMediaQuery, useTheme } from '@mui/material';
+import { useMediaQuery, useTheme } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { CalendarDots, Globe, Ticket } from '@phosphor-icons/react';
@@ -51,7 +51,11 @@ const EventPage = () => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <ExploreHeader
         icon={
-          <Ticket size={isMobile ? 60 : 80} weight="duotone" format="Stroke" />
+          <Ticket
+            weight="duotone"
+            format="Stroke"
+            className="size-[80px] mobile:size-[60px]"
+          />
         }
         bgImage={'/events/header.png'}
         bgImageWidth={220}
@@ -76,7 +80,7 @@ const EventPage = () => {
 
       <ExploreNav navItems={NavItems} onNavChange={handleNavChange} />
 
-      <Stack direction="column" flex={1} p={isMobile ? '20px 10px' : '20px'}>
+      <div className="flex flex-1 flex-col p-[20px] mobile:p-[20px_10px]">
         <ExploreSearch
           value={searchVal}
           onChange={setSearchVal}
@@ -84,7 +88,7 @@ const EventPage = () => {
         />
 
         <EventListWithCalendar searchVal={searchVal} />
-      </Stack>
+      </div>
     </LocalizationProvider>
   );
 };

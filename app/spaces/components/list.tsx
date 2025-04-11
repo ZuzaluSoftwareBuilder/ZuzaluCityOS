@@ -1,10 +1,12 @@
 import { SpaceCard, SpaceCardSkeleton } from '@/components/biz/space/SpaceCard';
 import { Space } from '@/types';
-import { Grid, Stack, useMediaQuery, useTheme } from '@mui/material';
 import { useMemo, useState } from 'react';
 
 import ExploreSearch from '@/components/layout/explore/exploreSearch';
-import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
+import {
+  ResponsiveGrid,
+  ResponsiveGridItem,
+} from '@/components/layout/explore/responsiveGridItem';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import useUserSpace from '@/hooks/useUserSpace';
@@ -14,8 +16,6 @@ import { supabase } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 
 const SpaceList = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [searchVal, setSearchVal] = useState<string>('');
 
   const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
@@ -79,12 +79,7 @@ const SpaceList = () => {
   }, [spaces, legacySpacesData, searchVal]);
 
   return (
-    <Stack
-      direction="column"
-      flex={1}
-      p={isMobile ? '20px 10px' : '20px'}
-      gap={isMobile ? '10px' : '20px'}
-    >
+    <div className="flex flex-1 flex-col gap-[20px] p-[20px] mobile:gap-[10px] mobile:p-[20px_10px]">
       <ExploreSearch
         value={searchVal}
         onChange={setSearchVal}
@@ -92,18 +87,7 @@ const SpaceList = () => {
         className="mb-[10px]"
       />
 
-      <Grid
-        container
-        spacing="20px"
-        flex={1}
-        sx={{
-          '& .MuiGrid-item': {
-            width: '100%',
-            maxWidth: '100%',
-          },
-          alignContent: 'flex-start',
-        }}
-      >
+      <ResponsiveGrid>
         {isLoading || isRoleLoading || isLegacyLoading
           ? Array.from({ length: 8 }).map((_, index) => (
               <ResponsiveGridItem key={index}>
@@ -121,8 +105,8 @@ const SpaceList = () => {
                 />
               </ResponsiveGridItem>
             ))}
-      </Grid>
-    </Stack>
+      </ResponsiveGrid>
+    </div>
   );
 };
 

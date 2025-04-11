@@ -4,11 +4,9 @@ import Dialog from '@/app/spaces/components/Modal/Dialog';
 import ExploreHeader from '@/components/layout/explore/exploreHeader';
 import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useMediaQuery, useTheme } from '@mui/material';
 import { Buildings, CalendarDots, Globe } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
-import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 const NavItems: INavItem[] = [
   {
@@ -23,10 +21,7 @@ const NavItems: INavItem[] = [
 ];
 
 const SpacePage = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const [showModal, setShowModal] = React.useState(false);
+  const [showModal, setShowModal] = useState(false);
   const router = useRouter();
   const { isAuthenticated, showAuthPrompt } = useCeramicContext();
 
@@ -50,9 +45,9 @@ const SpacePage = () => {
       <ExploreHeader
         icon={
           <Buildings
-            size={isMobile ? 60 : 80}
             weight="duotone"
             format="Stroke"
+            className="size-[80px] mobile:size-[60px]"
           />
         }
         bgImage={'/space/header.png'}
