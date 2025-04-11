@@ -1,9 +1,8 @@
 'use client';
 
-import { Sidebar } from '@/components/layout';
-import { Stack } from '@mui/material';
-import * as React from 'react';
 import { PropsWithChildren } from 'react';
+import { Sidebar } from '@/components/layout';
+import * as React from 'react';
 
 export interface IExploreLayoutProps {
   selected: string;
@@ -16,18 +15,13 @@ const ExploreLayout: React.FC<PropsWithChildren<IExploreLayoutProps>> = ({
   showSidebar = true,
 }) => {
   return (
-    <Stack
-      direction="row"
-      sx={{ backgroundColor: '#222222', minHeight: 'calc(100vh - 50px)' }}
-    >
+    <div className="flex min-h-[calc(100vh-50px)] bg-[#222222]">
       <div className="block tablet:hidden mobile:hidden">
         {showSidebar && <Sidebar selected={selected} />}
       </div>
 
-      <Stack direction="column" flex={1} width="100%">
-        {children}
-      </Stack>
-    </Stack>
+      <div className="flex w-full flex-1 flex-col">{children}</div>
+    </div>
   );
 };
 
