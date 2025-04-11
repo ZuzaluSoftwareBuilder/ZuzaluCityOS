@@ -102,6 +102,7 @@ export const CeramicProvider = ({ children }: any) => {
         setUsername(basicProfile.username);
         setNewUser(false);
       } else {
+        logout();
         setNewUser(true);
       }
     }
