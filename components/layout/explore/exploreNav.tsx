@@ -108,7 +108,7 @@ export default function ExploreNav({
           >
             {item.label}
             {item.isComingSoon && (
-              <span className="ml-[10px] whitespace-nowrap text-[13px] font-[400]">
+              <span className="whitespace-nowrap text-[13px] font-[400]">
                 (Coming Soon)
               </span>
             )}
