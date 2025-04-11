@@ -24,7 +24,7 @@ export const AddButton = ({
   return (
     <Button
       className={cn(
-        'border border-white/10 h-[40px] bg-[#222] p-[8px_14px] text-[16px] z-[2] mobile:w-full mobile:mt-[10px] w-fit m-0',
+        'border border-white/10 h-[40px] bg-[#222] p-[8px_14px] text-[16px] z-[2] mobile:w-full w-fit m-0',
         isAuthenticated
           ? isDisabled
             ? 'cursor-not-allowed'
@@ -117,8 +117,8 @@ export default function ExploreHeader({
           img: 'object-contain',
         }}
       />
-      <div className="z-[2] flex flex-row gap-[20px] p-[25px_0_0_25px] mobile:gap-[10px] mobile:p-0">
-        {icon}
+      <div className="z-[2] flex flex-row gap-[20px] p-[25px_0_0_25px] mobile:mt-[20px] mobile:gap-[10px] mobile:p-0">
+        <div className="z-[2] shrink-0">{icon}</div>
 
         <div className="flex flex-col gap-[10px] mobile:gap-[5px]">
           <div className="flex flex-row items-center">
@@ -143,8 +143,8 @@ export default function ExploreHeader({
           )}
         </div>
       </div>
-      {!!onAdd && (
-        <div className="z-[2] hidden mobile:block">
+      <div className="z-[2] hidden min-h-[40px] mobile:mt-[10px] mobile:block">
+        {!!onAdd && (
           <AddButton
             isDisabled={false}
             isAuthenticated={isAuthenticated}
@@ -152,8 +152,8 @@ export default function ExploreHeader({
             icon={addButtonIcon ?? defaultAddButtonIcon}
             btnText={addButtonText}
           />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
