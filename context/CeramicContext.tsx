@@ -6,17 +6,38 @@ import {
 } from '@/services/graphql/profile';
 import { Profile } from '@/types/index.js';
 import { executeQuery } from '@/utils/ceramic';
+import { authenticateCeramic } from '@/utils/ceramicAuth';
+import {
+  safeGetLocalStorage,
+  safeRemoveLocalStorage,
+  safeSetLocalStorage,
+} from '@/utils/localStorage';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import { ComposeClient } from '@composedb/client';
-import { createContext, useCallback, useContext, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { getAccount } from 'wagmi/actions';
-import { authenticateCeramic } from '../utils/ceramicAuth';
 
 type ConnectSource = 'connectButton' | 'invalidAction';
+type AuthStatus =
+  | 'idle'
+  | 'authenticating'
+  | 'fetching_profile'
+  | 'creating_profile'
+  | 'authenticated'
+  | 'error';
+
+export const CreateProfileErrorPrefix = '[create profile]: ';
 
 interface CeramicContextType {
   ceramic: CeramicClient;
   composeClient: ComposeClient;
+  authStatus: AuthStatus;
   isAuthenticated: boolean;
   authenticate: () => Promise<void>;
   username: string | undefined;
@@ -27,14 +48,19 @@ interface CeramicContextType {
   showAuthPrompt: (source?: ConnectSource) => void;
   hideAuthPrompt: () => void;
   createProfile: (newName: string) => Promise<void>;
-  getProfile: () => Promise<void>;
+  getProfile: () => Promise<Profile | null>;
   connectSource: ConnectSource;
   setConnectSource: (source: ConnectSource) => void;
+  authError: string | null;
+  isAuthenticating: boolean;
+  isFetchingProfile: boolean;
+  isCreatingProfile: boolean;
 }
 
 const CeramicContext = createContext<CeramicContextType>({
   ceramic,
   composeClient,
+  authStatus: 'idle',
   isAuthenticated: false,
   authenticate: async () => {},
   username: undefined,
@@ -45,100 +71,199 @@ const CeramicContext = createContext<CeramicContextType>({
   showAuthPrompt: () => {},
   hideAuthPrompt: () => {},
   createProfile: async (newName: string) => {},
-  getProfile: async () => {},
+  getProfile: async () => null,
   connectSource: 'invalidAction',
   setConnectSource: () => {},
+  authError: null,
+  isAuthenticating: false,
+  isFetchingProfile: false,
+  isCreatingProfile: false,
 });
 
 export const CeramicProvider = ({ children }: any) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authStatus, setAuthStatus] = useState<AuthStatus>('idle');
   const [isAuthPromptVisible, setAuthPromptVisible] = useState(false);
   const [username, setUsername] = useState<string | undefined>(undefined);
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
   const [newUser, setNewUser] = useState<boolean | undefined>(undefined);
   const [connectSource, setConnectSource] =
     useState<ConnectSource>('invalidAction');
-  const authenticate = async () => {
-    console.log('authenticate');
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  const isAuthenticated = authStatus === 'authenticated';
+  const isAuthenticating = authStatus === 'authenticating';
+  const isFetchingProfile = authStatus === 'fetching_profile';
+  const isCreatingProfile = authStatus === 'creating_profile';
+
+  useEffect(() => {
+    const checkInitialAuth = async () => {
+      const did = safeGetLocalStorage('ceramic:eth_did');
+      if (did) {
+        setAuthStatus('authenticating');
+        try {
+          await authenticateCeramic(ceramic, composeClient);
+          await getProfile();
+        } catch (error: any) {
+          console.error('[CeramicContext] Initial auth check failed:', error);
+          setAuthError(
+            `Auto sign-in failed: ${error.message || 'Please try again'}`,
+          );
+          setAuthStatus('error');
+        }
+      } else {
+        setAuthStatus('idle');
+      }
+    };
+    checkInitialAuth();
+  }, []);
+
+  const getProfile = useCallback(async (): Promise<Profile | null> => {
+    if (!ceramic.did) {
+      setAuthStatus('error');
+      setAuthError(
+        'Cannot fetch profile, please connect wallet and authenticate.',
+      ); // Translated
+      return null;
+    }
+    setAuthStatus('fetching_profile');
+    setAuthError(null);
+    try {
+      const result: any = await executeQuery(GET_OWN_PROFILE_QUERY);
+      const basicProfile: Profile | undefined =
+        result?.data?.viewer?.zucityProfile;
+
+      if (basicProfile?.id) {
+        safeSetLocalStorage('username', basicProfile.username);
+        setProfile(basicProfile);
+        setUsername(basicProfile.username);
+        setNewUser(false);
+        setAuthStatus('authenticated');
+        return basicProfile;
+      } else {
+        setUsername(undefined);
+        setProfile(undefined);
+        safeRemoveLocalStorage('username');
+        setNewUser(true);
+        setAuthStatus('authenticated');
+        return null;
+      }
+    } catch (error: any) {
+      console.error(
+        '[CeramicContext] getProfile: Error fetching profile:',
+        error,
+      );
+      const errorMessage = `Failed to fetch profile: ${error.message || 'Please try again later'}`; // Translated
+      setAuthError(errorMessage);
+      setAuthStatus('error');
+      return null;
+    }
+  }, []);
+
+  const authenticate = useCallback(async () => {
+    if (authStatus === 'authenticating' || authStatus === 'authenticated') {
+      return;
+    }
+    setAuthStatus('authenticating');
+    setAuthError(null);
     try {
       await authenticateCeramic(ceramic, composeClient);
       await getProfile();
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('Authentication failed in CeramicContext:', error);
-      setIsAuthenticated(false);
-      throw error;
+    } catch (error: any) {
+      console.error('[CeramicContext] Authentication failed:', error); // Keep error log
+      const userDeniedSignature = error.message?.includes(
+        'User denied request signature',
+      );
+
+      if (userDeniedSignature) {
+        setAuthError(null);
+        setAuthStatus('idle');
+      } else {
+        const errorMessage = `Authentication failed: ${error.message || 'Please check wallet connection and try again'}`; // Translated
+        setAuthError(errorMessage);
+        setAuthStatus('error');
+        throw new Error(errorMessage);
+      }
     }
-  };
-  const showAuthPrompt = (source: ConnectSource = 'invalidAction') => {
-    setConnectSource(source);
-    setAuthPromptVisible(true);
-    const existingusername = localStorage.getItem('username');
-    if (existingusername) {
-      setIsAuthenticated(true);
-    }
-  };
+  }, [authStatus, getProfile]);
+
+  const createProfile = useCallback(
+    async (newName: string) => {
+      const { address } = getAccount(config);
+      if (!ceramic.did || !newName || !address) {
+        const errorMsg = `${CreateProfileErrorPrefix} Invalid user info or wallet address, cannot create profile.'`;
+        console.error(errorMsg);
+        setAuthError(errorMsg);
+        setAuthStatus('error');
+        return;
+      }
+      setAuthStatus('creating_profile');
+      setAuthError(null);
+      try {
+        const update = await executeQuery(CREATE_PROFILE_MUTATION, {
+          input: {
+            content: {
+              username: newName,
+              address: address.toString().toLowerCase(),
+            },
+          },
+        });
+
+        if (update.errors) {
+          console.error(
+            '[CeramicContext] createProfile: Error creating profile (GraphQL):',
+            update.errors,
+          );
+          const errorMessage = `${CreateProfileErrorPrefix} Failed to create profile: ${update.errors[0]?.message || 'Please try again'}`;
+          setAuthError(errorMessage);
+          setAuthStatus('error');
+        } else {
+          await getProfile();
+        }
+      } catch (error: any) {
+        console.error(
+          '[CeramicContext] createProfile: Error creating profile (Network/Other):',
+          error,
+        ); // Keep error log
+        const errorMessage = `Error creating profile: ${error.message || 'Please try again later'}`; // Translated
+        setAuthError(errorMessage);
+        setAuthStatus('error');
+      }
+    },
+    [getProfile],
+  );
+
+  const showAuthPrompt = useCallback(
+    (source: ConnectSource = 'invalidAction') => {
+      setConnectSource(source);
+      setAuthPromptVisible(true);
+    },
+    [],
+  );
+
   const hideAuthPrompt = useCallback(() => {
     setAuthPromptVisible(false);
   }, []);
 
-  const logout = () => {
-    localStorage.removeItem('username');
-    localStorage.removeItem('ceramic:eth_did');
-    localStorage.removeItem('display did');
-    localStorage.removeItem('logged_in');
-    setIsAuthenticated(false);
-    setNewUser(false);
-  };
+  const logout = useCallback(() => {
+    safeRemoveLocalStorage('username');
+    safeRemoveLocalStorage('ceramic:eth_did');
+    safeRemoveLocalStorage('display did');
+    safeRemoveLocalStorage('logged_in');
 
-  const getProfile = async () => {
-    if (ceramic.did !== undefined) {
-      const profile: any = await executeQuery(GET_OWN_PROFILE_QUERY);
-      const basicProfile: { id: string; username: string } | undefined =
-        profile?.data?.viewer?.zucityProfile;
-      if (basicProfile?.id) {
-        localStorage.setItem('username', basicProfile.username);
-        setProfile(basicProfile);
-        setUsername(basicProfile.username);
-        setNewUser(false);
-      } else {
-        logout();
-        setNewUser(true);
-      }
-    }
-  };
-
-  const createProfile = async (newName: string) => {
-    const { address } = getAccount(config);
-    if (!ceramic.did || !newName || !address) {
-      console.error('Invalid DID or name provided.');
-      return;
-    }
-
-    try {
-      const update = await executeQuery(CREATE_PROFILE_MUTATION, {
-        input: {
-          content: {
-            username: newName,
-            address: address.toString().toLowerCase(),
-          },
-        },
-      });
-
-      if (update.errors) {
-        console.error('Error creating profile:', update.errors);
-      }
-      await getProfile();
-    } catch (error) {
-      console.error('Error creating profile:', error);
-    }
-  };
+    setUsername(undefined);
+    setProfile(undefined);
+    setNewUser(undefined);
+    setAuthError(null);
+    setAuthStatus('idle');
+    setAuthPromptVisible(false);
+  }, []);
 
   return (
     <CeramicContext.Provider
       value={{
         ceramic,
         composeClient,
+        authStatus,
         isAuthenticated,
         authenticate,
         username,
@@ -152,6 +277,10 @@ export const CeramicProvider = ({ children }: any) => {
         getProfile,
         connectSource,
         setConnectSource,
+        authError,
+        isAuthenticating,
+        isFetchingProfile,
+        isCreatingProfile,
       }}
     >
       {children}

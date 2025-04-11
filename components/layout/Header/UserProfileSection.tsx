@@ -32,7 +32,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
   avatarSize = 28,
 }) => {
   const router = useRouter();
-  const { isAuthenticated, showAuthPrompt, logout, profile } =
+  const { isAuthenticated, newUser, showAuthPrompt, logout, profile } =
     useCeramicContext();
   const { litDisconnect } = useLitContext();
   const { disconnect } = useDisconnect();
@@ -43,7 +43,6 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
     disconnect();
     logout();
     litDisconnect();
-    window.location.reload();
   }, [disconnect, logout, litDisconnect]);
 
   const handleProfile = useCallback(() => {
@@ -69,7 +68,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
     <>
       <Profile showModal={showProfile} onClose={handleCloseProfile} />
 
-      {isAuthenticated ? (
+      {isAuthenticated && !newUser ? (
         <UserProfileDropdown
           avatarSize={avatarSize}
           isOpen={open}

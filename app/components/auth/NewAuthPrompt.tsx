@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Modal,
   ModalBody,
@@ -5,7 +7,10 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@/components/base/modal';
-import { useCeramicContext } from '@/context/CeramicContext';
+import {
+  CreateProfileErrorPrefix,
+  useCeramicContext,
+} from '@/context/CeramicContext';
 import { Button, Input, Spinner } from '@heroui/react';
 import { X } from '@phosphor-icons/react';
 import React, {
@@ -15,115 +20,55 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useAccount, useDisconnect, useEnsName } from 'wagmi';
+import { useAccount, useEnsName } from 'wagmi';
 import AuthButton from './AuthButton';
 import ConnectWalletButton from './ConnectWalletButton';
-
-export enum IAuthState {
-  ConnectWallet = 'CONNECT_WALLET',
-  NewUser = 'NEW_USER',
-  LoggedIn = 'Logged_In',
-}
 
 const NewAuthPrompt: React.FC = () => {
   const { isConnected, address } = useAccount();
   const { data: ensName } = useEnsName({ address });
   const [inputUsername, setInputUsername] = useState('');
+  const [isSkipButtonLoading, setIsSkipButtonLoading] = useState(false);
+  const [isContinueButtonLoading, setIsContinueButtonLoading] = useState(false);
+  const [isCloseButtonLoading, setIsCloseButtonLoading] = useState(false);
+  const connectionIntentRef = useRef(false);
   const {
+    authStatus,
+    isAuthenticating,
+    isFetchingProfile,
+    isCreatingProfile,
+    authError,
+    newUser,
+    username,
+    connectSource,
     authenticate,
+    createProfile,
     hideAuthPrompt,
     isAuthPromptVisible,
-    newUser,
-    profile,
-    username,
-    createProfile,
-    connectSource,
   } = useCeramicContext();
-  const { disconnect } = useDisconnect();
-  const [authState, setAuthState] = useState<IAuthState | undefined>(undefined);
-  const authenticateCalled = useRef(false);
+
   const maxUsernameLength = Infinity;
-  const [isContinueLoading, setIsContinueLoading] = useState(false);
-  const [isSkipLoading, setIsSkipLoading] = useState(false);
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
-  const [needsManualReset, setNeedsManualReset] = useState(false);
 
   useEffect(() => {
-    const existingUsername = localStorage.getItem('username');
-    const authenticateLoggedUser = async () => {
-      if (existingUsername && isAuthPromptVisible) {
-        await authenticate();
-        setAuthState(IAuthState.LoggedIn);
-      } else if (!existingUsername && isAuthPromptVisible && isConnected) {
-        disconnect();
-        setAuthState(IAuthState.ConnectWallet);
-      }
-    };
-    authenticateLoggedUser();
-  }, [isAuthPromptVisible]);
-
-  const handleConnectButtonClick = useCallback(() => {
-    if (needsManualReset) {
-      console.log('Manual reset triggered on connect button click');
-      disconnect();
-      authenticateCalled.current = false;
-      setIsAuthenticating(false);
-      setTimeout(() => {
-        setNeedsManualReset(false);
-      }, 100);
-    }
-  }, [needsManualReset, disconnect]);
-
-  useEffect(() => {
-    const authenticateUser = async (needSetState = true) => {
-      try {
-        authenticateCalled.current = true;
-        setIsAuthenticating(true);
-        await authenticate();
-        setIsAuthenticating(false);
-      } catch (error) {
-        console.error('Authentication failed:', error);
-
-        console.log('Disconnecting wallet due to authentication failure');
-        disconnect();
-        setIsAuthenticating(false);
-        authenticateCalled.current = false;
-        setNeedsManualReset(true);
-        needSetState && setAuthState(IAuthState.ConnectWallet);
-      }
-    };
     if (
       isConnected &&
+      authStatus === 'idle' &&
       isAuthPromptVisible &&
-      !authenticateCalled.current &&
-      !localStorage.getItem('username')
+      connectionIntentRef.current
     ) {
-      authenticateUser();
+      connectionIntentRef.current = false;
+      authenticate().catch((err) => {
+        console.error(
+          '[NewAuthPrompt] Authentication triggered by useEffect failed:',
+          err,
+        );
+      });
     }
-    if (
-      isConnected &&
-      localStorage.getItem('username') &&
-      !authenticateCalled.current
-    ) {
-      authenticateUser(false);
-    }
-  }, [isConnected, isAuthPromptVisible, authenticate, disconnect]);
 
-  useEffect(() => {
-    setAuthState(newUser ? IAuthState.NewUser : IAuthState.LoggedIn);
-  }, [newUser]);
-
-  useEffect(() => {
-    if (isAuthPromptVisible && !isConnected) {
-      setAuthState(IAuthState.ConnectWallet);
+    if ((!isAuthPromptVisible || !isConnected) && connectionIntentRef.current) {
+      connectionIntentRef.current = false;
     }
-  }, [isAuthPromptVisible, isConnected]);
-
-  useEffect(() => {
-    if (!isConnected) {
-      setIsAuthenticating(false);
-    }
-  }, [isConnected]);
+  }, [isConnected, authStatus, isAuthPromptVisible, authenticate]);
 
   const onInputChange = useCallback(
     (value: string) => {
@@ -138,34 +83,30 @@ const NewAuthPrompt: React.FC = () => {
 
   const handleSkip = useCallback(async () => {
     if (address) {
-      setIsSkipLoading(true);
+      setIsSkipButtonLoading(true);
       try {
         await createProfile((ensName || address.slice(0, 10)) as string);
-        setAuthState(IAuthState.LoggedIn);
       } catch (e) {
-        console.error('createProfile error:', e);
+        // Error is logged within createProfile context function
       } finally {
-        setIsSkipLoading(false);
+        setIsSkipButtonLoading(false);
       }
     }
   }, [address, ensName, createProfile]);
 
   const handleContinue = useCallback(async () => {
-    setIsContinueLoading(true);
+    setIsContinueButtonLoading(true);
     try {
       await createProfile(inputUsername);
-      setAuthState(IAuthState.LoggedIn);
     } catch (e) {
-      console.error('createProfile error:', e);
+      // Error is logged within createProfile context function
     } finally {
-      setIsContinueLoading(false);
+      setIsContinueButtonLoading(false);
     }
   }, [inputUsername, createProfile]);
 
   const handleFinish = useCallback(() => {
     hideAuthPrompt();
-    setAuthState(undefined);
-    authenticateCalled.current = false;
   }, [hideAuthPrompt]);
 
   const connectWalletContent = useMemo(() => {
@@ -213,8 +154,11 @@ const NewAuthPrompt: React.FC = () => {
             {description}
           </p>
           <ConnectWalletButton
-            isLoading={isAuthenticating}
-            onConnectClick={handleConnectButtonClick}
+            isLoading={isAuthenticating || isFetchingProfile}
+            authenticate={authenticate}
+            onInitiateConnect={() => {
+              connectionIntentRef.current = true;
+            }}
           />
         </ModalBody>
         <div className="w-full rounded-b-[10px] bg-[#363636] px-[20px] py-[10px]">
@@ -228,15 +172,50 @@ const NewAuthPrompt: React.FC = () => {
     connectWalletContent,
     renderCloseButton,
     isAuthenticating,
-    handleConnectButtonClick,
+    isFetchingProfile,
+    authStatus,
+    authError,
+    authenticate,
   ]);
 
   const renderNewUserContent = useCallback(() => {
+    const handleCloseAndSkip = async () => {
+      setIsCloseButtonLoading(true);
+      try {
+        await handleSkip();
+      } catch (e) {
+        // Error logged in handleSkip -> createProfile
+      } finally {
+        setIsCloseButtonLoading(false);
+        hideAuthPrompt();
+      }
+    };
+
+    const isAnyLoading =
+      isSkipButtonLoading || isContinueButtonLoading || isCloseButtonLoading;
+
     return (
       <>
         <div className="flex w-full items-center justify-between p-[20px]">
           <ModalHeader>Welcome to Zuzalu City! (beta)</ModalHeader>
-          {renderCloseButton()}
+          <Button
+            isIconOnly
+            onPress={handleCloseAndSkip}
+            className="size-auto min-w-0 bg-transparent p-0 opacity-50 transition-opacity hover:opacity-100"
+            aria-label="Close and Skip"
+            isDisabled={isAnyLoading}
+          >
+            {isCloseButtonLoading ? (
+              <Spinner size="sm" color="current" />
+            ) : (
+              <X
+                size={20}
+                weight={'light'}
+                format={'Stroke'}
+                className="opacity-50"
+              />
+            )}
+          </Button>
         </div>
         <ModalBody className="gap-[20px]">
           <p className="text-[14px] leading-[1.4] text-white/70">
@@ -260,7 +239,7 @@ const NewAuthPrompt: React.FC = () => {
                   'bg-[rgba(255,255,255,0.05)]',
                 ],
               }}
-              isDisabled={isSkipLoading || isContinueLoading}
+              isDisabled={isCreatingProfile}
             />
           </div>
         </ModalBody>
@@ -268,33 +247,35 @@ const NewAuthPrompt: React.FC = () => {
           <AuthButton
             onPress={handleSkip}
             className="flex-1 bg-transparent hover:bg-white/5"
-            isDisabled={isSkipLoading}
+            isDisabled={isAnyLoading}
+            isLoading={isSkipButtonLoading}
           >
-            {isSkipLoading ? <Spinner size="sm" color="current" /> : 'Skip'}
+            Skip
           </AuthButton>
           <AuthButton
             onPress={handleContinue}
             className="flex-1"
             color="primary"
-            isDisabled={isContinueLoading}
+            isDisabled={!inputUsername || isAnyLoading}
+            isLoading={isContinueButtonLoading}
           >
-            {isContinueLoading ? (
-              <Spinner size="sm" color="current" />
-            ) : (
-              'Continue'
-            )}
+            Continue
           </AuthButton>
         </ModalFooter>
       </>
     );
   }, [
-    renderCloseButton,
     inputUsername,
     onInputChange,
-    isSkipLoading,
-    isContinueLoading,
+    isSkipButtonLoading,
+    isContinueButtonLoading,
+    isCloseButtonLoading,
     handleSkip,
     handleContinue,
+    authStatus,
+    authError,
+    isCreatingProfile,
+    hideAuthPrompt,
   ]);
 
   const renderLoggedInContent = useCallback(() => {
@@ -330,21 +311,52 @@ const NewAuthPrompt: React.FC = () => {
   }, [username, address, handleFinish, renderCloseButton]);
 
   const renderModalContent = useCallback(() => {
-    switch (authState) {
-      case IAuthState.ConnectWallet:
+    if (!isConnected) {
+      return renderConnectWalletContent();
+    }
+
+    switch (authStatus) {
+      case 'idle':
         return renderConnectWalletContent();
 
-      case IAuthState.NewUser:
+      case 'authenticating':
+        return renderConnectWalletContent();
+
+      case 'fetching_profile':
+        if (newUser === true) {
+          return renderNewUserContent();
+        } else {
+          return renderConnectWalletContent();
+        }
+
+      case 'authenticated':
+        if (newUser) {
+          return renderNewUserContent();
+        } else {
+          return renderLoggedInContent();
+        }
+
+      case 'creating_profile':
         return renderNewUserContent();
 
-      case IAuthState.LoggedIn:
-        return renderLoggedInContent();
+      case 'error':
+        if (authError?.includes(CreateProfileErrorPrefix)) {
+          return renderNewUserContent();
+        }
+        return renderConnectWalletContent();
 
       default:
-        return null;
+        return (
+          <ModalBody>
+            <Spinner label="Loading..." />
+          </ModalBody>
+        );
     }
   }, [
-    authState,
+    isConnected,
+    authStatus,
+    newUser,
+    authError,
     renderConnectWalletContent,
     renderNewUserContent,
     renderLoggedInContent,

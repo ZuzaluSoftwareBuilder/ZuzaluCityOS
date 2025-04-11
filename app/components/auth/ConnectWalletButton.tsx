@@ -6,36 +6,36 @@ import { useAccount } from 'wagmi';
 
 export interface IConnectWalletButtonProps {
   isLoading?: boolean;
-  onConnectClick?: () => void;
+  authenticate: () => Promise<void>;
+  onInitiateConnect: () => void;
 }
 
 const ConnectWalletButton: React.FC<IConnectWalletButtonProps> = ({
-  isLoading: externalLoading,
-  onConnectClick,
+  isLoading: ceramicLoading,
+  authenticate,
+  onInitiateConnect,
 }) => {
   const { openConnectModal } = useConnectModal();
-  const { isConnected, isConnecting } = useAccount();
+  const { isConnected, isConnecting: wagmiConnecting } = useAccount();
 
-  const isLoading = externalLoading || isConnecting;
-  const showSigningMessage = externalLoading && isConnected && !isConnecting;
+  const isLoading = wagmiConnecting || ceramicLoading;
 
-  const handleConnect = useCallback(() => {
-    if (onConnectClick) {
-      onConnectClick();
-    }
-
-    if (showSigningMessage) {
-      console.log('Already in signing process, not opening modal');
-      return;
-    }
-
-    if (openConnectModal) {
-      console.log('Opening connect modal');
-      openConnectModal();
+  const handleConnect = useCallback(async () => {
+    if (!isConnected) {
+      onInitiateConnect();
+      if (openConnectModal) {
+        openConnectModal();
+      } else {
+        console.error('openConnectModal is not available');
+      }
     } else {
-      console.error('openConnectModal is not available');
+      try {
+        await authenticate();
+      } catch (error) {
+        console.error('Error during authenticate call:', error);
+      }
     }
-  }, [onConnectClick, openConnectModal, showSigningMessage]);
+  }, [isConnected, openConnectModal, authenticate, onInitiateConnect]);
 
   return (
     <Button
@@ -53,7 +53,11 @@ const ConnectWalletButton: React.FC<IConnectWalletButtonProps> = ({
       onPress={handleConnect}
       isLoading={isLoading}
     >
-      {showSigningMessage ? 'Sign In Message' : 'Connect Wallet'}
+      {isConnected
+        ? ceramicLoading
+          ? 'Signing In...'
+          : 'Sign In Message'
+        : 'Connect Wallet'}
     </Button>
   );
 };
