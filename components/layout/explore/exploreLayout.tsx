@@ -1,8 +1,8 @@
 'use client';
 
-import { PropsWithChildren } from 'react';
 import { Sidebar } from '@/components/layout';
 import * as React from 'react';
+import { PropsWithChildren } from 'react';
 
 export interface IExploreLayoutProps {
   selected: string;

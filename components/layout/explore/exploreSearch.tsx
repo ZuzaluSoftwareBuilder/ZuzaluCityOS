@@ -1,6 +1,6 @@
-import React from 'react';
 import { Input } from '@/components/base';
 import { MagnifyingGlass } from '@phosphor-icons/react';
+import React from 'react';
 
 interface IExploreSearchProps {
   value: string;

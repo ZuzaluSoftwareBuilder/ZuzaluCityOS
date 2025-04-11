@@ -1,20 +1,20 @@
+import { SpaceCard, SpaceCardSkeleton } from '@/components/biz/space/SpaceCard';
+import { Space } from '@/types';
 import { Grid } from '@mui/material';
 import { useMemo, useState } from 'react';
-import { Space } from '@/types';
-import { SpaceCard, SpaceCardSkeleton } from '@/components/biz/space/SpaceCard';
 
+import ExploreSearch from '@/components/layout/explore/exploreSearch';
 import {
   ResponsiveGrid,
   ResponsiveGridItem,
 } from '@/components/layout/explore/responsiveGridItem';
-import ExploreSearch from '@/components/layout/explore/exploreSearch';
-import useUserSpace from '@/hooks/useUserSpace';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { useGraphQL } from '@/hooks/useGraphQL';
+import useUserSpace from '@/hooks/useUserSpace';
 import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
 import dayjs from '@/utils/dayjs';
-import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/utils/supabase/client';
+import { useQuery } from '@tanstack/react-query';
 
 const SpaceList = () => {
   const [searchVal, setSearchVal] = useState<string>('');

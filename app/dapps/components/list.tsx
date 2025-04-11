@@ -1,21 +1,21 @@
 import { GearSixIcon } from '@/components/icons';
-import { useTheme, useMediaQuery, Skeleton, Typography } from '@mui/material';
+import { Skeleton, Typography, useMediaQuery, useTheme } from '@mui/material';
 
-import { Stack } from '@mui/material';
-import { useState, useMemo } from 'react';
-import { Item } from '.';
-import Filter from './filter';
-import { Dapp } from '@/types';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
-import { useGraphQL } from '@/hooks/useGraphQL';
+import ExploreSearch from '@/components/layout/explore/exploreSearch';
 import {
   ResponsiveGrid,
   ResponsiveGridItem,
 } from '@/components/layout/explore/responsiveGridItem';
-import { useQuery } from '@tanstack/react-query';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
+import { Dapp } from '@/types';
 import { supabase } from '@/utils/supabase/client';
-import ExploreSearch from '@/components/layout/explore/exploreSearch';
+import { Stack } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
+import { Item } from '.';
+import Filter from './filter';
 
 interface ListProps {
   onDetailClick: (data: Dapp) => void;
