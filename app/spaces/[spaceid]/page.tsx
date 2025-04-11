@@ -1,22 +1,22 @@
 'use client';
 
-import { useParams } from 'next/navigation';
-import SpaceSection from './components/home/spaceSection';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_SPACE_AND_EVENTS_QUERY_BY_ID } from '@/services/graphql/space';
-import { Event, Space } from '@/types';
-import React, { useMemo } from 'react';
-import SpaceEventList from '@/app/spaces/[spaceid]/components/home/spaceEventList';
 import SideNav from '@/app/spaces/[spaceid]/components/home/sideNav/sideNav';
-import { useBuildInRole } from '@/context/BuildInRoleContext';
+import SpaceEventList from '@/app/spaces/[spaceid]/components/home/spaceEventList';
 import {
   CommonDrawerHeader,
   Drawer,
   DrawerBody,
   DrawerContent,
 } from '@/components/base';
-import { CaretUpDown } from '@phosphor-icons/react';
+import { useBuildInRole } from '@/context/BuildInRoleContext';
+import { useGraphQL } from '@/hooks/useGraphQL';
 import useOpenDraw from '@/hooks/useOpenDraw';
+import { GET_SPACE_AND_EVENTS_QUERY_BY_ID } from '@/services/graphql/space';
+import { Event, Space } from '@/types';
+import { CaretUpDown } from '@phosphor-icons/react';
+import { useParams } from 'next/navigation';
+import React, { useMemo } from 'react';
+import SpaceSection from './components/home/spaceSection';
 
 const SpaceHomePage: React.FC = () => {
   const params = useParams();

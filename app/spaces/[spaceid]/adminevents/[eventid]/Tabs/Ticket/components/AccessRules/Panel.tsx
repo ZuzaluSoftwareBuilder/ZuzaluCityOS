@@ -1,13 +1,13 @@
+import { BuildStoreFrontIcon } from '@/components/icons';
+import ClockIcon from '@/components/icons/Clock';
+import useRegAndAccess from '@/hooks/useRegAndAccess';
+import { RegistrationAndAccess } from '@/types';
 import { Stack, Typography } from '@mui/material';
 import {
   StatusIndicatorPanel,
   TitleWithTag,
   useStatusContext,
 } from '../Common';
-import ClockIcon from '@/components/icons/Clock';
-import { BuildStoreFrontIcon } from '@/components/icons';
-import useRegAndAccess from '@/hooks/useRegAndAccess';
-import { RegistrationAndAccess } from '@/types';
 
 interface PanelProps {
   regAndAccess?: RegistrationAndAccess;

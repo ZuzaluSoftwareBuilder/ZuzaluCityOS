@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { Box, Stack, Typography, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { EventIcon, MapIcon } from 'components/icons';
 
 const EventName = () => {

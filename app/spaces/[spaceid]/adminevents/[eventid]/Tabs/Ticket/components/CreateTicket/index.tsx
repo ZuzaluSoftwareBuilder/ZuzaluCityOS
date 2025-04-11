@@ -1,4 +1,5 @@
 import { ZuInput, ZuSwitch } from '@/components/core';
+import FormUploader from '@/components/form/FormUploader';
 import {
   CheckCircleIcon,
   CheckIcon,
@@ -11,7 +12,9 @@ import {
   USDTIcon,
   UncheckCircleIcon,
 } from '@/components/icons';
-import { STARTING_STATUS } from '@/constant';
+import { SCROLL_EXPLORER, STARTING_STATUS } from '@/constant';
+import { shortenAddress } from '@/utils/format';
+import { SelectedFile } from '@lxdao/uploader3';
 import {
   Box,
   Button,
@@ -25,18 +28,14 @@ import {
   Typography,
   useMediaQuery,
 } from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { Dayjs } from 'dayjs';
 import Image from 'next/image';
 import React from 'react';
-import { Dayjs } from 'dayjs';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { shortenAddress } from '@/utils/format';
-import { SCROLL_EXPLORER } from '@/constant';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { SelectedFile } from '@lxdao/uploader3';
 import { ButtonGroup } from '../Common';
-import FormUploader from '@/components/form/FormUploader';
 
 interface IProps {
   setIsConfirm?: React.Dispatch<React.SetStateAction<boolean>> | any;

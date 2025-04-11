@@ -1,15 +1,15 @@
 'use client';
-import * as React from 'react';
 import { Box, Stack, useMediaQuery } from '@mui/material';
+import * as React from 'react';
 
-import { Ticket, Overview, Venue, Announcements, Apps } from './Tabs';
-import { Tabbar, Navbar } from 'components/layout';
-import { useParams, useRouter } from 'next/navigation';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { getSpacesQuery } from '@/services/space';
 import { Space } from '@/types';
 import { useQuery } from '@tanstack/react-query';
-import { getSpacesQuery } from '@/services/space';
+import { Navbar, Tabbar } from 'components/layout';
+import { useParams, useRouter } from 'next/navigation';
 import { EventProvider, useEventContext } from './EventContext';
+import { Announcements, Apps, Overview, Ticket, Venue } from './Tabs';
 import {
   StatusProvider,
   useStatusContext,

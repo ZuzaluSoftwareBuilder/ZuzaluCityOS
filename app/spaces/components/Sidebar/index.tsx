@@ -1,13 +1,13 @@
 import { ZuSelect } from '@/components/core';
 import { SearchIcon } from '@/components/icons';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import {
   InputAdornment,
   OutlinedInput,
   Stack,
   Typography,
+  useTheme,
 } from '@mui/material';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import { useTheme } from '@mui/material';
 
 export default function SidebarLeft() {
   const { breakpoints } = useTheme();

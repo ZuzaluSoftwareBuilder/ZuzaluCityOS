@@ -3,8 +3,8 @@ import { getMembers } from '@/services/member';
 import { getRoles } from '@/services/role';
 import { Space, UserRole } from '@/types';
 import { useQuery } from '@tanstack/react-query';
-import { useGraphQL } from './useGraphQL';
 import { useMemo } from 'react';
+import { useGraphQL } from './useGraphQL';
 
 export default function useGetSpaceMember(spaceId: string) {
   const { data: roles, isLoading: isLoadingRoles } = useQuery({

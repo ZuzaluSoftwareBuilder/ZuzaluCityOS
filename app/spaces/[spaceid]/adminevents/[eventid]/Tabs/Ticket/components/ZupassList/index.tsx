@@ -1,16 +1,16 @@
+import Drawer from '@/components/drawer';
+import { TicketIcon } from '@/components/icons/Ticket';
+import useOpenDraw from '@/hooks/useOpenDraw';
+import useRegAndAccess from '@/hooks/useRegAndAccess';
+import { RegistrationAndAccess } from '@/types';
 import { Link, Stack, Typography } from '@mui/material';
+import { useMemo } from 'react';
+import AccessRules from '../AccessRules';
+import ApplicationPanel from '../Application/Panel';
 import { ConfigPanel, TitleWithTag } from '../Common';
 import { RegistrationStatus } from '../Status';
-import ApplicationPanel from '../Application/Panel';
-import AccessRules from '../AccessRules';
-import useOpenDraw from '@/hooks/useOpenDraw';
-import Drawer from '@/components/drawer';
-import Form from './Form';
-import { TicketIcon } from '@/components/icons/Ticket';
-import { RegistrationAndAccess } from '@/types';
-import { useMemo } from 'react';
 import { TagProps } from '../types';
-import useRegAndAccess from '@/hooks/useRegAndAccess';
+import Form from './Form';
 
 interface ZupassListProps {
   regAndAccess?: RegistrationAndAccess;

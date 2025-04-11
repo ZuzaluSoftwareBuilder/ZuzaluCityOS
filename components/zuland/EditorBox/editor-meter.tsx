@@ -1,8 +1,8 @@
-import React from 'react';
 import { Box, Stack, Typography } from '@mui/material';
 import CircularProgress, {
   circularProgressClasses,
 } from '@mui/material/CircularProgress';
+import React from 'react';
 export type EditorMeterProps = {
   max: number;
   value: number;

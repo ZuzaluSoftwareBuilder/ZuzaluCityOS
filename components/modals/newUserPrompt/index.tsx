@@ -1,9 +1,9 @@
 import { ZuButton, ZuInput } from '@/components/core';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useZupassContext } from '@/context/ZupassContext';
-import { updateZupassMember } from '@/services/event/addZupassMember';
-import { updateScrollpassMember } from '@/services/event/addScrollpassMember';
 import { useLitContext } from '@/context/LitContext';
+import { useZupassContext } from '@/context/ZupassContext';
+import { updateScrollpassMember } from '@/services/event/addScrollpassMember';
+import { updateZupassMember } from '@/services/event/addZupassMember';
 import {
   Box,
   Checkbox,

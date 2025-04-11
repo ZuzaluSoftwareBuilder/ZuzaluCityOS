@@ -1,10 +1,10 @@
-import * as React from 'react';
-import TextField from '@mui/material/TextField';
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
-import { SPACE_CATEGORIES } from '@/constant';
-import { useCallback } from 'react';
-import SearchIcon from '@mui/icons-material/Search';
 import SelectCheckItem from '@/components/select/selectCheckItem';
+import { SPACE_CATEGORIES } from '@/constant';
+import SearchIcon from '@mui/icons-material/Search';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import * as React from 'react';
+import { useCallback } from 'react';
 
 const filter = createFilterOptions<FilmOptionType>();
 

@@ -1,5 +1,4 @@
 'use client';
-import { Stack, Typography, Box, Skeleton, useTheme } from '@mui/material';
 import {
   ArrowForwardIcon,
   CalendarIcon,
@@ -8,11 +7,12 @@ import {
   ScrollPassIcon,
   ZuPassIcon,
 } from '@/components/icons';
-import { useRouter } from 'next/navigation';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useEffect, useMemo, useState } from 'react';
-import { EventData, Event, ScrollPassTickets } from '@/types';
+import { Event, EventData, ScrollPassTickets } from '@/types';
+import { Box, Skeleton, Stack, Typography, useTheme } from '@mui/material';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 
 const Home = () => {
   const router = useRouter();

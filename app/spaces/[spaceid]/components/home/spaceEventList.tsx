@@ -1,15 +1,15 @@
-import { Skeleton } from '@heroui/react';
+import {
+  EventCard,
+  EventCardMonthGroup,
+  EventCardSkeleton,
+} from '@/components/biz/event/EventCard';
 import {
   filterUpcomingEvents,
   groupEventsByMonth,
 } from '@/components/cards/EventCard';
-import React, { Fragment } from 'react';
-import {
-  EventCard,
-  EventCardSkeleton,
-  EventCardMonthGroup,
-} from '@/components/biz/event/EventCard';
 import { Event } from '@/types';
+import { Skeleton } from '@heroui/react';
+import { Fragment } from 'react';
 
 export interface ISpaceEventListProps {
   eventsData: Event[];

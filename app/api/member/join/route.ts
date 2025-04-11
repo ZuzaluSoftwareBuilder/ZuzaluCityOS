@@ -1,19 +1,19 @@
-import { dayjs } from '@/utils/dayjs';
-import utc from 'dayjs/plugin/utc';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
 import {
   CHECK_EXISTING_ROLE_QUERY,
   CREATE_ROLE_QUERY,
   UPDATE_ROLE_QUERY,
 } from '@/services/graphql/role';
-import { z } from 'zod';
+import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
+import { Space } from '@/types';
+import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { dayjs } from '@/utils/dayjs';
 import {
   createErrorResponse,
   createSuccessResponse,
 } from '@/utils/service/response';
 import { supabase } from '@/utils/supabase/client';
-import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
-import { Space } from '@/types';
+import utc from 'dayjs/plugin/utc';
+import { z } from 'zod';
 
 dayjs.extend(utc);
 

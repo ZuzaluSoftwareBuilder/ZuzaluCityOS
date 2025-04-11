@@ -1,6 +1,6 @@
+import { Divider } from '@/components/base';
 import { Dapp } from '@/types';
 import { Image } from '@heroui/react';
-import { Divider } from '@/components/base';
 import { BoxArrowDown, Plugs } from '@phosphor-icons/react';
 interface ItemProps {
   data: Dapp;

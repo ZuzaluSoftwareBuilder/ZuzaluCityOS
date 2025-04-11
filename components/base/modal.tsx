@@ -1,15 +1,15 @@
+import { Button } from '@/components/base';
 import {
   Modal as HeroModal,
-  ModalContent,
-  ModalHeader,
   ModalBody,
+  ModalContent,
   ModalFooter,
+  ModalHeader,
   type ModalProps,
   cn,
 } from '@heroui/react';
-import { Button } from '@/components/base';
-import React, { forwardRef } from 'react';
 import { X } from '@phosphor-icons/react';
+import React, { forwardRef } from 'react';
 
 export const Modal = forwardRef<HTMLDivElement, ModalProps>((props, ref) => {
   const { classNames, motionProps, ...rest } = props;
@@ -90,4 +90,4 @@ export const CommonModalHeader: React.FC<{
   );
 };
 
-export { ModalContent, ModalHeader, ModalBody, ModalFooter };
+export { ModalBody, ModalContent, ModalFooter, ModalHeader };

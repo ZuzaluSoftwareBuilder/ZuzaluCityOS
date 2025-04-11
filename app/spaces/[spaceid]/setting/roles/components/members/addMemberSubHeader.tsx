@@ -1,6 +1,6 @@
-import React from 'react';
-import { Button, Input } from '@heroui/react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { Button, Input } from '@heroui/react';
+import React from 'react';
 
 export interface IAddMembersSubHeaderProps {
   onSearch: (query: string) => void;

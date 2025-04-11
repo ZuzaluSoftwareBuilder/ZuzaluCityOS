@@ -1,40 +1,40 @@
 'use client';
-import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
-import { useParams } from 'next/navigation';
-import {
-  Stack,
-  Typography,
-  Box,
-  SwipeableDrawer,
-  useTheme,
-} from '@mui/material';
-import { EventName, EventAbout, EventDetail } from '@/components/event';
 import { ZuButton } from '@/components/core';
-import { XMarkIcon } from '@/components/icons';
-import {
-  CeramicResponseType,
-  Event,
-  EventEdge,
-  Anchor,
-  Contract,
-} from '@/types';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { supabase } from '@/utils/supabase/client';
-import {
-  Verify,
-  Agree,
-  Mint,
-  Complete,
-  Transaction,
-} from '@/components/event/Whitelist';
+import { EventAbout, EventDetail, EventName } from '@/components/event';
 import {
   SponsorAgree,
+  SponsorComplete,
   SponsorMint,
   SponsorTransaction,
-  SponsorComplete,
 } from '@/components/event/Sponsor';
+import {
+  Agree,
+  Complete,
+  Mint,
+  Transaction,
+  Verify,
+} from '@/components/event/Whitelist';
+import { XMarkIcon } from '@/components/icons';
+import { useCeramicContext } from '@/context/CeramicContext';
+import {
+  Anchor,
+  CeramicResponseType,
+  Contract,
+  Event,
+  EventEdge,
+} from '@/types';
 import getLatLngFromAddress from '@/utils/osm';
+import { supabase } from '@/utils/supabase/client';
+import {
+  Box,
+  Stack,
+  SwipeableDrawer,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { LatLngLiteral } from 'leaflet';
+import { useParams } from 'next/navigation';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 interface IAbout {
   eventData: Event | undefined;

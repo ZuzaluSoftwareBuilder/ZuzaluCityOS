@@ -1,14 +1,14 @@
 'use client';
 
-import { DoorOpen, LockLaminated } from '@phosphor-icons/react';
-import { useSpaceData } from '../../components/context/spaceData';
-import RuleList from './components/ruleList';
 import { Button } from '@/components/base';
-import { useCallback } from 'react';
-import { executeQuery } from '@/utils/ceramic';
 import { UPDATE_SPACE_MUTATION } from '@/services/graphql/space';
+import { executeQuery } from '@/utils/ceramic';
+import { DoorOpen, LockLaminated } from '@phosphor-icons/react';
 import { useMutation } from '@tanstack/react-query';
+import { useCallback } from 'react';
+import { useSpaceData } from '../../components/context/spaceData';
 import { useSpacePermissions } from '../../components/permission';
+import RuleList from './components/ruleList';
 
 export default function AccessSettingPage() {
   const { spaceData, refreshSpaceData } = useSpaceData();

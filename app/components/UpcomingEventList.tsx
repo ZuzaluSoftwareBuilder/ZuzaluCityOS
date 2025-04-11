@@ -1,39 +1,39 @@
+import CalendarSelect from '@/app/events/components/EventList/CalendarSelect';
+import { Button, Calendar } from '@/components/base';
+import { EventCard } from '@/components/biz';
+import {
+  EventCardSkeleton,
+  groupEventsByMonth,
+} from '@/components/cards/EventCard';
 import {
   ArrowCircleRightIcon,
   ArrowsCounterClockwiseIcon,
   MapIcon,
   TicketIcon,
 } from '@/components/icons';
-import CommonHeader from './CommonHeader';
-import { useRouter } from 'next/navigation';
-import dayjs from 'dayjs';
-import React, { useState, useMemo } from 'react';
-import { Event } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { UPCOMING_EVENTS_QUERY } from '@/graphql/eventQueries';
+import { useMediaQuery } from '@/hooks';
+import { Event } from '@/types';
+import { supabase } from '@/utils/supabase/client';
+import {
+  Accordion,
+  AccordionItem,
+  DateValue,
+  Select as HSelect,
+  SelectItem,
+  Skeleton,
+} from '@heroui/react';
+import { fromAbsolute, getLocalTimeZone, today } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
-import { SmallEventCardSkeleton } from './SmallEventCard';
+import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import minMax from 'dayjs/plugin/minMax';
-import {
-  EventCardSkeleton,
-  groupEventsByMonth,
-} from '@/components/cards/EventCard';
-import { EventCard } from '@/components/biz';
-import {
-  AccordionItem,
-  Accordion,
-  DateValue,
-  SelectItem,
-  Skeleton,
-  Select as HSelect,
-} from '@heroui/react';
-import CalendarSelect from '@/app/events/components/EventList/CalendarSelect';
-import { UPCOMING_EVENTS_QUERY } from '@/graphql/eventQueries';
-import { supabase } from '@/utils/supabase/client';
-import { useMediaQuery } from '@/hooks';
-import { fromAbsolute, getLocalTimeZone, today } from '@internationalized/date';
-import { Calendar, Button } from '@/components/base';
+import { useRouter } from 'next/navigation';
+import React, { useMemo, useState } from 'react';
+import CommonHeader from './CommonHeader';
+import { SmallEventCardSkeleton } from './SmallEventCard';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);

@@ -1,7 +1,6 @@
 'use client';
-import * as React from 'react';
-import { useRouter } from 'next/navigation';
 import { CaretLeft } from '@phosphor-icons/react';
+import { useRouter } from 'next/navigation';
 
 const Header = () => {
   const router = useRouter();

@@ -1,11 +1,11 @@
 'use client';
 
-import { Space } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
+import useUserSpace from '@/hooks/useUserSpace';
+import { Space } from '@/types';
+import { Image, Skeleton, Tooltip } from '@heroui/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Image, Tooltip, Skeleton } from '@heroui/react';
-import useUserSpace from '@/hooks/useUserSpace';
 
 const SpaceItemSkeleton = () => {
   return (

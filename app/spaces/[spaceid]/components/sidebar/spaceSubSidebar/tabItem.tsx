@@ -1,8 +1,8 @@
 'use client';
 
-import Link, { LinkProps } from 'next/link';
 import { cn } from '@heroui/react';
-import { Lock, IconContext } from '@phosphor-icons/react';
+import { IconContext, Lock } from '@phosphor-icons/react';
+import Link, { LinkProps } from 'next/link';
 
 export interface ITabItemProps extends Partial<LinkProps> {
   href?: string;

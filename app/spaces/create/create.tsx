@@ -1,52 +1,50 @@
 'use client';
-import React, { useState } from 'react';
-import dayjs from '@/utils/dayjs';
+import { SpaceCard } from '@/components/biz/space/SpaceCard';
+import { useCeramicContext } from '@/context/CeramicContext';
 import {
-  ProfileContent,
-  LinksContent,
+  CreateZucitySpaceMutationMutation,
+  CreateZucitySpaceMutationMutationVariables,
+  ZucitySpaceInput,
+} from '@/graphql/graphql';
+import { Mobile, NotMobile, useMediaQuery } from '@/hooks/useMediaQuery';
+import { CREATE_SPACE_MUTATION } from '@/services/graphql/space';
+import { createUrl } from '@/services/url';
+import { uint8ArrayToBase64 } from '@/utils';
+import { executeQuery } from '@/utils/ceramic';
+import dayjs from '@/utils/dayjs';
+import { covertNameToUrlName } from '@/utils/format';
+import { supabase } from '@/utils/supabase/client';
+import { addToast, cn } from '@heroui/react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { DID } from 'dids';
+import { Ed25519Provider } from 'key-did-provider-ed25519';
+import { getResolver } from 'key-did-resolver';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import {
+  AccessRule,
   CategoriesContent,
   CreateSpaceTabs,
   Header,
-  AccessRule,
-  TabStatus,
+  LinksContent,
+  ProfileContent,
   TabContentEnum,
+  TabStatus,
 } from './components';
-import { SpaceCard } from '@/components/biz/space/SpaceCard';
-import { cn } from '@heroui/react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  ProfileFormData,
-  ProfilValidationSchema,
-} from './components/ProfileContent';
 import {
   CategoriesFormData,
   CategoriesValidationSchema,
 } from './components/CategoriesContent';
+import { Categories } from './components/constant';
 import {
   LinksFormData,
   LinksValidationSchema,
 } from './components/LinksContent';
-import { useRouter } from 'next/navigation';
-import { covertNameToUrlName } from '@/utils/format';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { createUrl } from '@/services/url';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { CREATE_SPACE_MUTATION } from '@/services/graphql/space';
-import { executeQuery } from '@/utils/ceramic';
 import {
-  ZucitySpaceInput,
-  CreateZucitySpaceMutationMutation,
-  CreateZucitySpaceMutationMutationVariables,
-} from '@/graphql/graphql';
-import { supabase } from '@/utils/supabase/client';
-import { uint8ArrayToBase64 } from '@/utils';
-import { getResolver } from 'key-did-resolver';
-import { Ed25519Provider } from 'key-did-provider-ed25519';
-import { DID } from 'dids';
-import { Categories } from './components/constant';
-import { Mobile, NotMobile } from '@/hooks/useMediaQuery';
-import { addToast } from '@heroui/react';
+  ProfileFormData,
+  ProfilValidationSchema,
+} from './components/ProfileContent';
 
 const DEFAULT_AVATAR =
   'https://nftstorage.link/ipfs/bafybeifcplhgttja4hoj5vx4u3x7ucft34acdpiaf62fsqrobesg5bdsqe';

@@ -1,12 +1,12 @@
 import FormHeader from '@/components/form/FormHeader';
 
+import { Button } from '@/components/base';
+import { useCeramicContext } from '@/context/CeramicContext';
 import { Dapp } from '@/types';
+import { Image } from '@heroui/react';
+import { Eye, NotePencil } from '@phosphor-icons/react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { Image } from '@heroui/react';
-import { Button } from '@/components/base';
-import { Eye, NotePencil } from '@phosphor-icons/react';
 
 interface OwnedDappListProps {
   onViewDapp: (dapp: Dapp) => void;

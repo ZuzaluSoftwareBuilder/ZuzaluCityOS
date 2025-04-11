@@ -3,7 +3,10 @@ import SessionCard from '@/app/spaces/[spaceid]/adminevents/[eventid]/Tabs/Sessi
 import Dialog from '@/app/spaces/components/Modal/Dialog';
 import SlotDates from '@/components/calendar/SlotDate';
 import { ZuButton, ZuCalendar, ZuInput, ZuSwitch } from '@/components/core';
-import { useEditorStore } from '@/components/editor/useEditorStore';
+import {
+  decodeOutputData,
+  useEditorStore,
+} from '@/components/editor/useEditorStore';
 import BpCheckbox from '@/components/event/Checkbox';
 import {
   ArrowDownIcon,
@@ -32,8 +35,10 @@ import {
 } from '@/components/typography/formTypography';
 import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { useLitContext } from '@/context/LitContext';
 import { Anchor, Event, Profile, ProfileEdge, Session, Venue } from '@/types';
 import dayjs, { Dayjs } from '@/utils/dayjs';
+import { formatUserName } from '@/utils/format';
 import formatDateAgo from '@/utils/formatDateAgo';
 import { supabase } from '@/utils/supabase/client';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -60,16 +65,13 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimeStepOptions, TimeView } from '@mui/x-date-pickers/models';
 import { useQuery } from '@tanstack/react-query';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
-import { FilterSessionPop } from './FilterSessionPop';
 import { download } from 'utils/download';
-import { decodeOutputData } from '@/components/editor/useEditorStore';
-import dynamic from 'next/dynamic';
-import { formatUserName } from '@/utils/format';
-import { useLitContext } from '@/context/LitContext';
+import { FilterSessionPop } from './FilterSessionPop';
 
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,

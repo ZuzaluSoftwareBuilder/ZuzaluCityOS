@@ -1,4 +1,4 @@
-import { styled, Button, ButtonProps } from '@mui/material';
+import { Button, ButtonProps, styled } from '@mui/material';
 
 interface ZuButtonProps extends ButtonProps {
   zuvariant?: string;

@@ -1,14 +1,14 @@
+import { definition } from '@/composites/definition.js';
 import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
-import { createPublicClient, createWalletClient, getContract } from 'viem';
-import { http } from 'wagmi';
-import { sepolia } from 'wagmi/chains';
+import { CeramicClient } from '@ceramicnetwork/http-client';
+import { ComposeClient } from '@composedb/client';
+import { RuntimeCompositeDefinition } from '@composedb/types';
 import { EdDSAPublicKey } from '@pcd/eddsa-pcd';
 import { EdDSATicketPCDTypeName } from '@pcd/eddsa-ticket-pcd';
 import { PipelineEdDSATicketZuAuthConfig } from '@pcd/passport-interface';
-import { CeramicClient } from '@ceramicnetwork/http-client';
-import { RuntimeCompositeDefinition } from '@composedb/types';
-import { definition } from '@/composites/definition.js';
-import { ComposeClient } from '@composedb/client';
+import { createPublicClient, createWalletClient, getContract } from 'viem';
+import { http } from 'wagmi';
+import { sepolia } from 'wagmi/chains';
 
 export const isDev = process.env.NEXT_PUBLIC_ENV === 'dev';
 export const ceramicUrl =

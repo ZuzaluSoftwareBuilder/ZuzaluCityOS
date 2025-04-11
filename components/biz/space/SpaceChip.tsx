@@ -1,6 +1,6 @@
-import React, { ReactNode, useMemo } from 'react';
 import { Categories } from '@/app/spaces/create/components/constant';
 import { cn } from '@heroui/react';
+import React, { ReactNode, useMemo } from 'react';
 
 export interface ISpaceChipProps {
   category?: string;

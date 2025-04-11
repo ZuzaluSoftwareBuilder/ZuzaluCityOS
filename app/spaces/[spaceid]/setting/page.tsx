@@ -1,5 +1,4 @@
 'use client';
-import React from 'react';
 import { Stack } from '@mui/material';
 import { Overview } from './Tabs';
 

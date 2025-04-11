@@ -1,9 +1,8 @@
-import React from 'react';
-import { Typography, Stack, useTheme } from '@mui/material';
 import { QRCodeIcon } from '@/components/icons';
-import { RegistrationAndAccess } from '@/types';
-import { StatusIndicatorPanel, useStatusContext } from '../Common';
 import useRegAndAccess from '@/hooks/useRegAndAccess';
+import { RegistrationAndAccess } from '@/types';
+import { Stack, Typography, useTheme } from '@mui/material';
+import { StatusIndicatorPanel, useStatusContext } from '../Common';
 import CheckList from './CheckList';
 
 interface TicketHeaderProps {

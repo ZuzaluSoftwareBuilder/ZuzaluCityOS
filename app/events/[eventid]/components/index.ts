@@ -1,4 +1,4 @@
-import Thumbnail from './Thumbnail';
 import Subbar from './Subbar';
+import Thumbnail from './Thumbnail';
 
-export { Thumbnail, Subbar };
+export { Subbar, Thumbnail };

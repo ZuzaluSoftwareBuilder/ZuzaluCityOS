@@ -1,41 +1,39 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'next/navigation';
-import {
-  Stack,
-  Box,
-  Typography,
-  SwipeableDrawer,
-  useTheme,
-  useMediaQuery,
-} from '@mui/material';
-import { EventName, EventDetail, EventAbout } from 'components/event';
+import LotteryCard from '@/components/cards/LotteryCard';
+import { ZuButton } from '@/components/core';
+import { ApplicationForm } from '@/components/event/EventApplication/ApplicationForm';
 import EventRegister from '@/components/event/EventRegister';
 import {
-  Verify,
-  Agree,
-  Mint,
-  Complete,
-  Transaction,
-  Tickets,
-} from '@/components/event/Whitelist';
-import {
   SponsorAgree,
+  SponsorComplete,
   SponsorMint,
   SponsorTransaction,
-  SponsorComplete,
 } from '@/components/event/Sponsor';
-import { ZuButton } from '@/components/core';
+import {
+  Agree,
+  Complete,
+  Mint,
+  Tickets,
+  Transaction,
+  Verify,
+} from '@/components/event/Whitelist';
 import { ArrowUpLeftIcon, XMarkIcon } from '@/components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { Event } from '@/types';
-import { supabase } from '@/utils/supabase/client';
-import { Anchor, Contract } from '@/types';
-import { LatLngLiteral } from 'leaflet';
+import { Anchor, Contract, Event } from '@/types';
 import getLatLngFromAddress from '@/utils/osm';
-import LotteryCard from '@/components/cards/LotteryCard';
-import { ApplicationForm } from '@/components/event/EventApplication/ApplicationForm';
-import { useRouter } from 'next/navigation';
+import { supabase } from '@/utils/supabase/client';
+import {
+  Box,
+  Stack,
+  SwipeableDrawer,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { EventAbout, EventDetail, EventName } from 'components/event';
+import { LatLngLiteral } from 'leaflet';
+import { useParams, useRouter } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
 interface IAbout {
   eventData: Event | undefined;
   setVerify: React.Dispatch<React.SetStateAction<boolean>> | any;

@@ -1,19 +1,19 @@
 'use client';
-import React, { useState } from 'react';
-import { Stack, Typography, Box, Divider, Modal } from '@mui/material';
 import { ZuButton, ZuInput } from '@/components/core';
 import {
-  RightArrowIcon,
-  RefreshIcon,
-  LeftArrowIcon,
-  Square2StackIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
   ArrowTopRightSquareIcon,
   ArrowUpLeftIcon,
-  ScrollIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
   CloseIcon,
+  LeftArrowIcon,
+  RefreshIcon,
+  RightArrowIcon,
+  ScrollIcon,
+  Square2StackIcon,
 } from '@/components/icons';
+import { Box, Divider, Modal, Stack, Typography } from '@mui/material';
+import React, { useState } from 'react';
 
 interface IProps {
   setIsAgree?: React.Dispatch<React.SetStateAction<boolean>> | any;

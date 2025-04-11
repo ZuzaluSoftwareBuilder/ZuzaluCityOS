@@ -1,24 +1,24 @@
 'use client';
 
-import React, { useState, SetStateAction, Dispatch } from 'react';
-import Link from 'next/link';
 import { useAkashaAuthStore } from '@/hooks/use-akasha-auth-store';
+import Link from 'next/link';
+import { Dispatch, SetStateAction, useState } from 'react';
 
-import {
-  Stack,
-  Box,
-  Typography,
-  useTheme,
-  useMediaQuery,
-  CircularProgress,
-} from '@mui/material';
 import { ZuButton } from '@/components/core';
 import { PlusCircleIcon } from '@/components/icons';
+import {
+  Box,
+  CircularProgress,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 
-import Container from '@/components/zuland/Container';
-import SortList from '@/components/zuland/SortList';
-import PostCard from '@/components/zuland/PostCard';
 import AkashaConnectModal from '@/components/modals/Zuland/AkashaConnectModal';
+import Container from '@/components/zuland/Container';
+import PostCard from '@/components/zuland/PostCard';
+import SortList from '@/components/zuland/SortList';
 import TopicList from '@/components/zuland/TopicList';
 import { Post } from '@/utils/akasha/beam-to-post';
 

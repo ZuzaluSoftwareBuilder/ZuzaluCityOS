@@ -1,18 +1,18 @@
 import FormHeader from '@/components/form/FormHeader';
-import { Box, Button, Stack, Typography } from '@mui/material';
-import { CommonWrapper, ButtonGroup, RoundCheckbox } from '../Common';
 import { ScrollPassIcon } from '@/components/icons';
-import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useCallback } from 'react';
-import Image from 'next/image';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { updateRegAndAccess } from '@/services/event/regAndAccess';
 import { RegistrationAndAccess } from '@/types';
 import { shortenAddress } from '@/utils/format';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateRegAndAccess } from '@/services/event/regAndAccess';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useCallback } from 'react';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { ButtonGroup, CommonWrapper, RoundCheckbox } from '../Common';
 
 interface FormProps {
   onClose: () => void;

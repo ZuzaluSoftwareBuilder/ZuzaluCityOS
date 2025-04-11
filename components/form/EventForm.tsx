@@ -1,47 +1,47 @@
 'use client';
-import React, { useState, useCallback } from 'react';
-import { useForm, Controller, useFieldArray } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import Yup from '@/utils/yupExtensions';
-import {
-  Box,
-  Typography,
-  Button,
-  Stack,
-  Select,
-  MenuItem,
-  TextField,
-  Chip,
-  FormHelperText,
-  FormControl,
-} from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { TimezoneSelector } from '@/components/select/TimezoneSelector';
+import Dialog from '@/app/spaces/components/Modal/Dialog';
 import { useEditorStore } from '@/components/editor/useEditorStore';
-import { ZuButton, ZuInput } from 'components/core';
-import CancelIcon from '@mui/icons-material/Cancel';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { TimezoneSelector } from '@/components/select/TimezoneSelector';
 import {
   FormLabel,
   FormLabelDesc,
   FormTitle,
 } from '@/components/typography/formTypography';
 import { SOCIAL_TYPES } from '@/constant';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
-import { DesktopDatePicker } from '@mui/x-date-pickers';
-import { ITimezoneOption } from 'react-timezone-select';
-import dayjs from 'dayjs';
-import { CreateEventRequest } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { createEventKeySupa } from '@/services/event/createEvent';
+import { createUrl } from '@/services/url';
+import { CreateEventRequest } from '@/types';
+import { covertNameToUrlName } from '@/utils/format';
+import Yup from '@/utils/yupExtensions';
+import { yupResolver } from '@hookform/resolvers/yup';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import {
+  Box,
+  Button,
+  Chip,
+  FormControl,
+  FormHelperText,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { DesktopDatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { ZuButton, ZuInput } from 'components/core';
+import dayjs from 'dayjs';
+import React, { useCallback, useState } from 'react';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { ITimezoneOption } from 'react-timezone-select';
+import { PlusIcon } from '../icons';
+import FormatCheckboxGroup from './FormatCheckbox';
 import FormFooter from './FormFooter';
 import FormHeader from './FormHeader';
-import FormatCheckboxGroup from './FormatCheckbox';
 import FormUploader from './FormUploader';
-import { PlusIcon } from '../icons';
-import { covertNameToUrlName } from '@/utils/format';
-import { createUrl } from '@/services/url';
 
 import dynamic from 'next/dynamic';
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {

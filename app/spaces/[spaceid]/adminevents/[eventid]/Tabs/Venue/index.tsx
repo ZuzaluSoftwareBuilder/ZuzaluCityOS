@@ -1,43 +1,42 @@
 'use client';
-import React, { useMemo, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { ZuButton, ZuInput } from '@/components/core';
+import BpCheckbox from '@/components/event/Checkbox';
+import FormUploader from '@/components/form/FormUploader';
 import {
-  Stack,
-  SwipeableDrawer,
-  Box,
-  Typography,
-  OutlinedInput,
-  Select,
-  MenuItem,
-  Chip,
-  useTheme,
-} from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { VenueHeader, VenueList } from './components';
-import {
-  XMarkIcon,
+  MinusIcon,
   PlusCircleIcon,
   PlusIcon,
-  MinusIcon,
+  XMarkIcon,
 } from '@/components/icons';
-import BpCheckbox from '@/components/event/Checkbox';
-import { ZuButton, ZuInput } from '@/components/core';
-import { TimeRange } from './components';
-import { supabase } from '@/utils/supabase/client';
-import { VENUE_TAGS } from '@/constant';
-import { Event, AvailableType } from '@/types';
-import dayjs from 'dayjs';
+import { useUploaderPreview } from '@/components/PreviewFile/useUploaderPreview';
+import SelectCheckItem from '@/components/select/selectCheckItem';
 import {
   FormLabel,
   FormLabelDesc,
   FormTitle,
 } from '@/components/typography/formTypography';
-import SelectCheckItem from '@/components/select/selectCheckItem';
-import { useUploaderPreview } from '@/components/PreviewFile/useUploaderPreview';
-import { useQuery } from '@tanstack/react-query';
+import { VENUE_TAGS } from '@/constant';
 import { getVenues } from '@/services/venues';
-import FormUploader from '@/components/form/FormUploader';
+import { AvailableType, Event } from '@/types';
+import { supabase } from '@/utils/supabase/client';
+import {
+  Box,
+  Chip,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  Stack,
+  SwipeableDrawer,
+  Typography,
+  useTheme,
+} from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
+import { useParams } from 'next/navigation';
+import React, { useMemo, useState } from 'react';
+import { TimeRange, VenueHeader, VenueList } from './components';
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
 interface IVenue {

@@ -1,33 +1,33 @@
 'use client';
 // import type { Metadata } from 'next';
-import './globals.css';
-import { AppRouterCacheProvider } from '@/components/emotion/AppRouterCacheProvider';
-import { ThemeProvider } from '@mui/material/styles';
-import theme from 'theme/theme';
-import { WalletProvider } from '../context/WalletContext';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { CeramicProvider } from '../context/CeramicContext';
-import { Header } from '@/components/layout';
-import AppContextProvider from '@/context/AppContext';
-import React, { useEffect, useState } from 'react';
-import { ZupassProvider } from '@/context/ZupassContext';
-import '@/utils/yupExtensions';
+import NewAuthPrompt from '@/app/components/auth/NewAuthPrompt';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { LitProvider } from '@/context/LitContext';
 import { DialogProvider } from '@/components/dialog/DialogContext';
 import { GlobalDialog } from '@/components/dialog/GlobalDialog';
+import { AppRouterCacheProvider } from '@/components/emotion/AppRouterCacheProvider';
+import { Header } from '@/components/layout';
 import { ToastProvider } from '@/components/toast/ToastContext';
-import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import {
-  HeroUIProvider,
-  ToastProvider as HeroToastProvider,
-} from '@heroui/react';
-import { usePathname } from 'next/navigation';
-import { useMediaQuery } from '@mui/material';
-import NewAuthPrompt from '@/app/components/auth/NewAuthPrompt';
+import AppContextProvider from '@/context/AppContext';
 import { BuildInRoleProvider } from '@/context/BuildInRoleContext';
+import { LitProvider } from '@/context/LitContext';
 import { ModalProvider } from '@/context/ModalContext';
+import { ZupassProvider } from '@/context/ZupassContext';
+import '@/utils/yupExtensions';
+import {
+  ToastProvider as HeroToastProvider,
+  HeroUIProvider,
+} from '@heroui/react';
+import { useMediaQuery } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { usePathname } from 'next/navigation';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import React, { useCallback, useEffect, useState } from 'react';
+import theme from 'theme/theme';
+import { CeramicProvider } from '../context/CeramicContext';
+import { WalletProvider } from '../context/WalletContext';
+import './globals.css';
 
 const queryClient = new QueryClient();
 
@@ -40,7 +40,7 @@ function RootLayout({
 }>) {
   const [isClient, setIsClient] = useState(false);
   const [show, setShow] = useState(ceramicDown);
-  const [showBetaUpgrade, setShowBetaUpgrade] = useState(betaUpgrade);
+  const [showBetaUpgrade, setShowBetaUpgrade] = useState(false);
   const pathname = usePathname();
   const isMobileAndTablet = useMediaQuery('(max-width: 1199px)');
   const isSpacePage = pathname?.startsWith('/spaces/');
@@ -48,6 +48,16 @@ function RootLayout({
 
   useEffect(() => {
     setIsClient(true);
+
+    const betaUpgradeShown =
+      localStorage.getItem('betaUpgradeShown') === 'true';
+
+    setShowBetaUpgrade(!betaUpgradeShown && betaUpgrade);
+  }, []);
+
+  const handleBetaUpgradeClose = useCallback(() => {
+    localStorage.setItem('betaUpgradeShown', 'true');
+    setShowBetaUpgrade(false);
   }, []);
 
   return (
@@ -128,12 +138,8 @@ function RootLayout({
                                           </>
                                         }
                                         showModal={showBetaUpgrade}
-                                        onClose={() =>
-                                          setShowBetaUpgrade(false)
-                                        }
-                                        onConfirm={() =>
-                                          setShowBetaUpgrade(false)
-                                        }
+                                        onClose={handleBetaUpgradeClose}
+                                        onConfirm={handleBetaUpgradeClose}
                                       />
                                     )}
                                     <div

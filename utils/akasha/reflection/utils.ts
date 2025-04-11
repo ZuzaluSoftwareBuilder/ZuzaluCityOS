@@ -1,12 +1,12 @@
+import { ZulandReadableReflection } from '@/types/akasha';
+import { ZulandLit } from '@/utils/lit';
+import { AccessControlCondition } from '@/utils/lit/types';
 import {
   AkashaReflectEdge,
   BlockLabeledValue,
 } from '@akashaorg/typings/lib/sdk/graphql-types-new';
-import { ZulandReadableReflection } from '@/types/akasha';
-import { getProfileByDid } from '../profile';
 import { convertBlockContentToReadableBlock } from '../block/utils';
-import { AccessControlCondition } from '@/utils/lit/types';
-import { ZulandLit } from '@/utils/lit';
+import { getProfileByDid } from '../profile';
 
 export async function extractReadableReflections(
   reflections: AkashaReflectEdge[],

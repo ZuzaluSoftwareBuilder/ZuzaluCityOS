@@ -1,16 +1,16 @@
 import EventAbout from './EventAbout';
-import EventRegister from './EventRegister';
 import EventDetail from './EventDetail';
 import EventName from './EventName';
-import { Initial, Disclaimer, Email, Payment } from './Register';
+import EventRegister from './EventRegister';
+import { Disclaimer, Email, Initial, Payment } from './Register';
 
 export {
-  EventAbout,
-  EventDetail,
-  EventRegister,
-  EventName,
-  Initial,
   Disclaimer,
   Email,
+  EventAbout,
+  EventDetail,
+  EventName,
+  EventRegister,
+  Initial,
   Payment,
 };

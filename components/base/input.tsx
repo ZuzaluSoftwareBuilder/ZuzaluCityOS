@@ -1,9 +1,9 @@
+import commonStyle from '@/style/common';
 import {
   extendVariants,
   Input as HInput,
   Textarea as HTextarea,
 } from '@heroui/react';
-import commonStyle from '@/style/common';
 
 const Input = extendVariants(HInput, {
   variants: {

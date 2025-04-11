@@ -1,7 +1,7 @@
-import * as React from 'react';
 import { Tag } from '@akashaorg/typings/lib/ui';
-import { Button, Typography, Box, Popper, Paper } from '@mui/material';
+import { Box, Button, Paper, Popper, Typography } from '@mui/material';
 import { styled } from '@mui/system';
+import * as React from 'react';
 
 export interface ITagPopover {
   postsLabel?: string;

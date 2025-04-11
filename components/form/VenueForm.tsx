@@ -1,37 +1,37 @@
+import { TimeRange } from '@/app/spaces/[spaceid]/adminevents/[eventid]/Tabs/Venue/components';
+import Dialog from '@/app/spaces/components/Modal/Dialog';
+import { ZuButton, ZuInput } from '@/components/core';
+import BpCheckbox from '@/components/event/Checkbox';
 import {
-  Stack,
-  Box,
-  Typography,
-  OutlinedInput,
-  Select,
-  MenuItem,
-  Chip,
-} from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { useCallback, useEffect, useState } from 'react';
-import { Event, AvailableType, Venue } from '@/types';
-import { supabase } from '@/utils/supabase/client';
+  MinusIcon,
+  PlusCircleIcon,
+  PlusIcon,
+  XMarkIcon,
+} from '@/components/icons';
+import SelectCheckItem from '@/components/select/selectCheckItem';
 import {
   FormLabel,
   FormLabelDesc,
   FormTitle,
 } from '@/components/typography/formTypography';
-import BpCheckbox from '@/components/event/Checkbox';
-import { ZuButton, ZuInput } from '@/components/core';
-import { TimeRange } from '@/app/spaces/[spaceid]/adminevents/[eventid]/Tabs/Venue/components';
-import {
-  XMarkIcon,
-  PlusCircleIcon,
-  PlusIcon,
-  MinusIcon,
-} from '@/components/icons';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { VENUE_TAGS } from '@/constant';
-import SelectCheckItem from '@/components/select/selectCheckItem';
+import { AvailableType, Event, Venue } from '@/types';
+import { supabase } from '@/utils/supabase/client';
+import {
+  Box,
+  Chip,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
-import FormUploader from './FormUploader';
+import { useCallback, useEffect, useState } from 'react';
 import { useUploaderPreview } from '../PreviewFile/useUploaderPreview';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
+import FormUploader from './FormUploader';
 
 interface IVenue {
   venue: Venue;

@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { Stack, Typography, Box, Divider } from '@mui/material';
 import { ZuButton, ZuInput } from '@/components/core';
+import BpCheckbox from '@/components/event/Checkbox';
 import {
   ArrowDownTrayIcon,
   ArrowUpRightIcon,
   RightArrowIcon,
   ScrollIcon,
 } from '@/components/icons';
-import BpCheckbox from '@/components/event/Checkbox';
+import { Box, Divider, Stack, Typography } from '@mui/material';
+import React, { useState } from 'react';
 
 interface IProps {
   setIsInitial?: React.Dispatch<React.SetStateAction<boolean>> | any;

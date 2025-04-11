@@ -1,12 +1,12 @@
-import { AkashaProfile } from '@akashaorg/typings/lib/ui';
-import akashaSdk from '../akasha';
 import { AkashaProfileStats, ZulandProfileInput } from '@/types/akasha';
-import { SetOptionsInput } from '@akashaorg/typings/lib/sdk/graphql-types-new';
-import { getAppByEventId } from '../app';
 import { AccessControlCondition } from '@/utils/lit/types';
-import { readContract } from 'wagmi/actions';
-import { createConfig, http } from 'wagmi';
+import { SetOptionsInput } from '@akashaorg/typings/lib/sdk/graphql-types-new';
+import { AkashaProfile } from '@akashaorg/typings/lib/ui';
 import * as WagmiChains from '@wagmi/core/chains';
+import { createConfig, http } from 'wagmi';
+import { readContract } from 'wagmi/actions';
+import akashaSdk from '../akasha';
+import { getAppByEventId } from '../app';
 
 export async function getProfileByDid(did: string): Promise<{
   akashaProfile: AkashaProfile;

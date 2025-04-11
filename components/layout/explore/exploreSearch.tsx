@@ -1,5 +1,5 @@
-import { OutlinedInput, InputAdornment } from '@mui/material';
 import { SearchIcon } from '@/components/icons';
+import { InputAdornment, OutlinedInput } from '@mui/material';
 import React from 'react';
 
 interface IExploreSearchProps {

@@ -1,8 +1,8 @@
-import { cn, Button } from '@heroui/react';
-import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { Button, cn } from '@heroui/react';
 import { Wallet } from '@phosphor-icons/react';
-import { useAccount } from 'wagmi';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useCallback } from 'react';
+import { useAccount } from 'wagmi';
 
 export interface IConnectWalletButtonProps {
   isLoading?: boolean;

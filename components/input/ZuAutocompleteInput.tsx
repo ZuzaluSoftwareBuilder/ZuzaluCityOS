@@ -1,3 +1,5 @@
+import { ZuAutoCompleteProps } from '@/types';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import {
   Autocomplete,
   Box,
@@ -6,8 +8,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import { ZuAutoCompleteProps } from '@/types';
 
 export default function ZuAutoCompleteInput({
   optionVals,

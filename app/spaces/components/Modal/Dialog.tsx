@@ -11,8 +11,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 interface Proptypes {
   title: string;

@@ -1,16 +1,16 @@
-import { useCallback, useState } from 'react';
-import { ZuButton } from '@/components/core';
-import { Divider, Stack, Typography } from '@mui/material';
-import { ConfigButton } from '../Common';
-import { CheckIcon, XMarkIcon } from '@/components/icons';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
-import useOpenDraw from '@/hooks/useOpenDraw';
-import ViewForm from './ViewForm';
+import { ZuButton } from '@/components/core';
 import Draw from '@/components/drawer';
-import { ApplicationForm, RegistrationAndAccess } from '@/types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { CheckIcon, XMarkIcon } from '@/components/icons';
+import useOpenDraw from '@/hooks/useOpenDraw';
 import { updateApplicationForm } from '@/services/event/updateEvent';
+import { ApplicationForm, RegistrationAndAccess } from '@/types';
+import { Divider, Stack, Typography } from '@mui/material';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
+import { useCallback, useState } from 'react';
+import { ConfigButton } from '../Common';
+import ViewForm from './ViewForm';
 
 interface ItemProps {
   data: ApplicationForm;

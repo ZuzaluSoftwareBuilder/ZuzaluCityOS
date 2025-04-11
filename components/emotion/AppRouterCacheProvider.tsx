@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
-import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
+import React from 'react';
 
 const cache = createCache({ key: 'mui', prepend: true });
 

@@ -1,15 +1,15 @@
 import FormHeader from '@/components/form/FormHeader';
-import { Box, Stack, TextField, Typography } from '@mui/material';
-import { CommonWrapper, ButtonGroup } from '../Common';
 import { ZuPassIcon } from '@/components/icons';
-import { Controller, useForm } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useCallback } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateRegAndAccess } from '@/services/event/regAndAccess';
 import { RegistrationAndAccess, ZuPassInfo } from '@/types';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Box, Stack, TextField, Typography } from '@mui/material';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
+import { useCallback } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { ButtonGroup, CommonWrapper } from '../Common';
 
 interface FormProps {
   regAndAccess?: RegistrationAndAccess;

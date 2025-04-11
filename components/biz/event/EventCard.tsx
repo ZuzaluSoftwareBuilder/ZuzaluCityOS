@@ -1,9 +1,9 @@
-import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import { MapIcon } from '@/components/icons';
 import { Event } from '@/types';
 import { Avatar, Skeleton } from '@heroui/react';
-import { MapIcon } from '@/components/icons';
 import dayjs from 'dayjs';
+import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 interface EventCardProps {
   data: Event;
 }

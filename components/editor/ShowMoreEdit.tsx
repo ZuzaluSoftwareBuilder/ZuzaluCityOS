@@ -1,8 +1,8 @@
 'use client';
 import { ChevronUpIcon } from '../icons';
 
-import dynamic from 'next/dynamic';
 import { ZuButton } from '@/components/core';
+import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { ChevronDownIcon } from '../icons';
 

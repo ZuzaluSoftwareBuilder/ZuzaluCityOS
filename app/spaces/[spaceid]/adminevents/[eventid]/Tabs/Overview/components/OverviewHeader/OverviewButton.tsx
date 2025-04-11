@@ -1,6 +1,6 @@
-import * as React from 'react';
 import { Stack, Typography } from '@mui/material';
 import { PlusCircleIcon } from 'components/icons';
+import * as React from 'react';
 
 const BUTTON_GROUP = [
   {

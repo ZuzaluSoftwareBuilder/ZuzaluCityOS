@@ -1,5 +1,5 @@
-import dayjs from 'dayjs';
 import { executeQuery } from '@/utils/ceramic';
+import dayjs from 'dayjs';
 import { CREATE_DAPP_MUTATION, UPDATE_DAPP_MUTATION } from '../graphql/dApp';
 
 const getValue = (value: any) => {

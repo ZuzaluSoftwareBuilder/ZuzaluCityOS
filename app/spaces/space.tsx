@@ -1,14 +1,14 @@
 'use client';
-import { Stack, Grid, useTheme, useMediaQuery } from '@mui/material';
-import { Sidebar } from 'components/layout';
-import { SpaceHeader } from './components';
 import { SpaceCard } from '@/components/cards';
 import { SpaceCardSkeleton } from '@/components/cards/SpaceCard';
+import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { useGraphQL } from '@/hooks/useGraphQL';
+import useUserSpace from '@/hooks/useUserSpace';
 import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
 import { Space } from '@/types';
-import useUserSpace from '@/hooks/useUserSpace';
-import { useBuildInRole } from '@/context/BuildInRoleContext';
+import { Grid, Stack, useMediaQuery, useTheme } from '@mui/material';
+import { Sidebar } from 'components/layout';
+import { SpaceHeader } from './components';
 
 const Home = () => {
   const theme = useTheme();

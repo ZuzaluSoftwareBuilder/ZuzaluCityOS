@@ -1,13 +1,13 @@
+import { CREATE_SPACE_GATING_RULE } from '@/services/graphql/spaceGating';
+import { PermissionName } from '@/types';
 import { withSessionValidation } from '@/utils/authMiddleware';
 import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
-import { z } from 'zod';
 import {
   createErrorResponse,
   createSuccessResponse,
 } from '@/utils/service/response';
 import { hasRequiredPermission } from '@/utils/service/role';
-import { PermissionName } from '@/types';
-import { CREATE_SPACE_GATING_RULE } from '@/services/graphql/spaceGating';
+import { z } from 'zod';
 
 const createRuleSchema = z.object({
   id: z.string().min(1, 'Resource ID is required'),

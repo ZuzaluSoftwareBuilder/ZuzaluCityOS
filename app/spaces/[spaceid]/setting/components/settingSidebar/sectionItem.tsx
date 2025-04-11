@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
 import { Tooltip } from '@heroui/react';
 import { Barricade } from '@phosphor-icons/react';
+import React from 'react';
 import { SettingItem } from './settingsData';
 
 export interface SectionItemProps {

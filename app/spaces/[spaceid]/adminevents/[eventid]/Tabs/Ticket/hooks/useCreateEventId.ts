@@ -1,14 +1,14 @@
-import { useCallback, useState } from 'react';
 import { isDev, TICKET_FACTORY_ADDRESS } from '@/constant';
 import { config } from '@/context/WalletContext';
 import { Event } from '@/types';
 import { convertDateToEpoch } from '@/utils/format';
-import { Address } from 'viem';
-import { writeContract, waitForTransactionReceipt } from 'wagmi/actions';
-import { sepolia, mainnet } from 'viem/chains';
 import { TICKET_FACTORY_ABI } from '@/utils/ticket_factory_abi';
-import { useAccount, useSwitchChain } from 'wagmi';
 import { ethers } from 'ethers';
+import { useCallback, useState } from 'react';
+import { Address } from 'viem';
+import { mainnet, sepolia } from 'viem/chains';
+import { useAccount, useSwitchChain } from 'wagmi';
+import { waitForTransactionReceipt, writeContract } from 'wagmi/actions';
 
 interface PropTypes {
   event: Event;

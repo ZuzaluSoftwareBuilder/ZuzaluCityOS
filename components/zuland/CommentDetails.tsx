@@ -1,27 +1,27 @@
-import React, { useState, useRef, useMemo } from 'react';
-import Image from 'next/image';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import Image from 'next/image';
+import React, { useMemo, useRef, useState } from 'react';
 
+import { ZuButton } from '@/components/core';
+import { ZulandReadableReflection } from '@/types/akasha';
 import {
   getReadableReflectionsByReflectionId,
   standardDateFormat,
 } from '@/utils/akasha';
-import { ZulandReadableReflection } from '@/types/akasha';
 import {
+  Avatar,
+  Box,
+  CircularProgress,
+  Divider,
   Stack,
   Typography,
-  Avatar,
-  Divider,
-  CircularProgress,
 } from '@mui/material';
-import { Box } from '@mui/material';
-import { ZuButton } from '@/components/core';
 
-import ReplyForm from './ReplyForm';
 import { ChatBubbleIcon } from '@/components/icons';
 import { buildIpfsUrl } from '@/utils/akasha/beam-to-post';
-import ReadOnlyEditor from './ReadOnlyEditor';
 import { IPublishData } from '@akashaorg/typings/lib/ui';
+import ReadOnlyEditor from './ReadOnlyEditor';
+import ReplyForm from './ReplyForm';
 
 interface CommentDetailsProps {
   eventId: string;

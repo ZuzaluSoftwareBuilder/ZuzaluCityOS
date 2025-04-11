@@ -1,6 +1,5 @@
 import { Box, ListItemText } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
-import React from 'react';
 
 interface IProps {
   label: string;

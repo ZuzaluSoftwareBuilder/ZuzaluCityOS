@@ -1,13 +1,13 @@
 import {
-  Dropdown as HeroDropdown,
-  DropdownTrigger,
-  DropdownMenu as HeroDropdownMenu,
   DropdownItem,
-  type DropdownProps,
   type DropdownMenuProps,
+  type DropdownProps,
+  DropdownTrigger,
+  Dropdown as HeroDropdown,
+  DropdownMenu as HeroDropdownMenu,
   cn,
 } from '@heroui/react';
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
   (props, ref) => {
@@ -102,4 +102,4 @@ export const DropdownMenu = forwardRef<HTMLUListElement, DropdownMenuProps>(
 
 DropdownMenu.displayName = 'DropdownMenu';
 
-export { DropdownTrigger, DropdownItem };
+export { DropdownItem, DropdownTrigger };

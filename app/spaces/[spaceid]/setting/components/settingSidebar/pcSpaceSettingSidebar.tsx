@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import BackHeader from '@/app/spaces/[spaceid]/setting/components/backHeader';
 import { Button } from '@heroui/react';
 import { ArrowLineDown, X } from '@phosphor-icons/react';
-import BackHeader from '@/app/spaces/[spaceid]/setting/components/backHeader';
-import { SettingSection, getSettingSections } from './settingsData';
+import { useParams, useRouter } from 'next/navigation';
+import React, { useCallback, useEffect, useState } from 'react';
 import SectionGroup from './sectionGroup';
+import { SettingSection, getSettingSections } from './settingsData';
 
 interface SettingSubSidebarProps {
   currentPath?: string;

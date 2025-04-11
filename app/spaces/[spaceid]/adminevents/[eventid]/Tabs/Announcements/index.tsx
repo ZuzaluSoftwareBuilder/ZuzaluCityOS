@@ -1,13 +1,13 @@
 'use client';
-import React, { useCallback, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { Stack, useTheme } from '@mui/material';
-import { Header, PostList } from './components';
-import { Event, Post } from '@/types';
-import { useQuery } from '@tanstack/react-query';
 import Drawer from '@/components/drawer';
 import PostForm from '@/components/form/PostForm';
 import { getPosts } from '@/services/announcements';
+import { Event, Post } from '@/types';
+import { Stack, useTheme } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
+import React, { useCallback, useState } from 'react';
+import { Header, PostList } from './components';
 
 interface IVenue {
   event: Event | undefined;

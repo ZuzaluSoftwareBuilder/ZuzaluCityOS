@@ -1,4 +1,12 @@
 import {
+  AkashaPageInfo,
+  BeamsByAuthorDid,
+  ZulandContentBlockInput,
+  ZulandReadableBeam,
+} from '@/types/akasha';
+import { ZulandLit } from '@/utils/lit';
+import { AccessControlCondition } from '@/utils/lit/types';
+import {
   AkashaBeam,
   AkashaBeamFiltersInput,
   AkashaBeamInput,
@@ -9,20 +17,12 @@ import {
   SortOrder,
 } from '@akashaorg/typings/lib/sdk/graphql-types-new';
 import akashaSdk from '../akasha';
-import {
-  AkashaPageInfo,
-  BeamsByAuthorDid,
-  ZulandContentBlockInput,
-  ZulandReadableBeam,
-} from '@/types/akasha';
+import { getAppByEventId } from '../app';
+import { createBlockContent } from '../block';
 import {
   extractBeamReadableContent,
   extractDecryptedBeamReadableContent,
 } from './utils';
-import { getAppByEventId } from '../app';
-import { createBlockContent } from '../block';
-import { ZulandLit } from '@/utils/lit';
-import { AccessControlCondition } from '@/utils/lit/types';
 
 const DEFAULT_BEAMS_TAKE = 10;
 

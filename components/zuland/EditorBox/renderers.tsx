@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { RenderElementProps, RenderLeafProps } from 'slate-react';
 import {
+  Box,
   Button,
   Link,
   List,
   ListItem,
   ListItemText,
   Typography,
-  Box,
 } from '@mui/material';
+import * as React from 'react';
+import { RenderElementProps, RenderLeafProps } from 'slate-react';
 
 /*
  ** A workaround for a chromium bug that incorrectly positions a cursor inside an inline element

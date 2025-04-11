@@ -1,8 +1,8 @@
-import { supabase } from '@/utils/supabase/client';
 import {
   createErrorResponse,
   createSuccessResponse,
 } from '@/utils/service/response';
+import { supabase } from '@/utils/supabase/client';
 
 export const dynamic = 'force-dynamic';
 

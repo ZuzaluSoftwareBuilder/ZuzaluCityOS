@@ -1,10 +1,5 @@
 'use client';
-import { useState, useEffect, Fragment } from 'react';
-import { useParams } from 'next/navigation';
-import { Box, Skeleton, Stack, Typography } from '@mui/material';
 import { EventCard } from '@/components/cards';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { Event, Space, SpaceEventData } from '@/types';
 import {
   EventCardMonthGroup,
   EventCardSkeleton,
@@ -12,6 +7,11 @@ import {
   filterUpcomingEvents,
   groupEventsByMonth,
 } from '@/components/cards/EventCard';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { Event, Space, SpaceEventData } from '@/types';
+import { Box, Skeleton, Stack, Typography } from '@mui/material';
+import { useParams } from 'next/navigation';
+import { Fragment, useEffect, useState } from 'react';
 
 const Home = () => {
   const params = useParams();

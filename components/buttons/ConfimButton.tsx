@@ -1,7 +1,7 @@
 import {
+  CircularProgress,
   Button as MuiButton,
   ButtonProps as MuiButtonProps,
-  CircularProgress,
 } from '@mui/material';
 
 interface ConfirmButtonProps extends MuiButtonProps {

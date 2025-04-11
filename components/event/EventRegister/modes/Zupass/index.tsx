@@ -1,8 +1,8 @@
+import { Anchor } from '@/types';
+import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import { Stack, Typography } from '@mui/material';
 import { ZuButton } from 'components/core';
 import React, { Dispatch, SetStateAction } from 'react';
-import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
-import { Anchor } from '@/types';
 import VerifyAccess from '../components/verify';
 
 export interface ZupassDefaultProps {

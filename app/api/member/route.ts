@@ -1,10 +1,10 @@
-import { NextRequest } from 'next/server';
 import { GET_MEMBERS_QUERY } from '@/services/graphql/role';
 import { executeQuery } from '@/utils/ceramic';
 import {
   createErrorResponse,
   createSuccessResponse,
 } from '@/utils/service/response';
+import { NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);

@@ -1,12 +1,12 @@
-import { Stack, Typography } from '@mui/material';
-import ConfigForm from '../Registration/Form';
 import Drawer from '@/components/drawer';
 import useOpenDraw from '@/hooks/useOpenDraw';
-import { RegistrationStatus } from '../Status';
+import useRegAndAccess from '@/hooks/useRegAndAccess';
+import { RegistrationAndAccess } from '@/types';
+import { Stack, Typography } from '@mui/material';
 import ApplicationPanel from '../Application/Panel';
 import { ConfigButton } from '../Common';
-import { RegistrationAndAccess } from '@/types';
-import useRegAndAccess from '@/hooks/useRegAndAccess';
+import ConfigForm from '../Registration/Form';
+import { RegistrationStatus } from '../Status';
 
 interface NoTicketListProps {
   regAndAccess?: RegistrationAndAccess;

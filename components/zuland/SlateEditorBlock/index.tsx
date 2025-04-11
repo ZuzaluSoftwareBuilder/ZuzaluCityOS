@@ -1,18 +1,18 @@
 'use client';
 
+import { TrashcanIcon } from '@/components/icons';
+import EditorBox, { EditorActions } from '@/components/zuland/EditorBox';
+import { encodeSlateToBase64 } from '@/utils/akasha';
+import { type IPublishData } from '@akashaorg/typings/lib/ui';
+import { Box, Icon, IconButton, Stack } from '@mui/material';
+import Button from '@mui/material/Button';
 import React, {
   createRef,
-  useState,
-  useImperativeHandle,
   forwardRef,
+  useImperativeHandle,
   useRef,
+  useState,
 } from 'react';
-import EditorBox, { EditorActions } from '@/components/zuland/EditorBox';
-import { type IPublishData } from '@akashaorg/typings/lib/ui';
-import { encodeSlateToBase64 } from '@/utils/akasha';
-import Button from '@mui/material/Button';
-import { Box, Icon, IconButton, Stack } from '@mui/material';
-import { TrashcanIcon } from '@/components/icons';
 
 interface SlateEditorBlockProps {
   authenticatedDID: string;

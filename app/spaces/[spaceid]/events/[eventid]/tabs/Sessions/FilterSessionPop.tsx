@@ -1,6 +1,10 @@
 import { ZuButton, ZuSwitch } from '@/components/core';
 import { EditIcon, MapIcon, TicketIcon } from '@/components/icons';
 import { FilterSessionsPopComponentProps } from '@/types';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import {
   MenuItem,
   Popover,
@@ -9,10 +13,6 @@ import {
   Typography,
 } from '@mui/material';
 import { ArrowLeftIcon } from '@mui/x-date-pickers';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { useState } from 'react';
 
 export function FilterSessionPop({

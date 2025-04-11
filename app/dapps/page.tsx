@@ -1,19 +1,18 @@
 'use client';
 
-import ExploreHeader from '@/components/layout/explore/exploreHeader';
-import { Shapes } from '@phosphor-icons/react';
 import { CubeIcon, DIcon, GlobalIcon } from '@/components/icons';
+import ExploreHeader from '@/components/layout/explore/exploreHeader';
 import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
+import { Shapes } from '@phosphor-icons/react';
 
-import { useTheme } from '@mui/material';
-import { useMediaQuery } from '@mui/material';
-import { List, DappDetail } from './components';
-import React, { useCallback, useState } from 'react';
 import { Drawer, DrawerContent } from '@/components/base';
 import DappForm from '@/components/form/DappForm';
 import { Dapp } from '@/types';
-import OwnedDappList from './components/ownedDappList';
 import { useDisclosure } from '@heroui/react';
+import { useMediaQuery, useTheme } from '@mui/material';
+import { useCallback, useState } from 'react';
+import { DappDetail, List } from './components';
+import OwnedDappList from './components/ownedDappList';
 
 const NavItems: INavItem[] = [
   { label: 'Explore Apps', icon: <GlobalIcon /> },

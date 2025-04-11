@@ -1,4 +1,11 @@
 'use client';
+import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
+import { Image } from '@heroui/react';
+import { CaretLineDown, Trash } from '@phosphor-icons/react';
+import { useMutation } from '@tanstack/react-query';
+import clsx from 'clsx';
+import get from 'lodash/get';
+import { useParams } from 'next/navigation';
 import React, {
   createContext,
   memo,
@@ -7,15 +14,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import clsx from 'clsx';
-import get from 'lodash/get';
-import { Image } from '@heroui/react';
-import { useParams } from 'next/navigation';
-import { CaretLineDown, Trash } from '@phosphor-icons/react';
-import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
-import { useMutation } from '@tanstack/react-query';
 
-import FormHeader from '@/components/form/FormHeader';
 import {
   Button,
   Divider,
@@ -23,19 +22,20 @@ import {
   DrawerBody,
   DrawerContent,
 } from '@/components/base';
-import { ArrowUpRightIcon } from '@/components/icons';
 import ShowMoreEdit from '@/components/editor/ShowMoreEdit';
+import FormHeader from '@/components/form/FormHeader';
+import { ArrowUpRightIcon } from '@/components/icons';
 import {
   installDApp,
   InstallDAppParams,
   uninstallDApp,
   UninstallDAppParams,
 } from '@/services/space/apps';
-import { NOOP } from '@/utils/function';
 import { Dapp } from '@/types';
+import { NOOP } from '@/utils/function';
 
-import { useInstalledAppsData } from './InstalledAppsData';
 import { NativeDApp } from '../constants';
+import { useInstalledAppsData } from './InstalledAppsData';
 
 const DAppDetailDrawerContext = createContext<{
   open: (app?: Dapp | NativeDApp) => void;

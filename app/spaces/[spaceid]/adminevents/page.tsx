@@ -1,15 +1,15 @@
 'use client';
-import React, { useState, useCallback, useMemo } from 'react';
-import { useParams } from 'next/navigation';
-import { Box, Stack } from '@mui/material';
-import { EventHeader, CurrentEvents } from './components';
 import { Event, Space } from '@/types';
+import { Box, Stack } from '@mui/material';
+import { useParams } from 'next/navigation';
+import { useCallback, useMemo, useState } from 'react';
+import { CurrentEvents, EventHeader } from './components';
 
 import Drawer from '@/components/drawer';
 import { EventForm } from '@/components/form/EventForm';
-import { GET_SPACE_AND_EVENTS_QUERY_BY_ID } from '@/services/graphql/space';
-import { useGraphQL } from '@/hooks/useGraphQL';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import { GET_SPACE_AND_EVENTS_QUERY_BY_ID } from '@/services/graphql/space';
 
 export interface IEventArg {
   args: {

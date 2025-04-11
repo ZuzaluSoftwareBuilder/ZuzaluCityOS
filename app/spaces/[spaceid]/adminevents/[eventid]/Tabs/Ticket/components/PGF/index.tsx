@@ -1,13 +1,13 @@
-import { Link, Stack, Typography } from '@mui/material';
 import Drawer from '@/components/drawer';
-import useOpenDraw from '@/hooks/useOpenDraw';
-import { RegistrationStatus } from '../Status';
-import { ConfigPanel, TitleWithTag } from '../Common';
-import { RegistrationAndAccess } from '@/types';
-import useRegAndAccess from '@/hooks/useRegAndAccess';
-import { useMemo } from 'react';
-import { TagProps } from '../types';
 import { TicketIcon } from '@/components/icons';
+import useOpenDraw from '@/hooks/useOpenDraw';
+import useRegAndAccess from '@/hooks/useRegAndAccess';
+import { RegistrationAndAccess } from '@/types';
+import { Link, Stack, Typography } from '@mui/material';
+import { useMemo } from 'react';
+import { ConfigPanel, TitleWithTag } from '../Common';
+import { RegistrationStatus } from '../Status';
+import { TagProps } from '../types';
 import Form from './Form';
 
 interface PGFListProps {

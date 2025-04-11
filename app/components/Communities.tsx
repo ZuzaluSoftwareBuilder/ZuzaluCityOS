@@ -1,18 +1,18 @@
 import { SpaceCard, SpaceCardSkeleton } from '@/components/biz';
-import { useRouter } from 'next/navigation';
-import CommonHeader from './CommonHeader';
 import { BuildingsIcon } from '@/components/icons';
-import { useMemo } from 'react';
-import { ScrollShadow } from '@heroui/react';
-import { useMediaQuery } from '@/hooks';
-import dayjs from '@/utils/dayjs';
-import useUserSpace from '@/hooks/useUserSpace';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { Space } from '@/types';
-import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
-import { useQuery } from '@tanstack/react-query';
+import { useMediaQuery } from '@/hooks';
+import { useGraphQL } from '@/hooks/useGraphQL';
+import useUserSpace from '@/hooks/useUserSpace';
+import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
+import { Space } from '@/types';
+import dayjs from '@/utils/dayjs';
 import { supabase } from '@/utils/supabase/client';
+import { ScrollShadow } from '@heroui/react';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
+import CommonHeader from './CommonHeader';
 
 export default function Communities() {
   const router = useRouter();

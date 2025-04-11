@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { getProfileStatsByDid } from '@/utils/akasha';
 import { AkashaProfileStats } from '@/types/akasha';
+import { getProfileStatsByDid } from '@/utils/akasha';
+import { create } from 'zustand';
 interface AkashaAuthState {
   currentAkashaUser: {
     id?: string;

@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { Stack, Typography } from '@mui/material';
-import { PlusIcon } from '@/components/icons';
-import { ZuButton } from '@/components/core';
 import { EventMCard } from '@/components/cards';
+import { ZuButton } from '@/components/core';
+import { PlusIcon } from '@/components/icons';
 import { Event } from '@/types';
+import { Stack, Typography } from '@mui/material';
+import * as React from 'react';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 

@@ -1,18 +1,6 @@
-import {
-  Box,
-  Stack,
-  Typography,
-  TextField,
-  IconButton,
-  Collapse,
-  Divider,
-} from '@mui/material';
+import Dialog from '@/app/spaces/components/Modal/Dialog';
+import { ZuButton } from '@/components/core';
 import FormHeader from '@/components/form/FormHeader';
-import { CommonWrapper, ButtonGroup } from '../Common';
-import { useCallback, useState } from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import {
   ArrowTopRightSquareIcon,
   ChevronDownIcon,
@@ -22,19 +10,31 @@ import {
   XCricleIcon,
   XMarkIcon,
 } from '@/components/icons';
-import { ZuButton } from '@/components/core';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateRegAndAccess } from '@/services/event/regAndAccess';
-import { useParams } from 'next/navigation';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { RegistrationAndAccess } from '@/types';
-import { isAddress } from 'viem';
-import { isDev } from '@/constant';
-import { sepolia, mainnet } from 'wagmi/chains';
-import CopyToClipboard from 'react-copy-to-clipboard';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
 import { formatAddressString } from '@/components/layout/Header/UserProfileSection';
+import { isDev } from '@/constant';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { updateRegAndAccess } from '@/services/event/regAndAccess';
+import { RegistrationAndAccess } from '@/types';
 import { getWalletAddressFromDid } from '@/utils/did';
+import { yupResolver } from '@hookform/resolvers/yup';
+import {
+  Box,
+  Collapse,
+  Divider,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
+import { useCallback, useState } from 'react';
+import CopyToClipboard from 'react-copy-to-clipboard';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { isAddress } from 'viem';
+import { mainnet, sepolia } from 'wagmi/chains';
+import * as yup from 'yup';
+import { ButtonGroup, CommonWrapper } from '../Common';
 
 interface FormProps {
   regAndAccess?: RegistrationAndAccess;

@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import { FlagIcon } from '@/components/icons';
+import { useState } from 'react';
 
 import { Box, Chip, Typography } from '@mui/material';
 
-import { Modal } from '@mui/material';
 import { ZuButton } from '@/components/core';
+import { Modal } from '@mui/material';
 
 interface ReportPostModalProps {
   openReportModal: boolean;

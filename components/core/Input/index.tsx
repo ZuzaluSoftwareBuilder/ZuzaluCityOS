@@ -1,4 +1,4 @@
-import { styled, Input } from '@mui/material';
+import { Input, styled } from '@mui/material';
 
 const ZuInput = styled(Input)(({ theme }) => ({
   color: 'white',

@@ -1,16 +1,16 @@
 'use client';
-import { useMemo, useState } from 'react';
-import { usePathname, useParams, useRouter } from 'next/navigation';
-import { CaretUpDown } from '@phosphor-icons/react';
-import PcSpaceSettingSidebar from './components/settingSidebar/pcSpaceSettingSidebar';
-import MobileSpaceSettingSidebar from './components/settingSidebar/mobileSpaceSettingSidebar';
-import BackHeader from './components/backHeader';
-import { getSettingSections } from './components/settingSidebar/settingsData';
-import { Backdrop, CircularProgress } from '@mui/material';
-import * as React from 'react';
 import useCheckWalletConnectAndSpacePermission, {
   PermissionCheckType,
 } from '@/hooks/useCheckWalletConnectAndSpacePermission';
+import { Backdrop, CircularProgress } from '@mui/material';
+import { CaretUpDown } from '@phosphor-icons/react';
+import { useParams, usePathname, useRouter } from 'next/navigation';
+import * as React from 'react';
+import { useMemo, useState } from 'react';
+import BackHeader from './components/backHeader';
+import MobileSpaceSettingSidebar from './components/settingSidebar/mobileSpaceSettingSidebar';
+import PcSpaceSettingSidebar from './components/settingSidebar/pcSpaceSettingSidebar';
+import { getSettingSections } from './components/settingSidebar/settingsData';
 
 const SettingLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();

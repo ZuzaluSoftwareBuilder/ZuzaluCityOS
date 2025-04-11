@@ -1,16 +1,16 @@
 'use client';
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  useReducer,
-} from 'react';
+import { ZupassConfig } from '@/types';
 import { zuAuthPopup } from '@pcd/zuauth/client';
 import { authenticate } from '@pcd/zuauth/server';
-import { ZupassConfig } from '@/types';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from 'react';
 
 type ZuAuthState =
   | 'logged out'

@@ -1,78 +1,77 @@
 'use client';
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import Dialog from '@/app/spaces/components/Modal/Dialog';
+import { ZuButton, ZuInput, ZuSwitch } from '@/components/core';
+import { useDialog } from '@/components/dialog/DialogContext';
+import { useEditorStore } from '@/components/editor/useEditorStore';
+import BpCheckbox from '@/components/event/Checkbox';
 import {
-  Stack,
-  Typography,
-  SwipeableDrawer,
-  Divider,
-  Box,
-  Select,
-  OutlinedInput,
-  MenuItem,
-  useTheme,
-  useMediaQuery,
-  Snackbar,
-  Alert,
-  CircularProgress,
-} from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DesktopDatePicker } from '@mui/x-date-pickers';
-import { DesktopTimePicker } from '@mui/x-date-pickers';
-import { TimeView } from '@mui/x-date-pickers/models';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from '@/utils/dayjs';
-import { ZuInput, ZuButton, ZuSwitch } from '@/components/core';
-import {
-  PlusCircleIcon,
-  XMarkIcon,
   ArrowDownIcon,
+  ArrowUpTrayIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   EditIcon,
   MapIcon,
-  SessionIcon,
   MicrophoneIcon,
-  TagIcon,
-  PlusIcon,
   MinusIcon,
+  PlusCircleIcon,
+  PlusIcon,
+  SessionIcon,
   ShareIcon,
-  ArrowUpTrayIcon,
+  TagIcon,
+  XMarkIcon,
 } from '@/components/icons';
-import BpCheckbox from '@/components/event/Checkbox';
-import {
-  Anchor,
-  Session,
-  ProfileEdge,
-  Profile,
-  CeramicResponseType,
-  EventEdge,
-  Venue,
-  Event,
-  FilmOptionType,
-} from '@/types';
-import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { supabase } from '@/utils/supabase/client';
-import { SessionSupabaseData } from '@/types';
-import { supaEditSession } from '@/services/session';
-import Link from 'next/link';
-import formatDateAgo from '@/utils/formatDateAgo';
 import SelectCategories from '@/components/select/selectCategories';
 import SelectSearchUser from '@/components/select/selectSearchUser';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
-import { useEditorStore } from '@/components/editor/useEditorStore';
 import {
   FormLabel,
   FormLabelDesc,
 } from '@/components/typography/formTypography';
-import { Thumbnail } from '../../components';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { supaEditSession } from '@/services/session';
+import {
+  Anchor,
+  CeramicResponseType,
+  Event,
+  EventEdge,
+  FilmOptionType,
+  Profile,
+  ProfileEdge,
+  Session,
+  SessionSupabaseData,
+  Venue,
+} from '@/types';
+import dayjs, { Dayjs } from '@/utils/dayjs';
+import { formatUserName } from '@/utils/format';
+import formatDateAgo from '@/utils/formatDateAgo';
+import { supabase } from '@/utils/supabase/client';
 import CancelIcon from '@mui/icons-material/Cancel';
+import {
+  Alert,
+  Box,
+  CircularProgress,
+  Divider,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  Snackbar,
+  Stack,
+  SwipeableDrawer,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { DesktopDatePicker, DesktopTimePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TimeView } from '@mui/x-date-pickers/models';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
-import { formatUserName } from '@/utils/format';
-import { useDialog } from '@/components/dialog/DialogContext';
+import Link from 'next/link';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { Thumbnail } from '../../components';
 
 const EditorPreview = dynamic(
   () => import('@/components/editor/EditorPreview'),

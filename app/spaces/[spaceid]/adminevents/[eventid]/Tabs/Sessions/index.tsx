@@ -1,60 +1,60 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import dayjs, { Dayjs } from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import isBetween from 'dayjs/plugin/isBetween';
-import timezone from 'dayjs/plugin/timezone';
-import {
-  Stack,
-  Box,
-  Typography,
-  SwipeableDrawer,
-  OutlinedInput,
-  Select,
-  MenuItem,
-  useTheme,
-} from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { TimeView } from '@mui/x-date-pickers/models';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { SessionHeader, SessionList } from './components';
-import { ZuButton, ZuInput } from 'components/core';
-import {
-  XMarkIcon,
-  PlusCircleIcon,
-  ArrowDownIcon,
-  PlusIcon,
-  MinusIcon,
-} from 'components/icons';
+import { useEditorStore } from '@/components/editor/useEditorStore';
 import BpCheckbox from '@/components/event/Checkbox';
-import { useCeramicContext } from '@/context/CeramicContext';
-import {
-  Session,
-  SessionData,
-  Profile,
-  ProfileEdge,
-  Event,
-  EventEdge,
-  Anchor,
-  CeramicResponseType,
-  Venue,
-  SessionSupabaseData,
-} from '@/types';
-import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
-import { supabase } from '@/utils/supabase/client';
+import SelectCategories from '@/components/select/selectCategories';
+import SelectSearchUser from '@/components/select/selectSearchUser';
 import {
   FormLabel,
   FormLabelDesc,
   FormTitle,
 } from '@/components/typography/formTypography';
-import SelectCategories from '@/components/select/selectCategories';
-import SelectSearchUser from '@/components/select/selectSearchUser';
+import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
+import { useCeramicContext } from '@/context/CeramicContext';
 import { supaCreateSession } from '@/services/session';
-import { useEditorStore } from '@/components/editor/useEditorStore';
+import {
+  Anchor,
+  CeramicResponseType,
+  Event,
+  EventEdge,
+  Profile,
+  ProfileEdge,
+  Session,
+  SessionData,
+  SessionSupabaseData,
+  Venue,
+} from '@/types';
+import { supabase } from '@/utils/supabase/client';
+import {
+  Box,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  Stack,
+  SwipeableDrawer,
+  Typography,
+  useTheme,
+} from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { TimeView } from '@mui/x-date-pickers/models';
+import { ZuButton, ZuInput } from 'components/core';
+import {
+  ArrowDownIcon,
+  MinusIcon,
+  PlusCircleIcon,
+  PlusIcon,
+  XMarkIcon,
+} from 'components/icons';
+import dayjs, { Dayjs } from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import { useParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { SessionHeader, SessionList } from './components';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

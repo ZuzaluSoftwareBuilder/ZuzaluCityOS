@@ -1,77 +1,76 @@
 'use client';
-import React, { useState, useRef } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import {
-  Stack,
-  Typography,
-  SwipeableDrawer,
-  Divider,
-  Box,
-  Select,
-  OutlinedInput,
-  MenuItem,
-  useTheme,
-  useMediaQuery,
-  Snackbar,
-  Alert,
-} from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DesktopDatePicker } from '@mui/x-date-pickers';
-import { DesktopTimePicker } from '@mui/x-date-pickers';
-import { TimeView } from '@mui/x-date-pickers/models';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from '@/utils/dayjs';
-import { ZuInput, ZuButton, ZuSwitch } from '@/components/core';
-import { IconSidebar, Header, Sidebar } from '../../components';
-import {
-  PlusCircleIcon,
-  LockIcon,
-  XMarkIcon,
-  ArrowDownIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  MapIcon,
-  SessionIcon,
-  MicrophoneIcon,
-  TagIcon,
-  PlusIcon,
-  MinusIcon,
-  CalendarIcon,
-  ShareIcon,
-} from '@/components/icons';
-import {
-  Anchor,
-  Session,
-  ProfileEdge,
-  Profile,
-  CeramicResponseType,
-  EventEdge,
-  Venue,
-  Event,
-  FilmOptionType,
-} from '@/types';
-import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { supabase } from '@/utils/supabase/client';
-import { SessionSupabaseData } from '@/types';
-import { supaEditSession } from '@/services/session';
-import Link from 'next/link';
-import formatDateAgo from '@/utils/formatDateAgo';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import SidebarButton from 'components/layout/Sidebar/SidebarButton';
-import SelectCategories from '@/components/select/selectCategories';
+import { ZuButton, ZuInput, ZuSwitch } from '@/components/core';
 import { useEditorStore } from '@/components/editor/useEditorStore';
 import BpCheckbox from '@/components/event/Checkbox';
+import {
+  ArrowDownIcon,
+  CalendarIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  LockIcon,
+  MapIcon,
+  MicrophoneIcon,
+  MinusIcon,
+  PlusCircleIcon,
+  PlusIcon,
+  SessionIcon,
+  ShareIcon,
+  TagIcon,
+  XMarkIcon,
+} from '@/components/icons';
+import SelectCategories from '@/components/select/selectCategories';
 import {
   FormLabel,
   FormLabelDesc,
 } from '@/components/typography/formTypography';
+import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { supaEditSession } from '@/services/session';
+import {
+  Anchor,
+  CeramicResponseType,
+  Event,
+  EventEdge,
+  FilmOptionType,
+  Profile,
+  ProfileEdge,
+  Session,
+  SessionSupabaseData,
+  Venue,
+} from '@/types';
+import dayjs, { Dayjs } from '@/utils/dayjs';
+import formatDateAgo from '@/utils/formatDateAgo';
+import { supabase } from '@/utils/supabase/client';
+import {
+  Alert,
+  Box,
+  Divider,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  Snackbar,
+  Stack,
+  SwipeableDrawer,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { DesktopDatePicker, DesktopTimePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TimeView } from '@mui/x-date-pickers/models';
+import SidebarButton from 'components/layout/Sidebar/SidebarButton';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { Header, IconSidebar, Sidebar } from '../../components';
 
 import SelectSearchUser from '@/components/select/selectSearchUser';
+import { formatUserName } from '@/utils/format';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
-import { formatUserName } from '@/utils/format';
 
 const EditorPreview = dynamic(
   () => import('@/components/editor/EditorPreview'),

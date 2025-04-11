@@ -1,11 +1,11 @@
-import { parseHeaderToMarkdown } from './BlockTypeParsers/HeaderTypeParser';
-import { parseParagraphToMarkdown } from './BlockTypeParsers/ParagraphTypeParser';
-import { parseListToMarkdown } from './BlockTypeParsers/ListTypeParser';
-import { parseDelimiterToMarkdown } from './BlockTypeParsers/DelimiterTypeParser';
-import { parseImageToMarkdown } from './BlockTypeParsers/ImageTypeParser';
 import { parseCheckboxToMarkdown } from './BlockTypeParsers/CheckboxTypeParser';
-import { parseQuoteToMarkdown } from './BlockTypeParsers/QuoteTypeParser';
 import { parseCodeToMarkdown } from './BlockTypeParsers/CodeTypeParser';
+import { parseDelimiterToMarkdown } from './BlockTypeParsers/DelimiterTypeParser';
+import { parseHeaderToMarkdown } from './BlockTypeParsers/HeaderTypeParser';
+import { parseImageToMarkdown } from './BlockTypeParsers/ImageTypeParser';
+import { parseListToMarkdown } from './BlockTypeParsers/ListTypeParser';
+import { parseParagraphToMarkdown } from './BlockTypeParsers/ParagraphTypeParser';
+import { parseQuoteToMarkdown } from './BlockTypeParsers/QuoteTypeParser';
 import { fileDownloadHandler } from './FileHandler';
 
 /**

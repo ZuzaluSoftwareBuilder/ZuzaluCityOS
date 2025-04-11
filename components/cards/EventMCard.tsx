@@ -1,16 +1,16 @@
 'use client';
 
-import * as React from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { Box, Typography, Button, BoxProps } from '@mui/material';
-import {
-  EyeIcon,
-  EventIcon,
-  ThreeVerticalIcon,
-  EyeSlashIcon,
-  ArchiveIcon,
-} from '../icons';
 import { Event } from '@/types';
+import { Box, BoxProps, Button, Typography } from '@mui/material';
+import { usePathname, useRouter } from 'next/navigation';
+import * as React from 'react';
+import {
+  ArchiveIcon,
+  EventIcon,
+  EyeIcon,
+  EyeSlashIcon,
+  ThreeVerticalIcon,
+} from '../icons';
 
 const EVENT_TYPE = [
   {

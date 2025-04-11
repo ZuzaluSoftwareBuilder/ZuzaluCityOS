@@ -1,9 +1,9 @@
+import { Anchor, ScrollPassTickets } from '@/types';
+import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import { Stack, Typography } from '@mui/material';
 import { ZuButton } from 'components/core';
 import React, { Dispatch, SetStateAction } from 'react';
-import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import TicketCard from '../components/ticketCard';
-import { Anchor, ScrollPassTickets } from '@/types';
 import VerifyAccess from '../components/verify';
 
 export interface ScrollPassDefaultProps {

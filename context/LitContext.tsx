@@ -1,20 +1,20 @@
-import React, { createContext, useContext, useState } from 'react';
+import { addLitUser } from '@/services/lit/addUser';
 import {
-  LitNodeClient,
-  encryptString,
-  decryptToString,
-  disconnectWeb3,
-} from '@lit-protocol/lit-node-client';
-import { LitNetwork } from '@lit-protocol/constants';
-import {
+  createSiweMessageWithRecaps,
   generateAuthSig,
   LitAbility,
   LitAccessControlConditionResource,
-  LitPKPResource,
   LitActionResource,
+  LitPKPResource,
 } from '@lit-protocol/auth-helpers';
-import { createSiweMessageWithRecaps } from '@lit-protocol/auth-helpers';
-import { addLitUser } from '@/services/lit/addUser';
+import { LitNetwork } from '@lit-protocol/constants';
+import {
+  decryptToString,
+  disconnectWeb3,
+  encryptString,
+  LitNodeClient,
+} from '@lit-protocol/lit-node-client';
+import React, { createContext, useContext, useState } from 'react';
 
 interface LitContextType {
   client: LitNodeClient | null;

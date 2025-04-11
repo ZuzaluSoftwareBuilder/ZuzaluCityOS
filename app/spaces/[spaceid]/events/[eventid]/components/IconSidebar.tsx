@@ -1,5 +1,4 @@
 'use client';
-import * as React from 'react';
 import { Stack } from '@mui/material';
 import {
   CalendarIcon,

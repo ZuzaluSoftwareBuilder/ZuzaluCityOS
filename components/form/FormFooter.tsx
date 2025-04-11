@@ -1,8 +1,7 @@
 import { ZuButton } from '@/components/core';
 import { PlusCircleIcon, XMarkIcon } from '@/components/icons';
-import { Box, CircularProgress } from '@mui/material';
-import React from 'react';
 import { useMediaQuery } from '@/hooks';
+import { Box, CircularProgress } from '@mui/material';
 
 interface IProps {
   confirmText: string;

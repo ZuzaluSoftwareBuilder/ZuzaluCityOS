@@ -1,19 +1,19 @@
-import * as React from 'react';
+import { Event, Venue } from '@/types';
 import {
+  InputAdornment,
+  OutlinedInput,
   Stack,
   Typography,
-  OutlinedInput,
-  InputAdornment,
   useTheme,
 } from '@mui/material';
 import ZuButton from 'components/core/Button';
 import {
-  PlusIcon,
-  PlusCircleIcon,
   InformationIcon,
+  PlusCircleIcon,
+  PlusIcon,
   SearchIcon,
 } from 'components/icons';
-import { Venue, Event } from '@/types';
+import * as React from 'react';
 import VenueCard from './VenueCard';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';

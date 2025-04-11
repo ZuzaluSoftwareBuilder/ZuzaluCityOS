@@ -1,14 +1,4 @@
 'use client';
-import React, { useState } from 'react';
-import {
-  CalendarIcon,
-  ChevronDownIcon,
-  SettingIcon,
-  TableIcon,
-  EventIcon,
-  AnnouncementsIcon,
-} from 'components/icons';
-import SidebarButton from './SidebarButton';
 import {
   Box,
   Popover,
@@ -16,9 +6,19 @@ import {
   Stack,
   StackProps,
   Typography,
+  useTheme,
 } from '@mui/material';
-import { useTheme } from '@mui/material';
-import { useRouter, usePathname } from 'next/navigation';
+import {
+  AnnouncementsIcon,
+  CalendarIcon,
+  ChevronDownIcon,
+  EventIcon,
+  SettingIcon,
+  TableIcon,
+} from 'components/icons';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import SidebarButton from './SidebarButton';
 
 import styles from './SubSidebar.module.css';
 

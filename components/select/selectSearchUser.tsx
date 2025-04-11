@@ -1,13 +1,13 @@
+import { Profile } from '@/types';
+import { formatUserName } from '@/utils/format';
+import SearchIcon from '@mui/icons-material/Search';
+import { Box, Chip, ListItemText, Stack, Typography } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
+import Checkbox from '@mui/material/Checkbox';
+import TextField from '@mui/material/TextField';
+import Image from 'next/image';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import SearchIcon from '@mui/icons-material/Search';
-import { Profile } from '@/types';
-import { Box, Chip, ListItemText, Stack, Typography } from '@mui/material';
-import Image from 'next/image';
-import Checkbox from '@mui/material/Checkbox';
-import { formatUserName } from '@/utils/format';
 
 interface IProps {
   users: Profile[];

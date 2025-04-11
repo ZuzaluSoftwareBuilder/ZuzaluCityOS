@@ -1,12 +1,12 @@
 import {
+  ZulandCreateAppReleaseInput,
+  ZulandCreateAppReleaseInputWithTicketRules,
+} from '@/types/akasha';
+import {
   AkashaAppRelease,
   AppProviderValueInput,
 } from '@akashaorg/typings/lib/sdk/graphql-types-new';
 import akashaSdk from '../akasha';
-import {
-  ZulandCreateAppReleaseInput,
-  ZulandCreateAppReleaseInputWithTicketRules,
-} from '@/types/akasha';
 
 /**
  * Creates an app release in the AKASHA system.

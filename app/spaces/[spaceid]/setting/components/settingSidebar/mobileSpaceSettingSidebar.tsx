@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter, useParams } from 'next/navigation';
 import {
-  Drawer,
-  DrawerContent,
-  DrawerBody,
   CommonDrawerHeader,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
 } from '@/components/base';
-import { SettingSection, getSettingSections } from './settingsData';
+import { useParams, useRouter } from 'next/navigation';
+import React, { useCallback, useEffect, useState } from 'react';
 import SectionGroup from './sectionGroup';
+import { SettingSection, getSettingSections } from './settingsData';
 
 interface MobileSettingSidebarProps {
   isOpen: boolean;

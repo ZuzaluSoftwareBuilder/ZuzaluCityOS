@@ -1,18 +1,17 @@
 'use client';
 
-import { Avatar, Image } from '@heroui/react';
 import {
   Button,
   Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
   DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
 } from '@/components/base';
-import React from 'react';
+import Copy from '@/components/biz/common/Copy';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { formatUserName } from '@/utils/format';
-import { UserSquare, Wallet, SignOut } from '@phosphor-icons/react';
-import Copy from '@/components/biz/common/Copy';
+import { Avatar, Image } from '@heroui/react';
+import { SignOut, UserSquare, Wallet } from '@phosphor-icons/react';
 
 export interface IUserProfileDropdown {
   avatarSize?: number;

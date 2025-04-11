@@ -1,17 +1,17 @@
 import {
   AkashaApp,
+  AkashaAppApplicationType,
   AkashaAppReleaseInterface,
-  CeramicAccount,
-  BeamEmbeddedType,
-  AkashaReflectInterfaceConnection,
-  BeamLabeled,
   AkashaContentBlock,
-  ProfileImageSourceInput,
   AkashaContentBlockBlockDef,
+  AkashaReflectInterfaceConnection,
+  AppProviderValueInput,
+  BeamEmbeddedType,
+  BeamLabeled,
   BlockLabeledValue,
   BlockLabeledValueInput,
-  AkashaAppApplicationType,
-  AppProviderValueInput,
+  CeramicAccount,
+  ProfileImageSourceInput,
 } from '@akashaorg/typings/lib/sdk/graphql-types-new';
 import { AkashaProfile } from '@akashaorg/typings/lib/ui';
 import { Descendant } from 'slate';

@@ -1,8 +1,7 @@
-import * as React from 'react';
-import { Box, Stack, Typography, useTheme, IconButton } from '@mui/material';
-import { EventIcon, GroupIcon, MapIcon, ShareIcon } from 'components/icons';
-import { convertDateStringFormat } from '@/utils';
 import useGetShareLink from '@/hooks/useGetShareLink';
+import { convertDateStringFormat } from '@/utils';
+import { Box, IconButton, Stack, Typography, useTheme } from '@mui/material';
+import { EventIcon, GroupIcon, MapIcon, ShareIcon } from 'components/icons';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { useToast } from '../toast/ToastContext';
 

@@ -1,21 +1,21 @@
-import React, { useCallback, useState } from 'react';
 import {
-  MemberItem,
   MemberEmpty,
+  MemberItem,
   MemberSkeleton,
 } from '@/app/spaces/[spaceid]/setting/roles/components/members/memberItem';
-import { Button } from '@heroui/react';
 import {
-  Modal,
-  ModalContent,
-  ModalBody,
-  ModalFooter,
   CommonModalHeader,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
 } from '@/components/base/modal';
-import { X } from '@phosphor-icons/react';
-import { RolePermission } from '@/types';
-import { IMemberItem } from './memberManagement';
 import useOpenDraw from '@/hooks/useOpenDraw';
+import { RolePermission } from '@/types';
+import { Button } from '@heroui/react';
+import { X } from '@phosphor-icons/react';
+import React, { useCallback, useState } from 'react';
+import { IMemberItem } from './memberManagement';
 
 export interface MemberListProps {
   members: IMemberItem[];

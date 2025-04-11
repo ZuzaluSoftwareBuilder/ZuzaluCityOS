@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
 import { AppRouterCacheProvider } from '@/components/emotion/AppRouterCacheProvider';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Zuzalu City',

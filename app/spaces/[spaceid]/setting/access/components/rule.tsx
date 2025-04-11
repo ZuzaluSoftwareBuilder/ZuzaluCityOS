@@ -1,6 +1,6 @@
-import POAPAutocomplete from './poapAutocomplete';
-import { Controller, useFormContext } from 'react-hook-form';
 import { Input, Textarea } from '@/components/base';
+import { Controller, useFormContext } from 'react-hook-form';
+import POAPAutocomplete from './poapAutocomplete';
 
 interface POAPProps {
   initialValue?: number[];

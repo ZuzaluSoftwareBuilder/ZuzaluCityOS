@@ -1,24 +1,24 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useAkashaAuthStore } from '@/hooks/use-akasha-auth-store';
 import { useQueryClient } from '@tanstack/react-query';
 import { useQueryState } from 'nuqs';
-import { useAkashaAuthStore } from '@/hooks/use-akasha-auth-store';
+import React, { useEffect, useState } from 'react';
 
-import { Stack } from '@mui/material';
 import DiscussionsHome from '@/components/zuland/DiscussionsHome';
-import PostDetails from '@/components/zuland/PostDetails';
 import NewPost from '@/components/zuland/NewPost';
+import PostDetails from '@/components/zuland/PostDetails';
+import { Stack } from '@mui/material';
 
+import Container from '@/components/zuland/Container';
+import { ZulandReadableBeam } from '@/types/akasha';
 import {
   getZulandReadableBeams,
   hasUserTicketPermissions,
 } from '@/utils/akasha';
-import { ZulandReadableBeam } from '@/types/akasha';
 import { akashaBeamToMarkdown, Post } from '@/utils/akasha/beam-to-post';
-import Container from '@/components/zuland/Container';
-import { useInfiniteQuery } from '@tanstack/react-query';
 import { ZulandLit } from '@/utils/lit';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 interface DiscussionsProps {
   eventId: string;

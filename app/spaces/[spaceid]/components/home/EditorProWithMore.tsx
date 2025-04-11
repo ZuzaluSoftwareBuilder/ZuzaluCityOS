@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import EditorPro from '@/components/editorPro';
 import { Button } from '@/components/base';
+import EditorPro, { EditorProProps } from '@/components/editorPro';
 import { ChevronDownIcon, ChevronUpIcon } from '@/components/icons';
-import { EditorProProps } from '@/components/editorPro';
+import { useState } from 'react';
 
 export interface EditorProWithMoreProps
   extends Omit<EditorProProps, 'collapsed' | 'onCollapse'> {

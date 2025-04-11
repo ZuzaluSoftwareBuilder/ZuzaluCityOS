@@ -1,8 +1,8 @@
 'use client';
-import { ClickAwayListener, Stack, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import { ClickAwayListener, Stack, Typography } from '@mui/material';
 import { ZuButton } from 'components/core';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {

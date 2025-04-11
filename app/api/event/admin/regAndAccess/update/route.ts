@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
-import { supabase } from '@/utils/supabase/client';
-import { Ed25519Provider } from 'key-did-provider-ed25519';
-import { getResolver } from 'key-did-resolver';
-import { DID } from 'dids';
+import { TicketingMethod } from '@/app/spaces/[spaceid]/adminevents/[eventid]/Tabs/Ticket/components/types';
 import { ceramic, composeClient } from '@/constant';
 import { base64ToUint8Array } from '@/utils';
-import { TicketingMethod } from '@/app/spaces/[spaceid]/adminevents/[eventid]/Tabs/Ticket/components/types';
+import { supabase } from '@/utils/supabase/client';
+import { DID } from 'dids';
+import { Ed25519Provider } from 'key-did-provider-ed25519';
+import { getResolver } from 'key-did-resolver';
+import { NextResponse } from 'next/server';
 
 const Update_QUERY = `
       mutation UpdateZucityEventRegistrationAndAccessMutation($input: UpdateZucityEventRegistrationAndAccessInput!) {

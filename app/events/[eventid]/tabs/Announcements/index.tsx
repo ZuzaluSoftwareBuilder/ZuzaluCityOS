@@ -1,40 +1,39 @@
 'use client';
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import {
-  Stack,
-  Box,
-  Typography,
-  SwipeableDrawer,
-  useTheme,
-  useMediaQuery,
-  Skeleton,
-} from '@mui/material';
-import { EventDetail } from 'components/event';
+import { ZuButton } from '@/components/core';
 import EventRegister from '@/components/event/EventRegister';
 import {
-  Verify,
-  Agree,
-  Mint,
-  Complete,
-  Transaction,
-} from '@/components/event/Whitelist';
-import {
   SponsorAgree,
+  SponsorComplete,
   SponsorMint,
   SponsorTransaction,
-  SponsorComplete,
 } from '@/components/event/Sponsor';
-import { ZuButton } from '@/components/core';
+import {
+  Agree,
+  Complete,
+  Mint,
+  Transaction,
+  Verify,
+} from '@/components/event/Whitelist';
 import { ArrowUpLeftIcon, XMarkIcon } from '@/components/icons';
-import { Event } from '@/types';
-import { supabase } from '@/utils/supabase/client';
-import { Anchor, Contract } from '@/types';
-import { LatLngLiteral } from 'leaflet';
+import { getPosts } from '@/services/announcements';
+import { Anchor, Contract, Event } from '@/types';
 import getLatLngFromAddress from '@/utils/osm';
+import { supabase } from '@/utils/supabase/client';
+import {
+  Box,
+  Skeleton,
+  Stack,
+  SwipeableDrawer,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import { styled } from '@mui/system';
 import { useQuery } from '@tanstack/react-query';
-import { getPosts } from '@/services/announcements';
+import { EventDetail } from 'components/event';
+import { LatLngLiteral } from 'leaflet';
+import { useParams, useRouter } from 'next/navigation';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PostCard from './PostCard';
 
 interface IAbout {

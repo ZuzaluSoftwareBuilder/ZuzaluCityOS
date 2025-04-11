@@ -1,7 +1,6 @@
-import { ButtonProps, cn } from '@heroui/react';
-import { Button as HButton } from '@heroui/button';
 import COMMON_STYLES from '@/style/common';
-import React from 'react';
+import { Button as HButton } from '@heroui/button';
+import { ButtonProps, cn } from '@heroui/react';
 
 interface IButtonProps extends ButtonProps {
   border?: boolean;

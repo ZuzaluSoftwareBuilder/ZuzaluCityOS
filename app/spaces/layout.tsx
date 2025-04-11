@@ -1,8 +1,8 @@
-import type { Metadata } from 'next';
+import SpaceHomeLayout from '@/app/spaces/components/spaceHomeLayout';
 import { AppRouterCacheProvider } from '@/components/emotion/AppRouterCacheProvider';
 import { ThemeProvider } from '@mui/material/styles';
+import type { Metadata } from 'next';
 import theme from 'theme/theme';
-import SpaceHomeLayout from '@/app/spaces/components/spaceHomeLayout';
 
 export const metadata: Metadata = {
   title: 'Zuzalu City',

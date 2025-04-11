@@ -1,11 +1,11 @@
 import { ZuButton } from '@/components/core';
-import { Collapse, Stack, Typography } from '@mui/material';
 import { ChevronDownIcon, ChevronUpIcon, WrenchIcon } from '@/components/icons';
+import useRegAndAccess from '@/hooks/useRegAndAccess';
+import { RegistrationAndAccess } from '@/types';
+import { Collapse, Stack, Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { RoundCheckbox, useStatusContext } from '../Common';
-import { RegistrationAndAccess } from '@/types';
 import { RegistrationAccess, TicketingMethod } from '../types';
-import useRegAndAccess from '@/hooks/useRegAndAccess';
 
 interface ChecklistProps {
   regAndAccess?: RegistrationAndAccess;

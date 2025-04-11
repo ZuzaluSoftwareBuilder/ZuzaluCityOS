@@ -1,17 +1,16 @@
 'use client';
-import * as React from 'react';
 import {
+  Box,
+  InputAdornment,
+  OutlinedInput,
   Stack,
   Typography,
-  OutlinedInput,
-  InputAdornment,
-  Box,
 } from '@mui/material';
 import {
-  SearchIcon,
-  HomeIcon,
-  EventIcon,
   ChevronDownIcon,
+  EventIcon,
+  HomeIcon,
+  SearchIcon,
 } from 'components/icons';
 
 const SubSidebar = () => {

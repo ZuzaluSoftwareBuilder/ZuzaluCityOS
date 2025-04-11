@@ -1,4 +1,4 @@
-import { Tag, NFTMetadata } from '@/types';
+import { NFTMetadata, Tag } from '@/types';
 export const generateNFTMetadata = (
   name: string,
   description: string,

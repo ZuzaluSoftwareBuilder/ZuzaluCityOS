@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { Stack, Typography, useTheme } from '@mui/material';
 import { ZuButton } from '@/components/core';
-import { PlusIcon } from 'components/icons';
 import { Anchor } from '@/types';
+import { Stack, Typography, useTheme } from '@mui/material';
+import { PlusIcon } from 'components/icons';
+import * as React from 'react';
 
 interface SessionHeaderProps {
   onToggle: (anchor: Anchor, open: boolean) => void;

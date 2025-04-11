@@ -1,9 +1,9 @@
 'use client';
-import React, { useState } from 'react';
 import { Stack, Typography } from '@mui/material';
 import { ZuButton } from 'components/core';
 import { ChevronDownIcon, ChevronUpIcon } from 'components/icons';
 import dynamic from 'next/dynamic';
+import { useState } from 'react';
 
 const EditorPreview = dynamic(
   () => import('@/components/editor/EditorPreview'),

@@ -1,14 +1,15 @@
-import { Space } from '@/types';
-import { addToast, Button, Skeleton } from '@heroui/react';
-import { ArrowSquareRight, Heart } from '@phosphor-icons/react';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { followSpace, unFollowSpace } from '@/services/member';
 import Copy from '@/components/biz/common/Copy';
 import { CheckCircleIcon } from '@/components/icons';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { followSpace, unFollowSpace } from '@/services/member';
+import { Space } from '@/types';
+import { addToast, Skeleton } from '@heroui/react';
+import { ArrowSquareRight, Heart } from '@phosphor-icons/react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Button } from '@/components/base';
 import { useModal } from '@/context/ModalContext';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface SpaceActionsProps {
   spaceData?: Space;

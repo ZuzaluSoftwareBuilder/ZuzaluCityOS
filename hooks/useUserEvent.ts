@@ -1,10 +1,10 @@
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useGraphQL } from '@/hooks/useGraphQL';
+import useUserRole from '@/hooks/useUserRole';
+import { GET_EVENT_QUERY_BY_IDS } from '@/services/graphql/event';
 import { GET_USER_OWN_EVENT } from '@/services/graphql/profile';
 import { IUserProfileWithSpaceAndEvent } from '@/types';
 import { useMemo } from 'react';
-import { GET_EVENT_QUERY_BY_IDS } from '@/services/graphql/event';
-import useUserRole from '@/hooks/useUserRole';
 
 const useUserEvent = () => {
   const { profile } = useCeramicContext();

@@ -1,6 +1,6 @@
 import { Link as ILink } from '@/types';
-import Link from 'next/link';
 import { ArrowUpRight } from '@phosphor-icons/react';
+import Link from 'next/link';
 
 const CustomLink = ({ link }: { link: ILink }) => {
   return (

@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import dayjs from 'dayjs';
+import { Profile, Session } from '@/types';
+import { formatUserName } from '@/utils/format';
+import { supabase } from '@/utils/supabase/client';
+import CancelIcon from '@mui/icons-material/Cancel';
 import {
-  Stack,
-  Typography,
   Box,
-  Tooltip,
   CircularProgress,
+  Stack,
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import { MapIcon, SessionIcon, UserCircleIcon } from 'components/icons';
-import { Profile, Session } from '@/types';
-import { supabase } from '@/utils/supabase/client';
+import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
-import CancelIcon from '@mui/icons-material/Cancel';
-import { formatUserName } from '@/utils/format';
+import React, { useEffect, useState } from 'react';
 interface SessionCardProps {
   session: Session;
   eventId: string;

@@ -1,15 +1,14 @@
 'use client';
 
-import { Sidebar } from 'components/layout';
-import { useTheme } from '@mui/material';
-import { Stack, useMediaQuery } from '@mui/material';
-import { Header, List, Nav, DappDetail } from './components';
-import { useCallback, useState } from 'react';
 import { Drawer, DrawerContent } from '@/components/base';
 import DappForm from '@/components/form/DappForm';
 import { Dapp } from '@/types';
-import OwnedDappList from './components/ownedDappList';
 import { useDisclosure } from '@heroui/react';
+import { Stack, useMediaQuery, useTheme } from '@mui/material';
+import { Sidebar } from 'components/layout';
+import { useCallback, useState } from 'react';
+import { DappDetail, Header, List, Nav } from './components';
+import OwnedDappList from './components/ownedDappList';
 
 export default function DappsPage() {
   const theme = useTheme();

@@ -1,15 +1,20 @@
 'use client';
+import { Event } from '@/types';
+import { dayjs } from '@/utils/dayjs';
+import { supabase } from '@/utils/supabase/client';
+import WarningIcon from '@mui/icons-material/Warning';
+import {
+  Box,
+  Skeleton,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { useRouter, usePathname } from 'next/navigation';
-import { Box, Skeleton, Typography } from '@mui/material';
-import { useTheme, useMediaQuery } from '@mui/material';
 import { MapIcon } from '../icons';
-import { Event } from '@/types';
-import { supabase } from '@/utils/supabase/client';
-import { dayjs } from '@/utils/dayjs';
-import WarningIcon from '@mui/icons-material/Warning';
 
 type EventCardProps = { event: Event };
 

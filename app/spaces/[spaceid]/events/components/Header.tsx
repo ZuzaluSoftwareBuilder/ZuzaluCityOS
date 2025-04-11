@@ -1,5 +1,4 @@
 'use client';
-import * as React from 'react';
 import { Stack, Typography } from '@mui/material';
 import { ThreeHorizonIcon } from 'components/icons';
 

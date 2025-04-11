@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Event } from '@/types';
+import React, { createContext, ReactNode, useContext, useState } from 'react';
 
 interface EventContextType {
   event: Event | undefined;

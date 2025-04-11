@@ -1,6 +1,6 @@
 import { CloseIcon } from '@/components/icons';
-import { Drawer } from '@mui/material';
 import { Button, Image } from '@heroui/react';
+import { Drawer } from '@mui/material';
 import Sidebar from '.';
 
 interface PropTypes {

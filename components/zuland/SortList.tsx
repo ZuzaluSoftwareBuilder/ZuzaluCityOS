@@ -1,6 +1,6 @@
-import React from 'react';
-import { Chip, Stack, Box, Typography } from '@mui/material';
 import { ClockIcon, SparklesIcon } from '@/components/icons';
+import { Box, Chip, Stack, Typography } from '@mui/material';
+import React from 'react';
 
 interface SortListProps {
   selectedSort: string;

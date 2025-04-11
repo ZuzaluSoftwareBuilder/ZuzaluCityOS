@@ -78,4 +78,4 @@ const EventRightWrapper = styled(Box)`
   gap: 8px;
 `;
 
-export { SpaceComingSoonCard, EventComingSoonCard };
+export { EventComingSoonCard, SpaceComingSoonCard };

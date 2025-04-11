@@ -1,8 +1,8 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import { AvailableType } from '@/types';
 import { Stack, Typography } from '@mui/material';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs';
-import { AvailableType } from '@/types';
+import React, { Dispatch, SetStateAction } from 'react';
 
 interface ITimeRange {
   values: AvailableType[];

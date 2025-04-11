@@ -1,7 +1,7 @@
-import { Stack, Typography } from '@mui/material';
-import { ApplyRule, ApplyOption } from './Tabs/Ticket/components/types';
 import { Event } from '@/types';
+import { Stack, Typography } from '@mui/material';
 import { useCallback } from 'react';
+import { ApplyOption, ApplyRule } from './Tabs/Ticket/components/types';
 
 interface NavigationProps {
   event?: Event;

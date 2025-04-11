@@ -1,13 +1,12 @@
 'use client';
-import React from 'react';
-import { Controller, UseFormReturn } from 'react-hook-form';
-import { Image } from '@heroui/react';
-import * as Yup from 'yup';
-import { Input, Avatar } from '@/components/base';
+import { Avatar, Input } from '@/components/base';
 import EditorPro from '@/components/editorPro';
 import PhotoUpload from '@/components/form/PhotoUpload';
-import { Image as PhotoIcon } from '@phosphor-icons/react';
-import { MarkdownLogo } from '@phosphor-icons/react';
+import { Image } from '@heroui/react';
+import { MarkdownLogo, Image as PhotoIcon } from '@phosphor-icons/react';
+import React from 'react';
+import { Controller, UseFormReturn } from 'react-hook-form';
+import * as Yup from 'yup';
 
 export interface ProfileFormData {
   name: string;

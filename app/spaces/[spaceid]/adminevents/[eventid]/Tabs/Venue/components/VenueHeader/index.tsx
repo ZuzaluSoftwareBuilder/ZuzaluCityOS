@@ -1,6 +1,6 @@
-import * as React from 'react';
 import { Stack, Typography, useTheme } from '@mui/material';
 import { GroupIcon } from 'components/icons';
+import * as React from 'react';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 

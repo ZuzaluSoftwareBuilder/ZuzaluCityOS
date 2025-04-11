@@ -1,12 +1,12 @@
+import { composeClient } from '@/constant';
+import { CeramicResponseType, EventEdge, Space } from '@/types';
+import { supabase } from '@/utils/supabase/client';
 import { ImageResponse } from '@vercel/og';
-import { NextRequest } from 'next/server';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import { CeramicResponseType, EventEdge, Space } from '@/types';
-import { composeClient } from '@/constant';
+import { NextRequest } from 'next/server';
 import type { Font } from 'satori';
-import { supabase } from '@/utils/supabase/client';
 
 dayjs.extend(timezone);
 dayjs.extend(utc);

@@ -1,9 +1,9 @@
 import * as remark from 'remark';
-import { parseMarkdownToHeader } from './BlockTypeParsers/HeaderTypeParser';
-import { parseMarkdownToParagraph } from './BlockTypeParsers/ParagraphTypeParser';
-import { parseMarkdownToList } from './BlockTypeParsers/ListTypeParser';
-import { parseMarkdownToDelimiter } from './BlockTypeParsers/DelimiterTypeParser';
 import { parseMarkdownToCode } from './BlockTypeParsers/CodeTypeParser';
+import { parseMarkdownToDelimiter } from './BlockTypeParsers/DelimiterTypeParser';
+import { parseMarkdownToHeader } from './BlockTypeParsers/HeaderTypeParser';
+import { parseMarkdownToList } from './BlockTypeParsers/ListTypeParser';
+import { parseMarkdownToParagraph } from './BlockTypeParsers/ParagraphTypeParser';
 import { parseMarkdownToQuote } from './BlockTypeParsers/QuoteTypeParser';
 
 export const editorData: any[] = [];

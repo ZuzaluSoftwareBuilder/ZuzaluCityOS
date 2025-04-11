@@ -1,18 +1,18 @@
-import '@rainbow-me/rainbowkit/styles.css';
 import {
   RainbowKitProvider,
-  darkTheme,
   connectorsForWallets,
+  darkTheme,
 } from '@rainbow-me/rainbowkit';
-import { WagmiProvider, createConfig, http, fallback } from 'wagmi';
-import { mainnet, sepolia } from 'wagmi/chains';
-import React, { ReactNode } from 'react';
-import { createPublicClient } from 'viem';
+import '@rainbow-me/rainbowkit/styles.css';
 import {
+  metaMaskWallet,
   rainbowWallet,
   walletConnectWallet,
-  metaMaskWallet,
 } from '@rainbow-me/rainbowkit/wallets';
+import React, { ReactNode } from 'react';
+import { createPublicClient } from 'viem';
+import { WagmiProvider, createConfig, fallback, http } from 'wagmi';
+import { mainnet, sepolia } from 'wagmi/chains';
 
 const connectors = connectorsForWallets(
   [

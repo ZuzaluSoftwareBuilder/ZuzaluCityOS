@@ -2,24 +2,24 @@
 
 import { ChatBubbleIcon } from '@/components/icons';
 import { ArrowUpOnSquareIcon } from '@/components/icons/ArrowUpOnSquare';
+import ShareModal from '@/components/modals/Zuland/ShareModal';
+import { buildIpfsUrl, Post } from '@/utils/akasha/beam-to-post';
 import {
-  Stack,
-  Typography,
+  Avatar,
   Box,
   Button,
+  CardContent,
   IconButton,
-  Avatar,
+  Stack,
+  Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import TopicChip from './TopicChip';
-import { CardContent } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Link from 'next/link';
-import { buildIpfsUrl, Post } from '@/utils/akasha/beam-to-post';
 import { useState } from 'react';
-import ShareModal from '@/components/modals/Zuland/ShareModal';
 import ReadOnlyEditor from './ReadOnlyEditor';
+import TopicChip from './TopicChip';
 
 const CardContentCustom = styled(CardContent)(({ theme }) => ({
   padding: '10px',

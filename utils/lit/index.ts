@@ -1,11 +1,11 @@
-import * as LitJsSdk from '@lit-protocol/lit-node-client';
-import akashaSdk from '../akasha/akasha';
-import { AccessControlCondition } from './types';
 import {
   createSiweMessageWithRecaps,
   LitAbility,
   LitAccessControlConditionResource,
 } from '@lit-protocol/auth-helpers';
+import * as LitJsSdk from '@lit-protocol/lit-node-client';
+import akashaSdk from '../akasha/akasha';
+import { AccessControlCondition } from './types';
 
 export class ZulandLit {
   private litNodeClient: LitJsSdk.LitNodeClient;

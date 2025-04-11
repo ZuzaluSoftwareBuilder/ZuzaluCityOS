@@ -1,13 +1,13 @@
 //import type { CeramicApi } from "@ceramicnetwork/common";
+import { config } from '@/context/WalletContext';
+import { CeramicClient } from '@ceramicnetwork/http-client';
 import type { ComposeClient } from '@composedb/client';
+import { EthereumWebAuth, getAccountId } from '@didtools/pkh-ethereum';
+import { getAccount } from '@wagmi/core';
+import { DIDSession } from 'did-session';
+import { DID } from 'dids';
 import { Ed25519Provider } from 'key-did-provider-ed25519';
 import { getResolver } from 'key-did-resolver';
-import { DID } from 'dids';
-import { DIDSession } from 'did-session';
-import { EthereumWebAuth, getAccountId } from '@didtools/pkh-ethereum';
-import { CeramicClient } from '@ceramicnetwork/http-client';
-import { getAccount } from '@wagmi/core';
-import { config } from '@/context/WalletContext';
 
 const DID_SEED_KEY = 'ceramic:did_seed';
 

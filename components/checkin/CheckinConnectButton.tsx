@@ -1,9 +1,8 @@
-import { Stack } from '@mui/material';
 import { ZuButton } from '@/components/core';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
-import Image from 'next/image';
+import { Stack } from '@mui/material';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import React from 'react';
+import Image from 'next/image';
 
 interface IProps {
   address: string;

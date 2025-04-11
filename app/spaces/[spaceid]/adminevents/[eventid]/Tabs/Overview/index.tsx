@@ -1,5 +1,26 @@
 'use client';
-import * as React from 'react';
+import Dialog from '@/app/spaces/components/Modal/Dialog';
+import { ZuButton, ZuInput } from '@/components/core';
+import { useEditorStore } from '@/components/editor/useEditorStore';
+import BpCheckbox from '@/components/event/Checkbox';
+import { PlusCircleIcon, PlusIcon, XMarkIcon } from '@/components/icons';
+import { useUploaderPreview } from '@/components/PreviewFile/useUploaderPreview';
+import { TimezoneSelector } from '@/components/select/TimezoneSelector';
+import {
+  FormLabel,
+  FormLabelDesc,
+  FormTitle,
+} from '@/components/typography/formTypography';
+import { SOCIAL_TYPES } from '@/constant';
+import { useCeramicContext } from '@/context/CeramicContext';
+import { updateEventKeySupa } from '@/services/event/updateEvent';
+import { createUrlWhenEdit } from '@/services/url';
+import { Event, UpdateEventRequest } from '@/types';
+import { covertNameToUrlName } from '@/utils/format';
+import { supabase } from '@/utils/supabase/client';
+import { yupResolver } from '@hookform/resolvers/yup';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 import {
   Box,
   Button,
@@ -13,50 +34,28 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { OverviewHeader, OverviewDetail, OverviewInvite } from './components';
-import { Event, UpdateEventRequest } from '@/types';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs, { Dayjs } from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import { useParams } from 'next/navigation';
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
-import { useEditorStore } from '@/components/editor/useEditorStore';
-import { useUploaderPreview } from '@/components/PreviewFile/useUploaderPreview';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import {
   allTimezones,
   ITimezoneOption,
   useTimezoneSelect,
 } from 'react-timezone-select';
-import dayjs, { Dayjs } from 'dayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import Dialog from '@/app/spaces/components/Modal/Dialog';
-import { ZuButton, ZuInput } from '@/components/core';
-import { PlusCircleIcon, PlusIcon, XMarkIcon } from '@/components/icons';
-import {
-  FormLabel,
-  FormLabelDesc,
-  FormTitle,
-} from '@/components/typography/formTypography';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimezoneSelector } from '@/components/select/TimezoneSelector';
-import BpCheckbox from '@/components/event/Checkbox';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { SOCIAL_TYPES } from '@/constant';
-import CancelIcon from '@mui/icons-material/Cancel';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
-import timezone from 'dayjs/plugin/timezone';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useParams } from 'next/navigation';
-import { supabase } from '@/utils/supabase/client';
-import { updateEventKeySupa } from '@/services/event/updateEvent';
-import { createUrlWhenEdit } from '@/services/url';
-import { covertNameToUrlName } from '@/utils/format';
+import { OverviewDetail, OverviewHeader, OverviewInvite } from './components';
 
 dayjs.extend(timezone);
 
 type FormData = Yup.InferType<typeof schema>;
 
-import dynamic from 'next/dynamic';
 import FormUploader from '@/components/form/FormUploader';
+import dynamic from 'next/dynamic';
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,
 });

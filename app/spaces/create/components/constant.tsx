@@ -1,14 +1,14 @@
-import React from 'react';
-import {
-  Buildings,
-  Newspaper,
-  UsersThree,
-  Storefront,
-  Code,
-  AirTrafficControl,
-  IconProps,
-} from '@phosphor-icons/react';
 import { Categories as SpaceTypesConstant } from '@/constant';
+import {
+  AirTrafficControl,
+  Buildings,
+  Code,
+  IconProps,
+  Newspaper,
+  Storefront,
+  UsersThree,
+} from '@phosphor-icons/react';
+import React from 'react';
 
 export const Categories = SpaceTypesConstant.map(
   (

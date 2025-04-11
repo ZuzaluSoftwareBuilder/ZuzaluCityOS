@@ -1,23 +1,23 @@
-import * as React from 'react';
-import { useRouter } from 'next/navigation';
 import {
+  InputAdornment,
+  OutlinedInput,
   Stack,
   Typography,
-  OutlinedInput,
-  InputAdornment,
 } from '@mui/material';
+import { ZuButton } from 'components/core';
 import {
-  SearchIcon,
-  HomeIcon,
-  PlusIcon,
-  StreamIcon,
-  MegaPhoneIcon,
   ChatIcon,
   EventIcon,
-  TableIcon,
+  HomeIcon,
+  MegaPhoneIcon,
+  PlusIcon,
   QuestionIcon,
+  SearchIcon,
+  StreamIcon,
+  TableIcon,
 } from 'components/icons';
-import { ZuButton } from 'components/core';
+import { useRouter } from 'next/navigation';
+import * as React from 'react';
 
 interface SidebarProps {
   spaceId: string | string[];

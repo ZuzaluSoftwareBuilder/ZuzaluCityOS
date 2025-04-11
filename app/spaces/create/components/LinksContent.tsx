@@ -1,11 +1,10 @@
-import React from 'react';
-import { useFieldArray, Controller, UseFormReturn } from 'react-hook-form';
+import { Button, Input, Select, SelectItem } from '@/components/base';
 import { Card } from '@/components/base/card';
-import { Input, Button, Select, SelectItem } from '@/components/base';
 import { SOCIAL_TYPES } from '@/constant';
-import { XCircle, Plus } from '@phosphor-icons/react';
-import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { Link } from '@/types';
+import { CaretLeft, CaretRight, Plus, XCircle } from '@phosphor-icons/react';
+import React from 'react';
+import { Controller, useFieldArray, UseFormReturn } from 'react-hook-form';
 import * as yup from 'yup';
 
 export interface LinksFormData {

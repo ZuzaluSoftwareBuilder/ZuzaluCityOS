@@ -1,6 +1,6 @@
-import EventHeader from './EventHeader';
 import CurrentEvents from './CurrentEvent';
-import PastEvents from './PastEvent';
+import EventHeader from './EventHeader';
 import Invite from './Invite';
+import PastEvents from './PastEvent';
 
-export { EventHeader, CurrentEvents, PastEvents, Invite };
+export { CurrentEvents, EventHeader, Invite, PastEvents };

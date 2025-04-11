@@ -2,16 +2,16 @@
 import { Space } from '@/types';
 import { Avatar, cn, Image, Skeleton, useDisclosure } from '@heroui/react';
 
-import { Users } from '@phosphor-icons/react';
-import useGetShareLink from '@/hooks/useGetShareLink';
-import { useParams } from 'next/navigation';
-import React, { useMemo } from 'react';
-import useUserSpace from '@/hooks/useUserSpace';
 import { formatMemberCount } from '@/components/biz/space/SpaceCard';
+import SpaceChip from '@/components/biz/space/SpaceChip';
+import useGetShareLink from '@/hooks/useGetShareLink';
+import useUserSpace from '@/hooks/useUserSpace';
+import { Users } from '@phosphor-icons/react';
+import { useParams } from 'next/navigation';
+import { useMemo } from 'react';
 import EditorProWithMore from './EditorProWithMore';
 import { JoinSpaceNoGate, JoinSpaceWithGate } from './modal/joinSpace';
 import SpaceActions from './spaceActions';
-import SpaceChip from '@/components/biz/space/SpaceChip';
 
 export interface SpaceSectionProps {
   spaceData?: Space;

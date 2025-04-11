@@ -1,7 +1,7 @@
+import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_USER_ROLES_QUERY } from '@/services/graphql/role';
-import { useBuildInRole } from '@/context/BuildInRoleContext';
 
 const useUserRole = () => {
   const { profile } = useCeramicContext();

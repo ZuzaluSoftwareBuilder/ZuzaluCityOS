@@ -1,12 +1,12 @@
 'use client';
-import React from 'react';
-import Link from 'next/link';
-import { Stack, Typography, Box, useTheme } from '@mui/material';
-import { RightArrowIcon } from 'components/icons';
 import { SOCIAL_TYPES } from '@/constant';
-import 'leaflet/dist/leaflet.css';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
+import { RightArrowIcon } from 'components/icons';
 import { LatLngLiteral } from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import React from 'react';
 
 type UserLink = {
   title: string;

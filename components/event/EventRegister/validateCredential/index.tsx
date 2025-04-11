@@ -1,8 +1,8 @@
-import React, { SetStateAction, Dispatch, useEffect } from 'react';
-import { Stack, Typography, IconButton, CircularProgress } from '@mui/material';
-import { ZuButton } from 'components/core';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { CircularProgress, IconButton, Stack, Typography } from '@mui/material';
+import { ZuButton } from 'components/core';
 import Image from 'next/image';
+import React, { Dispatch, SetStateAction, useEffect } from 'react';
 
 interface ValidateCredentialProps {
   handleStep: (step: number) => void;

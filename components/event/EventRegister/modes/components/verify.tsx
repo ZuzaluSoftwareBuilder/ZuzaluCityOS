@@ -1,7 +1,7 @@
-import React from 'react';
 import { Stack, Typography } from '@mui/material';
 import { ZuButton } from 'components/core';
 import { KeyIcon } from 'components/icons';
+import React from 'react';
 
 interface VerifyAccessProps {
   handleStep: (step: number) => void;

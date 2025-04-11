@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Stack, Typography } from '@mui/material';
 import { ZuButton } from 'components/core';
 import { ChevronDownIcon } from 'components/icons';

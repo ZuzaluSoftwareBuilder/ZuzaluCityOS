@@ -1,10 +1,10 @@
+import { Categories } from '@/app/spaces/create/components/constant';
+import { Card, CardBody } from '@/components/base';
+import SelectCategories from '@/components/select/selectCategories';
+import { IconProps } from '@phosphor-icons/react';
 import React from 'react';
 import { Controller, UseFormReturn } from 'react-hook-form';
 import * as yup from 'yup';
-import { Card, CardBody } from '@/components/base';
-import SelectCategories from '@/components/select/selectCategories';
-import { Categories } from '@/app/spaces/create/components/constant';
-import { IconProps } from '@phosphor-icons/react';
 
 export interface CategoriesFormData {
   category: string;

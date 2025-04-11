@@ -1,12 +1,12 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { useQueryState } from 'nuqs';
-import { Stack } from '@mui/material';
-import { Thumbnail, Subbar } from './components';
-import { About, Sessions, Announcements, PublicSessions } from './tabs';
-import { CeramicResponseType, EventEdge, Event } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { CeramicResponseType, Event, EventEdge } from '@/types';
+import { Stack } from '@mui/material';
 import { useParams } from 'next/navigation';
+import { useQueryState } from 'nuqs';
+import { useEffect, useState } from 'react';
+import { Subbar, Thumbnail } from './components';
+import { About, Announcements, PublicSessions, Sessions } from './tabs';
 import Discussions from './tabs/Discussions';
 
 const Home = () => {
