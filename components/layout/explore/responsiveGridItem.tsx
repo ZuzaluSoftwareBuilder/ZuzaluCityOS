@@ -1,49 +1,42 @@
-import { Grid, GridProps } from '@mui/material';
 import React from 'react';
 
-interface ResponsiveGridItemProps extends Omit<GridProps, 'item'> {
+interface ResponsiveGridProps {
   children: React.ReactNode;
   gap?: number;
+  className?: string;
 }
 
-const ResponsiveGridItem: React.FC<ResponsiveGridItemProps> = ({
+export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
   children,
   gap = 20,
+  className = '',
   ...rest
 }) => {
+  const gapClass = gap ? `gap-[${gap}px]` : '';
+
   return (
-    <Grid
-      item
-      xl={3}
-      lg={4}
-      md={6}
-      sm={12}
-      xs={12}
-      gap={gap}
-      sx={{
-        '@media (max-width: 809px)': {
-          maxWidth: '100% !important',
-          flexBasis: '100% !important',
-        },
-        '@media (min-width: 810px) and (max-width: 1199px)': {
-          maxWidth: '50% !important',
-          flexBasis: '50% !important',
-        },
-        '@media (min-width: 1200px) and (max-width: 1399px)': {
-          maxWidth: '33.333% !important',
-          flexBasis: '33.333% !important',
-        },
-        '@media (min-width: 1400px)': {
-          maxWidth: '25% !important',
-          flexBasis: '25% !important',
-        },
-        ...(rest.sx || {}),
-      }}
+    <div
+      className={`grid w-full grid-cols-1 content-start ${gapClass} xl:grid-cols-4 pc:grid-cols-3 tablet:grid-cols-2 ${className}`}
       {...rest}
     >
       {children}
-    </Grid>
+    </div>
   );
 };
 
-export default ResponsiveGridItem;
+interface ResponsiveGridItemProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const ResponsiveGridItem: React.FC<ResponsiveGridItemProps> = ({
+  children,
+  className = '',
+  ...rest
+}) => {
+  return (
+    <div className={`w-full ${className}`} {...rest}>
+      {children}
+    </div>
+  );
+};

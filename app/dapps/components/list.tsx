@@ -1,11 +1,5 @@
 import { GearSixIcon } from '@/components/icons';
-import {
-  Grid,
-  useTheme,
-  useMediaQuery,
-  Skeleton,
-  Typography,
-} from '@mui/material';
+import { useTheme, useMediaQuery, Skeleton, Typography } from '@mui/material';
 
 import { Stack } from '@mui/material';
 import { useState, useMemo } from 'react';
@@ -15,7 +9,10 @@ import { Dapp } from '@/types';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
 import { useGraphQL } from '@/hooks/useGraphQL';
-import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
+import {
+  ResponsiveGrid,
+  ResponsiveGridItem,
+} from '@/components/layout/explore/responsiveGridItem';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/utils/supabase/client';
 import ExploreSearch from '@/components/layout/explore/exploreSearch';
@@ -166,18 +163,7 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
       ) : (
         <Filter filterData={filterData} onFilterChange={setFilter} />
       )}
-      <Grid
-        container
-        spacing="20px"
-        flex={1}
-        sx={{
-          '& .MuiGrid-item': {
-            width: '100%',
-            maxWidth: '100%',
-          },
-          alignContent: 'flex-start',
-        }}
-      >
+      <ResponsiveGrid>
         {isAllLoading
           ? Array.from({ length: 4 }).map((_, index) => (
               <ResponsiveGridItem key={index}>
@@ -219,7 +205,7 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
                 <Item data={data} onClick={() => onDetailClick(data)} />
               </ResponsiveGridItem>
             ))}
-      </Grid>
+      </ResponsiveGrid>
     </div>
   );
 }

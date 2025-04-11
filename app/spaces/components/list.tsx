@@ -3,7 +3,10 @@ import { useMemo, useState } from 'react';
 import { Space } from '@/types';
 import { SpaceCard, SpaceCardSkeleton } from '@/components/biz/space/SpaceCard';
 
-import ResponsiveGridItem from '@/components/layout/explore/responsiveGridItem';
+import {
+  ResponsiveGrid,
+  ResponsiveGridItem,
+} from '@/components/layout/explore/responsiveGridItem';
 import ExploreSearch from '@/components/layout/explore/exploreSearch';
 import useUserSpace from '@/hooks/useUserSpace';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
@@ -84,6 +87,26 @@ const SpaceList = () => {
         placeholder="Search Spaces"
         className="mb-[10px]"
       />
+
+      <ResponsiveGrid>
+        {isLoading || isRoleLoading || isLegacyLoading
+          ? Array.from({ length: 8 }).map((_, index) => (
+              <ResponsiveGridItem key={index}>
+                <SpaceCardSkeleton autoWidth={true} key={index} />
+              </ResponsiveGridItem>
+            ))
+          : filteredSpacesData?.map((item) => (
+              <ResponsiveGridItem key={item.id}>
+                <SpaceCard
+                  key={item.id}
+                  data={item}
+                  autoWidth={true}
+                  isJoined={userJoinedSpaceIds.has(item.id)}
+                  isFollowed={userFollowedSpaceIds.has(item.id)}
+                />
+              </ResponsiveGridItem>
+            ))}
+      </ResponsiveGrid>
 
       <Grid
         container
