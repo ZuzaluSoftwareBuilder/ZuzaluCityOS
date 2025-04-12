@@ -265,15 +265,6 @@ export const CeramicProvider = ({ children }: any) => {
     setAuthError(null);
     setAuthStatus('idle');
     setAuthPromptVisible(false);
-
-    const ethereum = (window as any).ethereum;
-    if (ethereum) {
-      ethereum
-        .request({ method: 'wallet_disconnect' })
-        .catch((error: Error) => {
-          console.log('Wallet disconnect method not supported:', error);
-        });
-    }
   }, []);
 
   return (
