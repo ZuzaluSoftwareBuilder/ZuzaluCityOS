@@ -232,10 +232,11 @@ export const CeramicProvider = ({ children }: any) => {
         console.error(
           '[CeramicContext] createProfile: Error creating profile (Network/Other):',
           error,
-        ); // Keep error log
-        const errorMessage = `Error creating profile: ${error.message || 'Please try again later'}`; // Translated
+        );
+        const errorMessage = `Fail to create profile: ${error.message || 'Please try again later'}`; // Translated
         setAuthError(errorMessage);
         setAuthStatus('error');
+        throw new Error(errorMessage);
       }
     },
     [getProfile],

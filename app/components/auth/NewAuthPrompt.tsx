@@ -11,7 +11,7 @@ import {
   CreateProfileErrorPrefix,
   useCeramicContext,
 } from '@/context/CeramicContext';
-import { Button, Input, Spinner } from '@heroui/react';
+import { addToast, Button, Input, Spinner } from '@heroui/react';
 import { X } from '@phosphor-icons/react';
 import React, {
   useCallback,
@@ -24,13 +24,13 @@ import { useAccount, useEnsName } from 'wagmi';
 import AuthButton from './AuthButton';
 import ConnectWalletButton from './ConnectWalletButton';
 
+type LoadingButtonType = 'skip' | 'continue' | 'close' | null;
+
 const NewAuthPrompt: React.FC = () => {
   const { isConnected, address } = useAccount();
   const { data: ensName } = useEnsName({ address });
   const [inputUsername, setInputUsername] = useState('');
-  const [isSkipButtonLoading, setIsSkipButtonLoading] = useState(false);
-  const [isContinueButtonLoading, setIsContinueButtonLoading] = useState(false);
-  const [isCloseButtonLoading, setIsCloseButtonLoading] = useState(false);
+  const [loadingButton, setLoadingButton] = useState<LoadingButtonType>(null);
   const connectionIntentRef = useRef(false);
   const {
     authStatus,
@@ -81,41 +81,59 @@ const NewAuthPrompt: React.FC = () => {
     [maxUsernameLength],
   );
 
-  const handleSkip = useCallback(async () => {
-    if (address) {
-      setIsSkipButtonLoading(true);
-      try {
-        await createProfile((ensName || address.slice(0, 10)) as string);
-      } catch (e) {
-        // Error is logged within createProfile context function
-      } finally {
-        setIsSkipButtonLoading(false);
+  const handleProfileAction = useCallback(
+    async (
+      options: {
+        shouldClose?: boolean;
+        useInputUsername?: boolean;
+        buttonType?: LoadingButtonType;
+      } = {},
+    ) => {
+      const {
+        shouldClose = false,
+        useInputUsername = false,
+        buttonType = shouldClose ? 'close' : 'skip',
+      } = options;
+
+      if (address) {
+        setLoadingButton(buttonType);
+
+        try {
+          const usernameToUse = useInputUsername
+            ? inputUsername
+            : ((ensName || address.slice(0, 10)) as string);
+
+          await createProfile(usernameToUse);
+        } catch (e: any) {
+          addToast({
+            title: e.message || 'Fail to create profile',
+            color: 'danger',
+          });
+        } finally {
+          setLoadingButton(null);
+          if (shouldClose) {
+            hideAuthPrompt();
+          }
+        }
       }
-    }
-  }, [address, ensName, createProfile]);
+    },
+    [address, ensName, inputUsername, createProfile, hideAuthPrompt],
+  );
 
-  const handleCloseAndSkip = useCallback(async () => {
-    setIsCloseButtonLoading(true);
-    try {
-      await handleSkip();
-    } catch (e) {
-      // Error logged in handleSkip -> createProfile
-    } finally {
-      setIsCloseButtonLoading(false);
-      hideAuthPrompt();
-    }
-  }, [handleSkip, hideAuthPrompt]);
+  const handleSkip = useCallback(() => {
+    return handleProfileAction({ buttonType: 'skip' });
+  }, [handleProfileAction]);
 
-  const handleContinue = useCallback(async () => {
-    setIsContinueButtonLoading(true);
-    try {
-      await createProfile(inputUsername);
-    } catch (e) {
-      // Error is logged within createProfile context function
-    } finally {
-      setIsContinueButtonLoading(false);
-    }
-  }, [inputUsername, createProfile]);
+  const handleCloseAndSkip = useCallback(() => {
+    return handleProfileAction({ shouldClose: true, buttonType: 'close' });
+  }, [handleProfileAction]);
+
+  const handleContinue = useCallback(() => {
+    return handleProfileAction({
+      useInputUsername: true,
+      buttonType: 'continue',
+    });
+  }, [handleProfileAction]);
 
   const handleFinish = useCallback(() => {
     hideAuthPrompt();
@@ -191,8 +209,7 @@ const NewAuthPrompt: React.FC = () => {
   ]);
 
   const renderNewUserContent = useCallback(() => {
-    const isAnyLoading =
-      isSkipButtonLoading || isContinueButtonLoading || isCloseButtonLoading;
+    const isAnyLoading = loadingButton !== null;
 
     return (
       <>
@@ -205,7 +222,7 @@ const NewAuthPrompt: React.FC = () => {
             aria-label="Close and Skip"
             isDisabled={isAnyLoading}
           >
-            {isCloseButtonLoading ? (
+            {loadingButton === 'close' ? (
               <Spinner size="sm" color="current" />
             ) : (
               <X
@@ -248,7 +265,7 @@ const NewAuthPrompt: React.FC = () => {
             onPress={handleSkip}
             className="flex-1 bg-transparent hover:bg-white/5"
             isDisabled={isAnyLoading}
-            isLoading={isSkipButtonLoading}
+            isLoading={loadingButton === 'skip'}
           >
             Skip
           </AuthButton>
@@ -257,7 +274,7 @@ const NewAuthPrompt: React.FC = () => {
             className="flex-1"
             color="primary"
             isDisabled={!inputUsername || isAnyLoading}
-            isLoading={isContinueButtonLoading}
+            isLoading={loadingButton === 'continue'}
           >
             Continue
           </AuthButton>
@@ -267,16 +284,11 @@ const NewAuthPrompt: React.FC = () => {
   }, [
     inputUsername,
     onInputChange,
-    isSkipButtonLoading,
-    isContinueButtonLoading,
-    isCloseButtonLoading,
+    loadingButton,
     handleCloseAndSkip,
     handleSkip,
     handleContinue,
-    authStatus,
-    authError,
     isCreatingProfile,
-    hideAuthPrompt,
   ]);
 
   const renderLoggedInContent = useCallback(() => {
