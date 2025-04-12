@@ -1,3 +1,4 @@
+import { useCeramicContext } from '@/context/CeramicContext';
 import { Button, cn } from '@heroui/react';
 import { Wallet } from '@phosphor-icons/react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
@@ -15,6 +16,7 @@ const ConnectWalletButton: React.FC<IConnectWalletButtonProps> = ({
   authenticate,
   onInitiateConnect,
 }) => {
+  const { isCheckingInitialAuth } = useCeramicContext();
   const { openConnectModal } = useConnectModal();
   const { isConnected, isConnecting: wagmiConnecting } = useAccount();
 
@@ -50,6 +52,7 @@ const ConnectWalletButton: React.FC<IConnectWalletButtonProps> = ({
           <Wallet size={20} weight={'fill'} format={'Stroke'} />
         )
       }
+      isDisabled={isCheckingInitialAuth || isLoading}
       onPress={handleConnect}
       isLoading={isLoading}
     >
