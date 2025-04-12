@@ -43,6 +43,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
     disconnect();
     logout();
     litDisconnect();
+    window.location.reload();
   }, [disconnect, logout, litDisconnect]);
 
   const handleProfile = useCallback(() => {

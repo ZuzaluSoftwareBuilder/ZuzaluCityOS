@@ -44,6 +44,7 @@ interface CeramicContextType {
   ceramic: CeramicClient;
   composeClient: ComposeClient;
   authStatus: AuthStatus;
+  isCheckingInitialAuth: boolean;
   isAuthenticated: boolean;
   authenticate: () => Promise<void>;
   username: string | undefined;
@@ -67,6 +68,7 @@ const CeramicContext = createContext<CeramicContextType>({
   ceramic,
   composeClient,
   authStatus: 'idle',
+  isCheckingInitialAuth: true,
   isAuthenticated: false,
   authenticate: async () => {},
   username: undefined,
@@ -95,7 +97,7 @@ export const CeramicProvider = ({ children }: any) => {
   const [connectSource, setConnectSource] =
     useState<ConnectSource>('invalidAction');
   const [authError, setAuthError] = useState<string | null>(null);
-
+  const [isCheckingInitialAuth, setIsCheckingInitialAuth] = useState(true);
   const isAuthenticated = authStatus === 'authenticated';
   const isAuthenticating = authStatus === 'authenticating';
   const isFetchingProfile = authStatus === 'fetching_profile';
@@ -119,6 +121,7 @@ export const CeramicProvider = ({ children }: any) => {
       } else {
         setAuthStatus('idle');
       }
+      setIsCheckingInitialAuth(false);
     };
     checkInitialAuth();
   }, []);
@@ -262,6 +265,15 @@ export const CeramicProvider = ({ children }: any) => {
     setAuthError(null);
     setAuthStatus('idle');
     setAuthPromptVisible(false);
+
+    const ethereum = (window as any).ethereum;
+    if (ethereum) {
+      ethereum
+        .request({ method: 'wallet_disconnect' })
+        .catch((error: Error) => {
+          console.log('Wallet disconnect method not supported:', error);
+        });
+    }
   }, []);
 
   return (
@@ -270,6 +282,7 @@ export const CeramicProvider = ({ children }: any) => {
         ceramic,
         composeClient,
         authStatus,
+        isCheckingInitialAuth,
         isAuthenticated,
         authenticate,
         username,
