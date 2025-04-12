@@ -47,7 +47,7 @@ const NewAuthPrompt: React.FC = () => {
     isAuthPromptVisible,
   } = useCeramicContext();
 
-  const maxUsernameLength = Infinity;
+  const maxUsernameLength = 200;
 
   useEffect(() => {
     if (
@@ -93,6 +93,18 @@ const NewAuthPrompt: React.FC = () => {
       }
     }
   }, [address, ensName, createProfile]);
+
+  const handleCloseAndSkip = useCallback(async () => {
+    setIsCloseButtonLoading(true);
+    try {
+      await handleSkip();
+    } catch (e) {
+      // Error logged in handleSkip -> createProfile
+    } finally {
+      setIsCloseButtonLoading(false);
+      hideAuthPrompt();
+    }
+  }, [handleSkip, hideAuthPrompt]);
 
   const handleContinue = useCallback(async () => {
     setIsContinueButtonLoading(true);
@@ -179,18 +191,6 @@ const NewAuthPrompt: React.FC = () => {
   ]);
 
   const renderNewUserContent = useCallback(() => {
-    const handleCloseAndSkip = async () => {
-      setIsCloseButtonLoading(true);
-      try {
-        await handleSkip();
-      } catch (e) {
-        // Error logged in handleSkip -> createProfile
-      } finally {
-        setIsCloseButtonLoading(false);
-        hideAuthPrompt();
-      }
-    };
-
     const isAnyLoading =
       isSkipButtonLoading || isContinueButtonLoading || isCloseButtonLoading;
 
@@ -270,6 +270,7 @@ const NewAuthPrompt: React.FC = () => {
     isSkipButtonLoading,
     isContinueButtonLoading,
     isCloseButtonLoading,
+    handleCloseAndSkip,
     handleSkip,
     handleContinue,
     authStatus,

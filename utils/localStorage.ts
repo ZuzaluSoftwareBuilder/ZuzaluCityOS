@@ -1,4 +1,3 @@
-// Helper function to safely get item from localStorage
 export const safeGetLocalStorage = (key: string): string | null => {
   try {
     return localStorage.getItem(key);
@@ -7,7 +6,6 @@ export const safeGetLocalStorage = (key: string): string | null => {
     return null;
   }
 };
-// Helper function to safely set item in localStorage
 export const safeSetLocalStorage = (key: string, value: string): void => {
   try {
     localStorage.setItem(key, value);
@@ -15,7 +13,6 @@ export const safeSetLocalStorage = (key: string, value: string): void => {
     console.warn(`Failed to set localStorage key "${key}":`, error);
   }
 };
-// Helper function to safely remove item from localStorage
 export const safeRemoveLocalStorage = (key: string): void => {
   try {
     localStorage.removeItem(key);

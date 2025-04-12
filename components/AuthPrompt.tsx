@@ -1,4 +1,5 @@
 import Dialog from '@/app/spaces/components/Modal/Dialog';
+import { StorageKey_Username } from '@/constant/StorageKey';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { Box, Button, OutlinedInput } from '@mui/material';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
@@ -124,7 +125,7 @@ const AuthPrompt: React.FC<{}> = () => {
   ]);
 
   useEffect(() => {
-    const existingUsername = localStorage.getItem('username');
+    const existingUsername = localStorage.getItem(StorageKey_Username);
     const authenticateLoggedUser = async () => {
       if (existingUsername && isAuthPromptVisible) {
         await authenticate();
@@ -152,13 +153,13 @@ const AuthPrompt: React.FC<{}> = () => {
       isConnected &&
       isAuthPromptVisible &&
       !authenticateCalled.current &&
-      !localStorage.getItem('username')
+      !localStorage.getItem(StorageKey_Username)
     ) {
       authenticateUser();
     }
     if (
       isConnected &&
-      localStorage.getItem('username') &&
+      localStorage.getItem(StorageKey_Username) &&
       !authenticateCalled.current
     ) {
       authenticateUser(false);

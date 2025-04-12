@@ -1,4 +1,9 @@
 //import type { CeramicApi } from "@ceramicnetwork/common";
+import {
+  StorageKey_CeramicEthDid,
+  StorageKey_DisplayDid,
+  StorageKey_LoggedIn,
+} from '@/constant/StorageKey';
 import { config } from '@/context/WalletContext';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import type { ComposeClient } from '@composedb/client';
@@ -21,12 +26,12 @@ export const authenticateCeramic = async (
 ) => {
   try {
     await authenticateEthPKH(ceramic, compose);
-    localStorage.setItem('logged_in', 'true');
+    localStorage.setItem(StorageKey_LoggedIn, 'true');
   } catch (error) {
     console.error('Ceramic authentication failed:', error);
-    localStorage.removeItem('ceramic:eth_did');
-    localStorage.removeItem('display did');
-    localStorage.removeItem('logged_in');
+    localStorage.removeItem(StorageKey_CeramicEthDid);
+    localStorage.removeItem(StorageKey_DisplayDid);
+    localStorage.removeItem(StorageKey_LoggedIn);
     throw error;
   }
 };
@@ -65,14 +70,14 @@ const authenticateEthPKH = async (
   compose: ComposeClient,
 ) => {
   try {
-    const sessionStr = localStorage.getItem('ceramic:eth_did');
+    const sessionStr = localStorage.getItem(StorageKey_CeramicEthDid);
     let session;
     if (sessionStr) {
       try {
         session = await DIDSession.fromSession(sessionStr);
       } catch (e) {
         console.error('Failed to restore DIDSession from localStorage:', e);
-        localStorage.removeItem('ceramic:eth_did');
+        localStorage.removeItem(StorageKey_CeramicEthDid);
       }
     }
     if (!session || (session.hasSession && session.isExpired)) {
@@ -96,7 +101,7 @@ const authenticateEthPKH = async (
           session = await DIDSession.authorize(authMethod, {
             resources: compose.resources,
           });
-          localStorage.setItem('ceramic:eth_did', session.serialize());
+          localStorage.setItem(StorageKey_CeramicEthDid, session.serialize());
         } catch (error) {
           console.error('DIDSession.authorize failed:', error);
           throw error;
@@ -114,7 +119,7 @@ const authenticateEthPKH = async (
     ) {
       compose.setDID(session.did);
       ceramic.did = session.did;
-      localStorage.setItem('display did', session.did.toString());
+      localStorage.setItem(StorageKey_DisplayDid, session.did.toString());
       return true;
     } else {
       throw new Error('Failed to create valid DID session');

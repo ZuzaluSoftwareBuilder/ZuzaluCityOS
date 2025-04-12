@@ -1,4 +1,10 @@
 import { ceramic, composeClient } from '@/constant';
+import {
+  StorageKey_CeramicEthDid,
+  StorageKey_DisplayDid,
+  StorageKey_LoggedIn,
+  StorageKey_Username,
+} from '@/constant/StorageKey';
 import { config } from '@/context/WalletContext';
 import {
   CREATE_PROFILE_MUTATION,
@@ -97,7 +103,7 @@ export const CeramicProvider = ({ children }: any) => {
 
   useEffect(() => {
     const checkInitialAuth = async () => {
-      const did = safeGetLocalStorage('ceramic:eth_did');
+      const did = safeGetLocalStorage(StorageKey_CeramicEthDid);
       if (did) {
         setAuthStatus('authenticating');
         try {
@@ -133,7 +139,7 @@ export const CeramicProvider = ({ children }: any) => {
         result?.data?.viewer?.zucityProfile;
 
       if (basicProfile?.id) {
-        safeSetLocalStorage('username', basicProfile.username);
+        safeSetLocalStorage(StorageKey_Username, basicProfile.username);
         setProfile(basicProfile);
         setUsername(basicProfile.username);
         setNewUser(false);
@@ -142,7 +148,7 @@ export const CeramicProvider = ({ children }: any) => {
       } else {
         setUsername(undefined);
         setProfile(undefined);
-        safeRemoveLocalStorage('username');
+        safeRemoveLocalStorage(StorageKey_Username);
         setNewUser(true);
         setAuthStatus('authenticated');
         return null;
@@ -245,10 +251,10 @@ export const CeramicProvider = ({ children }: any) => {
   }, []);
 
   const logout = useCallback(() => {
-    safeRemoveLocalStorage('username');
-    safeRemoveLocalStorage('ceramic:eth_did');
-    safeRemoveLocalStorage('display did');
-    safeRemoveLocalStorage('logged_in');
+    safeRemoveLocalStorage(StorageKey_Username);
+    safeRemoveLocalStorage(StorageKey_CeramicEthDid);
+    safeRemoveLocalStorage(StorageKey_DisplayDid);
+    safeRemoveLocalStorage(StorageKey_LoggedIn);
 
     setUsername(undefined);
     setProfile(undefined);

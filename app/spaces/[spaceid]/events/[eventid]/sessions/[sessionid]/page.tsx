@@ -68,6 +68,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Header, IconSidebar, Sidebar } from '../../components';
 
 import SelectSearchUser from '@/components/select/selectSearchUser';
+import { StorageKey_CeramicEthDid } from '@/constant/StorageKey';
 import { formatUserName } from '@/utils/format';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
@@ -817,7 +818,7 @@ const Home = () => {
           ) || [];
         const members =
           eventDetails?.members?.map((member) => member.id.toLowerCase()) || [];
-        if (!ceramic.did && localStorage.getItem('ceramic:eth_did')) {
+        if (!ceramic.did && localStorage.getItem(StorageKey_CeramicEthDid)) {
           await authenticate();
         }
         const adminId = ceramic?.did?.parent.toString().toLowerCase() || '';
