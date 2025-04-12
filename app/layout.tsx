@@ -12,6 +12,7 @@ import { BuildInRoleProvider } from '@/context/BuildInRoleContext';
 import { LitProvider } from '@/context/LitContext';
 import { ModalProvider } from '@/context/ModalContext';
 import { ZupassProvider } from '@/context/ZupassContext';
+import useTheme, { Theme } from '@/hooks/use-theme';
 import '@/utils/yupExtensions';
 import {
   ToastProvider as HeroToastProvider,
@@ -28,7 +29,6 @@ import theme from 'theme/theme';
 import { CeramicProvider } from '../context/CeramicContext';
 import { WalletProvider } from '../context/WalletContext';
 import './globals.css';
-import useTheme, { Theme } from '@/hooks/use-theme';
 
 const queryClient = new QueryClient();
 
@@ -82,85 +82,86 @@ function RootLayout({
             <DialogProvider>
               <ToastProvider>
                 <ThemeProvider theme={theme}>
-                <div className={HeroTheme}>
-                  <QueryClientProvider client={queryClient}>
-                    <NuqsAdapter>
-                      <LitProvider>
-                        <CeramicProvider>
-                          <BuildInRoleProvider>
-                            <WalletProvider>
-                              <ZupassProvider>
-                                <ModalProvider>
-                                  <AppContextProvider>
-                                    <ReactQueryDevtools
-                                      initialIsOpen={false}
-                                      buttonPosition="bottom-left"
-                                    />
-                                    <HeroToastProvider
-                                      placement={'bottom-left'}
-                                      toastOffset={20}
-                                      toastProps={{
-                                        classNames: {
-                                          base: 'max-w-[350px]',
-                                        },
-                                        variant: 'flat',
-                                      }}
-                                      regionProps={{
-                                        classNames: { base: 'z-[1500]' },
-                                      }}
-                                    />
-                                    {!shouldHideHeader && <Header />}
-                                    {isClient && <NewAuthPrompt />}
-                                    <GlobalDialog />
-                                    {isClient && show && (
-                                      <Dialog
-                                        title="Upgrading Ceramic Node"
-                                        message="We are currently upgrading our Ceramic node. Some data may be temporarily unavailable or inconsistent. We apologize for any inconvenience."
-                                        showModal={show}
-                                        onClose={() => setShow(false)}
-                                        onConfirm={() => setShow(false)}
+                  <div className={HeroTheme}>
+                    <QueryClientProvider client={queryClient}>
+                      <NuqsAdapter>
+                        <LitProvider>
+                          <CeramicProvider>
+                            <BuildInRoleProvider>
+                              <WalletProvider>
+                                <ZupassProvider>
+                                  <ModalProvider>
+                                    <AppContextProvider>
+                                      <ReactQueryDevtools
+                                        initialIsOpen={false}
+                                        buttonPosition="bottom-left"
                                       />
-                                    )}
-                                    {isClient && showBetaUpgrade && (
-                                      <Dialog
-                                        title="Beta Version Upgrade"
-                                        message={
-                                          <>
-                                            We&apos;ve just rolled out a major
-                                            Beta upgrade—our default chain has
-                                            officially moved from Scroll to
-                                            Mainnet ! 🚀
-                                            <br />
-                                            <br />
-                                            Any data previously created on
-                                            Scroll is now marked as
-                                            &quot;Legacy&quot; and need to be
-                                            recreated on Mainnet now. Thanks for
-                                            your understanding and support as we
-                                            continue to grow and improve! 💫
-                                          </>
-                                        }
-                                        showModal={showBetaUpgrade}
-                                        onClose={handleBetaUpgradeClose}
-                                        onConfirm={handleBetaUpgradeClose}
+                                      <HeroToastProvider
+                                        placement={'bottom-left'}
+                                        toastOffset={20}
+                                        toastProps={{
+                                          classNames: {
+                                            base: 'max-w-[350px]',
+                                          },
+                                          variant: 'flat',
+                                        }}
+                                        regionProps={{
+                                          classNames: { base: 'z-[1500]' },
+                                        }}
                                       />
-                                    )}
-                                    <div
-                                      style={{
-                                        minHeight: `calc(100vh - 50px)`,
-                                      }}
-                                    >
-                                      {children}
-                                    </div>
-                                  </AppContextProvider>
-                                </ModalProvider>
-                              </ZupassProvider>
-                            </WalletProvider>
-                          </BuildInRoleProvider>
-                        </CeramicProvider>
-                      </LitProvider>
-                    </NuqsAdapter>
-                  </QueryClientProvider>
+                                      {!shouldHideHeader && <Header />}
+                                      {isClient && <NewAuthPrompt />}
+                                      <GlobalDialog />
+                                      {isClient && show && (
+                                        <Dialog
+                                          title="Upgrading Ceramic Node"
+                                          message="We are currently upgrading our Ceramic node. Some data may be temporarily unavailable or inconsistent. We apologize for any inconvenience."
+                                          showModal={show}
+                                          onClose={() => setShow(false)}
+                                          onConfirm={() => setShow(false)}
+                                        />
+                                      )}
+                                      {isClient && showBetaUpgrade && (
+                                        <Dialog
+                                          title="Beta Version Upgrade"
+                                          message={
+                                            <>
+                                              We&apos;ve just rolled out a major
+                                              Beta upgrade—our default chain has
+                                              officially moved from Scroll to
+                                              Mainnet ! 🚀
+                                              <br />
+                                              <br />
+                                              Any data previously created on
+                                              Scroll is now marked as
+                                              &quot;Legacy&quot; and need to be
+                                              recreated on Mainnet now. Thanks
+                                              for your understanding and support
+                                              as we continue to grow and
+                                              improve! 💫
+                                            </>
+                                          }
+                                          showModal={showBetaUpgrade}
+                                          onClose={handleBetaUpgradeClose}
+                                          onConfirm={handleBetaUpgradeClose}
+                                        />
+                                      )}
+                                      <div
+                                        style={{
+                                          minHeight: `calc(100vh - 50px)`,
+                                        }}
+                                      >
+                                        {children}
+                                      </div>
+                                    </AppContextProvider>
+                                  </ModalProvider>
+                                </ZupassProvider>
+                              </WalletProvider>
+                            </BuildInRoleProvider>
+                          </CeramicProvider>
+                        </LitProvider>
+                      </NuqsAdapter>
+                    </QueryClientProvider>
                   </div>
                 </ThemeProvider>
               </ToastProvider>
