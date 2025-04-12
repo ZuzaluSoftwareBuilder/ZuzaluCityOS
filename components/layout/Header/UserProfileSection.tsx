@@ -6,8 +6,8 @@ import UserProfileDropdown from '@/components/layout/Header/UserProfileDropdown'
 import Profile from '@/components/profile';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useLitContext } from '@/context/LitContext';
-import useOpenDraw from '@/hooks/useOpenDraw';
 import { getWalletAddressFromDid } from '@/utils/did';
+import { useDisclosure } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { useDisconnect } from 'wagmi';
@@ -37,7 +37,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
   const { litDisconnect } = useLitContext();
   const { disconnect } = useDisconnect();
   const [showProfile, setShowProfile] = useState(false);
-  const { open, handleOpen, handleClose } = useOpenDraw();
+  const { isOpen, onOpenChange } = useDisclosure();
 
   const handleLogout = useCallback(() => {
     disconnect();
@@ -72,9 +72,8 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
       {isAuthenticated ? (
         <UserProfileDropdown
           avatarSize={avatarSize}
-          isOpen={open}
-          onOpen={handleOpen}
-          onClose={handleClose}
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
           handleProfile={handleProfile}
           handlePassport={handlePassport}
           handleLogout={handleLogout}

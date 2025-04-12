@@ -16,8 +16,7 @@ import { SignOut, UserSquare, Wallet } from '@phosphor-icons/react';
 export interface IUserProfileDropdown {
   avatarSize?: number;
   isOpen: boolean;
-  onClose: () => void;
-  onOpen: () => void;
+  onOpenChange: (isOpen: boolean) => void;
   handleProfile: () => void;
   handlePassport: () => void;
   handleLogout: () => void;
@@ -28,8 +27,7 @@ export interface IUserProfileDropdown {
 const UserProfileDropdown = ({
   avatarSize = 28,
   isOpen,
-  onOpen,
-  onClose,
+  onOpenChange,
   handleProfile,
   handlePassport,
   handleLogout,
@@ -43,8 +41,7 @@ const UserProfileDropdown = ({
   return (
     <Dropdown
       isOpen={isOpen}
-      onOpenChange={onOpen}
-      onClose={onClose}
+      onOpenChange={onOpenChange}
       placement="bottom-end"
     >
       <DropdownTrigger>
