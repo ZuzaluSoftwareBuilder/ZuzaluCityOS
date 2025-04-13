@@ -2,21 +2,11 @@ import ZuInput from '@/components/core/Input';
 import FormFooter from '@/components/form/FormFooter';
 import FormHeader from '@/components/form/FormHeader';
 import SelectCategories from '@/components/select/selectCategories';
-import {
-  FormLabelDesc,
-  FormTitle,
-} from '@/components/typography/formTypography';
+import { FormTitle } from '@/components/typography/formTypography';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { Space } from '@/types';
 import Yup from '@/utils/yupExtensions';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  Box,
-  FormHelperText,
-  FormLabel,
-  Stack,
-  Typography,
-} from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -133,46 +123,26 @@ export default function CalendarConfigForm({
   );
 
   return (
-    <Box
-      sx={{
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-      }}
-    >
-      <Box sx={{ position: 'sticky', top: 0, zIndex: 1200 }}>
+    <div className="relative flex h-screen flex-col">
+      <div className="sticky top-0 z-[1200]">
         <FormHeader title="Configure Calendar" handleClose={handleClose} />
-      </Box>
+      </div>
 
-      <Box
-        sx={{
-          flex: 1,
-          overflowY: 'auto',
-        }}
-      >
-        <Stack gap="20px" p="20px" pb="80px">
-          <Box display="flex" flexDirection="column" gap="20px">
-            <Box bgcolor="#262626" borderRadius="10px">
-              <Stack padding="20px 20px 0" gap="10px">
+      <div className="flex-1 overflow-y-auto">
+        <div className="flex flex-col gap-[20px] p-[20px] pb-[80px]">
+          <div className="flex flex-col gap-[20px]">
+            <div className="rounded-[10px] bg-[#262626]">
+              <div className="flex flex-col gap-[10px] p-[20px] pb-0">
                 <FormTitle>Initial Calendar Setup</FormTitle>
-                <Typography
-                  fontSize={14}
-                  lineHeight={1.6}
-                  sx={{ opacity: 0.6 }}
-                >
+                <p className="text-[14px] leading-[1.6] opacity-60">
                   Setup your space calendar
-                </Typography>
-              </Stack>
-              <Box
-                padding="0 20px 20px"
-                mt="30px"
-                display="flex"
-                flexDirection="column"
-                gap="20px"
-              >
-                <Stack spacing="10px">
-                  <FormLabel>Calendar Name*</FormLabel>
+                </p>
+              </div>
+              <div className="mt-[30px] flex flex-col gap-[20px] px-[20px] pb-[20px]">
+                <div className="flex flex-col gap-[10px]">
+                  <label className="font-semibold text-white">
+                    Calendar Name*
+                  </label>
                   <Controller
                     name="name"
                     control={control}
@@ -184,17 +154,19 @@ export default function CalendarConfigForm({
                           error={!!error}
                         />
                         {error && (
-                          <FormHelperText error>{error.message}</FormHelperText>
+                          <p className="text-xs text-error">{error.message}</p>
                         )}
                       </>
                     )}
                   />
-                </Stack>
-                <Stack spacing="10px">
-                  <FormLabel>Calendar Categories*</FormLabel>
-                  <FormLabelDesc>
+                </div>
+                <div className="flex flex-col gap-[10px]">
+                  <label className="font-semibold text-white">
+                    Calendar Categories*
+                  </label>
+                  <p className="text-sm text-white/60">
                     Search or create categories related to your space
-                  </FormLabelDesc>
+                  </p>
                   <Controller
                     name="category"
                     control={control}
@@ -206,23 +178,19 @@ export default function CalendarConfigForm({
                           value={(field.value as string[]) || []}
                         />
                         {error && (
-                          <FormHelperText error>{error.message}</FormHelperText>
+                          <p className="text-xs text-error">{error.message}</p>
                         )}
                       </>
                     )}
                   />
-                </Stack>
-                <Stack gap="10px">
+                </div>
+                <div className="flex flex-col gap-[10px]">
                   <FormTitle>Access Rules</FormTitle>
-                  <Typography
-                    fontSize={14}
-                    lineHeight={1.6}
-                    sx={{ opacity: 0.6 }}
-                  >
+                  <p className="text-[14px] leading-[1.6] opacity-60">
                     Who can read/write for this calendar
-                  </Typography>
-                </Stack>
-                <Stack spacing="10px">
+                  </p>
+                </div>
+                <div className="flex flex-col gap-[10px]">
                   {accessItems.map((item) => (
                     <Item
                       key={item.id}
@@ -233,27 +201,19 @@ export default function CalendarConfigForm({
                     />
                   ))}
                   {errors.accessRule && (
-                    <FormHelperText error>
+                    <p className="text-xs text-error">
                       {errors.accessRule.message}
-                    </FormHelperText>
+                    </p>
                   )}
-                </Stack>
-              </Box>
-            </Box>
-          </Box>
-        </Stack>
-      </Box>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <Box
-        sx={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1200,
-        }}
-      >
-        <Box p="20px" bgcolor="#222">
+      <div className="absolute inset-x-0 bottom-0 z-[1200]">
+        <div className="bg-[#222] p-[20px]">
           <FormFooter
             confirmText="Confirm"
             disabled={configCalendarMutation.isPending}
@@ -261,8 +221,8 @@ export default function CalendarConfigForm({
             handleClose={handleClose}
             handleConfirm={handleSubmit(onFormSubmit)}
           />
-        </Box>
-      </Box>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 }
