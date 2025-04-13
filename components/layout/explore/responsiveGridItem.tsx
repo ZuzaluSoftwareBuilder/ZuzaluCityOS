@@ -16,7 +16,7 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
 
   return (
     <div
-      className={`grid w-full grid-cols-1 content-start ${gapClass} xl:grid-cols-4 pc:grid-cols-3 tablet:grid-cols-2 ${className}`}
+      className={`grid w-full grid-cols-1 content-start ${gapClass} pc:grid-cols-3 tablet:grid-cols-2 [@media(min-width:1445px)]:grid-cols-4 ${className}`}
       {...rest}
     >
       {children}
