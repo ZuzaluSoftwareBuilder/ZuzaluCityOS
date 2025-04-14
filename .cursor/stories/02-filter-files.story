@@ -5,7 +5,7 @@
 
 ## 步骤
 1.  **获取变更列表:** 执行 `git diff --name-only origin/dev...HEAD` 获取所有变更文件。
-2.  **筛选文件:** 使用 `grep -v "/graphql/"` 过滤掉 `/graphql/`、`/.cursor/` 目录下的文件和 `package-lock.json` 文件。
+2.  **筛选文件:** 使用 `grep -v "/graphql/"` 过滤掉 `/graphql/`、`.cursor/` 目录下的文件和 `package-lock.json` 文件。
 3.  **记录列表:** 保存筛选后的文件列表以供后续步骤使用。
 
 ## 验收标准 (AC)
