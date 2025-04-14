@@ -243,7 +243,7 @@ const NewAuthPrompt: React.FC = () => {
               Username
             </p>
             <Input
-              placeholder="type your username"
+              placeholder="Type your username"
               value={inputUsername}
               onValueChange={onInputChange}
               className="h-[40px] px-0 text-white"

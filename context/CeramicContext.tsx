@@ -131,8 +131,10 @@ export const CeramicProvider = ({ children }: any) => {
       setAuthStatus('error');
       setAuthError(
         'Cannot fetch profile, please connect wallet and authenticate.',
-      ); // Translated
-      return null;
+      );
+      throw new Error(
+        'Cannot fetch profile, please connect wallet and authenticate.',
+      );
     }
     setAuthStatus('fetching_profile');
     setAuthError(null);
@@ -161,10 +163,10 @@ export const CeramicProvider = ({ children }: any) => {
         '[CeramicContext] getProfile: Error fetching profile:',
         error,
       );
-      const errorMessage = `Failed to fetch profile: ${error.message || 'Please try again later'}`; // Translated
+      const errorMessage = `Failed to fetch profile: ${error.message || 'Please try again later'}`;
       setAuthError(errorMessage);
       setAuthStatus('error');
-      return null;
+      throw new Error(errorMessage);
     }
   }, []);
 
@@ -178,16 +180,16 @@ export const CeramicProvider = ({ children }: any) => {
       await authenticateCeramic(ceramic, composeClient);
       await getProfile();
     } catch (error: any) {
-      console.error('[CeramicContext] Authentication failed:', error); // Keep error log
-      const userDeniedSignature = error.message?.includes(
-        'User denied request signature',
-      );
+      console.error('[CeramicContext] Authentication failed:', error);
+      const userDeniedSignature = error.message
+        ?.toLowerCase()
+        .includes('user denied request signature');
 
       if (userDeniedSignature) {
         setAuthError(null);
         setAuthStatus('idle');
       } else {
-        const errorMessage = `Authentication failed: ${error.message || 'Please check wallet connection and try again'}`; // Translated
+        const errorMessage = `Authentication failed: ${error.message || 'Please check wallet connection and try again'}`;
         setAuthError(errorMessage);
         setAuthStatus('error');
         throw new Error(errorMessage);
@@ -203,7 +205,7 @@ export const CeramicProvider = ({ children }: any) => {
         console.error(errorMsg);
         setAuthError(errorMsg);
         setAuthStatus('error');
-        return;
+        throw new Error(errorMsg);
       }
       setAuthStatus('creating_profile');
       setAuthError(null);
@@ -225,6 +227,7 @@ export const CeramicProvider = ({ children }: any) => {
           const errorMessage = `${CreateProfileErrorPrefix} Failed to create profile: ${update.errors[0]?.message || 'Please try again'}`;
           setAuthError(errorMessage);
           setAuthStatus('error');
+          throw new Error(errorMessage);
         } else {
           await getProfile();
         }
@@ -233,7 +236,7 @@ export const CeramicProvider = ({ children }: any) => {
           '[CeramicContext] createProfile: Error creating profile (Network/Other):',
           error,
         );
-        const errorMessage = `Fail to create profile: ${error.message || 'Please try again later'}`; // Translated
+        const errorMessage = `Fail to create profile: ${error.message || 'Please try again later'}`;
         setAuthError(errorMessage);
         setAuthStatus('error');
         throw new Error(errorMessage);
