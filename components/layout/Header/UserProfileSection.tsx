@@ -6,12 +6,11 @@ import UserProfileDropdown from '@/components/layout/Header/UserProfileDropdown'
 import Profile from '@/components/profile';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useLitContext } from '@/context/LitContext';
-import { config } from '@/context/WalletContext';
 import useOpenDraw from '@/hooks/useOpenDraw';
 import { getWalletAddressFromDid } from '@/utils/did';
-import { disconnect } from '@wagmi/core';
 import { useRouter } from 'next/navigation';
 import React, { memo, useCallback, useMemo, useState } from 'react';
+import { useDisconnect } from 'wagmi';
 
 export function formatAddressString(
   str?: string,
@@ -38,13 +37,14 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
   const { litDisconnect } = useLitContext();
   const [showProfile, setShowProfile] = useState(false);
   const { open, handleOpen, handleClose } = useOpenDraw();
+  const { disconnectAsync } = useDisconnect();
 
   const handleLogout = useCallback(async () => {
-    await disconnect(config);
+    await disconnectAsync();
     logout();
     litDisconnect();
     window.location.reload();
-  }, [logout, litDisconnect]);
+  }, [logout, litDisconnect, disconnectAsync]);
 
   const handleProfile = useCallback(() => {
     setShowProfile(true);

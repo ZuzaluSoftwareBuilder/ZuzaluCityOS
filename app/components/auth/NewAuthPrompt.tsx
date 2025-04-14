@@ -20,11 +20,11 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useAccount, useEnsName } from 'wagmi';
+import { useAccount, useDisconnect, useEnsName } from 'wagmi';
 import AuthButton from './AuthButton';
 import ConnectWalletButton from './ConnectWalletButton';
 
-type LoadingButtonType = 'skip' | 'continue' | 'close' | null;
+type LoadingButtonType = 'skip' | 'continue' | null;
 
 const NewAuthPrompt: React.FC = () => {
   const { isConnected, address } = useAccount();
@@ -40,12 +40,14 @@ const NewAuthPrompt: React.FC = () => {
     authError,
     newUser,
     username,
+    logout,
     connectSource,
     authenticate,
     createProfile,
     hideAuthPrompt,
     isAuthPromptVisible,
   } = useCeramicContext();
+  const { disconnectAsync } = useDisconnect();
 
   const maxUsernameLength = 200;
 
@@ -82,18 +84,11 @@ const NewAuthPrompt: React.FC = () => {
   );
 
   const handleProfileAction = useCallback(
-    async (
-      options: {
-        shouldClose?: boolean;
-        useInputUsername?: boolean;
-        buttonType?: LoadingButtonType;
-      } = {},
-    ) => {
-      const {
-        shouldClose = false,
-        useInputUsername = false,
-        buttonType = shouldClose ? 'close' : 'skip',
-      } = options;
+    async (options: {
+      useInputUsername?: boolean;
+      buttonType: LoadingButtonType;
+    }) => {
+      const { useInputUsername = false, buttonType } = options;
 
       if (address) {
         setLoadingButton(buttonType);
@@ -111,21 +106,14 @@ const NewAuthPrompt: React.FC = () => {
           });
         } finally {
           setLoadingButton(null);
-          if (shouldClose) {
-            hideAuthPrompt();
-          }
         }
       }
     },
-    [address, ensName, inputUsername, createProfile, hideAuthPrompt],
+    [address, ensName, inputUsername, createProfile],
   );
 
   const handleSkip = useCallback(() => {
     return handleProfileAction({ buttonType: 'skip' });
-  }, [handleProfileAction]);
-
-  const handleCloseAndSkip = useCallback(() => {
-    return handleProfileAction({ shouldClose: true, buttonType: 'close' });
   }, [handleProfileAction]);
 
   const handleContinue = useCallback(() => {
@@ -138,6 +126,12 @@ const NewAuthPrompt: React.FC = () => {
   const handleFinish = useCallback(() => {
     hideAuthPrompt();
   }, [hideAuthPrompt]);
+
+  const handleCloseAndReset = useCallback(async () => {
+    hideAuthPrompt();
+    await disconnectAsync();
+    logout();
+  }, [hideAuthPrompt, logout, disconnectAsync]);
 
   const connectWalletContent = useMemo(() => {
     if (connectSource === 'invalidAction') {
@@ -155,7 +149,7 @@ const NewAuthPrompt: React.FC = () => {
   const renderCloseButton = useCallback(() => {
     return (
       <Button
-        onPress={hideAuthPrompt}
+        onPress={handleCloseAndReset}
         className="size-auto min-w-0 bg-transparent p-0 opacity-50 transition-opacity hover:opacity-100"
         aria-label="Close"
       >
@@ -167,7 +161,7 @@ const NewAuthPrompt: React.FC = () => {
         />
       </Button>
     );
-  }, [hideAuthPrompt]);
+  }, [handleCloseAndReset]);
 
   const renderConnectWalletContent = useCallback(() => {
     const { title, description } = connectWalletContent;
@@ -217,21 +211,17 @@ const NewAuthPrompt: React.FC = () => {
           <ModalHeader>Welcome to Zuzalu City! (beta)</ModalHeader>
           <Button
             isIconOnly
-            onPress={handleCloseAndSkip}
+            onPress={handleCloseAndReset}
             className="size-auto min-w-0 bg-transparent p-0 opacity-50 transition-opacity hover:opacity-100"
-            aria-label="Close and Skip"
+            aria-label="Close"
             isDisabled={isAnyLoading}
           >
-            {loadingButton === 'close' ? (
-              <Spinner size="sm" color="current" />
-            ) : (
-              <X
-                size={20}
-                weight={'light'}
-                format={'Stroke'}
-                className="opacity-50"
-              />
-            )}
+            <X
+              size={20}
+              weight={'light'}
+              format={'Stroke'}
+              className="opacity-50"
+            />
           </Button>
         </div>
         <ModalBody className="gap-[20px]">
@@ -282,13 +272,13 @@ const NewAuthPrompt: React.FC = () => {
       </>
     );
   }, [
+    loadingButton,
+    handleCloseAndReset,
     inputUsername,
     onInputChange,
-    loadingButton,
-    handleCloseAndSkip,
+    isCreatingProfile,
     handleSkip,
     handleContinue,
-    isCreatingProfile,
   ]);
 
   const renderLoggedInContent = useCallback(() => {
