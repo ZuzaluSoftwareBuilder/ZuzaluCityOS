@@ -1,12 +1,15 @@
+import { Select, SelectItem } from '@/components/base/select';
 import ZuInput from '@/components/core/Input';
 import FormFooter from '@/components/form/FormFooter';
 import FormHeader from '@/components/form/FormHeader';
 import SelectCategories from '@/components/select/selectCategories';
 import { FormTitle } from '@/components/typography/formTypography';
 import { useCeramicContext } from '@/context/CeramicContext';
+import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 import { Space } from '@/types';
 import Yup from '@/utils/yupExtensions';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { FormHelperText } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -28,6 +31,7 @@ const schema = Yup.object().shape({
     .required('Calendar category is required')
     .min(1, 'Calendar category is required'),
   accessRule: Yup.string().required('Access rule is required'),
+  allowedRoles: Yup.array(Yup.string()).optional(),
 });
 
 type FormData = Yup.InferType<typeof schema>;
@@ -49,13 +53,20 @@ export default function CalendarConfigForm({
     shouldFocusError: true,
   });
   const { composeClient } = useCeramicContext();
+  const { roles } = useGetSpaceMember(space.id);
 
   const accessRule = watch('accessRule');
+  const currentAllowedRoles = watch('allowedRoles') || [];
+
+  const spaceRoles = useMemo(() => {
+    if (!roles?.data) return [];
+    return roles.data.filter((role) => role.role.level !== 'owner');
+  }, [roles]);
 
   const configCalendarMutation = useMutation({
     mutationFn: async (data: FormData) => {
       const customAttributes = space.customAttributes || [];
-      const result = await composeClient.executeQuery(
+      await composeClient.executeQuery(
         `
       mutation updateZucitySpaceMutation($input: UpdateZucitySpaceInput!) {
         updateZucitySpace(
@@ -82,6 +93,9 @@ export default function CalendarConfigForm({
                         .map((item) => item?.trim())
                         .join(','),
                       accessRule: data.accessRule,
+                      allowedRoles: data.allowedRoles
+                        ? data.allowedRoles.join(',')
+                        : '',
                     },
                   }),
                 },
@@ -90,7 +104,6 @@ export default function CalendarConfigForm({
           },
         },
       );
-      console.log(result);
     },
     onSuccess: () => {
       reset();
@@ -205,6 +218,44 @@ export default function CalendarConfigForm({
                       {errors.accessRule.message}
                     </p>
                   )}
+                </div>
+                <div className="flex flex-col gap-[10px]">
+                  <FormTitle>Allowed Roles</FormTitle>
+                  <p className="text-[14px] leading-[1.6] opacity-60">
+                    Select which space roles can access this calendar
+                  </p>
+                </div>
+                <div className="flex flex-col gap-[10px]">
+                  <Controller
+                    name="allowedRoles"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <>
+                        <Select
+                          selectionMode="multiple"
+                          className="w-full"
+                          value={field.value as any}
+                          selectedKeys={
+                            currentAllowedRoles.filter(Boolean) as any
+                          }
+                          onSelectionChange={(keys) => {
+                            // Convert the selected keys to role IDs
+                            const selectedKeys = Array.from(keys) as string[];
+                            field.onChange(selectedKeys);
+                          }}
+                        >
+                          {spaceRoles.map((roleItem) => (
+                            <SelectItem key={roleItem.role.id}>
+                              {roleItem.role.name}
+                            </SelectItem>
+                          ))}
+                        </Select>
+                        {error && (
+                          <FormHelperText error>{error.message}</FormHelperText>
+                        )}
+                      </>
+                    )}
+                  />
                 </div>
               </div>
             </div>
