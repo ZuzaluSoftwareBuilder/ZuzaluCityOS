@@ -128,6 +128,7 @@ const NewAuthPrompt: React.FC = () => {
   }, [hideAuthPrompt]);
 
   const handleCloseAndReset = useCallback(async () => {
+    setInputUsername('');
     hideAuthPrompt();
     await disconnectAsync();
     logout();
