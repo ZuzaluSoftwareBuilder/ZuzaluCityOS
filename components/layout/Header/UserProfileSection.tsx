@@ -60,15 +60,12 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
     if (
       !!prevIsConnectedRef.current &&
       !isConnected &&
-      (authStatus === 'authenticated' ||
-        authStatus === 'authenticating' ||
-        authStatus === 'fetching_profile' ||
-        authStatus === 'creating_profile')
+      authStatus === 'authenticated'
     ) {
       handleLogout();
     }
     prevIsConnectedRef.current = isConnected;
-  }, [isConnected, authStatus, handleLogout]);
+  }, [isConnected, handleLogout, authStatus]);
 
   const handleProfile = useCallback(() => {
     setShowProfile(true);

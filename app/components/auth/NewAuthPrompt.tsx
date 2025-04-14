@@ -123,15 +123,11 @@ const NewAuthPrompt: React.FC = () => {
     });
   }, [handleProfileAction]);
 
-  const handleFinish = useCallback(() => {
-    hideAuthPrompt();
-  }, [hideAuthPrompt]);
-
   const handleCloseAndReset = useCallback(async () => {
     setInputUsername('');
     hideAuthPrompt();
-    await disconnectAsync();
     logout();
+    await disconnectAsync();
   }, [hideAuthPrompt, logout, disconnectAsync]);
 
   const connectWalletContent = useMemo(() => {
@@ -147,23 +143,6 @@ const NewAuthPrompt: React.FC = () => {
     };
   }, [connectSource]);
 
-  const renderCloseButton = useCallback(() => {
-    return (
-      <Button
-        onPress={handleCloseAndReset}
-        className="size-auto min-w-0 bg-transparent p-0 opacity-50 transition-opacity hover:opacity-100"
-        aria-label="Close"
-      >
-        <X
-          size={20}
-          weight={'light'}
-          format={'Stroke'}
-          className="opacity-50"
-        />
-      </Button>
-    );
-  }, [handleCloseAndReset]);
-
   const renderConnectWalletContent = useCallback(() => {
     const { title, description } = connectWalletContent;
     return (
@@ -172,7 +151,7 @@ const NewAuthPrompt: React.FC = () => {
           <ModalHeader className="p-0 text-[18px] font-bold leading-[1.2]">
             {title}
           </ModalHeader>
-          {renderCloseButton()}
+          <CloseButton onPress={handleCloseAndReset} />
         </div>
         <ModalBody className="gap-[10px] pb-5">
           <p className="text-[14px] leading-[1.4] text-white/70">
@@ -195,11 +174,9 @@ const NewAuthPrompt: React.FC = () => {
     );
   }, [
     connectWalletContent,
-    renderCloseButton,
+    handleCloseAndReset,
     isAuthenticating,
     isFetchingProfile,
-    authStatus,
-    authError,
     authenticate,
   ]);
 
@@ -210,20 +187,7 @@ const NewAuthPrompt: React.FC = () => {
       <>
         <div className="flex w-full items-center justify-between p-[20px]">
           <ModalHeader>Welcome to Zuzalu City! (beta)</ModalHeader>
-          <Button
-            isIconOnly
-            onPress={handleCloseAndReset}
-            className="size-auto min-w-0 bg-transparent p-0 opacity-50 transition-opacity hover:opacity-100"
-            aria-label="Close"
-            isDisabled={isAnyLoading}
-          >
-            <X
-              size={20}
-              weight={'light'}
-              format={'Stroke'}
-              className="opacity-50"
-            />
-          </Button>
+          <CloseButton onPress={handleCloseAndReset} />
         </div>
         <ModalBody className="gap-[20px]">
           <p className="text-[14px] leading-[1.4] text-white/70">
@@ -290,7 +254,7 @@ const NewAuthPrompt: React.FC = () => {
       <>
         <div className="flex w-full items-center justify-between p-[20px]">
           <ModalHeader>{`You're all set.`}</ModalHeader>
-          {renderCloseButton()}
+          <CloseButton onPress={hideAuthPrompt} />
         </div>
         <ModalBody>
           {username && !isAddressUsername && (
@@ -306,13 +270,17 @@ const NewAuthPrompt: React.FC = () => {
           </p>
         </ModalBody>
         <ModalFooter>
-          <AuthButton onPress={handleFinish} className="w-full" color="primary">
+          <AuthButton
+            onPress={hideAuthPrompt}
+            className="w-full"
+            color="primary"
+          >
             {`Let's Go!`}
           </AuthButton>
         </ModalFooter>
       </>
     );
-  }, [username, address, handleFinish, renderCloseButton]);
+  }, [username, address, hideAuthPrompt]);
 
   const renderModalContent = useCallback(() => {
     if (!isConnected) {
@@ -377,6 +345,18 @@ const NewAuthPrompt: React.FC = () => {
     >
       <ModalContent>{renderModalContent()}</ModalContent>
     </Modal>
+  );
+};
+
+const CloseButton = ({ onPress }: { onPress: () => void }) => {
+  return (
+    <Button
+      onPress={onPress}
+      className="size-auto min-w-0 bg-transparent p-0 opacity-50 transition-opacity hover:opacity-100"
+      aria-label="Close"
+    >
+      <X size={20} weight={'light'} format={'Stroke'} className="opacity-50" />
+    </Button>
   );
 };
 
