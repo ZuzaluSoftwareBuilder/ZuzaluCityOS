@@ -219,7 +219,7 @@ export const CeramicProvider = ({ children }: any) => {
           },
         });
 
-        if (update.errors) {
+        if (!update.data || update.errors) {
           console.error(
             '[CeramicContext] createProfile: Error creating profile (GraphQL):',
             update.errors,
