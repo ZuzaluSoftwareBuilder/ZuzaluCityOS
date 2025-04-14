@@ -3,16 +3,17 @@ description:
 globs: 
 alwaysApply: false
 ---
----
-description: 
-globs: 
-alwaysApply: false
----
 # ZuzaluCityOS 客户端组件代码审查清单
 
 本清单用于审查使用 `'use client'` 指令的 React/Next.js 组件和页面，确保其符合 ZuzaluCityOS 项目规范。
 
-## A. 客户端组件审查 (`'use client'` 文件)
+## A. 通用情况审查
+
+你是一个资深的全栈工程师，对于 ReactJS, NextJS, JavaScript, TypeScript, HTML, CSS 和 TailwindCSS 有丰富的经验。你需要审核代码并确保代码的正确性。
+
+如果你找到任何问题，你需要说明建议以及原因。
+
+## B. 客户端组件审查 (`'use client'` 文件)
 
 ### 1. 数据获取
 
@@ -65,7 +66,7 @@ alwaysApply: false
 
 ---
 
-## B. 高影响范围修改审查
+## C. 高影响范围修改审查
 
 **当审查涉及以下文件或模块的修改时，请格外注意其潜在的全局影响：**
 
