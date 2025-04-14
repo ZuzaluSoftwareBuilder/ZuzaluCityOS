@@ -14,6 +14,10 @@ type ZucitySpaceGating @loadModel(id: "$SpaceGating_ID") {
   id: ID!
 }
 
+type ZucitySpaceCalendar @loadModel(id: "$SpaceCalendar_ID") {
+  id: ID!
+}
+
 type ZucityUserRoles @loadModel(id: "$UserRoles_ID") {
   id: ID!
 }
@@ -28,4 +32,6 @@ type ZucitySpace @loadModel(id: "$Space_ID") {
     @relationFrom(model: "ZucitySpaceGating", property: "spaceId")
   userRoles: [ZucityUserRoles]
     @relationFrom(model: "ZucityUserRoles", property: "spaceId")
+  spaceCalendar: [ZucitySpaceCalendar]
+    @relationFrom(model: "ZucitySpaceCalendar", property: "spaceId")
 }
