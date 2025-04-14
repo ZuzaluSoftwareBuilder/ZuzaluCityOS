@@ -9,8 +9,15 @@ import { useLitContext } from '@/context/LitContext';
 import useOpenDraw from '@/hooks/useOpenDraw';
 import { getWalletAddressFromDid } from '@/utils/did';
 import { useRouter } from 'next/navigation';
-import React, { memo, useCallback, useMemo, useState } from 'react';
-import { useDisconnect } from 'wagmi';
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { useAccount, useDisconnect } from 'wagmi';
 
 export function formatAddressString(
   str?: string,
@@ -38,6 +45,9 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
   const [showProfile, setShowProfile] = useState(false);
   const { open, handleOpen, handleClose } = useOpenDraw();
   const { disconnectAsync } = useDisconnect();
+  const { isConnected } = useAccount();
+  const { authStatus } = useCeramicContext();
+  const prevIsConnectedRef = useRef<boolean | undefined>(undefined);
 
   const handleLogout = useCallback(async () => {
     await disconnectAsync();
@@ -45,6 +55,20 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
     litDisconnect();
     window.location.reload();
   }, [logout, litDisconnect, disconnectAsync]);
+
+  useEffect(() => {
+    if (
+      !!prevIsConnectedRef.current &&
+      !isConnected &&
+      (authStatus === 'authenticated' ||
+        authStatus === 'authenticating' ||
+        authStatus === 'fetching_profile' ||
+        authStatus === 'creating_profile')
+    ) {
+      handleLogout();
+    }
+    prevIsConnectedRef.current = isConnected;
+  }, [isConnected, authStatus, handleLogout]);
 
   const handleProfile = useCallback(() => {
     setShowProfile(true);
