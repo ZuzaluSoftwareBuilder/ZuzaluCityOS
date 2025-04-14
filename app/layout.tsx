@@ -102,6 +102,12 @@ function RootLayout({
                                         toastProps={{
                                           classNames: {
                                             base: 'max-w-[350px]',
+                                            content: 'min-w-0',
+                                            wrapper: 'min-w-0',
+                                            title:
+                                              'break-words whitespace-normal',
+                                            description:
+                                              'break-words whitespace-normal',
                                           },
                                           variant: 'flat',
                                         }}
