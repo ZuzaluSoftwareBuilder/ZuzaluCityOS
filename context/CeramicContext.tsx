@@ -38,7 +38,7 @@ type AuthStatus =
   | 'authenticated'
   | 'error';
 
-export const CreateProfileErrorPrefix = '[create profile]: ';
+export const CreateProfileErrorPrefix = '[Create Profile Failed]';
 
 interface CeramicContextType {
   ceramic: CeramicClient;
@@ -224,7 +224,7 @@ export const CeramicProvider = ({ children }: any) => {
             '[CeramicContext] createProfile: Error creating profile (GraphQL):',
             update.errors,
           );
-          const errorMessage = `${CreateProfileErrorPrefix} Failed to create profile: ${update.errors[0]?.message || 'Please try again'}`;
+          const errorMessage = `${CreateProfileErrorPrefix}: ${update.errors[0]?.message || 'Please try again'}`;
           setAuthError(errorMessage);
           setAuthStatus('error');
           throw new Error(errorMessage);
@@ -236,7 +236,7 @@ export const CeramicProvider = ({ children }: any) => {
           '[CeramicContext] createProfile: Error creating profile (Network/Other):',
           error,
         );
-        const errorMessage = `Fail to create profile: ${error.message || 'Please try again later'}`;
+        const errorMessage = `${error.message || 'Please try again later'}`;
         setAuthError(errorMessage);
         setAuthStatus('error');
         throw new Error(errorMessage);
