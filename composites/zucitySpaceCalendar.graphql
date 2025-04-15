@@ -1,0 +1,32 @@
+type ZucitySpaceCalendar
+  @createModel(
+    accountRelation: LIST
+    description: "Space Calendar for Zuzalu.city beta version"
+  ){
+  author: DID! @documentAccount
+  name: String! @string(minLength: 1, maxLength: 10000)
+  category: [Category] @list(maxLength: 1000)
+  accessRule: String! @string(minLength: 1, maxLength: 10000)
+  spaceId: StreamID! @documentReference(model: "ZucitySpace")
+  space: ZucitySpace! @relationDocument(property: "spaceId")
+  allowedRoles: [Role] @list(maxLength: 1000)
+  created_at: DateTime!
+  updated_at: DateTime!
+  customAttributes: [TBD] @list(maxLength: 10000)
+}
+
+type Category {
+  category: String! @string(minLength: 1, maxLength: 10000)
+}
+
+type Role {
+  roleId: String! @string(minLength: 1, maxLength: 10000)
+}
+
+type TBD {
+  tbd: String @string(minLength: 1, maxLength: 10000)
+}
+
+type ZucitySpace @loadModel(id: "$Space_ID") {
+  id: ID!
+}
