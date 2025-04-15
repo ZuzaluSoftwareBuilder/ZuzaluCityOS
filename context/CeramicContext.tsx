@@ -1,5 +1,6 @@
 import { ceramic, composeClient } from '@/constant';
 import {
+  StorageKey_CeramicAuthPending,
   StorageKey_CeramicEthDid,
   StorageKey_DisplayDid,
   StorageKey_LoggedIn,
@@ -56,8 +57,8 @@ interface CeramicContextType {
   logout: () => void;
   performFullLogoutAndReload: () => Promise<void>;
   isAuthPromptVisible: boolean;
-  showAuthPrompt: (source?: ConnectSource) => void;
-  hideAuthPrompt: () => void;
+  showAuthPrompt: (source?: ConnectSource) => Promise<void>;
+  hideAuthPrompt: () => Promise<void>;
   createProfile: (newName: string) => Promise<void>;
   getProfile: () => Promise<Profile | null>;
   connectSource: ConnectSource;
@@ -81,8 +82,8 @@ const CeramicContext = createContext<CeramicContextType>({
   logout: () => {},
   performFullLogoutAndReload: async () => {},
   isAuthPromptVisible: false,
-  showAuthPrompt: () => {},
-  hideAuthPrompt: () => {},
+  showAuthPrompt: async () => {},
+  hideAuthPrompt: async () => {},
   createProfile: async (newName: string) => {},
   getProfile: async () => null,
   connectSource: 'invalidAction',
@@ -232,18 +233,24 @@ export const CeramicProvider = ({ children }: any) => {
     if (authStatus === 'authenticating' || authStatus === 'authenticated') {
       return;
     }
+    safeSetLocalStorage(StorageKey_CeramicAuthPending, '1');
     setAuthStatus('authenticating');
     setAuthError(null);
     try {
       await authenticateCeramic(ceramic, composeClient);
       await getProfile();
+      safeRemoveLocalStorage(StorageKey_CeramicAuthPending);
     } catch (error: any) {
       console.error('[CeramicContext] Authentication failed:', error);
-      const userDeniedSignature = error.message
-        ?.toLowerCase()
-        .includes('user denied request signature');
+      const errorMessageLower = error.message?.toLowerCase() || '';
+      const userDenied =
+        errorMessageLower.includes('user denied request signature') ||
+        errorMessageLower.includes('user rejected') ||
+        errorMessageLower.includes('cancelled') ||
+        errorMessageLower.includes('canceled');
 
-      if (userDeniedSignature) {
+      if (userDenied) {
+        console.log('[CeramicContext] User denied signature or cancelled.');
         setAuthError(null);
         setAuthStatus('idle');
       } else {
@@ -303,17 +310,22 @@ export const CeramicProvider = ({ children }: any) => {
     [getProfile],
   );
 
+  const hideAuthPrompt = useCallback(async () => {
+    setAuthPromptVisible(false);
+  }, []);
+
   const showAuthPrompt = useCallback(
-    (source: ConnectSource = 'invalidAction') => {
+    async (source: ConnectSource = 'invalidAction') => {
+      // in case of pending auth / reload page without disconnect wallet
+      if (safeGetLocalStorage(StorageKey_CeramicAuthPending)) {
+        await disconnectAsync();
+        safeRemoveLocalStorage(StorageKey_CeramicAuthPending);
+      }
       setConnectSource(source);
       setAuthPromptVisible(true);
     },
-    [],
+    [disconnectAsync],
   );
-
-  const hideAuthPrompt = useCallback(() => {
-    setAuthPromptVisible(false);
-  }, []);
 
   return (
     <CeramicContext.Provider
