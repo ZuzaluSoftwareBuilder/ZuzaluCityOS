@@ -48,7 +48,7 @@ const UserProfileDropdown = ({
       placement="bottom-end"
     >
       <DropdownTrigger>
-        <Button className="gap-[6px] bg-transparent text-[16px] font-[500] leading-[1.2] text-white">
+        <div className="flex h-[40px] cursor-pointer items-center gap-[6px]  rounded-[8px] border-none  bg-transparent px-[14px] py-[8px] text-[16px] font-[500] leading-[1.2] text-white hover:bg-[rgba(255,255,255,0.05)]">
           <Image
             src={profile?.avatar ?? '/user/avatar_p.png'}
             alt="avatar"
@@ -57,7 +57,7 @@ const UserProfileDropdown = ({
             className="object-cover"
           />
           {formattedName}
-        </Button>
+        </div>
       </DropdownTrigger>
       <DropdownMenu aria-label="userProfile" closeOnSelect={true}>
         <DropdownItem key="profileInfo">

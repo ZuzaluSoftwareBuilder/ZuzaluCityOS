@@ -5,12 +5,10 @@ import { WalletIcon } from '@/components/icons';
 import UserProfileDropdown from '@/components/layout/Header/UserProfileDropdown';
 import Profile from '@/components/profile';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useLitContext } from '@/context/LitContext';
 import useOpenDraw from '@/hooks/useOpenDraw';
 import { getWalletAddressFromDid } from '@/utils/did';
 import { useRouter } from 'next/navigation';
 import React, { memo, useCallback, useMemo, useState } from 'react';
-import { useDisconnect } from 'wagmi';
 
 export function formatAddressString(
   str?: string,
@@ -32,19 +30,15 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
   avatarSize = 28,
 }) => {
   const router = useRouter();
-  const { isAuthenticated, showAuthPrompt, logout, profile } =
-    useCeramicContext();
-  const { litDisconnect } = useLitContext();
-  const { disconnect } = useDisconnect();
+  const {
+    isAuthenticated,
+    newUser,
+    showAuthPrompt,
+    performFullLogoutAndReload,
+    profile,
+  } = useCeramicContext();
   const [showProfile, setShowProfile] = useState(false);
   const { open, handleOpen, handleClose } = useOpenDraw();
-
-  const handleLogout = useCallback(() => {
-    disconnect();
-    logout();
-    litDisconnect();
-    window.location.reload();
-  }, [disconnect, logout, litDisconnect]);
 
   const handleProfile = useCallback(() => {
     setShowProfile(true);
@@ -69,7 +63,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
     <>
       <Profile showModal={showProfile} onClose={handleCloseProfile} />
 
-      {isAuthenticated ? (
+      {isAuthenticated && !newUser ? (
         <UserProfileDropdown
           avatarSize={avatarSize}
           isOpen={open}
@@ -77,7 +71,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
           onClose={handleClose}
           handleProfile={handleProfile}
           handlePassport={handlePassport}
-          handleLogout={handleLogout}
+          handleLogout={performFullLogoutAndReload}
           displayAddress={formattedAddress || ''}
           address={address || ''}
         />

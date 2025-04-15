@@ -1,3 +1,4 @@
+import { StorageKey_CeramicEthDid } from '@/constant/StorageKey';
 import axios, { AxiosInstance } from 'axios';
 
 const getBaseUrl = () => {
@@ -18,7 +19,7 @@ const axiosInstance: AxiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('ceramic:eth_did');
+      const token = localStorage.getItem(StorageKey_CeramicEthDid);
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`;
       }
