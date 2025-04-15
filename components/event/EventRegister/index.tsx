@@ -1,4 +1,5 @@
 import Dialog from '@/app/spaces/components/Modal/Dialog';
+import { StorageKey_Username } from '@/constant/StorageKey';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { useLitContext } from '@/context/LitContext';
 import { useZupassContext } from '@/context/ZupassContext';
@@ -174,14 +175,17 @@ const EventRegister: React.FC<EventRegisterProps> = ({
         console.error('Authentication failed:', error);
       }
     };
-    if (localStorage.getItem('username') && !authenticateCalled.current) {
+    if (
+      localStorage.getItem(StorageKey_Username) &&
+      !authenticateCalled.current
+    ) {
       if (stage === 'Wallet Link') {
         setCurrentStep(3);
       } else {
         authenticateUser(false);
       }
     }
-  }, [localStorage.getItem('username')]);
+  }, [localStorage.getItem(StorageKey_Username)]);
 
   useEffect(() => {
     if (isAuthenticated) {

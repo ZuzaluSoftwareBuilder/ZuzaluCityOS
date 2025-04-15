@@ -27,6 +27,7 @@ import {
   FormLabelDesc,
 } from '@/components/typography/formTypography';
 import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
+import { StorageKey_CeramicEthDid } from '@/constant/StorageKey';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { supaEditSession } from '@/services/session';
 import {
@@ -1832,7 +1833,7 @@ const Home = () => {
           const members =
             eventDetails?.members?.map((member) => member.id.toLowerCase()) ||
             [];
-          if (!ceramic.did && localStorage.getItem('ceramic:eth_did')) {
+          if (!ceramic.did && localStorage.getItem(StorageKey_CeramicEthDid)) {
             await authenticate();
           }
           const adminId = ceramic?.did?.parent.toString().toLowerCase() || '';

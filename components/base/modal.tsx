@@ -23,11 +23,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>((props, ref) => {
       'w-[420px] mobile:w-[calc(90vw)]',
       classNames?.base,
     ),
-    wrapper: cn(
-      'bg-black/40 transition-opacity duration-300 items-center',
-      'z-[1100]',
-      classNames?.wrapper,
-    ),
+    wrapper: cn('bg-black/40 items-center', 'z-[1100]', classNames?.wrapper),
     backdrop: cn('bg-[rgba(34,34,34,0.6)]', classNames?.backdrop),
     header: cn('p-0 text-[18px] leading-[1.2] font-bold', classNames?.header),
     body: cn('px-[20px] py-0', classNames?.body),
