@@ -5,6 +5,7 @@ import {
   StorageKey_LoggedIn,
   StorageKey_Username,
 } from '@/constant/StorageKey';
+import { useLitContext } from '@/context/LitContext';
 import { config } from '@/context/WalletContext';
 import {
   CREATE_PROFILE_MUTATION,
@@ -25,8 +26,10 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
+import { useAccount, useDisconnect } from 'wagmi';
 import { getAccount } from 'wagmi/actions';
 
 type ConnectSource = 'connectButton' | 'invalidAction';
@@ -51,6 +54,7 @@ interface CeramicContextType {
   profile: Profile | undefined;
   newUser: boolean | undefined;
   logout: () => void;
+  performFullLogoutAndReload: () => Promise<void>;
   isAuthPromptVisible: boolean;
   showAuthPrompt: (source?: ConnectSource) => void;
   hideAuthPrompt: () => void;
@@ -75,6 +79,7 @@ const CeramicContext = createContext<CeramicContextType>({
   profile: undefined,
   newUser: undefined,
   logout: () => {},
+  performFullLogoutAndReload: async () => {},
   isAuthPromptVisible: false,
   showAuthPrompt: () => {},
   hideAuthPrompt: () => {},
@@ -103,6 +108,11 @@ export const CeramicProvider = ({ children }: any) => {
   const isFetchingProfile = authStatus === 'fetching_profile';
   const isCreatingProfile = authStatus === 'creating_profile';
 
+  const { isConnected } = useAccount();
+  const { disconnectAsync } = useDisconnect();
+  const { litDisconnect } = useLitContext();
+  const prevIsConnectedRef = useRef<boolean | undefined>();
+
   useEffect(() => {
     const checkInitialAuth = async () => {
       const did = safeGetLocalStorage(StorageKey_CeramicEthDid);
@@ -125,6 +135,54 @@ export const CeramicProvider = ({ children }: any) => {
     };
     checkInitialAuth();
   }, []);
+
+  const logout = useCallback(() => {
+    safeRemoveLocalStorage(StorageKey_Username);
+    safeRemoveLocalStorage(StorageKey_CeramicEthDid);
+    safeRemoveLocalStorage(StorageKey_DisplayDid);
+    safeRemoveLocalStorage(StorageKey_LoggedIn);
+
+    setUsername(undefined);
+    setProfile(undefined);
+    setNewUser(undefined);
+    setAuthError(null);
+    setAuthStatus('idle');
+    setAuthPromptVisible(false);
+  }, []);
+
+  const performFullLogoutAndReload = useCallback(async () => {
+    try {
+      await disconnectAsync();
+      logout();
+      litDisconnect();
+    } catch (error) {
+      console.error(
+        '[CeramicContext] Error during disconnect operations in performFullLogoutAndReload:',
+        error,
+      );
+    } finally {
+      window.location.reload();
+    }
+  }, [disconnectAsync, litDisconnect, logout]);
+
+  useEffect(() => {
+    if (
+      !!prevIsConnectedRef.current &&
+      !isConnected &&
+      authStatus === 'authenticated'
+    ) {
+      console.warn(
+        '[CeramicContext] External disconnection detected, performing full logout and reload.',
+      );
+      performFullLogoutAndReload().catch((error) => {
+        console.error(
+          '[CeramicContext] Error during performFullLogoutAndReload after external disconnect:',
+          error,
+        );
+      });
+    }
+    prevIsConnectedRef.current = isConnected;
+  }, [isConnected, authStatus, performFullLogoutAndReload]);
 
   const getProfile = useCallback(async (): Promise<Profile | null> => {
     if (!ceramic.did) {
@@ -257,20 +315,6 @@ export const CeramicProvider = ({ children }: any) => {
     setAuthPromptVisible(false);
   }, []);
 
-  const logout = useCallback(() => {
-    safeRemoveLocalStorage(StorageKey_Username);
-    safeRemoveLocalStorage(StorageKey_CeramicEthDid);
-    safeRemoveLocalStorage(StorageKey_DisplayDid);
-    safeRemoveLocalStorage(StorageKey_LoggedIn);
-
-    setUsername(undefined);
-    setProfile(undefined);
-    setNewUser(undefined);
-    setAuthError(null);
-    setAuthStatus('idle');
-    setAuthPromptVisible(false);
-  }, []);
-
   return (
     <CeramicContext.Provider
       value={{
@@ -284,6 +328,7 @@ export const CeramicProvider = ({ children }: any) => {
         profile,
         newUser,
         logout,
+        performFullLogoutAndReload,
         isAuthPromptVisible,
         showAuthPrompt,
         hideAuthPrompt,

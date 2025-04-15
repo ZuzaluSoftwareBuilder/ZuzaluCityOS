@@ -5,19 +5,10 @@ import { WalletIcon } from '@/components/icons';
 import UserProfileDropdown from '@/components/layout/Header/UserProfileDropdown';
 import Profile from '@/components/profile';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { useLitContext } from '@/context/LitContext';
 import useOpenDraw from '@/hooks/useOpenDraw';
 import { getWalletAddressFromDid } from '@/utils/did';
 import { useRouter } from 'next/navigation';
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { useAccount, useDisconnect } from 'wagmi';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 
 export function formatAddressString(
   str?: string,
@@ -39,33 +30,15 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
   avatarSize = 28,
 }) => {
   const router = useRouter();
-  const { isAuthenticated, newUser, showAuthPrompt, logout, profile } =
-    useCeramicContext();
-  const { litDisconnect } = useLitContext();
+  const {
+    isAuthenticated,
+    newUser,
+    showAuthPrompt,
+    performFullLogoutAndReload,
+    profile,
+  } = useCeramicContext();
   const [showProfile, setShowProfile] = useState(false);
   const { open, handleOpen, handleClose } = useOpenDraw();
-  const { disconnectAsync } = useDisconnect();
-  const { isConnected } = useAccount();
-  const { authStatus } = useCeramicContext();
-  const prevIsConnectedRef = useRef<boolean | undefined>(undefined);
-
-  const handleLogout = useCallback(async () => {
-    await disconnectAsync();
-    logout();
-    litDisconnect();
-    window.location.reload();
-  }, [logout, litDisconnect, disconnectAsync]);
-
-  useEffect(() => {
-    if (
-      !!prevIsConnectedRef.current &&
-      !isConnected &&
-      authStatus === 'authenticated'
-    ) {
-      handleLogout();
-    }
-    prevIsConnectedRef.current = isConnected;
-  }, [isConnected, handleLogout, authStatus]);
 
   const handleProfile = useCallback(() => {
     setShowProfile(true);
@@ -98,7 +71,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
           onClose={handleClose}
           handleProfile={handleProfile}
           handlePassport={handlePassport}
-          handleLogout={handleLogout}
+          handleLogout={performFullLogoutAndReload}
           displayAddress={formattedAddress || ''}
           address={address || ''}
         />

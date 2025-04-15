@@ -86,9 +86,9 @@ function RootLayout({
                     <QueryClientProvider client={queryClient}>
                       <NuqsAdapter>
                         <LitProvider>
-                          <CeramicProvider>
-                            <BuildInRoleProvider>
-                              <WalletProvider>
+                          <WalletProvider>
+                            <CeramicProvider>
+                              <BuildInRoleProvider>
                                 <ZupassProvider>
                                   <ModalProvider>
                                     <AppContextProvider>
@@ -162,9 +162,9 @@ function RootLayout({
                                     </AppContextProvider>
                                   </ModalProvider>
                                 </ZupassProvider>
-                              </WalletProvider>
-                            </BuildInRoleProvider>
-                          </CeramicProvider>
+                              </BuildInRoleProvider>
+                            </CeramicProvider>
+                          </WalletProvider>
                         </LitProvider>
                       </NuqsAdapter>
                     </QueryClientProvider>
