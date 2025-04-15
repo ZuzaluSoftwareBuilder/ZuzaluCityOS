@@ -250,9 +250,9 @@ export const CeramicProvider = ({ children }: any) => {
         errorMessageLower.includes('canceled');
 
       if (userDenied) {
-        console.log('[CeramicContext] User denied signature or cancelled.');
         setAuthError(null);
         setAuthStatus('idle');
+        throw new Error('[CeramicContext] User denied signature or cancelled.');
       } else {
         const errorMessage = `Authentication failed: ${error.message || 'Please check wallet connection and try again'}`;
         setAuthError(errorMessage);
