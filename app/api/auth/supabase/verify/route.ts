@@ -1,3 +1,4 @@
+import { getFakeEmail } from '@/app/api/utils/common';
 import supabaseAdmin from '@/app/api/utils/supabase';
 import {
   createErrorResponse,
@@ -10,13 +11,34 @@ import { z } from 'zod';
 const nonceSchema = z.object({
   address: z.string().min(1, 'Address is required'),
   signature: z.string().min(1, 'Signature is required'),
-  message: z.string().min(1, 'Nonce is required'),
+  message: z.string().min(1, 'Message is required'),
+  username: z.string().optional(),
 });
+
+const generateAuthToken = async (address: string): Promise<string> => {
+  const normalizedAddress = address.toLowerCase();
+  const email = getFakeEmail(normalizedAddress);
+  const { data, error } = await supabaseAdmin.auth.admin.generateLink({
+    type: 'magiclink',
+    email,
+  });
+
+  if (error) {
+    console.error(
+      `[API Verify] Database error when generating auth token (${normalizedAddress}):`,
+      error,
+    );
+    throw new Error(error.message);
+  }
+
+  return data.properties.hashed_token;
+};
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const validationResult = nonceSchema.safeParse(body);
+
     if (!validationResult.success) {
       return createErrorResponse(
         'Invalid request parameters',
@@ -24,54 +46,54 @@ export async function POST(request: NextRequest) {
         validationResult.error.format(),
       );
     }
-    const { address, signature, message } = validationResult.data;
-    const lowerCaseAddress = address.toLowerCase();
 
-    console.log(`[API Verify] Verifying Nonce for ${lowerCaseAddress}...`);
+    const { address, signature, message, username } = validationResult.data;
+    const normalizedAddress = address.toLowerCase();
+    const email = getFakeEmail(normalizedAddress);
+
+    console.log(`[API Verify] Verifying nonce for ${normalizedAddress}...`);
+
     const { data: nonceData, error: nonceError } = await supabaseAdmin
       .from('login_nonces')
       .select('nonce, expires_at')
-      .eq('address', lowerCaseAddress)
+      .eq('address', normalizedAddress)
       .maybeSingle();
 
     if (nonceError) {
       console.error(
-        `[API Verify] Database error when fetching nonce (${lowerCaseAddress}):`,
+        `[API Verify] Database error when fetching nonce (${normalizedAddress}):`,
         nonceError,
       );
       return createErrorResponse('Database error when retrieving nonce', 500);
     }
+
+    await supabaseAdmin
+      .from('login_nonces')
+      .delete()
+      .match({ address: normalizedAddress });
+
     if (!nonceData) {
-      console.log(`[API Verify] No nonce found for ${lowerCaseAddress}.`);
+      console.log(`[API Verify] No nonce found for ${normalizedAddress}.`);
       return createErrorResponse(
         'Invalid or expired nonce, please try again.',
         403,
       );
     }
+
     if (new Date(nonceData.expires_at) < new Date()) {
-      console.log(`[API Verify] Nonce for ${lowerCaseAddress} has expired.`);
-      await supabaseAdmin
-        .from('login_nonces')
-        .delete()
-        .match({ address: lowerCaseAddress });
+      console.log(`[API Verify] Nonce for ${normalizedAddress} has expired.`);
       return createErrorResponse('Nonce has expired, please try again.', 403);
     }
+
     if (!message.includes(nonceData.nonce)) {
       console.log(
-        `[API Verify] Message doesn't contain valid nonce (${nonceData.nonce}) for ${lowerCaseAddress}.`,
+        `[API Verify] Message doesn't contain valid nonce (${nonceData.nonce}) for ${normalizedAddress}.`,
       );
       return createErrorResponse('Invalid nonce in signature message.', 403);
     }
 
-    console.log(
-      `[API Verify] Nonce (${nonceData.nonce}) verified, deleting...`,
-    );
-    await supabaseAdmin
-      .from('login_nonces')
-      .delete()
-      .match({ address: lowerCaseAddress });
+    console.log(`[API Verify] Verifying signature for ${normalizedAddress}...`);
 
-    console.log(`[API Verify] Verifying signature for ${lowerCaseAddress}...`);
     let recoveredAddress: string;
     try {
       recoveredAddress = ethers.verifyMessage(message, signature);
@@ -85,56 +107,106 @@ export async function POST(request: NextRequest) {
         401,
       );
     }
-    if (recoveredAddress.toLowerCase() !== lowerCaseAddress) {
+
+    if (recoveredAddress.toLowerCase() !== normalizedAddress) {
       console.warn(
-        `[API Verify] Address mismatch: Recovered ${recoveredAddress.toLowerCase()} != Provided ${lowerCaseAddress}`,
+        `[API Verify] Address mismatch: Recovered ${recoveredAddress.toLowerCase()} != Provided ${normalizedAddress}`,
       );
       return createErrorResponse(
         'Signature does not match provided address',
         401,
       );
     }
+
     console.log(
-      `[API Verify] Signature verification successful: ${lowerCaseAddress}`,
+      `[API Verify] Signature verification successful: ${normalizedAddress}`,
     );
 
-    console.log(`[API Verify] Finding profile for ${lowerCaseAddress}...`);
+    console.log(`[API Verify] Finding profile for ${normalizedAddress}...`);
+
     const { data: profile, error: findProfileError } = await supabaseAdmin
       .from('profiles')
       .select('user_id')
-      .eq('address', lowerCaseAddress)
+      .eq('address', normalizedAddress)
       .maybeSingle();
 
     if (findProfileError) {
       console.error(
-        `[API Verify] Database error when finding profile (${lowerCaseAddress}):`,
+        `[API Verify] Database error when finding profile (${normalizedAddress}):`,
         findProfileError,
       );
       return createErrorResponse('Database error when finding profile', 500);
     }
 
     let isNewUser = !profile || !profile.user_id;
-    let token = null;
 
     if (!isNewUser) {
-      const { data: linkData, error: linkError } =
-        await supabaseAdmin.auth.admin.generateLink({
-          type: 'magiclink',
-          email: lowerCaseAddress,
-        });
-      if (linkError) {
-        console.error(
-          `[API Verify] Database error when generating link (${lowerCaseAddress}):`,
-          linkError,
-        );
-        return createErrorResponse('Database error when generating link', 500);
-      }
-      token = linkData.properties.hashed_token;
+      const token = await generateAuthToken(normalizedAddress);
+      return createSuccessResponse({ isNewUser, token });
     }
 
+    console.log(
+      `[API Verify] Profile not found for ${normalizedAddress}. Creating new user...`,
+    );
+
+    if (!username) {
+      return createErrorResponse('Username is required for new account', 400);
+    }
+
+    const { data: newUserResponse, error: createUserError } =
+      await supabaseAdmin.auth.admin.createUser({
+        user_metadata: { wallet_address: normalizedAddress },
+        email,
+        email_confirm: true,
+      });
+
+    if (createUserError) {
+      console.error(
+        '[API Verify] Failed to create Supabase Auth user:',
+        createUserError,
+      );
+      return createErrorResponse('Database error when creating user', 500);
+    }
+
+    if (!newUserResponse?.user) {
+      return createErrorResponse('Failed to create user account', 500);
+    }
+
+    const userId = newUserResponse.user.id;
+    console.log(`[API Verify] Created new Supabase Auth user: ${userId}`);
+
+    console.log(
+      `[API Verify] Creating profile record for new user ${userId}...`,
+    );
+
+    const { error: createProfileError } = await supabaseAdmin
+      .from('profiles')
+      .insert({
+        user_id: userId,
+        address: normalizedAddress,
+        username,
+      });
+
+    if (createProfileError) {
+      console.error(
+        `[API Verify] Failed to create profile for user ${userId}:`,
+        createProfileError,
+      );
+      console.log(
+        `[API Verify] Rolling back: Attempting to delete orphaned Auth user ${userId}...`,
+      );
+      await supabaseAdmin.auth.admin.deleteUser(userId);
+      return createErrorResponse('Database error when creating profile', 500);
+    }
+
+    console.log(
+      `[API Verify] Successfully created profile for new user ${userId}`,
+    );
+
+    const token = await generateAuthToken(normalizedAddress);
     return createSuccessResponse({ isNewUser, token });
   } catch (error: unknown) {
-    console.error('Error creating nonce:', error);
+    console.error('[API Verify] Unhandled error:', error);
     return createErrorResponse('Internal server error', 500);
   }
 }
