@@ -7,10 +7,8 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@/components/base/modal';
-import {
-  CreateProfileErrorPrefix,
-  useCeramicContext,
-} from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
+import { CreateProfileErrorPrefix } from '@/context/CeramicContext';
 import { addToast, Button, Input, Spinner } from '@heroui/react';
 import { X } from '@phosphor-icons/react';
 import React, {
@@ -46,7 +44,7 @@ const NewAuthPrompt: React.FC = () => {
     createProfile,
     hideAuthPrompt,
     isAuthPromptVisible,
-  } = useCeramicContext();
+  } = useAbstractAuthContext();
   const { disconnectAsync } = useDisconnect();
 
   const maxUsernameLength = 200;
@@ -125,8 +123,8 @@ const NewAuthPrompt: React.FC = () => {
 
   const handleCloseAndReset = useCallback(async () => {
     setInputUsername('');
-    hideAuthPrompt();
-    logout();
+    await hideAuthPrompt();
+    await logout();
     await disconnectAsync();
   }, [hideAuthPrompt, logout, disconnectAsync]);
 

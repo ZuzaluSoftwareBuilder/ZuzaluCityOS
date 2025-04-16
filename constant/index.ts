@@ -6,6 +6,7 @@ import { RuntimeCompositeDefinition } from '@composedb/types';
 import { EdDSAPublicKey } from '@pcd/eddsa-pcd';
 import { EdDSATicketPCDTypeName } from '@pcd/eddsa-ticket-pcd';
 import { PipelineEdDSATicketZuAuthConfig } from '@pcd/passport-interface';
+import { createClient } from '@supabase/supabase-js';
 import { createPublicClient, createWalletClient, getContract } from 'viem';
 import { http } from 'wagmi';
 import { sepolia } from 'wagmi/chains';
@@ -21,6 +22,12 @@ export const composeClient = new ComposeClient({
   ceramic: ceramicUrl,
   definition: definition as RuntimeCompositeDefinition,
 });
+
+export const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+export const supabaseKey =
+  process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY || '';
+export const supabase = createClient(supabaseUrl, supabaseKey);
+
 export const dashboardEvent = process.env.NEXT_PUBLIC_EVENT_ID;
 export const resendApiKey = process.env.NEXT_PUBLIC_RESEND_API_KEY;
 export const JWT_SECRET = 'ZuCity';

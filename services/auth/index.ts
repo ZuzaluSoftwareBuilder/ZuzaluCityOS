@@ -1,20 +1,48 @@
-export const login = async (address: string) => {
+import axiosInstance from '@/utils/axiosInstance';
+
+export async function getNonce(address: string) {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          address,
-        }),
-      },
-    );
-    const data = res.json();
-    return data;
+    const { data } = await axiosInstance.post(`/api/auth/supabase/nonce`, {
+      address,
+    });
+    console.log('getNonce', data);
+    return data.data?.nonce;
   } catch (error) {
-    console.log('error in login (service) => ', error);
+    return '';
   }
-};
+}
+
+export async function checkRegistration(address: string) {
+  try {
+    const { data } = await axiosInstance.get(
+      `/api/auth/supabase/checkRegistration?address=${address}`,
+    );
+
+    console.log('checkRegistration', data);
+    return !!data.data?.registered;
+  } catch (error) {
+    return false;
+  }
+}
+
+export interface IVerifyParams {
+  address: string;
+  message: string;
+  signature: string;
+  username?: string;
+}
+
+export async function verify(params: IVerifyParams) {
+  try {
+    const { data } = await axiosInstance.post(
+      '/api/auth/supabase/verify',
+      params,
+    );
+    return data.data as {
+      isNewUser: boolean;
+      token: string;
+    };
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}

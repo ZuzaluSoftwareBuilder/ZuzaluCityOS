@@ -4,7 +4,7 @@ import { Button } from '@/components/base';
 import { WalletIcon } from '@/components/icons';
 import UserProfileDropdown from '@/components/layout/Header/UserProfileDropdown';
 import Profile from '@/components/profile';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import useOpenDraw from '@/hooks/useOpenDraw';
 import { getWalletAddressFromDid } from '@/utils/did';
 import { useRouter } from 'next/navigation';
@@ -36,7 +36,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
     showAuthPrompt,
     performFullLogoutAndReload,
     profile,
-  } = useCeramicContext();
+  } = useAbstractAuthContext();
   const [showProfile, setShowProfile] = useState(false);
   const { open, handleOpen, handleClose } = useOpenDraw();
 

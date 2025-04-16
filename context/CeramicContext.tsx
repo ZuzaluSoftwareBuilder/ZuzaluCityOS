@@ -12,6 +12,7 @@ import {
   CREATE_PROFILE_MUTATION,
   GET_OWN_PROFILE_QUERY,
 } from '@/services/graphql/profile';
+import { AuthStatus, CeramicAuthContext, ConnectSource } from '@/types/auth';
 import { Profile } from '@/types/index.js';
 import { executeQuery } from '@/utils/ceramic';
 import { authenticateCeramic } from '@/utils/ceramicAuth';
@@ -20,8 +21,6 @@ import {
   safeRemoveLocalStorage,
   safeSetLocalStorage,
 } from '@/utils/localStorage';
-import { CeramicClient } from '@ceramicnetwork/http-client';
-import { ComposeClient } from '@composedb/client';
 import {
   createContext,
   useCallback,
@@ -33,43 +32,9 @@ import {
 import { useAccount, useDisconnect } from 'wagmi';
 import { getAccount } from 'wagmi/actions';
 
-type ConnectSource = 'connectButton' | 'invalidAction';
-type AuthStatus =
-  | 'idle'
-  | 'authenticating'
-  | 'fetching_profile'
-  | 'creating_profile'
-  | 'authenticated'
-  | 'error';
-
 export const CreateProfileErrorPrefix = '[Create Profile Failed]';
 
-interface CeramicContextType {
-  ceramic: CeramicClient;
-  composeClient: ComposeClient;
-  authStatus: AuthStatus;
-  isCheckingInitialAuth: boolean;
-  isAuthenticated: boolean;
-  authenticate: () => Promise<void>;
-  username: string | undefined;
-  profile: Profile | undefined;
-  newUser: boolean | undefined;
-  logout: () => void;
-  performFullLogoutAndReload: () => Promise<void>;
-  isAuthPromptVisible: boolean;
-  showAuthPrompt: (source?: ConnectSource) => Promise<void>;
-  hideAuthPrompt: () => Promise<void>;
-  createProfile: (newName: string) => Promise<void>;
-  getProfile: () => Promise<Profile | null>;
-  connectSource: ConnectSource;
-  setConnectSource: (source: ConnectSource) => void;
-  authError: string | null;
-  isAuthenticating: boolean;
-  isFetchingProfile: boolean;
-  isCreatingProfile: boolean;
-}
-
-const CeramicContext = createContext<CeramicContextType>({
+const CeramicContext = createContext<CeramicAuthContext>({
   ceramic,
   composeClient,
   authStatus: 'idle',
@@ -79,7 +44,7 @@ const CeramicContext = createContext<CeramicContextType>({
   username: undefined,
   profile: undefined,
   newUser: undefined,
-  logout: () => {},
+  logout: async () => {},
   performFullLogoutAndReload: async () => {},
   isAuthPromptVisible: false,
   showAuthPrompt: async () => {},
@@ -137,7 +102,7 @@ export const CeramicProvider = ({ children }: any) => {
     checkInitialAuth();
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     safeRemoveLocalStorage(StorageKey_Username);
     safeRemoveLocalStorage(StorageKey_CeramicEthDid);
     safeRemoveLocalStorage(StorageKey_DisplayDid);
@@ -154,7 +119,7 @@ export const CeramicProvider = ({ children }: any) => {
   const performFullLogoutAndReload = useCallback(async () => {
     try {
       await disconnectAsync();
-      logout();
+      await logout();
       litDisconnect();
     } catch (error) {
       console.error(

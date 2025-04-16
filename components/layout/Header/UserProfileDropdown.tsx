@@ -8,7 +8,7 @@ import {
   DropdownTrigger,
 } from '@/components/base';
 import Copy from '@/components/biz/common/Copy';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { formatUserName } from '@/utils/format';
 import { Avatar, Image } from '@heroui/react';
 import { SignOut, UserSquare, Wallet } from '@phosphor-icons/react';
@@ -36,7 +36,7 @@ const UserProfileDropdown = ({
   displayAddress,
   address,
 }: IUserProfileDropdown) => {
-  const { username, profile } = useCeramicContext();
+  const { username, profile } = useAbstractAuthContext();
 
   const formattedName = formatUserName(username);
 
