@@ -63,8 +63,7 @@ const NewAuthPrompt: React.FC = () => {
           err,
         );
         addToast({
-          title: 'Error',
-          description: err.message,
+          title: err.message || 'Authentication failed',
           color: 'danger',
         });
       });

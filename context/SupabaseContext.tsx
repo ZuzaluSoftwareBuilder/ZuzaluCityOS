@@ -26,7 +26,7 @@ import {
 } from 'react';
 import { useAccount, useDisconnect, useSignMessage } from 'wagmi';
 
-const SupabaseContext = createContext<SupabaseAuthContext>({
+const initialContext: SupabaseAuthContext = {
   supabase,
   session: null,
   user: null,
@@ -50,25 +50,36 @@ const SupabaseContext = createContext<SupabaseAuthContext>({
   isAuthenticating: false,
   isFetchingProfile: false,
   isCreatingProfile: false,
-});
+};
+
+const SupabaseContext = createContext<SupabaseAuthContext>(initialContext);
 
 export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
-  const [authStatus, setAuthStatus] = useState<AuthStatus>('idle');
-  const [session, setSession] = useState<Session | null>(null);
-  const [supabaseUser, setSupabaseUser] = useState<User | null>(null);
-  const [isAuthPromptVisible, setAuthPromptVisible] = useState(false);
-  const [username, setUsername] = useState<string | undefined>(undefined);
-  const [profile, setProfile] = useState<Profile | undefined>(undefined);
-  const [newUser, setNewUser] = useState<boolean | undefined>(undefined);
-  const [connectSource, setConnectSource] =
-    useState<ConnectSource>('invalidAction');
-  const [authError, setAuthError] = useState<string | null>(null);
-  const [isCheckingInitialAuth, setIsCheckingInitialAuth] = useState(true);
+  const [authState, setAuthState] = useState({
+    status: 'idle' as AuthStatus,
+    error: null as string | null,
+    isPromptVisible: false,
+    connectSource: 'invalidAction' as ConnectSource,
+    isCheckingInitialAuth: true,
+  });
 
-  const isAuthenticated = authStatus === 'authenticated';
-  const isAuthenticating = authStatus === 'authenticating';
-  const isFetchingProfile = authStatus === 'fetching_profile';
-  const isCreatingProfile = authStatus === 'creating_profile';
+  const [userState, setUserState] = useState({
+    session: null as Session | null,
+    user: null as User | null,
+    username: undefined as string | undefined,
+    profile: undefined as Profile | undefined,
+    newUser: undefined as boolean | undefined,
+  });
+
+  const [signatureState, setSignatureState] = useState({
+    nonce: '',
+    signature: '',
+  });
+
+  const isAuthenticated = authState.status === 'authenticated';
+  const isAuthenticating = authState.status === 'authenticating';
+  const isFetchingProfile = authState.status === 'fetching_profile';
+  const isCreatingProfile = authState.status === 'creating_profile';
 
   const { address, isConnected } = useAccount();
   const { litDisconnect } = useLitContext();
@@ -76,36 +87,59 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const { signMessageAsync } = useSignMessage();
   const prevIsConnectedRef = useRef<boolean | undefined>();
 
-  const [nonce, setNonce] = useState<string>('');
-  const [signature, setSignature] = useState<string>('');
+  const handleError = useCallback(
+    (message: string, resetToIdle = false, throwError = true) => {
+      setAuthState((prev) => ({
+        ...prev,
+        status: resetToIdle ? 'idle' : 'error',
+        error: resetToIdle ? null : message,
+      }));
+      if (throwError) throw new Error(message);
+      return null;
+    },
+    [],
+  );
 
-  const handleAndThrowError = (
-    message: string,
-    throwError = true,
-    resetToIdle?: boolean,
-  ) => {
-    const errorMessage = `[SupabaseContext] ${message}`;
-    setAuthStatus(resetToIdle ? 'idle' : 'error');
-    setAuthError(resetToIdle ? null : errorMessage);
-    if (!throwError) return null;
-    throw new Error(errorMessage);
-  };
+  const updateAuthState = useCallback(
+    (status: AuthStatus, error: string | null = null) => {
+      setAuthState((prev) => ({ ...prev, status, error }));
+    },
+    [],
+  );
 
-  const getMessageToSign = (nonce: string) => {
+  const resetAuthState = useCallback(() => {
+    safeRemoveLocalStorage(StorageKey_Username);
+    setUserState({
+      session: null,
+      user: null,
+      username: undefined,
+      profile: undefined,
+      newUser: undefined,
+    });
+    setAuthState((prev) => ({
+      ...prev,
+      status: 'idle',
+      error: null,
+      isPromptVisible: false,
+    }));
+  }, []);
+
+  const getMessageToSign = useCallback((nonce: string) => {
     return `Please sign this message to log in or register.\n\nNonce: ${nonce}`;
-  };
+  }, []);
 
   const getProfileFromSupabase = useCallback(
     async (userId: string): Promise<Profile | null> => {
       if (!userId) {
-        handleAndThrowError(
+        return handleError(
           'Cannot fetch profile.userId, please connect wallet and authenticate.',
           false,
+          false,
         );
-        return null;
       }
-      setAuthStatus('fetching_profile');
-      setAuthError(null);
+
+      updateAuthState('fetching_profile');
+
       try {
         const { data: profile } = await supabase
           .from('profiles')
@@ -115,50 +149,52 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
         if (profile) {
           safeSetLocalStorage(StorageKey_Username, profile.username);
-          setProfile({
-            id: profile.user_id,
+          setUserState((prev) => ({
+            ...prev,
+            profile: {
+              id: profile.user_id,
+              username: profile.username,
+              avatar: profile.avatar,
+            },
             username: profile.username,
-            avatar: profile.avatar,
-          });
-          setUsername(profile.username);
-          setNewUser(false);
-          setAuthStatus('authenticated');
+            newUser: false,
+          }));
+          updateAuthState('authenticated');
           return {
             ...profile,
             id: profile.user_id,
             username: profile.username,
           };
         } else {
-          setUsername(undefined);
-          setProfile(undefined);
           safeRemoveLocalStorage(StorageKey_Username);
-          setNewUser(true);
-          setAuthStatus('authenticated');
+          setUserState((prev) => ({
+            ...prev,
+            username: undefined,
+            profile: undefined,
+            newUser: true,
+          }));
+          updateAuthState('authenticated');
           return null;
         }
       } catch (error: any) {
-        handleAndThrowError(
+        return handleError(
           `Failed to fetch profile: ${error.message || 'Please try again later'}`,
         );
-        return null;
       }
     },
-    [],
+    [handleError, updateAuthState],
   );
 
   useEffect(() => {
     const checkInitialAuth = async () => {
-      setIsCheckingInitialAuth(true);
-      setAuthStatus('authenticating');
+      setAuthState((prev) => ({ ...prev, isCheckingInitialAuth: true }));
+      updateAuthState('authenticating');
+
       try {
         const {
           data: { session: currentSession },
           error,
         } = await supabase.auth.getSession();
-        console.log(
-          '[SupabaseContext] checkInitialAuth getSession:',
-          currentSession,
-        );
 
         if (error) {
           console.error('[SupabaseContext] Error getting session:', error);
@@ -168,8 +204,11 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         }
 
         if (currentSession) {
-          setSession(currentSession);
-          setSupabaseUser(currentSession.user);
+          setUserState((prev) => ({
+            ...prev,
+            session: currentSession,
+            user: currentSession.user,
+          }));
           await getProfileFromSupabase(currentSession.user.id);
         } else {
           resetAuthState();
@@ -178,30 +217,18 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         console.error('[SupabaseContext] Initial auth check failed:', error);
         resetAuthState();
       } finally {
-        setIsCheckingInitialAuth(false);
+        setAuthState((prev) => ({ ...prev, isCheckingInitialAuth: false }));
       }
     };
+
     checkInitialAuth();
   }, []);
 
-  const resetAuthState = useCallback(() => {
-    safeRemoveLocalStorage(StorageKey_Username);
-    setSession(null);
-    setSupabaseUser(null);
-
-    setUsername(undefined);
-    setProfile(undefined);
-    setNewUser(undefined);
-    setAuthError(null);
-    setAuthStatus('idle');
-    setAuthPromptVisible(false);
-  }, []);
-
   const logout = useCallback(async () => {
-    setAuthStatus('authenticating');
+    updateAuthState('idle');
     await supabase.auth.signOut();
     resetAuthState();
-  }, [resetAuthState]);
+  }, [resetAuthState, updateAuthState]);
 
   const performFullLogoutAndReload = useCallback(async () => {
     try {
@@ -210,7 +237,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       litDisconnect();
     } catch (error) {
       console.error(
-        '[SupabaseContext] Error during disconnect operations in performFullLogoutAndReload:',
+        '[SupabaseContext] Error during disconnect operations:',
         error,
       );
     } finally {
@@ -222,55 +249,73 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     if (
       prevIsConnectedRef.current === true &&
       !isConnected &&
-      authStatus === 'authenticated'
+      authState.status === 'authenticated'
     ) {
       console.warn(
         '[SupabaseContext] Wallet disconnected externally. Performing full logout.',
       );
       performFullLogoutAndReload().catch((error) => {
         console.error(
-          '[SupabaseContext] Error during performFullLogoutAndReload after external disconnect:',
+          '[SupabaseContext] Error during logout after external disconnect:',
           error,
         );
       });
     }
     prevIsConnectedRef.current = isConnected;
-  }, [isConnected, performFullLogoutAndReload, authStatus]);
+  }, [isConnected, performFullLogoutAndReload, authState.status]);
 
   const authenticate = useCallback(async () => {
     if (!isConnected || !address) {
-      handleAndThrowError('Wallet not connected, cannot authenticate.', false);
+      handleError('Wallet not connected, cannot authenticate.', false, false);
       return;
     }
-    if (authStatus === 'authenticating' || authStatus === 'authenticated') {
+
+    if (
+      authState.status === 'authenticating' ||
+      authState.status === 'authenticated'
+    ) {
       return;
     }
 
     safeSetLocalStorage(StorageKey_SupabaseAuthPending, '1');
-    setAuthStatus('authenticating');
-    setAuthError(null);
-    setNewUser(undefined);
+    updateAuthState('authenticating');
+    setUserState((pre) => ({
+      ...pre,
+      newUser: undefined,
+    }));
 
     try {
-      setAuthStatus('authenticating');
       const [currentNonce, isRegistration] = await Promise.all([
         getNonce(address),
         checkRegistration(address),
       ]);
-      setNonce(currentNonce);
+
       if (!currentNonce) {
-        handleAndThrowError('Nonce not found');
+        handleError('Nonce not found', false, true);
       }
+
+      setSignatureState((pre) => ({
+        ...pre,
+        nonce: currentNonce,
+      }));
+
       const messageToSign = getMessageToSign(currentNonce);
       const signature = await signMessageAsync({ message: messageToSign });
-      setSignature(signature);
+
+      setSignatureState((pre) => ({
+        ...pre,
+        signature,
+      }));
 
       if (!isRegistration) {
-        setUsername(undefined);
-        setProfile(undefined);
+        setUserState((prev) => ({
+          ...prev,
+          username: undefined,
+          profile: undefined,
+          newUser: true,
+        }));
         safeRemoveLocalStorage(StorageKey_Username);
-        setNewUser(true);
-        setAuthStatus('authenticated');
+        updateAuthState('authenticated');
         return;
       }
 
@@ -279,25 +324,30 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         message: messageToSign,
         signature,
       });
+
       const { data, error } = await supabase.auth.verifyOtp({
         token_hash: token,
         type: 'email',
       });
+
       if (error) {
-        handleAndThrowError(error.message || 'VerifyOtp failed');
+        handleError(error.message || 'VerifyOtp failed');
       } else {
-        setSession(data.session);
-        setSupabaseUser(data.user);
+        setUserState((prev) => ({
+          ...prev,
+          session: data.session,
+          user: data.user,
+        }));
         await getProfileFromSupabase(data.user?.id!);
       }
     } catch (error: any) {
       if (isUserDenied(error)) {
-        handleAndThrowError('User denied signature or cancelled.', true, true);
+        handleError('User denied signature or cancelled.', true, true);
       } else {
         const backendError = error.response?.data?.error;
         const errorMessage =
           backendError || error.message || 'Please try again';
-        handleAndThrowError(errorMessage);
+        handleError(errorMessage);
       }
     } finally {
       safeRemoveLocalStorage(StorageKey_SupabaseAuthPending);
@@ -305,68 +355,84 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   }, [
     isConnected,
     address,
-    authStatus,
+    authState.status,
     signMessageAsync,
     getProfileFromSupabase,
+    handleError,
+    updateAuthState,
+    getMessageToSign,
   ]);
 
   const createProfile = useCallback(
     async (newUsername: string) => {
       if (!address) {
-        handleAndThrowError(
+        handleError(
           `${CreateProfileErrorPrefix} Invalid user info or wallet address, cannot create profile.`,
         );
+        return;
       }
 
-      setAuthStatus('creating_profile');
-      setAuthError(null);
+      updateAuthState('creating_profile');
 
       try {
         const { token } = await verify({
           address: address!,
-          message: getMessageToSign(nonce),
-          signature,
+          message: getMessageToSign(signatureState.nonce),
+          signature: signatureState.signature,
           username: newUsername || '',
         });
+
         const { data, error } = await supabase.auth.verifyOtp({
           token_hash: token,
           type: 'email',
         });
 
         if (error) {
-          handleAndThrowError(
+          handleError(
             `${CreateProfileErrorPrefix}: ${error.message || 'Please try again'}`,
           );
+          return;
         }
 
-        setSession(data.session);
-        setSupabaseUser(data.user);
+        setUserState((prev) => ({
+          ...prev,
+          session: data.session,
+          user: data.user,
+        }));
+
         await getProfileFromSupabase(data.user?.id!);
       } catch (error: any) {
-        handleAndThrowError(
+        handleError(
           `${CreateProfileErrorPrefix}: ${error.message || 'Please try again'}`,
         );
       }
     },
-    [address, nonce, signature, getProfileFromSupabase],
+    [
+      address,
+      getMessageToSign,
+      signatureState,
+      getProfileFromSupabase,
+      handleError,
+      updateAuthState,
+    ],
   );
 
   const getProfile = useCallback(async (): Promise<Profile | null> => {
-    if (!supabaseUser?.id) {
+    if (!userState.user?.id) {
       console.warn(
         '[SupabaseContext] getProfile called but user is not authenticated.',
       );
       return null;
     }
-    return getProfileFromSupabase(supabaseUser.id);
-  }, [supabaseUser, getProfileFromSupabase]);
+    return getProfileFromSupabase(userState.user.id);
+  }, [userState.user, getProfileFromSupabase]);
 
   const hideAuthPrompt = useCallback(async () => {
-    setAuthPromptVisible(false);
-    if (authStatus === 'error') {
+    setAuthState((prev) => ({ ...prev, isPromptVisible: false }));
+    if (authState.status === 'error') {
       resetAuthState();
     }
-  }, [authStatus, resetAuthState]);
+  }, [authState.status, resetAuthState]);
 
   const showAuthPrompt = useCallback(
     async (source: ConnectSource = 'invalidAction') => {
@@ -374,36 +440,45 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         await disconnectAsync();
         safeRemoveLocalStorage(StorageKey_SupabaseAuthPending);
       }
-      setConnectSource(source);
-      setAuthPromptVisible(true);
-      if (authStatus === 'error') {
+
+      setAuthState((prev) => ({
+        ...prev,
+        connectSource: source,
+        isPromptVisible: true,
+      }));
+
+      if (authState.status === 'error') {
         resetAuthState();
       }
     },
-    [disconnectAsync, authStatus, resetAuthState],
+    [disconnectAsync, authState.status, resetAuthState],
   );
+
+  const setConnectSource = useCallback((source: ConnectSource) => {
+    setAuthState((prev) => ({ ...prev, connectSource: source }));
+  }, []);
 
   const contextValue: SupabaseAuthContext = {
     supabase,
-    session,
-    user: supabaseUser,
-    authStatus,
-    isCheckingInitialAuth,
+    session: userState.session,
+    user: userState.user,
+    authStatus: authState.status,
+    isCheckingInitialAuth: authState.isCheckingInitialAuth,
     isAuthenticated,
     authenticate,
-    username,
-    profile,
-    newUser,
+    username: userState.username,
+    profile: userState.profile,
+    newUser: userState.newUser,
     logout,
     performFullLogoutAndReload,
-    isAuthPromptVisible,
+    isAuthPromptVisible: authState.isPromptVisible,
     showAuthPrompt,
     hideAuthPrompt,
     createProfile,
     getProfile,
-    connectSource,
+    connectSource: authState.connectSource,
     setConnectSource,
-    authError,
+    authError: authState.error,
     isAuthenticating,
     isFetchingProfile,
     isCreatingProfile,
