@@ -12,7 +12,12 @@ import {
   CREATE_PROFILE_MUTATION,
   GET_OWN_PROFILE_QUERY,
 } from '@/services/graphql/profile';
-import { AuthStatus, CeramicAuthContext, ConnectSource } from '@/types/auth';
+import {
+  AuthStatus,
+  CeramicAuthContext,
+  ConnectSource,
+  Nullable,
+} from '@/types/auth';
 import { Profile } from '@/types/index.js';
 import { executeQuery } from '@/utils/ceramic';
 import { authenticateCeramic } from '@/utils/ceramicAuth';
@@ -41,9 +46,9 @@ const CeramicContext = createContext<CeramicAuthContext>({
   isCheckingInitialAuth: true,
   isAuthenticated: false,
   authenticate: async () => {},
-  username: undefined,
-  profile: undefined,
-  newUser: undefined,
+  username: null,
+  profile: null,
+  newUser: false,
   logout: async () => {},
   performFullLogoutAndReload: async () => {},
   isAuthPromptVisible: false,
@@ -62,12 +67,12 @@ const CeramicContext = createContext<CeramicAuthContext>({
 export const CeramicProvider = ({ children }: any) => {
   const [authStatus, setAuthStatus] = useState<AuthStatus>('idle');
   const [isAuthPromptVisible, setAuthPromptVisible] = useState(false);
-  const [username, setUsername] = useState<string | undefined>(undefined);
-  const [profile, setProfile] = useState<Profile | undefined>(undefined);
-  const [newUser, setNewUser] = useState<boolean | undefined>(undefined);
+  const [username, setUsername] = useState<Nullable<string>>(null);
+  const [profile, setProfile] = useState<Nullable<Profile>>(null);
+  const [newUser, setNewUser] = useState<boolean>(false);
   const [connectSource, setConnectSource] =
     useState<ConnectSource>('invalidAction');
-  const [authError, setAuthError] = useState<string | null>(null);
+  const [authError, setAuthError] = useState<Nullable<string>>(null);
   const [isCheckingInitialAuth, setIsCheckingInitialAuth] = useState(true);
   const isAuthenticated = authStatus === 'authenticated';
   const isAuthenticating = authStatus === 'authenticating';
@@ -108,9 +113,9 @@ export const CeramicProvider = ({ children }: any) => {
     safeRemoveLocalStorage(StorageKey_DisplayDid);
     safeRemoveLocalStorage(StorageKey_LoggedIn);
 
-    setUsername(undefined);
-    setProfile(undefined);
-    setNewUser(undefined);
+    setUsername(null);
+    setProfile(null);
+    setNewUser(false);
     setAuthError(null);
     setAuthStatus('idle');
     setAuthPromptVisible(false);
@@ -175,8 +180,8 @@ export const CeramicProvider = ({ children }: any) => {
         setAuthStatus('authenticated');
         return basicProfile;
       } else {
-        setUsername(undefined);
-        setProfile(undefined);
+        setUsername(null);
+        setProfile(null);
         safeRemoveLocalStorage(StorageKey_Username);
         setNewUser(true);
         setAuthStatus('authenticated');

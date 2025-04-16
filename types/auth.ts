@@ -3,6 +3,8 @@ import { CeramicClient } from '@ceramicnetwork/http-client';
 import { ComposeClient } from '@composedb/client';
 import { Session, SupabaseClient, User } from '@supabase/supabase-js'; // Import Session, User
 
+export type Nullable<T> = T | null;
+
 export type AuthSource = 'ceramic' | 'supabase';
 export type ConnectSource = 'connectButton' | 'invalidAction';
 export type AuthStatus =
@@ -20,12 +22,12 @@ export interface AuthContextBase {
   isAuthenticated: boolean;
   isAuthPromptVisible: boolean;
   connectSource: ConnectSource;
-  authError: string | null;
+  authError: Nullable<string>;
 
   // user
-  username?: string;
-  profile?: Profile;
-  newUser?: boolean;
+  username: Nullable<string>;
+  profile: Nullable<Profile>;
+  newUser: boolean;
 
   // biz status
   isAuthenticating: boolean;
@@ -45,8 +47,8 @@ export interface AuthContextBase {
 
 export interface SupabaseAuthContext extends AuthContextBase {
   supabase: SupabaseClient;
-  session: Session | null;
-  user: User | null;
+  session: Nullable<Session>;
+  user: Nullable<User>;
 }
 
 export interface CeramicAuthContext extends AuthContextBase {
@@ -60,4 +62,25 @@ export interface IAbstractAuthContext extends AuthContextBase {
   // for old ceramic usage
   ceramic: CeramicClient;
   composeClient: ComposeClient;
+}
+
+export interface AuthState {
+  status: AuthStatus;
+  error: Nullable<string>;
+  isPromptVisible: boolean;
+  connectSource: ConnectSource;
+  isCheckingInitialAuth: boolean;
+}
+
+export interface UserState {
+  session: Nullable<Session>;
+  user: Nullable<User>;
+  username: Nullable<string>;
+  profile: Nullable<Profile>;
+  newUser: boolean;
+}
+
+export interface SignatureState {
+  nonce: string;
+  signature: string;
 }

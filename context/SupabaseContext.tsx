@@ -5,7 +5,14 @@ import {
 import { CreateProfileErrorPrefix } from '@/context/CeramicContext';
 import { useLitContext } from '@/context/LitContext';
 import { checkRegistration, getNonce, verify } from '@/services/auth';
-import { AuthStatus, ConnectSource, SupabaseAuthContext } from '@/types/auth';
+import {
+  AuthState,
+  AuthStatus,
+  ConnectSource,
+  SignatureState,
+  SupabaseAuthContext,
+  UserState,
+} from '@/types/auth';
 import { Profile } from '@/types/index.js';
 import { isUserDenied } from '@/utils/handleError';
 import {
@@ -14,7 +21,6 @@ import {
   safeSetLocalStorage,
 } from '@/utils/localStorage';
 import { supabase } from '@/utils/supabase/client';
-import { Session, User } from '@supabase/supabase-js';
 import {
   createContext,
   ReactNode,
@@ -34,9 +40,9 @@ const initialContext: SupabaseAuthContext = {
   isCheckingInitialAuth: true,
   isAuthenticated: false,
   authenticate: async () => {},
-  username: undefined,
-  profile: undefined,
-  newUser: undefined,
+  username: null,
+  profile: null,
+  newUser: false,
   logout: async () => {},
   performFullLogoutAndReload: async () => {},
   isAuthPromptVisible: false,
@@ -55,23 +61,23 @@ const initialContext: SupabaseAuthContext = {
 const SupabaseContext = createContext<SupabaseAuthContext>(initialContext);
 
 export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
-  const [authState, setAuthState] = useState({
-    status: 'idle' as AuthStatus,
-    error: null as string | null,
+  const [authState, setAuthState] = useState<AuthState>({
+    status: 'idle',
+    error: null,
     isPromptVisible: false,
-    connectSource: 'invalidAction' as ConnectSource,
+    connectSource: 'invalidAction',
     isCheckingInitialAuth: true,
   });
 
-  const [userState, setUserState] = useState({
-    session: null as Session | null,
-    user: null as User | null,
-    username: undefined as string | undefined,
-    profile: undefined as Profile | undefined,
-    newUser: undefined as boolean | undefined,
+  const [userState, setUserState] = useState<UserState>({
+    session: null,
+    user: null,
+    username: null,
+    profile: null,
+    newUser: false,
   });
 
-  const [signatureState, setSignatureState] = useState({
+  const [signatureState, setSignatureState] = useState<SignatureState>({
     nonce: '',
     signature: '',
   });
@@ -112,9 +118,9 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     setUserState({
       session: null,
       user: null,
-      username: undefined,
-      profile: undefined,
-      newUser: undefined,
+      username: null,
+      profile: null,
+      newUser: false,
     });
     setAuthState((prev) => ({
       ...prev,
@@ -169,8 +175,8 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           safeRemoveLocalStorage(StorageKey_Username);
           setUserState((prev) => ({
             ...prev,
-            username: undefined,
-            profile: undefined,
+            username: null,
+            profile: null,
             newUser: true,
           }));
           updateAuthState('authenticated');
@@ -273,7 +279,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     updateAuthState('authenticating');
     setUserState((pre) => ({
       ...pre,
-      newUser: undefined,
+      newUser: false,
     }));
 
     try {
@@ -302,8 +308,8 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       if (!isRegistration) {
         setUserState((prev) => ({
           ...prev,
-          username: undefined,
-          profile: undefined,
+          username: null,
+          profile: null,
           newUser: true,
         }));
         safeRemoveLocalStorage(StorageKey_Username);
@@ -369,7 +375,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           address: address!,
           message: getMessageToSign(signatureState.nonce),
           signature: signatureState.signature,
-          username: newUsername || '',
+          username: newUsername,
         });
 
         const { data, error } = await supabase.auth.verifyOtp({
