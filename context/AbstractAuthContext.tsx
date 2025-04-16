@@ -1,6 +1,6 @@
 import { ceramic, composeClient } from '@/constant';
 import { AuthSource, IAbstractAuthContext } from '@/types/auth';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { useCeramicContext } from './CeramicContext';
 import { useSupabaseContext } from './SupabaseContext';
 
@@ -46,16 +46,6 @@ export const AbstractAuthProvider = ({
   const supabaseCtx = useSupabaseContext();
 
   const currentCtx = authSource === 'ceramic' ? ceramicCtx : supabaseCtx;
-
-  useEffect(() => {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (authSource === 'supabase' && !supabaseUrl) {
-      console.warn(
-        'Supabase configuration unavailable, falling back to Ceramic',
-      );
-      setAuthSource('ceramic');
-    }
-  }, [authSource]);
 
   const contextValue: IAbstractAuthContext = {
     ...currentCtx,
