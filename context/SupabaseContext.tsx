@@ -153,7 +153,9 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
         if (error) {
           console.error('[SupabaseContext] Error getting session:', error);
-          throw new Error(`获取会话失败: ${error.message}`);
+          throw new Error(
+            `[SupabaseContext] Get Session Failed: ${error.message}`,
+          );
         }
 
         if (currentSession) {
@@ -200,7 +202,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       litDisconnect();
     } catch (error) {
       console.error(
-        '[CeramicContext] Error during disconnect operations in performFullLogoutAndReload:',
+        '[SupabaseContext] Error during disconnect operations in performFullLogoutAndReload:',
         error,
       );
     } finally {
@@ -219,7 +221,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       );
       performFullLogoutAndReload().catch((error) => {
         console.error(
-          '[CeramicContext] Error during performFullLogoutAndReload after external disconnect:',
+          '[SupabaseContext] Error during performFullLogoutAndReload after external disconnect:',
           error,
         );
       });
@@ -229,7 +231,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
   const authenticate = useCallback(async () => {
     if (!isConnected || !address) {
-      setAuthError('钱包未连接，无法认证。');
+      setAuthError('Wallet not connected, cannot authenticate.');
       setAuthStatus('error');
       return;
     }
@@ -261,21 +263,15 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       setSignature(signature);
 
       if (isRegistration) {
-        const { isNewUser, token } = await verify({
+        const { token } = await verify({
           address,
           message: messageToSign,
           signature,
         });
-        console.log(
-          '[SupabaseContext] Verification response:',
-          isNewUser,
-          token,
-        );
         const { data } = await supabase.auth.verifyOtp({
           token_hash: token,
           type: 'email',
         });
-        console.log('[SupabaseContext] verifyOtp response:', data);
         setSession(data.session);
         setSupabaseUser(data.user);
         await getProfileFromSupabase(data.user?.id!);
@@ -290,16 +286,14 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       console.error('[SupabaseContext] Authentication failed:', error);
 
       if (isUserDenied(error)) {
-        console.log('[SupabaseContext] User denied signature or connection.');
+        console.warn('[SupabaseContext] User denied signature or connection.');
         setAuthError(null);
         setAuthStatus('idle');
       } else {
         const backendError = error.response?.data?.error;
-        const displayError = `认证失败: ${backendError || error.message || '请重试'}`;
-        console.error(
-          `[SupabaseContext] Authentication error details: ${displayError}`,
-        );
-        setAuthError(displayError);
+        const errorMessage = `Authentication failed: ${backendError || error.message || 'Please try again'}`;
+        console.error(`[SupabaseContext]: ${errorMessage}`);
+        setAuthError(errorMessage);
         setAuthStatus('error');
       }
     } finally {
@@ -327,7 +321,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       setAuthError(null);
 
       try {
-        const { isNewUser, token } = await verify({
+        const { token } = await verify({
           address: address!,
           message: getMessageToSign(nonce),
           signature,
@@ -349,20 +343,12 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           throw new Error(errorMessage);
         }
 
-        console.log(
-          'verify in createProfile: isNewUser + token',
-          isNewUser,
-          token,
-        );
         setSession(data.session);
         setSupabaseUser(data.user);
         await getProfileFromSupabase(data.user?.id!);
       } catch (error: any) {
-        console.error(
-          '[SupabaseContext] createProfile (update) failed:',
-          error,
-        );
-        const errorMessage = `${CreateProfileErrorPrefix}: ${error.message || '请重试'}`;
+        console.error('[SupabaseContext] createProfile failed:', error);
+        const errorMessage = `${CreateProfileErrorPrefix}: ${error.message || 'Please try again'}`;
         setAuthError(errorMessage);
         setAuthStatus('error');
         throw new Error(errorMessage);
