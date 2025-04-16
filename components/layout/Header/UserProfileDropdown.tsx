@@ -38,7 +38,7 @@ const UserProfileDropdown = ({
 }: IUserProfileDropdown) => {
   const { username, profile } = useAbstractAuthContext();
 
-  const formattedName = formatUserName(username);
+  const formattedName = formatUserName(username || '');
 
   return (
     <Dropdown
