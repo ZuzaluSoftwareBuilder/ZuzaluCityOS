@@ -62,6 +62,11 @@ const NewAuthPrompt: React.FC = () => {
           '[NewAuthPrompt] Authentication triggered by useEffect failed:',
           err,
         );
+        addToast({
+          title: 'Error',
+          description: err.message,
+          color: 'danger',
+        });
       });
     }
 

@@ -5,7 +5,6 @@ export async function getNonce(address: string) {
     const { data } = await axiosInstance.post(`/api/auth/supabase/nonce`, {
       address,
     });
-    console.log('getNonce', data);
     return data.data?.nonce;
   } catch (error) {
     return '';
@@ -17,8 +16,6 @@ export async function checkRegistration(address: string) {
     const { data } = await axiosInstance.get(
       `/api/auth/supabase/checkRegistration?address=${address}`,
     );
-
-    console.log('checkRegistration', data);
     return !!data.data?.registered;
   } catch (error) {
     return false;

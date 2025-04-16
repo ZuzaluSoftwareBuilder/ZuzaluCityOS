@@ -79,6 +79,18 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const [nonce, setNonce] = useState<string>('');
   const [signature, setSignature] = useState<string>('');
 
+  const handleAndThrowError = (
+    message: string,
+    throwError = true,
+    resetToIdle?: boolean,
+  ) => {
+    const errorMessage = `[SupabaseContext] ${message}`;
+    setAuthStatus(resetToIdle ? 'idle' : 'error');
+    setAuthError(resetToIdle ? null : errorMessage);
+    if (!throwError) return null;
+    throw new Error(errorMessage);
+  };
+
   const getMessageToSign = (nonce: string) => {
     return `Please sign this message to log in or register.\n\nNonce: ${nonce}`;
   };
@@ -86,13 +98,11 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const getProfileFromSupabase = useCallback(
     async (userId: string): Promise<Profile | null> => {
       if (!userId) {
-        setAuthStatus('error');
-        setAuthError(
+        handleAndThrowError(
           'Cannot fetch profile.userId, please connect wallet and authenticate.',
+          false,
         );
-        throw new Error(
-          'Cannot fetch profile.userId, please connect wallet and authenticate.',
-        );
+        return null;
       }
       setAuthStatus('fetching_profile');
       setAuthError(null);
@@ -102,7 +112,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           .select('*')
           .eq('user_id', userId)
           .single();
-        console.log('[SupabaseContext] Profile fetched:', profile);
+
         if (profile) {
           safeSetLocalStorage(StorageKey_Username, profile.username);
           setProfile({
@@ -127,11 +137,10 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           return null;
         }
       } catch (error: any) {
-        console.error('[SupabaseContext] getProfile failed:', error);
-        const errorMessage = `Failed to fetch profile: ${error.message || 'Please try again later'}`;
-        setAuthError(errorMessage);
-        setAuthStatus('error');
-        throw new Error(errorMessage);
+        handleAndThrowError(
+          `Failed to fetch profile: ${error.message || 'Please try again later'}`,
+        );
+        return null;
       }
     },
     [],
@@ -163,7 +172,6 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           setSupabaseUser(currentSession.user);
           await getProfileFromSupabase(currentSession.user.id);
         } else {
-          console.log('[SupabaseContext] No active session found.');
           resetAuthState();
         }
       } catch (error: any) {
@@ -231,12 +239,10 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
   const authenticate = useCallback(async () => {
     if (!isConnected || !address) {
-      setAuthError('Wallet not connected, cannot authenticate.');
-      setAuthStatus('error');
+      handleAndThrowError('Wallet not connected, cannot authenticate.', false);
       return;
     }
     if (authStatus === 'authenticating' || authStatus === 'authenticated') {
-      console.log('[SupabaseContext] Already authenticating or authenticated.');
       return;
     }
 
@@ -251,50 +257,47 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         getNonce(address),
         checkRegistration(address),
       ]);
-      console.log(
-        '[SupabaseContext] Nonce received:',
-        address,
-        currentNonce,
-        isRegistration,
-      );
       setNonce(currentNonce);
+      if (!currentNonce) {
+        handleAndThrowError('Nonce not found');
+      }
       const messageToSign = getMessageToSign(currentNonce);
       const signature = await signMessageAsync({ message: messageToSign });
       setSignature(signature);
 
-      if (isRegistration) {
-        const { token } = await verify({
-          address,
-          message: messageToSign,
-          signature,
-        });
-        const { data } = await supabase.auth.verifyOtp({
-          token_hash: token,
-          type: 'email',
-        });
-        setSession(data.session);
-        setSupabaseUser(data.user);
-        await getProfileFromSupabase(data.user?.id!);
-      } else {
+      if (!isRegistration) {
         setUsername(undefined);
         setProfile(undefined);
         safeRemoveLocalStorage(StorageKey_Username);
         setNewUser(true);
         setAuthStatus('authenticated');
+        return;
+      }
+
+      const { token } = await verify({
+        address,
+        message: messageToSign,
+        signature,
+      });
+      const { data, error } = await supabase.auth.verifyOtp({
+        token_hash: token,
+        type: 'email',
+      });
+      if (error) {
+        handleAndThrowError(error.message || 'VerifyOtp failed');
+      } else {
+        setSession(data.session);
+        setSupabaseUser(data.user);
+        await getProfileFromSupabase(data.user?.id!);
       }
     } catch (error: any) {
-      console.error('[SupabaseContext] Authentication failed:', error);
-
       if (isUserDenied(error)) {
-        console.warn('[SupabaseContext] User denied signature or connection.');
-        setAuthError(null);
-        setAuthStatus('idle');
+        handleAndThrowError('User denied signature or cancelled.', true, true);
       } else {
         const backendError = error.response?.data?.error;
-        const errorMessage = `Authentication failed: ${backendError || error.message || 'Please try again'}`;
-        console.error(`[SupabaseContext]: ${errorMessage}`);
-        setAuthError(errorMessage);
-        setAuthStatus('error');
+        const errorMessage =
+          backendError || error.message || 'Please try again';
+        handleAndThrowError(errorMessage);
       }
     } finally {
       safeRemoveLocalStorage(StorageKey_SupabaseAuthPending);
@@ -310,11 +313,9 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const createProfile = useCallback(
     async (newUsername: string) => {
       if (!address) {
-        const errorMsg = `${CreateProfileErrorPrefix} Invalid user info or wallet address, cannot create profile.'`;
-        console.error(errorMsg);
-        setAuthError(errorMsg);
-        setAuthStatus('error');
-        throw new Error(errorMsg);
+        handleAndThrowError(
+          `${CreateProfileErrorPrefix} Invalid user info or wallet address, cannot create profile.`,
+        );
       }
 
       setAuthStatus('creating_profile');
@@ -333,25 +334,18 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         });
 
         if (error) {
-          console.error(
-            '[SupabaseContext] createProfile: Error creating profile (GraphQL):',
-            error,
+          handleAndThrowError(
+            `${CreateProfileErrorPrefix}: ${error.message || 'Please try again'}`,
           );
-          const errorMessage = `${CreateProfileErrorPrefix}: ${error.message || 'Please try again'}`;
-          setAuthError(errorMessage);
-          setAuthStatus('error');
-          throw new Error(errorMessage);
         }
 
         setSession(data.session);
         setSupabaseUser(data.user);
         await getProfileFromSupabase(data.user?.id!);
       } catch (error: any) {
-        console.error('[SupabaseContext] createProfile failed:', error);
-        const errorMessage = `${CreateProfileErrorPrefix}: ${error.message || 'Please try again'}`;
-        setAuthError(errorMessage);
-        setAuthStatus('error');
-        throw new Error(errorMessage);
+        handleAndThrowError(
+          `${CreateProfileErrorPrefix}: ${error.message || 'Please try again'}`,
+        );
       }
     },
     [address, nonce, signature, getProfileFromSupabase],
