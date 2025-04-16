@@ -132,7 +132,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     async (userId: string): Promise<Profile | null> => {
       if (!userId) {
         return handleError(
-          'Cannot fetch profile.userId, please connect wallet and authenticate.',
+          'Get profile failed, please try again.',
           false,
           false,
         );
@@ -174,7 +174,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
             newUser: true,
           }));
           updateAuthState('authenticated');
-          return null;
+          return handleError('Get profile failed, please try again.');
         }
       } catch (error: any) {
         return handleError(
@@ -251,15 +251,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       !isConnected &&
       authState.status === 'authenticated'
     ) {
-      console.warn(
-        '[SupabaseContext] Wallet disconnected externally. Performing full logout.',
-      );
-      performFullLogoutAndReload().catch((error) => {
-        console.error(
-          '[SupabaseContext] Error during logout after external disconnect:',
-          error,
-        );
-      });
+      performFullLogoutAndReload();
     }
     prevIsConnectedRef.current = isConnected;
   }, [isConnected, performFullLogoutAndReload, authState.status]);
@@ -366,9 +358,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const createProfile = useCallback(
     async (newUsername: string) => {
       if (!address) {
-        handleError(
-          `${CreateProfileErrorPrefix} Invalid user info or wallet address, cannot create profile.`,
-        );
+        handleError(`${CreateProfileErrorPrefix} Failed to create profile.`);
         return;
       }
 
@@ -419,9 +409,6 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
   const getProfile = useCallback(async (): Promise<Profile | null> => {
     if (!userState.user?.id) {
-      console.warn(
-        '[SupabaseContext] getProfile called but user is not authenticated.',
-      );
       return null;
     }
     return getProfileFromSupabase(userState.user.id);
