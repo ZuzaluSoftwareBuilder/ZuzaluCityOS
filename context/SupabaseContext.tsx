@@ -247,7 +247,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (
-      prevIsConnectedRef.current === true &&
+      prevIsConnectedRef.current &&
       !isConnected &&
       authState.status === 'authenticated'
     ) {
