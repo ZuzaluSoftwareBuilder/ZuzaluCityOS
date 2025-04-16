@@ -1,12 +1,12 @@
 'use client';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { Stack, Typography, useTheme } from '@mui/material';
 
 const EventHeader = () => {
   // const [showModal, setShowModal] = React.useState(false);
   const theme = useTheme();
   // const router = useRouter();
-  const { isAuthenticated } = useCeramicContext();
+  const { isAuthenticated } = useAbstractAuthContext();
 
   const createButtonHandler = () => {
     // if(isAuthenticated) {

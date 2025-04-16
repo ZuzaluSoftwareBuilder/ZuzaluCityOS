@@ -1,4 +1,4 @@
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import useUserRole from '@/hooks/useUserRole';
 import { GET_EVENT_QUERY_BY_IDS } from '@/services/graphql/event';
@@ -7,7 +7,7 @@ import { IUserProfileWithSpaceAndEvent } from '@/types';
 import { useMemo } from 'react';
 
 const useUserEvent = () => {
-  const { profile } = useCeramicContext();
+  const { profile } = useAbstractAuthContext();
   const userDId = profile?.author?.id;
 
   const { userRoles, isUserRoleLoading, isUserRoleFetched, followerRoleId } =

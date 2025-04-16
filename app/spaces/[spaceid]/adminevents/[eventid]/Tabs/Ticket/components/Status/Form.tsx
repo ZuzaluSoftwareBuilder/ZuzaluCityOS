@@ -12,7 +12,7 @@ import {
 } from '@/components/icons';
 import { formatAddressString } from '@/components/layout/Header/UserProfileSection';
 import { isDev } from '@/constant';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { updateRegAndAccess } from '@/services/event/regAndAccess';
 import { RegistrationAndAccess } from '@/types';
 import { getWalletAddressFromDid } from '@/utils/did';
@@ -87,7 +87,7 @@ export default function Form({ regAndAccess, onClose }: FormProps) {
 
   const queryClient = useQueryClient();
   const pathname = useParams();
-  const { profile } = useCeramicContext();
+  const { profile } = useAbstractAuthContext();
   const profileId = profile?.id || '';
   const eventId = pathname.eventid?.toString() ?? '';
 

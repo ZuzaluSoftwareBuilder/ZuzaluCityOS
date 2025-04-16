@@ -1,6 +1,5 @@
 'use client';
 
-import { useCeramicContext } from '@/context/CeramicContext';
 import { useAkashaAuthStore } from '@/hooks/use-akasha-auth-store';
 import { useEffect, useState } from 'react';
 
@@ -19,6 +18,7 @@ import {
 } from '@mui/material';
 
 import { getIconFromLink } from '@/components/zuland/DiscussionSidebar';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
@@ -35,7 +35,7 @@ const AkashaCreateProfileModal = ({
   const MAX_DESCRIPTION_LENGTH = 100;
   const MAX_LINKS = 5;
 
-  const { username } = useCeramicContext();
+  const { username } = useAbstractAuthContext();
   const { currentAkashaUser, currentAkashaUserStats, setAkashaUserStats } =
     useAkashaAuthStore();
 

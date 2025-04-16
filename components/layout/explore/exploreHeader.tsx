@@ -3,7 +3,7 @@ import { HourglassHighIcon } from '@/components/icons';
 import { Image, cn } from '@heroui/react';
 import { Plus } from '@phosphor-icons/react';
 
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import React, { useCallback } from 'react';
 
 export interface IAddButtonProps {
@@ -82,7 +82,7 @@ export default function ExploreHeader({
   bgImageHeight = 200,
   bgImageTop,
 }: IExploreHeaderProps) {
-  const { isAuthenticated, showAuthPrompt } = useCeramicContext();
+  const { isAuthenticated, showAuthPrompt } = useAbstractAuthContext();
 
   const defaultAddButtonIcon = (
     <Plus size={20} weight={'fill'} format={'Stroke'} />

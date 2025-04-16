@@ -1,5 +1,5 @@
 'use client';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { Stack, Typography, useTheme } from '@mui/material';
 import { ZuButton } from 'components/core';
 import { SpacePlusIcon } from 'components/icons';
@@ -11,7 +11,7 @@ const SpaceHeader = () => {
   const [showModal, setShowModal] = React.useState(false);
   const theme = useTheme();
   const router = useRouter();
-  const { ceramic, isAuthenticated, showAuthPrompt } = useCeramicContext();
+  const { isAuthenticated, showAuthPrompt } = useAbstractAuthContext();
 
   const createButtonHandler = () => {
     if (isAuthenticated) {

@@ -1,6 +1,6 @@
 'use client';
 import { SpaceCard } from '@/components/biz/space/SpaceCard';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import {
   CreateZucitySpaceMutationMutation,
   CreateZucitySpaceMutationMutationVariables,
@@ -63,7 +63,7 @@ const Create = () => {
   const [isSubmit, setIsSubmit] = useState(false);
   const router = useRouter();
   const { isMobile } = useMediaQuery();
-  const { ceramic, profile } = useCeramicContext();
+  const { ceramic, profile } = useAbstractAuthContext();
   const profileForm = useForm<ProfileFormData>({
     resolver: yupResolver(ProfilValidationSchema),
     mode: 'all',

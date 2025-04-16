@@ -1,4 +1,4 @@
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import useUserRole from '@/hooks/useUserRole';
 import { GET_USER_OWN_SPACE } from '@/services/graphql/profile';
 import { GET_SPACE_QUERY_BY_IDS } from '@/services/graphql/space';
@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { useGraphQL } from './useGraphQL';
 
 const useUserSpace = () => {
-  const { profile } = useCeramicContext();
+  const { profile } = useAbstractAuthContext();
   const userDId = profile?.author?.id;
 
   const { userRoles, isUserRoleLoading, isUserRoleFetched, followerRoleId } =

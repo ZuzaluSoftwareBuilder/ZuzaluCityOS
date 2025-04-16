@@ -8,7 +8,6 @@ import {
   FormTitle,
 } from '@/components/typography/formTypography';
 import { SOCIAL_TYPES } from '@/constant';
-import { useCeramicContext } from '@/context/CeramicContext';
 import { createEventKeySupa } from '@/services/event/createEvent';
 import { createUrl } from '@/services/url';
 import { CreateEventRequest } from '@/types';
@@ -43,6 +42,7 @@ import FormFooter from './FormFooter';
 import FormHeader from './FormHeader';
 import FormUploader from './FormUploader';
 
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import dynamic from 'next/dynamic';
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,
@@ -138,7 +138,7 @@ export const EventForm: React.FC<EventFormProps> = ({
   const [blockClickModal, setBlockClickModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  const { profile, ceramic } = useCeramicContext();
+  const { profile, ceramic } = useAbstractAuthContext();
   const profileId = profile?.id || '';
   const adminId = ceramic?.did?.parent || '';
 

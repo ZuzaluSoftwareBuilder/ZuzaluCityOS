@@ -1,6 +1,6 @@
 import { QRReader } from '@/components/modals/QRScanModal/QRReader';
 import CreateDiscussionModal from '@/components/modals/Zuland/CreateDiscussionModal';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { Anchor, Event, Profile, ProfileEdge } from '@/types';
 import { supabase } from '@/utils/supabase/client';
 import { Link, Stack, Typography, useTheme } from '@mui/material';
@@ -15,7 +15,7 @@ interface PropTypes {
 }
 
 const OverviewHeader = ({ event, setTabName }: PropTypes) => {
-  const { composeClient, isAuthenticated, profile } = useCeramicContext();
+  const { composeClient, isAuthenticated, profile } = useAbstractAuthContext();
 
   const needShow = (event?.regAndAccess?.edges?.length ?? 0) > 0;
 

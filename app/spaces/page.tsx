@@ -3,7 +3,7 @@ import SpaceList from '@/app/spaces/components/list';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
 import ExploreHeader from '@/components/layout/explore/exploreHeader';
 import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { Buildings, CalendarDots, Globe } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
@@ -23,7 +23,7 @@ const NavItems: INavItem[] = [
 const SpacePage = () => {
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
-  const { isAuthenticated, showAuthPrompt } = useCeramicContext();
+  const { isAuthenticated, showAuthPrompt } = useAbstractAuthContext();
 
   const createButtonHandler = useCallback(() => {
     if (isAuthenticated) {

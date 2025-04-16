@@ -1,6 +1,5 @@
 'use client';
 import { DAPP_TAGS } from '@/constant';
-import { useCeramicContext } from '@/context/CeramicContext';
 import { useFormScrollToError } from '@/hooks/useFormScrollToError';
 import { Dapp, FilmOptionType } from '@/types';
 import Yup from '@/utils/yupExtensions';
@@ -20,6 +19,7 @@ import FormFooter from './FormFooter';
 import FormHeader from './FormHeader';
 
 import EditorPro from '@/components/editorPro';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { createDapp, updateDapp } from '@/services/dapp';
 import { Check } from '@phosphor-icons/react';
 import { isAddress } from 'viem';
@@ -87,7 +87,7 @@ const DappForm: React.FC<DappFormProps> = ({
   initialData,
   refetch,
 }) => {
-  const { profile } = useCeramicContext();
+  const { profile } = useAbstractAuthContext();
   const queryClient = useQueryClient();
   const profileId = profile?.id || '';
   const { scrollToError } = useFormScrollToError();

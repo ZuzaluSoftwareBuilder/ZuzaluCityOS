@@ -5,7 +5,7 @@ import {
   CheckCircleIcon,
   UsersIcon,
 } from '@/components/icons';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { Space } from '@/types';
 import { Avatar, Image, Skeleton, cn } from '@heroui/react';
 import { useRouter } from 'next/navigation';
@@ -85,7 +85,7 @@ export function SpaceCard({
     owner,
   } = data;
   const router = useRouter();
-  const { profile } = useCeramicContext();
+  const { profile } = useAbstractAuthContext();
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers = userRoles?.edges.map((item) => item.node).length ?? 0;

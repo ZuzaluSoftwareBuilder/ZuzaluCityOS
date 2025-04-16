@@ -1,4 +1,4 @@
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { yupResolver } from '@hookform/resolvers/yup';
 import CloseIcon from '@mui/icons-material/Close';
 import {
@@ -36,7 +36,8 @@ type FormData = Yup.InferType<typeof schema>;
 export default function Profile({ showModal, onClose }: Props) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { username, profile, composeClient, getProfile } = useCeramicContext();
+  const { username, profile, composeClient, getProfile } =
+    useAbstractAuthContext();
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: FormData) => {

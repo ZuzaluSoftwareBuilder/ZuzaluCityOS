@@ -5,7 +5,7 @@ import Dialog from '@/app/spaces/components/Modal/Dialog';
 import ExploreHeader from '@/components/layout/explore/exploreHeader';
 import ExploreNav, { INavItem } from '@/components/layout/explore/exploreNav';
 import ExploreSearch from '@/components/layout/explore/exploreSearch';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useMediaQuery, useTheme } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -31,7 +31,7 @@ const EventPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [searchVal, setSearchVal] = useState<string>('');
 
-  const { isAuthenticated, showAuthPrompt } = useCeramicContext();
+  const { isAuthenticated, showAuthPrompt } = useAbstractAuthContext();
 
   const createButtonHandler = useCallback(() => {
     if (isAuthenticated) {

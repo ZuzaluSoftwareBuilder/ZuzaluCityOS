@@ -1,6 +1,6 @@
 import FormHeader from '@/components/form/FormHeader';
 import { isDev } from '@/constant';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import {
   createRegAndAccess,
   updateRegAndAccess,
@@ -52,7 +52,7 @@ const ConfigForm: React.FC<RegistrationMethodSelectorProps> = ({
         }
       : {},
   });
-  const { profile } = useCeramicContext();
+  const { profile } = useAbstractAuthContext();
   const pass = formMethods.watch('pass');
   const profileId = profile?.id || '';
 

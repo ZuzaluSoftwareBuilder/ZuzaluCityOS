@@ -12,7 +12,6 @@ import {
   FormTitle,
 } from '@/components/typography/formTypography';
 import { SOCIAL_TYPES } from '@/constant';
-import { useCeramicContext } from '@/context/CeramicContext';
 import { updateEventKeySupa } from '@/services/event/updateEvent';
 import { createUrlWhenEdit } from '@/services/url';
 import { Event, UpdateEventRequest } from '@/types';
@@ -55,6 +54,7 @@ dayjs.extend(timezone);
 type FormData = Yup.InferType<typeof schema>;
 
 import FormUploader from '@/components/form/FormUploader';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import dynamic from 'next/dynamic';
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,
@@ -88,7 +88,7 @@ const schema = Yup.object().shape({
 });
 
 const Overview = ({ event, refetch, setTabName }: PropTypes) => {
-  const { ceramic, profile, composeClient } = useCeramicContext();
+  const { ceramic, profile } = useAbstractAuthContext();
   const params = useParams();
   const spaceId = params.spaceid?.toString() ?? '';
 

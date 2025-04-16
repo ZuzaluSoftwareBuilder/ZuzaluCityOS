@@ -1,6 +1,6 @@
 'use client';
 
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import useUserSpace from '@/hooks/useUserSpace';
 import { Space } from '@/types';
 import { Image, Skeleton, Tooltip } from '@heroui/react';
@@ -22,7 +22,7 @@ const SpaceItemSkeleton = () => {
 };
 
 const SpaceList = () => {
-  const { isAuthenticated, profile } = useCeramicContext();
+  const { isAuthenticated, profile } = useAbstractAuthContext();
 
   const { userJoinedSpaces, isUserSpaceLoading, isUserSpaceFetched } =
     useUserSpace();

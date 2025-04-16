@@ -1,5 +1,5 @@
 import { ArrowPathIcon, CloseIcon } from '@/components/icons';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { Stack, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { useQRCode } from 'next-qrcode';
@@ -13,7 +13,7 @@ interface PropTypes {
 
 const QRCode = ({ ticketAddress, eventId, onClose }: PropTypes) => {
   const { Canvas } = useQRCode();
-  const { username, profile } = useCeramicContext();
+  const { username, profile } = useAbstractAuthContext();
   const authorId = profile?.author?.id || '';
 
   const [errorCorrectionLevel, setErrorCorrectionLevel] = useState<string>('M');
