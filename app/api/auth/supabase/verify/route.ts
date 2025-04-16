@@ -53,47 +53,6 @@ export async function POST(request: NextRequest) {
 
     console.log(`[API Verify] Verifying nonce for ${normalizedAddress}...`);
 
-    const { data: nonceData, error: nonceError } = await supabaseAdmin
-      .from('login_nonces')
-      .select('nonce, expires_at')
-      .eq('address', normalizedAddress)
-      .maybeSingle();
-
-    if (nonceError) {
-      console.error(
-        `[API Verify] Database error when fetching nonce (${normalizedAddress}):`,
-        nonceError,
-      );
-      return createErrorResponse('Database error when retrieving nonce', 500);
-    }
-
-    await supabaseAdmin
-      .from('login_nonces')
-      .delete()
-      .match({ address: normalizedAddress });
-
-    if (!nonceData) {
-      console.log(`[API Verify] No nonce found for ${normalizedAddress}.`);
-      return createErrorResponse(
-        'Invalid or expired nonce, please try again.',
-        403,
-      );
-    }
-
-    if (new Date(nonceData.expires_at) < new Date()) {
-      console.log(`[API Verify] Nonce for ${normalizedAddress} has expired.`);
-      return createErrorResponse('Nonce has expired, please try again.', 403);
-    }
-
-    if (!message.includes(nonceData.nonce)) {
-      console.log(
-        `[API Verify] Message doesn't contain valid nonce (${nonceData.nonce}) for ${normalizedAddress}.`,
-      );
-      return createErrorResponse('Invalid nonce in signature message.', 403);
-    }
-
-    console.log(`[API Verify] Verifying signature for ${normalizedAddress}...`);
-
     let recoveredAddress: string;
     try {
       recoveredAddress = ethers.verifyMessage(message, signature);
@@ -118,17 +77,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(
-      `[API Verify] Signature verification successful: ${normalizedAddress}`,
-    );
+    const [nonceResult, profileResult] = await Promise.all([
+      supabaseAdmin
+        .from('login_nonces')
+        .select('nonce, expires_at')
+        .eq('address', normalizedAddress)
+        .maybeSingle(),
+      supabaseAdmin
+        .from('profiles')
+        .select('user_id')
+        .eq('address', normalizedAddress)
+        .maybeSingle(),
+    ]);
 
-    console.log(`[API Verify] Finding profile for ${normalizedAddress}...`);
+    const { data: nonceData, error: nonceError } = nonceResult;
+    const { data: profile, error: findProfileError } = profileResult;
 
-    const { data: profile, error: findProfileError } = await supabaseAdmin
-      .from('profiles')
-      .select('user_id')
-      .eq('address', normalizedAddress)
-      .maybeSingle();
+    if (nonceData) {
+      (async () => {
+        try {
+          await supabaseAdmin
+            .from('login_nonces')
+            .delete()
+            .match({ address: normalizedAddress });
+          console.log(`[API Verify] Deleted nonce for ${normalizedAddress}`);
+        } catch (err) {
+          console.error(`[API Verify] Error deleting nonce:`, err);
+        }
+      })();
+    }
+
+    if (nonceError) {
+      console.error(
+        `[API Verify] Database error when fetching nonce (${normalizedAddress}):`,
+        nonceError,
+      );
+      return createErrorResponse('Database error when retrieving nonce', 500);
+    }
 
     if (findProfileError) {
       console.error(
@@ -137,6 +122,30 @@ export async function POST(request: NextRequest) {
       );
       return createErrorResponse('Database error when finding profile', 500);
     }
+
+    if (!nonceData) {
+      console.log(`[API Verify] No nonce found for ${normalizedAddress}.`);
+      return createErrorResponse(
+        'Invalid or expired nonce, please try again.',
+        403,
+      );
+    }
+
+    if (new Date(nonceData.expires_at) < new Date()) {
+      console.log(`[API Verify] Nonce for ${normalizedAddress} has expired.`);
+      return createErrorResponse('Nonce has expired, please try again.', 403);
+    }
+
+    if (!message.includes(nonceData.nonce)) {
+      console.log(
+        `[API Verify] Message doesn't contain valid nonce (${nonceData.nonce}) for ${normalizedAddress}.`,
+      );
+      return createErrorResponse('Invalid nonce in signature message.', 403);
+    }
+
+    console.log(
+      `[API Verify] Signature verification successful: ${normalizedAddress}`,
+    );
 
     let isNewUser = !profile || !profile.user_id;
 
