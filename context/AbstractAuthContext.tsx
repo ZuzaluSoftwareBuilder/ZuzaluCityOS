@@ -4,13 +4,15 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useCeramicContext } from './CeramicContext';
 import { useSupabaseContext } from './SupabaseContext';
 
+const DefaultAuthSource: AuthSource = 'supabase';
+
 const initialContext: IAbstractAuthContext = {
   ceramic,
   composeClient,
   authStatus: 'idle',
   isCheckingInitialAuth: true,
   isAuthenticated: false,
-  authSource: 'supabase', // Default to supabase
+  authSource: DefaultAuthSource,
   setAuthSource: () => {},
   authenticate: async () => {},
   logout: async () => {},
@@ -38,7 +40,7 @@ export const AbstractAuthProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [authSource, setAuthSource] = useState<AuthSource>('supabase');
+  const [authSource, setAuthSource] = useState<AuthSource>(DefaultAuthSource);
 
   const ceramicCtx = useCeramicContext();
   const supabaseCtx = useSupabaseContext();
