@@ -1,4 +1,3 @@
-import { supabase } from '@/constant';
 import {
   StorageKey_SupabaseAuthPending,
   StorageKey_Username,
@@ -14,6 +13,7 @@ import {
   safeRemoveLocalStorage,
   safeSetLocalStorage,
 } from '@/utils/localStorage';
+import { supabase } from '@/utils/supabase/client';
 import { Session, User } from '@supabase/supabase-js';
 import {
   createContext,
