@@ -1,5 +1,5 @@
 'use client';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 import { getAllPermission } from '@/services/permission';
 import { PermissionName } from '@/types';
@@ -23,7 +23,7 @@ export const SpacePermissionProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const spaceId = useParams().spaceid;
-  const { profile } = useCeramicContext();
+  const { profile } = useAbstractAuthContext();
   const userId = profile?.author?.id;
 
   const { owner, roles, members, isLoading } = useGetSpaceMember(

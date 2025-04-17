@@ -18,7 +18,7 @@ import {
   Verify,
 } from '@/components/event/Whitelist';
 import { ArrowUpLeftIcon, XMarkIcon } from '@/components/icons';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { Anchor, Contract, Event } from '@/types';
 import getLatLngFromAddress from '@/utils/osm';
 import { supabase } from '@/utils/supabase/client';
@@ -78,7 +78,7 @@ const About: React.FC<IAbout> = ({ eventData, setVerify, canEdit }) => {
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('sm'));
 
-  const { composeClient, profile } = useCeramicContext();
+  const { composeClient, profile } = useAbstractAuthContext();
   const profileId = profile?.id || '';
 
   const [state, setState] = useState({

@@ -2,7 +2,7 @@
 
 import SpaceSubSidebar from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/spaceSubSidebar';
 import UserProfileSection from '@/components/layout/Header/UserProfileSection';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import {
   Button,
   cn,
@@ -19,7 +19,7 @@ import { useSpaceData } from './context/spaceData';
 
 const SpaceTopHeader: React.FC = () => {
   const router = useRouter();
-  const { isAuthenticated } = useCeramicContext();
+  const { isAuthenticated } = useAbstractAuthContext();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
 

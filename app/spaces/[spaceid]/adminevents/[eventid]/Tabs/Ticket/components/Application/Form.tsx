@@ -1,7 +1,7 @@
 import { ZuButton } from '@/components/core';
 import FormHeader from '@/components/form/FormHeader';
 import { PlusIcon, XCricleIcon } from '@/components/icons';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { updateRegAndAccess } from '@/services/event/regAndAccess';
 import { RegistrationAndAccess } from '@/types';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -59,7 +59,7 @@ export default function Form({
 
   const queryClient = useQueryClient();
   const pathname = useParams();
-  const { profile } = useCeramicContext();
+  const { profile } = useAbstractAuthContext();
   const profileId = profile?.id || '';
   const eventId = pathname.eventid?.toString();
 

@@ -1,6 +1,6 @@
 import FormHeader from '@/components/form/FormHeader';
 import { ScrollPassIcon } from '@/components/icons';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { updateRegAndAccess } from '@/services/event/regAndAccess';
 import { RegistrationAndAccess } from '@/types';
 import { shortenAddress } from '@/utils/format';
@@ -43,7 +43,7 @@ export default function ScrollpassForm({ onClose, regAndAccess }: FormProps) {
 
   const queryClient = useQueryClient();
   const pathname = useParams();
-  const { profile } = useCeramicContext();
+  const { profile } = useAbstractAuthContext();
   const profileId = profile?.id || '';
   const eventId = pathname.eventid?.toString() ?? '';
 

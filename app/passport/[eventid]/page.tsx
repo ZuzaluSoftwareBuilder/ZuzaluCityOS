@@ -8,7 +8,7 @@ import {
   Square2StackIcon,
 } from '@/components/icons';
 import { SCROLL_EXPLORER } from '@/constant';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import {
   CeramicResponseType,
   Event,
@@ -35,7 +35,7 @@ import QRCode from '../components/QRCode';
 const Home = () => {
   const router = useRouter();
   const params = useParams();
-  const { isAuthenticated, composeClient, ceramic } = useCeramicContext();
+  const { isAuthenticated, composeClient, ceramic } = useAbstractAuthContext();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 

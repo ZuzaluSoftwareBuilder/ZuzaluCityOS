@@ -1,7 +1,6 @@
 'use client';
 import Dialog from '@/app/spaces/components/Modal/Dialog';
 import { POST_TAGS } from '@/constant';
-import { useCeramicContext } from '@/context/CeramicContext';
 import { createPost, updatePost } from '@/services/announcements';
 import { Post } from '@/types';
 import Yup from '@/utils/yupExtensions';
@@ -28,6 +27,7 @@ import {
 import FormFooter from './FormFooter';
 import FormHeader from './FormHeader';
 
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import dynamic from 'next/dynamic';
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,
@@ -57,7 +57,7 @@ const PostForm: React.FC<PostFormProps> = ({
 }) => {
   const { breakpoints } = useTheme();
   const descriptionEditorStore = useEditorStore();
-  const { profile } = useCeramicContext();
+  const { profile } = useAbstractAuthContext();
   const params = useParams();
   const eventId = params.eventid?.toString() ?? '';
 

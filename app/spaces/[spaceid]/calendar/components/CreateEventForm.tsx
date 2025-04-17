@@ -14,7 +14,6 @@ import {
   FormLabelDesc,
   FormTitle,
 } from '@/components/typography/formTypography';
-import { useCeramicContext } from '@/context/CeramicContext';
 import Yup from '@/utils/yupExtensions';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -43,6 +42,7 @@ const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
 });
 
 import SelectCheckItem from '@/components/select/selectCheckItem';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { CalEvent } from '@/types';
 import { supabase } from '@/utils/supabase/client';
 import { useMutation } from '@tanstack/react-query';
@@ -212,7 +212,7 @@ const CreateEventForm: React.FC<EventFormProps> = ({
   const [blockClickModal, setBlockClickModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  const { profile } = useCeramicContext();
+  const { profile } = useAbstractAuthContext();
 
   const eventMutation = useMutation({
     mutationFn: async (data: FormData) => {

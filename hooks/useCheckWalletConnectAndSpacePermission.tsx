@@ -1,5 +1,5 @@
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { PermissionName } from '@/types';
 import { useEffect, useMemo, useState } from 'react';
 import { useAccount, useWalletClient } from 'wagmi';
@@ -73,7 +73,7 @@ const useCheckWalletConnectAndSpacePermission = ({
   permissionCheck = { type: PermissionCheckType.ROLE },
   callbacks = {},
 }: ICheckWalletPermissionConfig): IPermissionCheckResult => {
-  const { isAuthenticated, profile } = useCeramicContext();
+  const { isAuthenticated, profile } = useAbstractAuthContext();
   const userId = profile?.author?.id;
   const { isOwner, isAdmin, isMember, isLoading, checkPermission } =
     useSpacePermissions();

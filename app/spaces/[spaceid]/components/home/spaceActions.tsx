@@ -1,6 +1,5 @@
 import Copy from '@/components/biz/common/Copy';
 import { CheckCircleIcon } from '@/components/icons';
-import { useCeramicContext } from '@/context/CeramicContext';
 import { followSpace, unFollowSpace } from '@/services/member';
 import { Space } from '@/types';
 import { addToast, Skeleton } from '@heroui/react';
@@ -8,6 +7,7 @@ import { ArrowSquareRight, Heart } from '@phosphor-icons/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { Button } from '@/components/base';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useModal } from '@/context/ModalContext';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -34,7 +34,7 @@ const SpaceActions = ({
   className,
   isMobile = false,
 }: SpaceActionsProps) => {
-  const { profile, isAuthenticated, showAuthPrompt } = useCeramicContext();
+  const { profile, isAuthenticated, showAuthPrompt } = useAbstractAuthContext();
   const queryClient = useQueryClient();
   const { showModal } = useModal();
 

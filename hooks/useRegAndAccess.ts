@@ -6,7 +6,7 @@ import {
   RegistrationAccess,
   TicketingMethod,
 } from '@/app/spaces/[spaceid]/adminevents/[eventid]/Tabs/Ticket/components/types';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { updateRegAndAccess } from '@/services/event/regAndAccess';
 import { RegistrationAndAccess } from '@/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -24,7 +24,7 @@ const useRegAndAccess = (props: Props) => {
   const regAndAccess = event?.regAndAccess?.edges?.[0]?.node;
   const queryClient = useQueryClient();
   const pathname = useParams();
-  const { profile } = useCeramicContext();
+  const { profile } = useAbstractAuthContext();
   const profileId = profile?.id || '';
   const eventId = pathname.eventid?.toString() ?? '';
 

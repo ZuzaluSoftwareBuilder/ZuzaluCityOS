@@ -5,8 +5,8 @@ import {
   ModalContent,
 } from '@/components/base';
 import { ArrowSquareRightIcon } from '@/components/icons';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
-import { useCeramicContext } from '@/context/CeramicContext';
 import { useZupassContext } from '@/context/ZupassContext';
 import { usePOAPVerify } from '@/hooks/useRuleVerify';
 import useUserSpace from '@/hooks/useUserSpace';
@@ -109,7 +109,7 @@ const useJoinSpace = ({
   onClose: () => void;
   gated?: boolean;
 }) => {
-  const { profile } = useCeramicContext();
+  const { profile } = useAbstractAuthContext();
   const { spaceData } = useSpaceData();
   const { memberRole } = useBuildInRole();
   const queryClient = useQueryClient();
