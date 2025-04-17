@@ -1,9 +1,8 @@
 import { Profile } from '@/types/index.js';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import { ComposeClient } from '@composedb/client';
-import { Session, SupabaseClient, User } from '@supabase/supabase-js'; // Import Session, User
-
-export type Nullable<T> = T | null;
+import { Session, SupabaseClient, User } from '@supabase/supabase-js';
+import { Nullable } from './common';
 
 export type AuthSource = 'ceramic' | 'supabase';
 export type ConnectSource = 'connectButton' | 'invalidAction';

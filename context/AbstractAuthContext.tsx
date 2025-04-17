@@ -25,7 +25,7 @@ const initialContext: IAbstractAuthContext = {
   connectSource: 'invalidAction',
   setConnectSource: () => {},
   authError: null,
-  username: null,
+  username: '',
   profile: null,
   newUser: false,
   isAuthenticating: false,

@@ -12,12 +12,8 @@ import {
   CREATE_PROFILE_MUTATION,
   GET_OWN_PROFILE_QUERY,
 } from '@/services/graphql/profile';
-import {
-  AuthStatus,
-  CeramicAuthContext,
-  ConnectSource,
-  Nullable,
-} from '@/types/auth';
+import { AuthStatus, CeramicAuthContext, ConnectSource } from '@/types/auth';
+import { Nullable } from '@/types/common';
 import { Profile } from '@/types/index.js';
 import { executeQuery } from '@/utils/ceramic';
 import { authenticateCeramic } from '@/utils/ceramicAuth';
@@ -46,7 +42,7 @@ const CeramicContext = createContext<CeramicAuthContext>({
   isCheckingInitialAuth: true,
   isAuthenticated: false,
   authenticate: async () => {},
-  username: null,
+  username: '',
   profile: null,
   newUser: false,
   logout: async () => {},
@@ -155,7 +151,7 @@ export const CeramicProvider = ({ children }: any) => {
     prevIsConnectedRef.current = isConnected;
   }, [isConnected, authStatus, performFullLogoutAndReload]);
 
-  const getProfile = useCallback(async (): Promise<Profile | null> => {
+  const getProfile = useCallback(async (): Promise<Nullable<Profile>> => {
     if (!ceramic.did) {
       setAuthStatus('error');
       setAuthError(

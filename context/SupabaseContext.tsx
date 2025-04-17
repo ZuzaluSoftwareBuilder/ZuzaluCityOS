@@ -13,6 +13,7 @@ import {
   SupabaseAuthContext,
   UserState,
 } from '@/types/auth';
+import { Nullable } from '@/types/common';
 import { Profile } from '@/types/index.js';
 import { isUserDenied } from '@/utils/handleError';
 import {
@@ -72,7 +73,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const [userState, setUserState] = useState<UserState>({
     session: null,
     user: null,
-    username: null,
+    username: '',
     profile: null,
     newUser: false,
   });
@@ -107,7 +108,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const updateAuthState = useCallback(
-    (status: AuthStatus, error: string | null = null) => {
+    (status: AuthStatus, error: Nullable<string> = null) => {
       setAuthState((prev) => ({ ...prev, status, error }));
     },
     [],
@@ -135,7 +136,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const getProfileFromSupabase = useCallback(
-    async (userId: string): Promise<Profile | null> => {
+    async (userId: string): Promise<Nullable<Profile>> => {
       if (!userId) {
         return handleError(
           'Get profile failed, please try again.',
@@ -413,7 +414,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     ],
   );
 
-  const getProfile = useCallback(async (): Promise<Profile | null> => {
+  const getProfile = useCallback(async (): Promise<Nullable<Profile>> => {
     if (!userState.user?.id) {
       return null;
     }
