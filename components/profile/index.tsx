@@ -1,4 +1,5 @@
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
+import { useRepositories } from '@/context/RepositoryContext';
 import { yupResolver } from '@hookform/resolvers/yup';
 import CloseIcon from '@mui/icons-material/Close';
 import {
@@ -36,27 +37,16 @@ type FormData = Yup.InferType<typeof schema>;
 export default function Profile({ showModal, onClose }: Props) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { username, profile, composeClient, getProfile } =
-    useAbstractAuthContext();
+  const { username, profile, getProfile } = useAbstractAuthContext();
+  const { profileRepository } = useRepositories();
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: FormData) => {
       const { name, imageUrl } = data;
-      await composeClient.executeQuery(`
-        mutation {
-          updateZucityProfile(input: {
-            id: "${profile?.id}",
-            content: {
-              username: "${name}",
-              avatar: "${imageUrl}"
-            }
-          }) {
-            document {
-              username
-            }
-          }
-        }
-      `);
+      await profileRepository.update(profile?.id, {
+        username: name,
+        avatar: imageUrl,
+      });
     },
     onSuccess: () => {
       getProfile();
