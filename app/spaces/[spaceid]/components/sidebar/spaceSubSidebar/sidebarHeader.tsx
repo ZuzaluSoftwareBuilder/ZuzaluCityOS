@@ -1,4 +1,4 @@
-import { Space } from '@/types';
+import { Space } from '@/models/space';
 import {
   BellAlertIcon,
   ChevronDownIcon,

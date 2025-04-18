@@ -1,10 +1,9 @@
+import { getSpaceRepository } from '@/repositories/space';
 import {
   CHECK_EXISTING_ROLE_QUERY,
   CREATE_ROLE_QUERY,
   UPDATE_ROLE_QUERY,
 } from '@/services/graphql/role';
-import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
-import { Space } from '@/types';
 import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
 import { dayjs } from '@/utils/dayjs';
 import {
@@ -64,11 +63,12 @@ export const POST = async (req: Request) => {
       return createErrorResponse('Owner role cannot be added', 400);
     }
 
-    const spaceResult = await executeQuery(GET_SPACE_QUERY_BY_ID, {
-      id: spaceId,
-    });
+    const spaceRepository = getSpaceRepository();
+    const space = await spaceRepository.getById(spaceId);
 
-    const space = spaceResult.data?.node as Space;
+    if (!space) {
+      return createErrorResponse('Space not found', 404);
+    }
 
     if (space.gated === '1') {
       return createErrorResponse('Space is gated', 400);

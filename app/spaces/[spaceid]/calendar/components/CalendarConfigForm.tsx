@@ -7,7 +7,7 @@ import {
   FormTitle,
 } from '@/components/typography/formTypography';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { Space } from '@/types';
+import { Space } from '@/models/space';
 import Yup from '@/utils/yupExtensions';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {

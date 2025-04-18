@@ -1,14 +1,14 @@
 import { Input, Select, SelectItem } from '@/components/base';
 import { SOCIAL_TYPES } from '@/constant';
-import { Link } from '@/types';
+import { SpaceLink } from '@/models/space';
 import { Plus, XCircle } from '@phosphor-icons/react';
 import React from 'react';
 import { Controller, useFieldArray, UseFormReturn } from 'react-hook-form';
 import * as yup from 'yup';
 
 export interface LinksFormData {
-  socialLinks: Link[];
-  customLinks: Link[];
+  socialLinks: SpaceLink[];
+  customLinks: SpaceLink[];
 }
 
 export const LinksValidationSchema = yup.object({

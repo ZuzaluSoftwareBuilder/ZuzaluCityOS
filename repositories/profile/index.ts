@@ -1,9 +1,9 @@
+import { DatabaseType } from '../type';
 import { CeramicProfileRepository } from './ceramic';
 import { SupaProfileRepository } from './supa';
 import { IProfileRepository } from './type';
-
 export function getProfileRepository(
-  dataSource: 'supabase' | 'ceramic',
+  dataSource: DatabaseType = 'ceramic',
 ): IProfileRepository {
   if (dataSource === 'supabase') {
     return new SupaProfileRepository();

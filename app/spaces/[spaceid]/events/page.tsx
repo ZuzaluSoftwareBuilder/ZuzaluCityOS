@@ -8,68 +8,49 @@ import {
   groupEventsByMonth,
 } from '@/components/cards/EventCard';
 import { useCeramicContext } from '@/context/CeramicContext';
-import { Event, Space, SpaceEventData } from '@/types';
+import { Event, SpaceEventData } from '@/types';
 import { Box, Skeleton, Stack, Typography } from '@mui/material';
 import { useParams } from 'next/navigation';
 import { Fragment, useEffect, useState } from 'react';
+import { useSpaceData } from '../components/context/spaceData';
 
 const Home = () => {
   const params = useParams();
   const spaceId = params.spaceid?.toString() ?? '';
 
-  const [space, setSpace] = useState<Space>();
+  const { spaceData, isSpaceDataLoading } = useSpaceData();
   const [events, setEvents] = useState<Event[]>([]);
   const [isEventsLoading, setIsEventsLoading] = useState<boolean>(true);
-  const { composeClient, ceramic } = useCeramicContext();
+  const { composeClient } = useCeramicContext();
 
-  const getSpaceByID = async () => {
+  const getEventsBySpaceID = async () => {
     setIsEventsLoading(true);
-    const GET_SPACE_QUERY = `
-      query GetSpace($id: ID!) {
+    const GET_EVENTS_QUERY = `
+      query GetSpaceEvents($id: ID!) {
         node(id: $id) {
           ...on ZucitySpace {
-            avatar
-            banner
-            description
-            name
-            profileId
-            tagline
-            website
-            twitter
-            telegram
-            nostr
-            lens
-            github
-            discord
-            ens
-            admins {
-              id
-            }
-            superAdmin {
-              id
-            }
             events(first: 10) {
               edges {
                 node {
                   createdAt
                   description
-              endTime
-              timezone
-              status
-              tagline
-              imageUrl
-              externalUrl
-              gated
-              id
-              meetingUrl
-              profileId
-              spaceId
-              startTime
-              title
-              space {
-                avatar
-                name
-              }
+                  endTime
+                  timezone
+                  status
+                  tagline
+                  imageUrl
+                  externalUrl
+                  gated
+                  id
+                  meetingUrl
+                  profileId
+                  spaceId
+                  startTime
+                  title
+                  space {
+                    avatar
+                    name
+                  }
                 }
               }
             }
@@ -78,31 +59,31 @@ const Home = () => {
       }
       `;
 
-    const response: any = await composeClient.executeQuery(GET_SPACE_QUERY, {
-      id: spaceId,
-    });
-    const spaceData: Space = response.data.node as Space;
-    setSpace(spaceData);
-    const eventData: SpaceEventData = response.data.node
-      .events as SpaceEventData;
-    const fetchedEvents: Event[] = eventData.edges.map((edge) => edge.node);
-    setEvents(fetchedEvents);
-    return spaceData;
-  };
-  useEffect(() => {
-    const fetchData = async () => {
-      const space = await getSpaceByID();
-      document.title = space?.name + ' - ' + 'Zuzalu City';
-    };
-
-    fetchData()
-      .catch((error) => {
-        console.error('An error occurred:', error);
-      })
-      .finally(() => {
-        setIsEventsLoading(false);
+    try {
+      const response: any = await composeClient.executeQuery(GET_EVENTS_QUERY, {
+        id: spaceId,
       });
-  }, []);
+
+      const eventData: SpaceEventData = response.data.node
+        .events as SpaceEventData;
+      const fetchedEvents: Event[] = eventData.edges.map((edge) => edge.node);
+      setEvents(fetchedEvents);
+    } catch (error) {
+      console.error('获取事件数据失败:', error);
+    } finally {
+      setIsEventsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getEventsBySpaceID();
+  }, [spaceId]);
+
+  useEffect(() => {
+    if (spaceData?.name) {
+      document.title = spaceData.name + ' - ' + 'Zuzalu City';
+    }
+  }, [spaceData]);
 
   return (
     <Stack direction="row" height="calc(100vh - 50px)" width="100%">
@@ -113,7 +94,7 @@ const Home = () => {
           overflowY: 'auto',
         }}
       >
-        {isEventsLoading ? (
+        {isEventsLoading || isSpaceDataLoading ? (
           <Box
             sx={{
               display: 'flex',

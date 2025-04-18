@@ -1,10 +1,9 @@
-import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
+import { getSpaceRepository } from '@/repositories/space';
 import { getMembers } from '@/services/member';
 import { getRoles } from '@/services/role';
-import { Space, UserRole } from '@/types';
+import { UserRole } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useGraphQL } from './useGraphQL';
 
 export default function useGetSpaceMember(spaceId: string) {
   const { data: roles, isLoading: isLoadingRoles } = useQuery({
@@ -12,16 +11,17 @@ export default function useGetSpaceMember(spaceId: string) {
     queryFn: () => getRoles('space', spaceId as string),
   });
 
-  const { data: spaceData, isLoading: isLoadingOwner } = useGraphQL(
-    ['getSpaceByID', spaceId],
-    GET_SPACE_QUERY_BY_ID,
-    { id: spaceId },
-    {
-      select: (data) => {
-        return data?.data?.node as Space;
-      },
+  const spaceRepository = getSpaceRepository();
+
+  const { data: spaceData, isLoading: isLoadingOwner } = useQuery({
+    queryKey: ['space', spaceId],
+    queryFn: async () => {
+      if (!spaceId) return undefined;
+      const spaceData = await spaceRepository.getById(spaceId);
+      return spaceData || undefined;
     },
-  );
+    enabled: !!spaceId,
+  });
 
   const {
     data: members,
@@ -36,9 +36,9 @@ export default function useGetSpaceMember(spaceId: string) {
   });
 
   const owner = useMemo(() => {
-    return spaceData?.owner?.zucityProfile;
+    return spaceData?.ownerId ? { id: spaceData.ownerId } : undefined;
   }, [spaceData]);
-
+  console.log('getSapceMember', spaceData);
   return {
     owner,
     roles,
