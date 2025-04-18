@@ -20,37 +20,32 @@ export class SupaProfileRepository implements IProfileRepository {
     return data;
   }
 
-  async getProfileByUsername(_username: string): Promise<Nullable<Profile>> {
+  async getProfileByUsername(_username: string): Promise<Profile[]> {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('username', _username)
-      .maybeSingle();
+      .ilike('username', `%${_username}%`)
+      .limit(20);
 
     if (error) {
       throw new Error(error.message);
     }
 
-    if (!data) {
-      return null;
-    }
-
-    return data;
+    return data || [];
   }
 
-  async getProfileById(_id: string): Promise<Nullable<Profile>> {
+  async getProfileByAddress(
+    _address: string,
+    _chainId: number,
+  ): Promise<Nullable<Profile>> {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('user_id', _id)
+      .eq('address', _address.toLowerCase())
       .maybeSingle();
 
     if (error) {
       throw new Error(error.message);
-    }
-
-    if (!data) {
-      return null;
     }
 
     return data;

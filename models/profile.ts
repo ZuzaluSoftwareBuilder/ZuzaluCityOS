@@ -1,4 +1,7 @@
 export interface Profile {
+  /**
+   * when use ceramic, id equals did
+   */
   id: string;
   username: string;
   avatar: string;

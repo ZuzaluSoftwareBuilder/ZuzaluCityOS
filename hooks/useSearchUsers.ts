@@ -1,10 +1,4 @@
-import { useCeramicContext } from '@/context/CeramicContext';
-import {
-  GET_PROFILE_BY_DID_QUERY,
-  GET_PROFILE_BY_NAME_QUERY,
-} from '@/services/graphql/profile';
-import { IProfile, Profile } from '@/types';
-import { getWalletAddressFromProfile } from '@/utils/profile';
+import { useRepositories } from '@/context/RepositoryContext';
 import { useCallback, useEffect, useState } from 'react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
@@ -23,79 +17,56 @@ export function useSearchUsers(initialQuery = '') {
   const [searchedUsers, setSearchedUsers] = useState<SearchUser[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { composeClient } = useCeramicContext();
   const { chainId } = useAccount();
+  const { profileRepository } = useRepositories();
 
   const debouncedQuery = useDebounce(searchQuery, 300);
 
   const searchByWalletAddress = useCallback(
     async (address: string): Promise<SearchUser[]> => {
-      const normalizedAddress = address.startsWith('0x')
-        ? address.toLowerCase()
-        : `0x${address}`.toLowerCase();
-      const currentChainId = chainId || 1;
-      const did = `did:pkh:eip155:${currentChainId}:${normalizedAddress}`;
+      try {
+        const profile = await profileRepository.getProfileByAddress(
+          address,
+          chainId!,
+        );
+        if (!profile) {
+          return [];
+        }
 
-      const response = await composeClient.executeQuery(
-        GET_PROFILE_BY_DID_QUERY,
-        {
-          did,
-        },
-      );
-
-      if (response.errors) {
-        throw new Error(response.errors[0].message || 'search user error');
+        const user: SearchUser = {
+          id: profile.id,
+          username: profile.username,
+          avatar: profile.avatar || '/user/avatar_p.png',
+          address: profile.address,
+          did: profile.id,
+        };
+        return [user];
+      } catch (error) {
+        console.error('searchByWalletAddress error:', error);
+        throw error;
       }
-
-      const profileData: Profile = response.data?.node?.zucityProfile;
-      if (!profileData) {
-        return [];
-      }
-      const { id, username, avatar, author } = profileData;
-      const authorId = author?.id || '';
-      const user: SearchUser = {
-        id,
-        username,
-        avatar: avatar || '/user/avatar_p.png',
-        address: getWalletAddressFromProfile(profileData),
-        did: authorId,
-      };
-      return [user];
     },
-    [chainId, composeClient],
+    [chainId, profileRepository],
   );
 
   const searchByUsername = useCallback(
     async (username: string): Promise<SearchUser[]> => {
-      const response = await composeClient.executeQuery<IProfile>(
-        GET_PROFILE_BY_NAME_QUERY,
-        {
-          username,
-        },
-      );
+      try {
+        const profiles = await profileRepository.getProfileByUsername(username);
 
-      if (response.errors) {
-        throw new Error(response.errors[0].message || '搜索用户失败');
+        return profiles.map((profile) => ({
+          id: profile.id,
+          username: profile.username,
+          avatar: profile.avatar || '/user/avatar_p.png',
+          address: profile.address,
+          did: profile.id,
+        }));
+      } catch (error) {
+        console.error('searchByUsername error:', error);
+        throw error;
       }
-
-      if ('zucityProfileIndex' in response.data!) {
-        const profileData: IProfile = response.data as IProfile;
-        return profileData.zucityProfileIndex.edges.map((edge: any) => {
-          const authorId = edge.node.author?.id || '';
-
-          return {
-            id: edge.node.id,
-            username: edge.node.username || '',
-            avatar: edge.node.avatar || '/user/avatar_p.png',
-            address: getWalletAddressFromProfile(edge.node),
-            did: authorId,
-          };
-        });
-      }
-
-      return [];
     },
-    [composeClient],
+    [profileRepository],
   );
 
   const searchUsers = useCallback(
