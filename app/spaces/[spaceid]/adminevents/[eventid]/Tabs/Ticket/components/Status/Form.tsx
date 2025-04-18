@@ -71,6 +71,7 @@ export default function Form({ regAndAccess, onClose }: FormProps) {
       addresses: [{ address: '' }],
       whitelist:
         regAndAccess?.registrationWhitelist?.map((q) => ({
+          // TODO：confirm q.id source logic here
           address: getWalletAddressFromDid(q.id),
         })) || [],
     },

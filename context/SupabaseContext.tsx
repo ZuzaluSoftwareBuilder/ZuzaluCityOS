@@ -158,6 +158,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
               id: profile.user_id,
               username: profile.username,
               avatar: profile.avatar,
+              address: profile.address,
             },
             username: profile.username,
             newUser: false,

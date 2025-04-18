@@ -4,7 +4,7 @@ import {
   GET_PROFILE_BY_NAME_QUERY,
 } from '@/services/graphql/profile';
 import { IProfile, Profile } from '@/types';
-import { getWalletAddressFromDid } from '@/utils/did';
+import { getWalletAddressFromProfile } from '@/utils/profile';
 import { useCallback, useEffect, useState } from 'react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
@@ -57,7 +57,7 @@ export function useSearchUsers(initialQuery = '') {
         id,
         username,
         avatar: avatar || '/user/avatar_p.png',
-        address: getWalletAddressFromDid(authorId),
+        address: getWalletAddressFromProfile(profileData),
         did: authorId,
       };
       return [user];
@@ -87,7 +87,7 @@ export function useSearchUsers(initialQuery = '') {
             id: edge.node.id,
             username: edge.node.username || '',
             avatar: edge.node.avatar || '/user/avatar_p.png',
-            address: getWalletAddressFromDid(authorId),
+            address: getWalletAddressFromProfile(edge.node),
             did: authorId,
           };
         });
