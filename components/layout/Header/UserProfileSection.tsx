@@ -6,9 +6,9 @@ import UserProfileDropdown from '@/components/layout/Header/UserProfileDropdown'
 import Profile from '@/components/profile';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import useOpenDraw from '@/hooks/useOpenDraw';
-import { getWalletAddressFromDid } from '@/utils/did';
 import { useRouter } from 'next/navigation';
 import React, { memo, useCallback, useMemo, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 export function formatAddressString(
   str?: string,
@@ -35,10 +35,10 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
     newUser,
     showAuthPrompt,
     performFullLogoutAndReload,
-    profile,
   } = useAbstractAuthContext();
   const [showProfile, setShowProfile] = useState(false);
   const { open, handleOpen, handleClose } = useOpenDraw();
+  const { address } = useAccount();
 
   const handleProfile = useCallback(() => {
     setShowProfile(true);
@@ -51,8 +51,6 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
   const handleCloseProfile = useCallback(() => {
     setShowProfile(false);
   }, []);
-
-  const address = getWalletAddressFromDid(profile?.author?.id);
 
   const formattedAddress = useMemo(
     () => formatAddressString(address, 10, 6),

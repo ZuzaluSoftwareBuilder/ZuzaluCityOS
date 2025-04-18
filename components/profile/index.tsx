@@ -29,7 +29,7 @@ interface Props {
 
 const schema = Yup.object().shape({
   name: Yup.string().required('Event name is required'),
-  imageUrl: Yup.string(),
+  imageUrl: Yup.string().nullable(),
 });
 
 type FormData = Yup.InferType<typeof schema>;
@@ -45,7 +45,7 @@ export default function Profile({ showModal, onClose }: Props) {
       const { name, imageUrl } = data;
       await profileRepository.update(profile?.id, {
         username: name,
-        avatar: imageUrl,
+        avatar: imageUrl!,
       });
     },
     onSuccess: () => {
@@ -61,7 +61,7 @@ export default function Profile({ showModal, onClose }: Props) {
     resolver: yupResolver(schema),
     values: {
       name: username ?? '',
-      imageUrl: profile?.avatar ?? '',
+      imageUrl: profile?.avatar,
     },
   });
 
@@ -150,6 +150,7 @@ export default function Profile({ showModal, onClose }: Props) {
               render={({ field }) => (
                 <FormUploader
                   {...field}
+                  value={field.value!}
                   previewStyle={{
                     borderRadius: '50%',
                     width: '100px',
@@ -163,7 +164,7 @@ export default function Profile({ showModal, onClose }: Props) {
             disabled={!isDirty}
             loading={updateProfileMutation.isPending}
             startIcon={<ArrowUpTrayIcon size={5} />}
-            onClick={handleSubmit(handleClick)}
+            onClick={handleSubmit(handleClick, (e) => console.log(e))}
           >
             Save Changes
           </ConfimButton>
