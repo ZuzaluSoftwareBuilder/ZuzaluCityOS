@@ -377,6 +377,10 @@ export type Profile = {
   id: any;
   username: string;
   avatar?: string;
+  /**
+   * set by supabase, not ceramic, still need to read address from did when use ceramic
+   */
+  address?: string;
   author?: {
     id: string;
   };

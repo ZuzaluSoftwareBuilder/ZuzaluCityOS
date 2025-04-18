@@ -71,6 +71,7 @@ export default function Form({ regAndAccess, onClose }: FormProps) {
       addresses: [{ address: '' }],
       whitelist:
         regAndAccess?.registrationWhitelist?.map((q) => ({
+          // TODO wait supabase update, confirm q.id source logic
           address: getWalletAddressFromDid(q.id),
         })) || [],
     },

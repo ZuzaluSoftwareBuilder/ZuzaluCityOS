@@ -160,6 +160,7 @@ const ScanQRModal = ({ showModal, setShowModal }: IScanQRModal) => {
           // if (dayjs().diff(scannedDate, 'minute') > 1) {
           //   throw new Error('QR Code has expired');
           // }
+          // TODO confirm authorId, but page cannot be opened， wait to check
           const walletAddress = getWalletAddressFromDid(authorId);
 
           const [hasNFT, result] = await Promise.all([

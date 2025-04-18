@@ -6,7 +6,7 @@ import {
   updateMembersRole,
 } from '@/services/member';
 import { PermissionName, Profile, RolePermission, UserRole } from '@/types';
-import { getWalletAddressFromDid } from '@/utils/did';
+import { getWalletAddressFromProfile } from '@/utils/profile';
 import { addToast } from '@heroui/react';
 import { useParams } from 'next/navigation';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -188,7 +188,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
           id: did,
           name: profile.username,
           avatar: profile.avatar,
-          address: getWalletAddressFromDid(did),
+          address: getWalletAddressFromProfile(profile),
           roleId,
           did: profile.author?.id,
         } as IMemberItem;
@@ -202,7 +202,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
               id: owner?.author?.id,
               name: owner?.username,
               avatar: owner?.avatar,
-              address: getWalletAddressFromDid(owner?.author?.id),
+              address: getWalletAddressFromProfile(owner),
               roleId: null,
               did: owner?.author?.id,
             } as IMemberItem,
