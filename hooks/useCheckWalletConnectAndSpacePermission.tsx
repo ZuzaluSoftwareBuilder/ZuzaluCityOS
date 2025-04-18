@@ -74,7 +74,7 @@ const useCheckWalletConnectAndSpacePermission = ({
   callbacks = {},
 }: ICheckWalletPermissionConfig): IPermissionCheckResult => {
   const { isAuthenticated, profile } = useAbstractAuthContext();
-  const userId = profile?.author?.id;
+  const profileId = profile?.id;
   const { isOwner, isAdmin, isMember, isLoading, checkPermission } =
     useSpacePermissions();
   const { isConnected, isConnecting, status: walletStatus } = useAccount();
@@ -124,7 +124,7 @@ const useCheckWalletConnectAndSpacePermission = ({
   }, [walletStatus, isConnecting, isConnected, checkStatus.walletChecked]);
 
   useEffect(() => {
-    if (!isLoading && !!userId && !checkStatus.permissionChecked) {
+    if (!isLoading && !!profileId && !checkStatus.permissionChecked) {
       switch (permissionCheck.type) {
         case PermissionCheckType.SPECIFIC_PERMISSION:
           if (permissionCheck.permissionName) {
@@ -155,7 +155,7 @@ const useCheckWalletConnectAndSpacePermission = ({
       setCheckStatus((prev) => ({ ...prev, permissionChecked: true }));
     }
   }, [
-    userId,
+    profileId,
     isLoading,
     isOwner,
     isAdmin,

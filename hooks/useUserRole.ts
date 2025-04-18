@@ -1,11 +1,13 @@
-import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import { GET_USER_ROLES_QUERY } from '@/services/graphql/role';
+import { getDidByAddress } from '@/utils/did';
+import { useAccount } from 'wagmi';
 
 const useUserRole = () => {
-  const { profile } = useAbstractAuthContext();
-  const userDId = profile?.author?.id;
+  const { chainId, address } = useAccount();
+  // TODO wait supabase update
+  const userDId = getDidByAddress(address as string, chainId!);
 
   const { followerRole } = useBuildInRole();
 

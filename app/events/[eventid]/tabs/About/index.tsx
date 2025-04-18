@@ -78,7 +78,7 @@ const About: React.FC<IAbout> = ({ eventData, setVerify, canEdit }) => {
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('sm'));
 
-  const { composeClient, profile } = useAbstractAuthContext();
+  const { profile } = useAbstractAuthContext();
   const profileId = profile?.id || '';
 
   const [state, setState] = useState({
