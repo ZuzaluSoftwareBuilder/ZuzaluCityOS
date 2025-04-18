@@ -1,7 +1,7 @@
 'use client';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
-import { Space } from '@/types';
+import { Space } from '@/models/space';
+import { getSpaceRepository } from '@/repositories/space';
+import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import React, { createContext, useContext } from 'react';
 
@@ -18,21 +18,18 @@ const SpaceDataContext = createContext<SpaceDataContextType | undefined>(
 export const SpaceDataProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const spaceId = useParams().spaceid;
+  const spaceId = useParams().spaceid as string;
+  const spaceRepository = getSpaceRepository();
 
-  const { data, isLoading, refetch } = useGraphQL(
-    ['GET_SPACE_QUERY', spaceId],
-    GET_SPACE_QUERY_BY_ID,
-    {
-      id: spaceId as string,
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ['space', spaceId],
+    queryFn: async () => {
+      if (!spaceId) return undefined;
+      const spaceData = await spaceRepository.getById(spaceId);
+      return spaceData || undefined;
     },
-    {
-      select: (data) => {
-        return data?.data.node as Space;
-      },
-    },
-  );
-
+    enabled: !!spaceId,
+  });
   const value = {
     isSpaceDataLoading: isLoading,
     spaceData: data,

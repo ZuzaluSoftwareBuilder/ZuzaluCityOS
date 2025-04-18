@@ -4,9 +4,9 @@ import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permissio
 import { Button } from '@/components/base';
 import { Categories } from '@/constant';
 import { useMediaQuery } from '@/hooks';
+import { Space } from '@/models/space';
 import { UPDATE_SPACE_MUTATION } from '@/services/graphql/space';
 import { createUrlWhenEdit } from '@/services/url';
-import { Space } from '@/types';
 import { executeQuery } from '@/utils/ceramic';
 import { covertNameToUrlName } from '@/utils/format';
 import { addToast, cn } from '@heroui/react';
@@ -125,7 +125,7 @@ const EditSpace = () => {
   const setFormData = (data: Space) => {
     if (!data) return;
     profileForm.setValue('name', data.name);
-    profileForm.setValue('tagline', data.tagline);
+    profileForm.setValue('tagline', data.tagline || '');
     profileForm.setValue('description', data.description);
     profileForm.setValue('avatar', data.avatar || '');
     profileForm.setValue('banner', data.banner || '');

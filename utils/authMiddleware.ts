@@ -1,6 +1,6 @@
+import { getSpaceRepository } from '@/repositories/space';
 import { CHECK_EXISTING_ROLE_QUERY } from '@/services/graphql/role';
-import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
-import { Permission, RolePermission, Space, UserRole } from '@/types';
+import { Permission, RolePermission, UserRole } from '@/types';
 import { DIDSession } from 'did-session';
 import { NextRequest, NextResponse } from 'next/server';
 import { executeQuery } from './ceramic';
@@ -62,12 +62,14 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
         `and(resource.eq.${resource},resource_id.eq.${id}),and(resource.is.null,resource_id.is.null)`,
       );
     if (resource === 'space') {
-      const spaceResult = await executeQuery(GET_SPACE_QUERY_BY_ID, {
-        id,
-      });
+      const spaceRepository = getSpaceRepository();
+      const space = await spaceRepository.getById(id);
 
-      const space = spaceResult.data?.node as Space;
-      const isOwner = space.owner?.zucityProfile.author?.id === operatorId;
+      if (!space) {
+        return { isValid: false, error: 'Space not found' };
+      }
+
+      const isOwner = space.owner?.id === operatorId;
       if (isOwner) {
         return {
           isValid: true,
