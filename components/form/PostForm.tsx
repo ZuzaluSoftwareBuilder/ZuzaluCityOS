@@ -57,6 +57,7 @@ const PostForm: React.FC<PostFormProps> = ({
 }) => {
   const { breakpoints } = useTheme();
   const descriptionEditorStore = useEditorStore();
+  // TODO wait supabase update, confirm profile of event
   const { profile } = useAbstractAuthContext();
   const params = useParams();
   const eventId = params.eventid?.toString() ?? '';

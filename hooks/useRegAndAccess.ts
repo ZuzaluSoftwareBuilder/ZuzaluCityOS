@@ -25,6 +25,7 @@ const useRegAndAccess = (props: Props) => {
   const queryClient = useQueryClient();
   const pathname = useParams();
   const { profile } = useAbstractAuthContext();
+  // TODO wait supabase update, confirm profile.id of RegAndAccess
   const profileId = profile?.id || '';
   const eventId = pathname.eventid?.toString() ?? '';
 

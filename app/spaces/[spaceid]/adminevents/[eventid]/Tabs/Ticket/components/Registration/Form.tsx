@@ -54,6 +54,7 @@ const ConfigForm: React.FC<RegistrationMethodSelectorProps> = ({
   });
   const { profile } = useAbstractAuthContext();
   const pass = formMethods.watch('pass');
+  // TODO wait supabase update, confirm profile.id of RegAndAccess
   const profileId = profile?.id || '';
 
   const eventId = pathname.eventid?.toString() ?? '';

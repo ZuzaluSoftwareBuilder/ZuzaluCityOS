@@ -21,6 +21,7 @@ const OverviewHeader = ({ event, setTabName }: PropTypes) => {
 
   const params = useParams();
   const eventId = params.eventid?.toString() ?? '';
+  // TODO wait supabase update, confirm profile.id of sessions
   const profileId = profile?.id || '';
   const { breakpoints } = useTheme();
 

@@ -114,6 +114,7 @@ export function SpaceCard({
 
   const isLegacyOwner = useMemo(() => {
     if (!isLegacy) return false;
+    // TODO wait supabase update, confirm did of space
     return (owner as unknown as string) === profile?.author?.id;
   }, [isLegacy, owner, profile?.author?.id]);
 

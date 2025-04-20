@@ -137,7 +137,7 @@ export const EventForm: React.FC<EventFormProps> = ({
   const [isLoading, setLoading] = useState(false);
   const [blockClickModal, setBlockClickModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
+  // TODO wait supabase update, confirm profile.id of event
   const { profile, ceramic } = useAbstractAuthContext();
   const profileId = profile?.id || '';
   const adminId = ceramic?.did?.parent || '';

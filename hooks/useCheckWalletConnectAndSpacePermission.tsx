@@ -74,6 +74,7 @@ const useCheckWalletConnectAndSpacePermission = ({
   callbacks = {},
 }: ICheckWalletPermissionConfig): IPermissionCheckResult => {
   const { isAuthenticated, profile } = useAbstractAuthContext();
+  // TODO wait supabase update, confirm profile.id of space permission
   const profileId = profile?.id;
   const { isOwner, isAdmin, isMember, isLoading, checkPermission } =
     useSpacePermissions();

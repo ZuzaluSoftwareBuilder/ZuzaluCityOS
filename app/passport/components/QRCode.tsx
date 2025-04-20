@@ -14,7 +14,7 @@ interface PropTypes {
 const QRCode = ({ ticketAddress, eventId, onClose }: PropTypes) => {
   const { Canvas } = useQRCode();
   const { username, profile } = useAbstractAuthContext();
-  // TODO wait supabase update, to test qrcode logic
+  // TODO wait supabase update, confirm did usage of qrcode
   const authorId = profile?.author?.id || '';
 
   const [errorCorrectionLevel, setErrorCorrectionLevel] = useState<string>('M');

@@ -89,6 +89,7 @@ const DappForm: React.FC<DappFormProps> = ({
 }) => {
   const { profile } = useAbstractAuthContext();
   const queryClient = useQueryClient();
+  // TODO wait supabase update, confirm profile.id of dapp
   const profileId = profile?.id || '';
   const { scrollToError } = useFormScrollToError();
 
