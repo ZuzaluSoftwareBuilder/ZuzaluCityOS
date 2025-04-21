@@ -31,7 +31,10 @@ export class SupaProfileRepository implements IProfileRepository {
       throw new Error(error.message);
     }
 
-    return data || [];
+    return (data || []).map((profile) => ({
+      ...profile,
+      id: profile.user_id,
+    }));
   }
 
   async getProfileByAddress(
@@ -48,6 +51,9 @@ export class SupaProfileRepository implements IProfileRepository {
       throw new Error(error.message);
     }
 
-    return data;
+    return {
+      ...data,
+      id: data.user_id,
+    };
   }
 }

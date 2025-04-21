@@ -57,10 +57,11 @@ export class CeramicProfileRepository implements IProfileRepository {
 
     const profile = data.node.zucityProfile;
     return {
-      id: profile.author?.id,
+      id: profile.id,
       username: profile.username,
       avatar: profile.avatar || '',
       address: getWalletAddressFromProfile(profile),
+      did: profile.author?.id,
     };
   }
 
@@ -81,10 +82,11 @@ export class CeramicProfileRepository implements IProfileRepository {
     return data.zucityProfileIndex.edges.map((edge: any) => {
       const profile = edge.node;
       return {
-        id: profile.author?.id,
+        id: profile.id,
         username: profile.username,
         avatar: profile.avatar || '',
         address: getWalletAddressFromProfile(profile),
+        did: profile.author?.id,
       };
     });
   }

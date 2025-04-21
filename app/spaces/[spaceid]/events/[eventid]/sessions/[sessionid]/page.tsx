@@ -25,7 +25,6 @@ import {
   FormLabelDesc,
 } from '@/components/typography/formTypography';
 import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
-import { useCeramicContext } from '@/context/CeramicContext';
 import { supaEditSession } from '@/services/session';
 import {
   Anchor,
@@ -69,6 +68,7 @@ import { Header, IconSidebar, Sidebar } from '../../components';
 
 import SelectSearchUser from '@/components/select/selectSearchUser';
 import { StorageKey_CeramicEthDid } from '@/constant/StorageKey';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { formatUserName } from '@/utils/format';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
@@ -93,7 +93,7 @@ const Home = () => {
   const params = useParams();
   const [eventData, setEventData] = useState<Event>();
   const { authenticate, composeClient, ceramic, isAuthenticated, profile } =
-    useCeramicContext();
+    useAbstractAuthContext();
   const [sessionView, setSessionView] = useState<boolean>(false);
   const [verify, setVerify] = useState<boolean>(false);
   const eventId = params.eventid?.toString() ?? '';
@@ -118,6 +118,7 @@ const Home = () => {
     bottom: false,
     right: false,
   });
+  // TODO wait for supabase update, confirm profileId usage
   const profileId = profile?.id || '';
   const [directions, setDirections] = useState<string>('');
   const [customLocation, setCustomLocation] = useState<string>('');

@@ -38,7 +38,7 @@ export function useSearchUsers(initialQuery = '') {
           username: profile.username,
           avatar: profile.avatar || '/user/avatar_p.png',
           address: profile.address,
-          did: profile.id,
+          did: profile.did || profile.id,
         };
         return [user];
       } catch (error) {
@@ -59,7 +59,7 @@ export function useSearchUsers(initialQuery = '') {
           username: profile.username,
           avatar: profile.avatar || '/user/avatar_p.png',
           address: profile.address,
-          did: profile.id,
+          did: profile.did || profile.id,
         }));
       } catch (error) {
         console.error('searchByUsername error:', error);
