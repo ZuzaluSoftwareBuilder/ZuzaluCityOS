@@ -20,6 +20,7 @@ import FormHeader from './FormHeader';
 
 import EditorPro from '@/components/editorPro';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
+import { useRepositories } from '@/context/RepositoryContext';
 import { createDapp, updateDapp } from '@/services/dapp';
 import { Check } from '@phosphor-icons/react';
 import { isAddress } from 'viem';
@@ -88,6 +89,7 @@ const DappForm: React.FC<DappFormProps> = ({
   refetch,
 }) => {
   const { profile } = useAbstractAuthContext();
+  const { dappRepository } = useRepositories();
   const queryClient = useQueryClient();
   const profileId = profile?.id || '';
   const { scrollToError } = useFormScrollToError();
@@ -97,7 +99,6 @@ const DappForm: React.FC<DappFormProps> = ({
     handleSubmit,
     formState: { errors },
     setValue,
-    setError,
     reset,
     watch,
   } = useForm<FormData>({
@@ -132,9 +133,9 @@ const DappForm: React.FC<DappFormProps> = ({
   const submitMutation = useMutation({
     mutationFn: ({ type, data }: { type: 'create' | 'edit'; data: any }) => {
       if (type === 'create') {
-        return createDapp({ ...data, profileId });
+        return createDapp({ ...data, profileId }, dappRepository);
       } else {
-        return updateDapp({ ...data, id: initialData?.id });
+        return updateDapp({ ...data, id: initialData?.id }, dappRepository);
       }
     },
     onSuccess: () => {

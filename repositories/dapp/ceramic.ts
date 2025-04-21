@@ -1,3 +1,4 @@
+import { CreateDappInput } from '@/models/dapp';
 import {
   CREATE_DAPP_MUTATION,
   UPDATE_DAPP_MUTATION,
@@ -7,14 +8,14 @@ import dayjs from 'dayjs';
 import { BaseDappRepository } from './type';
 
 export class CeramicDappRepository extends BaseDappRepository {
-  async create(dappInput: any): Promise<string | null> {
+  async create(dappInput: CreateDappInput): Promise<string | null> {
     const {
       appName,
       developerName,
       description,
       tagline,
       bannerUrl,
-      developmentStatus,
+      devStatus,
       categories,
       openSource,
       websiteUrl,
@@ -27,34 +28,28 @@ export class CeramicDappRepository extends BaseDappRepository {
       isSCApp,
       scAddresses,
       auditLogUrl,
+      appType,
     } = dappInput;
 
     const result = await executeQuery(CREATE_DAPP_MUTATION, {
       input: {
         content: {
           profileId,
-          createdAtTime: dayjs().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-          appType: 'space',
+          createdAtTime: dayjs().toISOString(),
+          appType,
           appName,
           developerName,
           description,
           tagline,
-          categories: Array.isArray(categories)
-            ? categories.join(',')
-            : categories,
+          categories,
           appLogoUrl,
           bannerUrl,
-          devStatus: developmentStatus,
-          openSource,
+          devStatus,
+          openSource: this.getBooleanValue(openSource),
           repositoryUrl: this.getValue(repositoryUrl),
-          isSCApp,
-          scAddresses:
-            isSCApp && scAddresses
-              ? scAddresses.split(',').map((item: string) => ({
-                  address: item,
-                }))
-              : null,
-          isInstallable,
+          isSCApp: this.getBooleanValue(isSCApp),
+          scAddresses: this.getValue(scAddresses),
+          isInstallable: this.getBooleanValue(isInstallable),
           websiteUrl: this.getValue(websiteUrl),
           docsUrl: this.getValue(docsUrl),
           auditLogUrl: this.getValue(auditLogUrl),
@@ -77,7 +72,7 @@ export class CeramicDappRepository extends BaseDappRepository {
       description,
       tagline,
       bannerUrl,
-      developmentStatus,
+      devStatus,
       categories,
       openSource,
       websiteUrl,
@@ -102,7 +97,7 @@ export class CeramicDappRepository extends BaseDappRepository {
           description,
           tagline,
           bannerUrl,
-          devStatus: developmentStatus,
+          devStatus,
           categories: Array.isArray(categories)
             ? categories.join(',')
             : categories,

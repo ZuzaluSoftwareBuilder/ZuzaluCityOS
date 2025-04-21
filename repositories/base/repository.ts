@@ -1,5 +1,8 @@
 export abstract class BaseRepository {
-  protected getValue(value: any): any {
+  protected getBooleanValue(value: any) {
+    return value ? '1' : '0';
+  }
+  protected getValue(value: any) {
     return !value || value === '' ? null : value;
   }
 }

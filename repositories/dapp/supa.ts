@@ -1,16 +1,17 @@
+import { CreateDappInput } from '@/models/dapp';
 import { supabase } from '@/utils/supabase/client';
 import dayjs from 'dayjs';
 import { BaseDappRepository } from './type';
 
 export class SupaDappRepository extends BaseDappRepository {
-  async create(dappInput: any): Promise<string | null> {
+  async create(dappInput: CreateDappInput): Promise<string | null> {
     const {
       appName,
       developerName,
       description,
       tagline,
       bannerUrl,
-      developmentStatus,
+      devStatus,
       categories,
       openSource,
       websiteUrl,
@@ -23,37 +24,28 @@ export class SupaDappRepository extends BaseDappRepository {
       isSCApp,
       scAddresses,
       auditLogUrl,
+      appType,
     } = dappInput;
 
     const { data, error } = await supabase
-      .from('dapps')
+      .from('dapp_infos')
       .insert({
-        profile_id: profileId,
-        created_at: dayjs().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-        app_type: 'space',
+        author: profileId,
+        created_at: dayjs().toISOString(),
+        app_type: appType,
         app_name: appName,
         developer_name: developerName,
         description,
         tagline,
-        categories: Array.isArray(categories)
-          ? categories.join(',')
-          : categories,
+        categories,
         app_logo_url: appLogoUrl,
         banner_url: bannerUrl,
-        dev_status: developmentStatus,
-        open_source: openSource,
-        repository_url: repositoryUrl,
-        is_sc_app: isSCApp,
-        sc_addresses:
-          isSCApp && scAddresses
-            ? JSON.stringify(
-                scAddresses.split(',').map((item: string) => ({
-                  address: item,
-                  chain: '',
-                })),
-              )
-            : null,
-        is_installable: isInstallable,
+        dev_status: devStatus,
+        open_source: this.getBooleanValue(openSource),
+        repository_url: this.getValue(repositoryUrl),
+        is_sc_app: this.getBooleanValue(isSCApp),
+        sc_addresses: this.getValue(scAddresses),
+        is_installable: this.getBooleanValue(isInstallable),
         website_url: this.getValue(websiteUrl),
         docs_url: this.getValue(docsUrl),
         audit_log_url: this.getValue(auditLogUrl),
@@ -76,7 +68,7 @@ export class SupaDappRepository extends BaseDappRepository {
       description,
       tagline,
       bannerUrl,
-      developmentStatus,
+      devStatus,
       categories,
       openSource,
       websiteUrl,
@@ -100,7 +92,7 @@ export class SupaDappRepository extends BaseDappRepository {
         description,
         tagline,
         banner_url: bannerUrl,
-        dev_status: developmentStatus,
+        dev_status: devStatus,
         categories: Array.isArray(categories)
           ? categories.join(',')
           : categories,
