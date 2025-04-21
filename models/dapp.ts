@@ -16,14 +16,14 @@ export interface Dapp {
   categories: string;
   devStatus: string;
   openSource: boolean;
-  repositoryUrl: string;
-  appUrl: string;
-  websiteUrl: string;
-  docsUrl: string;
+  repositoryUrl?: string;
+  appUrl?: string;
+  websiteUrl?: string;
+  docsUrl?: string;
   tagline: string;
   isInstallable: string;
   isSCApp: boolean;
-  scAddresses: {
+  scAddresses?: {
     address: string;
     chain: string;
   }[];
