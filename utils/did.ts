@@ -4,6 +4,7 @@ export const getWalletAddressFromDid = (did?: string) => {
 };
 
 export const getDidByAddress = (address: string, chainId: number) => {
+  if (!address) return '';
   const normalizedAddress = address.startsWith('0x')
     ? address.toLowerCase()
     : `0x${address}`.toLowerCase();
