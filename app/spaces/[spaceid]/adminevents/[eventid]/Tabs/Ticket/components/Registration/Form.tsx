@@ -10,6 +10,7 @@ import {
   RegistrationAndAccess,
   UpdateRegAndAccessRequest,
 } from '@/types';
+import { getDidByAddress } from '@/utils/did';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -107,9 +108,11 @@ const ConfigForm: React.FC<RegistrationMethodSelectorProps> = ({
             whitelist
               ?.split(',')
               .filter(Boolean)
-              .map(
-                (address) =>
-                  `did:pkh:eip155:${isDev ? sepolia.id : mainnet.id}:${address.trim()}`,
+              .map((address) =>
+                getDidByAddress(
+                  address.trim(),
+                  isDev ? sepolia.id : mainnet.id,
+                ),
               ) || undefined;
           createMutation.mutate({
             eventId,

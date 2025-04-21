@@ -1,4 +1,6 @@
 //This is the Lit action stored in ipfs for verifying if a user is allowed to access an event
+import { getDidByAddress } from './did.js';
+
 export const verifyUser = async (eventId, userAddress, env) => {
   try {
     const baseUrl =
@@ -8,7 +10,7 @@ export const verifyUser = async (eventId, userAddress, env) => {
 
     const chainId = env === 'dev' ? '534351' : '534352';
 
-    const userDid = `did:pkh:eip155:${chainId}:${userAddress.toLowerCase()}`;
+    const userDid = getDidByAddress(userAddress.toLowerCase(), chainId);
 
     const response = await fetch(`${baseUrl}/api/v0/streams/${eventId}`).then(
       (res) => res.json(),
