@@ -4,6 +4,7 @@ import { useLitContext } from '@/context/LitContext';
 import { useZupassContext } from '@/context/ZupassContext';
 import { updateScrollpassMember } from '@/services/event/addScrollpassMember';
 import { updateZupassMember } from '@/services/event/addZupassMember';
+import { getWalletAddressFromDid } from '@/utils/did';
 import {
   Box,
   Checkbox,
@@ -150,8 +151,10 @@ export default function NewUserPromptModal({
               if (!litClient) {
                 throw new Error('Failed to connect to Lit Network');
               }
-              const encryptString =
-                ceramic?.did?.parent?.split(':').pop() || '';
+
+              const encryptString = getWalletAddressFromDid(
+                ceramic?.did?.parent,
+              );
 
               const accessControlConditions = [
                 {

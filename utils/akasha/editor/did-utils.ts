@@ -1,10 +1,11 @@
+import { getWalletAddressFromDid } from '@/utils/did';
 import { truncateMiddle } from './string-utils';
 
 export const truncateDid = (didKey: string, type = 'eth') => {
   if (didKey) {
     if (didKey.length <= 12) return didKey;
 
-    const address = didKey.split(':').pop() ?? '';
+    const address = getWalletAddressFromDid(didKey);
     switch (type) {
       case 'eth':
       case 'solana':
