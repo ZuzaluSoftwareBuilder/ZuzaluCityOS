@@ -8,6 +8,7 @@ export interface InstalledApp {
 export interface Dapp {
   id: string;
   appName: string;
+  appType?: string;
   developerName: string;
   description: string;
   bannerUrl: string;
@@ -15,14 +16,14 @@ export interface Dapp {
   categories: string;
   devStatus: string;
   openSource: boolean;
-  repositoryUrl: string;
-  appUrl: string;
-  websiteUrl: string;
-  docsUrl: string;
+  repositoryUrl?: string;
+  appUrl?: string;
+  websiteUrl?: string;
+  docsUrl?: string;
   tagline: string;
   isInstallable: string;
   isSCApp: boolean;
-  scAddresses: {
+  scAddresses?: {
     address: string;
     chain: string;
   }[];
@@ -36,3 +37,7 @@ export interface Dapp {
   };
   isLegacy?: boolean;
 }
+
+export type CreateDappInput = Omit<Dapp, 'id' | 'profile' | 'isLegacy'> & {
+  profileId: string;
+};
