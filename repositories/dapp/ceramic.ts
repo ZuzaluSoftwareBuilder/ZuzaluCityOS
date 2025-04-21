@@ -1,6 +1,7 @@
-import { CreateDappInput } from '@/models/dapp';
+import { CreateDappInput, Dapp } from '@/models/dapp';
 import {
   CREATE_DAPP_MUTATION,
+  GET_DAPP_LIST_QUERY,
   UPDATE_DAPP_MUTATION,
 } from '@/services/graphql/dApp';
 import { executeQuery } from '@/utils/ceramic';
@@ -123,5 +124,23 @@ export class CeramicDappRepository extends BaseDappRepository {
     }
 
     return result?.data?.updateZucityDappInfo?.document?.id || null;
+  }
+
+  async getDapps(): Promise<Dapp[]> {
+    const result = await executeQuery(GET_DAPP_LIST_QUERY, {
+      first: 100,
+    });
+
+    if (result.errors) {
+      throw new Error(result.errors.message);
+    }
+
+    if (!result?.data?.zucityDappInfoIndex?.edges) {
+      return [];
+    }
+
+    return result.data.zucityDappInfoIndex.edges.map(
+      (edge) => edge?.node,
+    ) as any;
   }
 }

@@ -1,9 +1,11 @@
-import { CreateDappInput } from '@/models/dapp';
+import { CreateDappInput, Dapp } from '@/models/dapp';
 import { supabase } from '@/utils/supabase/client';
 import dayjs from 'dayjs';
 import { BaseDappRepository } from './type';
 
 export class SupaDappRepository extends BaseDappRepository {
+  private readonly TABLE_NAME = 'dapp_infos';
+
   async create(dappInput: CreateDappInput): Promise<string | null> {
     const {
       appName,
@@ -28,7 +30,7 @@ export class SupaDappRepository extends BaseDappRepository {
     } = dappInput;
 
     const { data, error } = await supabase
-      .from('dapp_infos')
+      .from(this.TABLE_NAME)
       .insert({
         author: profileId,
         created_at: dayjs().toISOString(),
@@ -83,7 +85,7 @@ export class SupaDappRepository extends BaseDappRepository {
     } = dappInput;
 
     const { data, error } = await supabase
-      .from('dapps')
+      .from(this.TABLE_NAME)
       .update({
         app_url: !appUrl || appUrl === '' ? null : appUrl,
         app_name: appName,
@@ -122,5 +124,48 @@ export class SupaDappRepository extends BaseDappRepository {
     }
 
     return data?.id || null;
+  }
+
+  async getDapps(): Promise<Dapp[]> {
+    const { data, error } = await supabase
+      .from(this.TABLE_NAME)
+      .select(`*, author(*)`);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data.map(this.transformDapp) as Dapp[];
+  }
+
+  private transformDapp(dapp: any): Dapp {
+    return {
+      id: dapp.id,
+      tagline: dapp.tagline,
+      description: dapp.description,
+      categories: dapp.categories,
+      appName: dapp.app_name,
+      developerName: dapp.developer_name,
+      bannerUrl: dapp.banner_url,
+      appLogoUrl: dapp.app_logo_url,
+      devStatus: dapp.dev_status,
+      openSource: dapp.open_source,
+      websiteUrl: dapp.website_url,
+      repositoryUrl: dapp.repository_url,
+      appUrl: dapp.app_url,
+      docsUrl: dapp.docs_url,
+      isInstallable: dapp.is_installable,
+      isSCApp: dapp.is_sc_app,
+      scAddresses: dapp.sc_addresses,
+      auditLogUrl: dapp.audit_log_url,
+      appType: dapp.app_type,
+      profile: {
+        author: {
+          id: dapp.author.id,
+        },
+        username: dapp.author.username,
+        avatar: dapp.author.avatar,
+      },
+    };
   }
 }

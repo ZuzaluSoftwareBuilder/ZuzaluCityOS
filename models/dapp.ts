@@ -8,7 +8,7 @@ export interface InstalledApp {
 export interface Dapp {
   id: string;
   appName: string;
-  appType: string;
+  appType?: string;
   developerName: string;
   description: string;
   bannerUrl: string;
