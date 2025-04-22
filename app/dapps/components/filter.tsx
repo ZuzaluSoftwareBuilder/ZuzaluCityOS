@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 
 interface FilterProps {
   filterData: string[];
-  onFilterChange: (filter: string[]) => void;
+  onFilterChange: (_filter: string[]) => void;
 }
 
 export default function Filter({ filterData, onFilterChange }: FilterProps) {

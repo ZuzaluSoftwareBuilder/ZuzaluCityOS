@@ -3,7 +3,7 @@ import FormHeader from '@/components/form/FormHeader';
 import { Button } from '@/components/base';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useRepositories } from '@/context/RepositoryContext';
-import { Dapp } from '@/types';
+import { Dapp } from '@/models/dapp';
 import { Image } from '@heroui/react';
 import { Eye, NotePencil } from '@phosphor-icons/react';
 import { useQuery } from '@tanstack/react-query';

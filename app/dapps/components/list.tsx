@@ -6,7 +6,7 @@ import {
 } from '@/components/layout/explore/responsiveGridItem';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useRepositories } from '@/context/RepositoryContext';
-import { Dapp } from '@/types';
+import { Dapp } from '@/models/dapp';
 import { supabase } from '@/utils/supabase/client';
 import { Skeleton } from '@heroui/react';
 import { useQuery } from '@tanstack/react-query';

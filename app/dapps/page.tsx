@@ -7,7 +7,7 @@ import { Shapes } from '@phosphor-icons/react';
 
 import { Drawer, DrawerContent } from '@/components/base';
 import DappForm from '@/components/form/DappForm';
-import { Dapp } from '@/types';
+import { Dapp } from '@/models/dapp';
 import { useDisclosure } from '@heroui/react';
 import { useCallback, useState } from 'react';
 import { DappDetail, List } from './components';

@@ -1,7 +1,7 @@
-'use client';
 import { DAPP_TAGS } from '@/constant';
 import { useFormScrollToError } from '@/hooks/useFormScrollToError';
-import { Dapp, FilmOptionType } from '@/types';
+import { Dapp } from '@/models/dapp';
+import { FilmOptionType } from '@/types';
 import Yup from '@/utils/yupExtensions';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, FormHelperText, Stack, Typography } from '@mui/material';
@@ -112,12 +112,12 @@ const DappForm: React.FC<DappFormProps> = ({
       appLogoUrl: initialData?.appLogoUrl || '',
       bannerUrl: initialData?.bannerUrl || '',
       developmentStatus: initialData?.devStatus || '',
-      openSource: Number(initialData?.openSource) === 1 || false,
+      openSource: !!initialData?.openSource,
       repositoryUrl: initialData?.repositoryUrl || '',
-      isSCApp: Number(initialData?.isSCApp) === 1 || false,
+      isSCApp: !!initialData?.isSCApp,
       scAddresses:
         initialData?.scAddresses?.map((item) => item.address).join(',') || '',
-      isInstallable: Number(initialData?.isInstallable) === 1 || false,
+      isInstallable: !!initialData?.isInstallable,
       websiteUrl: initialData?.websiteUrl || '',
       docsUrl: initialData?.docsUrl || '',
       appUrl: initialData?.appUrl || '',
