@@ -1,3 +1,4 @@
+import { Result } from '@/models/base';
 import { CreateDappInput, Dapp, UpdateDappInput } from '@/models/dapp';
 import {
   CREATE_DAPP_MUTATION,
@@ -9,7 +10,7 @@ import dayjs from 'dayjs';
 import { BaseDappRepository } from './type';
 
 export class CeramicDappRepository extends BaseDappRepository {
-  async create(dappInput: CreateDappInput): Promise<string | null> {
+  async create(dappInput: CreateDappInput): Promise<Result<Dapp>> {
     const {
       appName,
       developerName,
@@ -32,7 +33,7 @@ export class CeramicDappRepository extends BaseDappRepository {
       appType,
     } = dappInput;
 
-    const result = await executeQuery(CREATE_DAPP_MUTATION, {
+    const response = await executeQuery(CREATE_DAPP_MUTATION, {
       input: {
         content: {
           profileId,
@@ -59,14 +60,34 @@ export class CeramicDappRepository extends BaseDappRepository {
       },
     });
 
-    if (result.errors) {
-      throw new Error(result.errors.message);
+    const result = this.handleGraphQLResponse(
+      response,
+      'Failed to create dapp',
+    );
+    if (result.error) {
+      return this.createResponse(null, result.error);
     }
 
-    return result?.data?.createZucityDappInfo?.document?.id || null;
+    const data = result?.data?.createZucityDappInfo?.document;
+    if (!data) {
+      return this.createResponse(
+        null,
+        new Error('Failed to create dapp: No valid data returned'),
+      );
+    }
+
+    const dapp = this.transformToDapp(data);
+    if (!dapp) {
+      return this.createResponse(
+        null,
+        new Error('Failed to create dapp: Data transformation error'),
+      );
+    }
+
+    return this.createResponse(dapp);
   }
 
-  async update(id: string, dappInput: UpdateDappInput): Promise<string | null> {
+  async update(id: string, dappInput: UpdateDappInput): Promise<Result<Dapp>> {
     const {
       appName,
       developerName,
@@ -88,7 +109,7 @@ export class CeramicDappRepository extends BaseDappRepository {
       appType,
     } = dappInput;
 
-    const result = await executeQuery(UPDATE_DAPP_MUTATION, {
+    const response = await executeQuery(UPDATE_DAPP_MUTATION, {
       input: {
         id,
         content: {
@@ -114,28 +135,58 @@ export class CeramicDappRepository extends BaseDappRepository {
       },
     });
 
-    if (result.errors) {
-      throw new Error(result.errors.message);
+    const result = this.handleGraphQLResponse(
+      response,
+      'Failed to update dapp',
+    );
+    if (result.error) {
+      return this.createResponse(null, result.error);
     }
 
-    return result?.data?.updateZucityDappInfo?.document?.id || null;
+    const data = result?.data?.updateZucityDappInfo?.document;
+    if (!data) {
+      return this.createResponse(
+        null,
+        new Error('Failed to update dapp: No valid data returned'),
+      );
+    }
+
+    const dapp = this.transformToDapp(data);
+    if (!dapp) {
+      return this.createResponse(
+        null,
+        new Error('Failed to update dapp: Data transformation error'),
+      );
+    }
+
+    return this.createResponse(dapp);
   }
 
-  async getDapps(): Promise<Dapp[]> {
-    const result = await executeQuery(GET_DAPP_LIST_QUERY, {
+  async getDapps(): Promise<Result<Dapp[]>> {
+    const response = await executeQuery(GET_DAPP_LIST_QUERY, {
       first: 100,
     });
 
-    if (result.errors) {
-      throw new Error(result.errors.message);
+    const result = this.handleGraphQLResponse(response, 'Failed to get dapps');
+    if (result.error) {
+      return this.createResponse(null, result.error);
     }
 
     if (!result?.data?.zucityDappInfoIndex?.edges) {
-      return [];
+      return this.createResponse(null, new Error('No dapps found'));
     }
 
-    return result.data.zucityDappInfoIndex.edges.map(
-      (edge) => edge?.node,
-    ) as any;
+    return this.createResponse(
+      result.data.zucityDappInfoIndex.edges.map((edge) => edge?.node),
+    );
+  }
+
+  protected transformToDapp(data: any): Dapp {
+    return {
+      ...data,
+      isInstallable: this.setBooleanValue(data.isInstallable),
+      isSCApp: this.setBooleanValue(data.isSCApp),
+      openSource: this.setBooleanValue(data.openSource),
+    };
   }
 }
