@@ -7,7 +7,7 @@ import { Event } from './event';
 import { Profile } from './profile';
 
 /**
- * 空间属性接口
+ * Space properties interface
  */
 export interface Space {
   id: string;
@@ -24,10 +24,10 @@ export interface Space {
   gated?: string;
   createdAt: string;
   updatedAt: string;
-  // 匹配ZucitySpace
+  // Match ZucitySpace
   owner: Profile;
   author: Profile;
-  // 关联数据，使用 edges.node 模式
+  // Related data using edges.node pattern
   announcements?: Edge<Announcement>;
   events?: Edge<Event>;
   installedApps?: Edge<InstalledApp>;
@@ -36,8 +36,8 @@ export interface Space {
 }
 
 /**
- * ZuPassInfo接口
- * @todo 考虑是否把链的信息去除
+ * ZuPassInfo interface
+ * @todo Consider whether to remove chain information
  */
 export interface ZuPassInfo extends PipelineEdDSATicketZuAuthConfig {
   access?: string;
@@ -47,14 +47,14 @@ export interface ZuPassInfo extends PipelineEdDSATicketZuAuthConfig {
 }
 
 /**
- * PoapsId接口
+ * PoapsId interface
  */
 export interface PoapsId {
   poapId: number;
 }
 
 /**
- * 空间访问控制接口
+ * Space access control interface
  */
 export interface SpaceGating {
   id: string;
@@ -65,7 +65,7 @@ export interface SpaceGating {
 }
 
 /**
- * 创建空间的输入类型
+ * Input type for creating a space
  */
 export type CreateSpaceInput = Omit<
   Space,
@@ -80,7 +80,7 @@ export type CreateSpaceInput = Omit<
 >;
 
 /**
- * 更新空间的输入类型
+ * Input type for updating a space
  */
 export type UpdateSpaceInput = Partial<
   Omit<
