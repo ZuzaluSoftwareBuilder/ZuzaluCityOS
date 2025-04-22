@@ -21,7 +21,7 @@ export interface Dapp {
   websiteUrl?: string;
   docsUrl?: string;
   tagline: string;
-  isInstallable: string;
+  isInstallable: boolean;
   isSCApp: boolean;
   scAddresses?: {
     address: string;

@@ -6,7 +6,8 @@ import {
 } from '@/components/layout/explore/responsiveGridItem';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useRepositories } from '@/context/RepositoryContext';
-import { Dapp } from '@/types';
+import { Result } from '@/models/base';
+import { Dapp } from '@/models/dapp';
 import { supabase } from '@/utils/supabase/client';
 import { Skeleton } from '@heroui/react';
 import { useQuery } from '@tanstack/react-query';
@@ -29,6 +30,12 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
   const { data, isLoading } = useQuery({
     queryKey: ['GET_DAPP_LIST_QUERY'],
     queryFn: () => dappRepository.getDapps(),
+    select: (data: Result<Dapp[]>) => {
+      if (data.error) {
+        return [];
+      }
+      return data.data;
+    },
   });
 
   const { data: legacyDappData, isLoading: legacyDappLoading } = useQuery({

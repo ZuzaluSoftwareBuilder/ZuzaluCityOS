@@ -3,7 +3,8 @@ import FormHeader from '@/components/form/FormHeader';
 import { Button } from '@/components/base';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useRepositories } from '@/context/RepositoryContext';
-import { Dapp } from '@/types';
+import { Result } from '@/models/base';
+import { Dapp } from '@/models/dapp';
 import { Image } from '@heroui/react';
 import { Eye, NotePencil } from '@phosphor-icons/react';
 import { useQuery } from '@tanstack/react-query';
@@ -24,6 +25,12 @@ export default function OwnedDappList({
   const { data: dapps } = useQuery({
     queryKey: ['GET_DAPP_LIST_QUERY'],
     queryFn: () => dappRepository.getDapps(),
+    select: (data: Result<Dapp[]>) => {
+      if (data.error) {
+        return [];
+      }
+      return data.data;
+    },
   });
 
   const { profile } = useAbstractAuthContext();

@@ -1,8 +1,11 @@
-import { ErrorResult, Result, SuccessResult } from '../../models/base';
+import { ErrorResult, Result, SuccessResult } from '@/models/base';
 
 export abstract class BaseRepository {
   protected getBooleanValue(value: any): string {
     return value ? '1' : '0';
+  }
+  protected setBooleanValue(value: string): boolean {
+    return value === '1';
   }
   protected getValue(value: any): any {
     return !value || value === '' ? null : value;
@@ -47,10 +50,10 @@ export abstract class BaseRepository {
    * @param errorMessage Error message prefix
    * @returns Result containing error if present, otherwise empty Result object
    */
-  protected handleGraphQLResponse(
-    response: { data?: any; errors?: any[] },
+  protected handleGraphQLResponse<T>(
+    response: { data?: T; errors?: any[] },
     errorMessage: string = 'GraphQL Error',
-  ): Result<null> {
+  ): Result<T | null> {
     // Handle GraphQL errors
     if (response.errors && response.errors.length > 0) {
       const errorMsg = response.errors

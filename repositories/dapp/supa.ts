@@ -1,3 +1,4 @@
+import { Result } from '@/models/base';
 import { CreateDappInput, Dapp, UpdateDappInput } from '@/models/dapp';
 import { supabase } from '@/utils/supabase/client';
 import dayjs from 'dayjs';
@@ -6,7 +7,7 @@ import { BaseDappRepository } from './type';
 export class SupaDappRepository extends BaseDappRepository {
   private readonly TABLE_NAME = 'dapp_infos';
 
-  async create(dappInput: CreateDappInput): Promise<string | null> {
+  async create(dappInput: CreateDappInput): Promise<Result<Dapp>> {
     const {
       appName,
       developerName,
@@ -57,13 +58,17 @@ export class SupaDappRepository extends BaseDappRepository {
       .single();
 
     if (error) {
-      throw new Error(error.message);
+      return this.createResponse(null, error);
     }
 
-    return data?.id || null;
+    const dapp = this.transformDapp(data);
+    if (!dapp) {
+      return this.createResponse(null, new Error('Invalid dapp data'));
+    }
+    return this.createResponse(dapp);
   }
 
-  async update(id: string, dappInput: UpdateDappInput): Promise<string | null> {
+  async update(id: string, dappInput: UpdateDappInput): Promise<Result<Dapp>> {
     const {
       appName,
       developerName,
@@ -112,22 +117,30 @@ export class SupaDappRepository extends BaseDappRepository {
       .single();
 
     if (error) {
-      throw new Error(error.message);
+      return this.createResponse(null, error);
     }
 
-    return data?.id || null;
+    const dapp = this.transformDapp(data);
+    if (!dapp) {
+      return this.createResponse(null, new Error('Invalid dapp data'));
+    }
+    return this.createResponse(dapp);
   }
 
-  async getDapps(): Promise<Dapp[]> {
+  async getDapps(): Promise<Result<Dapp[]>> {
     const { data, error } = await supabase
       .from(this.TABLE_NAME)
       .select(`*, author(*)`);
 
     if (error) {
-      throw new Error(error.message);
+      return this.createResponse(null, error);
     }
 
-    return data.map(this.transformDapp) as Dapp[];
+    const transformedDapps = data.map(this.transformDapp) as Dapp[];
+    if (!transformedDapps) {
+      return this.createResponse(null, new Error('Dapps not found'));
+    }
+    return this.createResponse(transformedDapps);
   }
 
   private transformDapp(dapp: any): Dapp {
@@ -141,13 +154,13 @@ export class SupaDappRepository extends BaseDappRepository {
       bannerUrl: dapp.banner_url,
       appLogoUrl: dapp.app_logo_url,
       devStatus: dapp.dev_status,
-      openSource: dapp.open_source,
+      openSource: this.setBooleanValue(dapp.open_source),
       websiteUrl: dapp.website_url,
       repositoryUrl: dapp.repository_url,
       appUrl: dapp.app_url,
       docsUrl: dapp.docs_url,
-      isInstallable: dapp.is_installable,
-      isSCApp: dapp.is_sc_app,
+      isInstallable: this.setBooleanValue(dapp.is_installable),
+      isSCApp: this.setBooleanValue(dapp.is_sc_app),
       scAddresses: dapp.sc_addresses,
       auditLogUrl: dapp.audit_log_url,
       appType: dapp.app_type,
