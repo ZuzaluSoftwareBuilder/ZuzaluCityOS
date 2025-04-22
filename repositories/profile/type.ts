@@ -3,17 +3,19 @@ import { Nullable } from '@/types/common';
 import { BaseRepository } from '../base/repository';
 
 export interface IProfileRepository {
-  update(_id: string, _data: UpdateProfileInput): Promise<Profile | null>;
+  update(_id: string, _data: UpdateProfileInput): Promise<void>;
+  getProfileByAddress(
+    _address: string,
+    _chainId: number,
+  ): Promise<Nullable<Profile>>;
+  getProfileByUsername(_username: string, _chainId: number): Promise<Profile[]>;
 }
 
 export abstract class BaseProfileRepository
   extends BaseRepository
   implements IProfileRepository
 {
-  abstract update(
-    _id: string,
-    _data: UpdateProfileInput,
-  ): Promise<Nullable<Profile>>;
+  abstract update(_id: string, _data: UpdateProfileInput): Promise<void>;
 
   abstract getProfileByAddress(
     _address: string,

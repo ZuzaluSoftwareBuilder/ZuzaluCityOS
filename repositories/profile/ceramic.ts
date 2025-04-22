@@ -10,10 +10,7 @@ import { getWalletAddressFromProfile } from '@/utils/profile';
 import { BaseProfileRepository } from './type';
 
 export class CeramicProfileRepository extends BaseProfileRepository {
-  async update(
-    _id: string,
-    _data: UpdateProfileInput,
-  ): Promise<Profile | null> {
+  async update(_id: string, _data: UpdateProfileInput): Promise<void> {
     const { error } = await composeClient.executeQuery(`
         mutation {
           updateZucityProfile(input: {
@@ -33,8 +30,6 @@ export class CeramicProfileRepository extends BaseProfileRepository {
     if (error) {
       throw new Error(error.message);
     }
-
-    return null;
   }
 
   async getProfileByAddress(
