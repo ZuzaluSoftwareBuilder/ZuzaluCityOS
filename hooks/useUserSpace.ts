@@ -1,16 +1,15 @@
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import useUserRole from '@/hooks/useUserRole';
 import { GET_USER_OWN_SPACE } from '@/services/graphql/profile';
 import { GET_SPACE_QUERY_BY_IDS } from '@/services/graphql/space';
 import { IUserProfileWithSpaceAndEvent } from '@/types';
-import { getDidByAddress } from '@/utils/did';
 import { useMemo } from 'react';
-import { useAccount } from 'wagmi';
 import { useGraphQL } from './useGraphQL';
 
 const useUserSpace = () => {
-  const { chainId, address } = useAccount();
+  const { profile } = useAbstractAuthContext();
   // TODO wait supabase update
-  const userDId = getDidByAddress(address as string, chainId!);
+  const userDId = profile?.did;
 
   const { userRoles, isUserRoleLoading, isUserRoleFetched, followerRoleId } =
     useUserRole();

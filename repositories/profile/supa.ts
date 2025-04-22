@@ -1,5 +1,6 @@
 import { Profile, UpdateProfileInput } from '@/models/profile';
 import { Nullable } from '@/types/common';
+import { getDidByAddress } from '@/utils/did';
 import { supabase } from '@/utils/supabase/client';
 import { IProfileRepository } from './type';
 
@@ -20,7 +21,10 @@ export class SupaProfileRepository implements IProfileRepository {
     return data;
   }
 
-  async getProfileByUsername(_username: string): Promise<Profile[]> {
+  async getProfileByUsername(
+    _username: string,
+    _chainId: number,
+  ): Promise<Profile[]> {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -34,6 +38,7 @@ export class SupaProfileRepository implements IProfileRepository {
     return (data || []).map((profile) => ({
       ...profile,
       id: profile.user_id,
+      did: getDidByAddress(profile.address, _chainId),
     }));
   }
 
@@ -54,6 +59,7 @@ export class SupaProfileRepository implements IProfileRepository {
     return {
       ...data,
       id: data.user_id,
+      did: getDidByAddress(data.address, _chainId),
     };
   }
 }

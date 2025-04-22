@@ -9,5 +9,5 @@ export interface IProfileRepository {
     _chainId: number,
   ): Promise<Nullable<Profile>>;
 
-  getProfileByUsername(_username: string): Promise<Profile[]>;
+  getProfileByUsername(_username: string, _chainId: number): Promise<Profile[]>;
 }

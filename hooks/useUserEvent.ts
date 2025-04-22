@@ -1,16 +1,15 @@
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useGraphQL } from '@/hooks/useGraphQL';
 import useUserRole from '@/hooks/useUserRole';
 import { GET_EVENT_QUERY_BY_IDS } from '@/services/graphql/event';
 import { GET_USER_OWN_EVENT } from '@/services/graphql/profile';
 import { IUserProfileWithSpaceAndEvent } from '@/types';
-import { getDidByAddress } from '@/utils/did';
 import { useMemo } from 'react';
-import { useAccount } from 'wagmi';
 
 const useUserEvent = () => {
-  const { chainId, address } = useAccount();
+  const { profile } = useAbstractAuthContext();
   // TODO wait supabase update
-  const userDId = getDidByAddress(address as string, chainId!);
+  const userDId = profile?.did;
 
   const { userRoles, isUserRoleLoading, isUserRoleFetched, followerRoleId } =
     useUserRole();

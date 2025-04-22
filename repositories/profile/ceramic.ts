@@ -65,7 +65,10 @@ export class CeramicProfileRepository implements IProfileRepository {
     };
   }
 
-  async getProfileByUsername(_username: string): Promise<Profile[]> {
+  async getProfileByUsername(
+    _username: string,
+    _chainId: number,
+  ): Promise<Profile[]> {
     const { data, error } = await composeClient.executeQuery(
       GET_PROFILE_BY_NAME_QUERY,
       { username: _username },

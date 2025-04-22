@@ -34,11 +34,8 @@ export function useSearchUsers(initialQuery = '') {
         }
 
         const user: SearchUser = {
-          id: profile.id,
-          username: profile.username,
+          ...profile,
           avatar: profile.avatar || '/user/avatar_p.png',
-          address: profile.address,
-          did: profile.did || profile.id,
         };
         return [user];
       } catch (error) {
@@ -52,14 +49,14 @@ export function useSearchUsers(initialQuery = '') {
   const searchByUsername = useCallback(
     async (username: string): Promise<SearchUser[]> => {
       try {
-        const profiles = await profileRepository.getProfileByUsername(username);
+        const profiles = await profileRepository.getProfileByUsername(
+          username,
+          chainId!,
+        );
 
         return profiles.map((profile) => ({
-          id: profile.id,
-          username: profile.username,
+          ...profile,
           avatar: profile.avatar || '/user/avatar_p.png',
-          address: profile.address,
-          did: profile.did || profile.id,
         }));
       } catch (error) {
         console.error('searchByUsername error:', error);

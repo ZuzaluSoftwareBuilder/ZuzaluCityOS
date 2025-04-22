@@ -36,7 +36,7 @@ const SpaceActions = ({
 }: SpaceActionsProps) => {
   const { profile, isAuthenticated, showAuthPrompt } = useAbstractAuthContext();
   // TODO wait supabase update , confirm did of space
-  const userDid = profile?.author?.id;
+  const userDid = profile?.did;
   const queryClient = useQueryClient();
   const { showModal } = useModal();
 

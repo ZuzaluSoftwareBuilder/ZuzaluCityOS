@@ -21,6 +21,7 @@ import {
   safeRemoveLocalStorage,
   safeSetLocalStorage,
 } from '@/utils/localStorage';
+import { getWalletAddressFromProfile } from '@/utils/profile';
 import {
   createContext,
   useCallback,
@@ -169,7 +170,11 @@ export const CeramicProvider = ({ children }: any) => {
 
       if (basicProfile?.id) {
         safeSetLocalStorage(StorageKey_Username, basicProfile.username);
-        setProfile(basicProfile);
+        setProfile({
+          ...basicProfile,
+          did: basicProfile.author?.id,
+          address: getWalletAddressFromProfile(basicProfile),
+        });
         setUsername(basicProfile.username);
         setNewUser(false);
         setAuthStatus('authenticated');

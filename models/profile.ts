@@ -9,8 +9,9 @@ export interface Profile {
   address: string;
   /**
    * when use ceramic, id equals profile.author.id
+   * useless in supabase context
    */
-  did?: string;
+  did: string;
 }
 
 export type UpdateProfileInput = Partial<Omit<Profile, 'id' | 'address'>>;

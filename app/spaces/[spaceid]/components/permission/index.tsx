@@ -25,7 +25,7 @@ export const SpacePermissionProvider: React.FC<{
   const spaceId = useParams().spaceid;
   const { profile } = useAbstractAuthContext();
   // TODO wait supabase update, confirm did of permission
-  const userId = profile?.author?.id;
+  const userId = profile?.did;
 
   const { owner, roles, members, isLoading } = useGetSpaceMember(
     spaceId as string,

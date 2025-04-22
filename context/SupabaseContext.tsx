@@ -12,6 +12,7 @@ import {
 } from '@/types/auth';
 import { Nullable } from '@/types/common';
 import { Profile } from '@/types/index.js';
+import { getDidByAddress } from '@/utils/did';
 import { isUserDenied } from '@/utils/handleError';
 import {
   safeRemoveLocalStorage,
@@ -84,7 +85,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const isFetchingProfile = authState.status === 'fetching_profile';
   const isCreatingProfile = authState.status === 'creating_profile';
 
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const { litDisconnect } = useLitContext();
   const { disconnectAsync } = useDisconnect();
   const { signMessageAsync } = useSignMessage();
@@ -159,6 +160,10 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
               username: profile.username,
               avatar: profile.avatar,
               address: profile.address,
+              /**
+               * useless in supabase, but For compatibility with Ceramic logic
+               */
+              did: getDidByAddress(profile.address, chainId!),
             },
             username: profile.username,
             newUser: false,
@@ -186,7 +191,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         );
       }
     },
-    [handleError, updateAuthState],
+    [chainId, handleError, updateAuthState],
   );
 
   useEffect(() => {
