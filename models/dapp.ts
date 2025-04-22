@@ -8,7 +8,7 @@ export interface InstalledApp {
 export interface Dapp {
   id: string;
   appName: string;
-  appType?: string;
+  appType: string;
   developerName: string;
   description: string;
   bannerUrl: string;
@@ -41,3 +41,5 @@ export interface Dapp {
 export type CreateDappInput = Omit<Dapp, 'id' | 'profile' | 'isLegacy'> & {
   profileId: string;
 };
+
+export type UpdateDappInput = Omit<Dapp, 'id' | 'profile' | 'isLegacy'>;

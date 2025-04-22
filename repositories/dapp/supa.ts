@@ -1,4 +1,4 @@
-import { CreateDappInput, Dapp } from '@/models/dapp';
+import { CreateDappInput, Dapp, UpdateDappInput } from '@/models/dapp';
 import { supabase } from '@/utils/supabase/client';
 import dayjs from 'dayjs';
 import { BaseDappRepository } from './type';
@@ -63,7 +63,7 @@ export class SupaDappRepository extends BaseDappRepository {
     return data?.id || null;
   }
 
-  async update(id: string, dappInput: any): Promise<string | null> {
+  async update(id: string, dappInput: UpdateDappInput): Promise<string | null> {
     const {
       appName,
       developerName,
@@ -82,38 +82,30 @@ export class SupaDappRepository extends BaseDappRepository {
       isSCApp,
       scAddresses,
       auditLogUrl,
+      appType,
     } = dappInput;
 
     const { data, error } = await supabase
       .from(this.TABLE_NAME)
       .update({
-        app_url: !appUrl || appUrl === '' ? null : appUrl,
+        app_type: appType,
         app_name: appName,
-        app_logo_url: appLogoUrl,
         developer_name: developerName,
         description,
         tagline,
+        categories,
+        app_logo_url: appLogoUrl,
         banner_url: bannerUrl,
         dev_status: devStatus,
-        categories: Array.isArray(categories)
-          ? categories.join(',')
-          : categories,
-        open_source: openSource,
-        website_url: this.getValue(websiteUrl),
+        open_source: this.getBooleanValue(openSource),
         repository_url: this.getValue(repositoryUrl),
+        is_sc_app: this.getBooleanValue(isSCApp),
+        sc_addresses: this.getValue(scAddresses),
+        is_installable: this.getBooleanValue(isInstallable),
+        website_url: this.getValue(websiteUrl),
         docs_url: this.getValue(docsUrl),
-        is_sc_app: isSCApp,
-        sc_addresses:
-          isSCApp && scAddresses
-            ? JSON.stringify(
-                scAddresses.split(',').map((item: string) => ({
-                  address: item,
-                  chain: '',
-                })),
-              )
-            : null,
-        is_installable: isInstallable,
         audit_log_url: this.getValue(auditLogUrl),
+        app_url: this.getValue(appUrl),
       })
       .eq('id', id)
       .select('id')
@@ -161,7 +153,7 @@ export class SupaDappRepository extends BaseDappRepository {
       appType: dapp.app_type,
       profile: {
         author: {
-          id: dapp.author.id,
+          id: dapp.author.user_id,
         },
         username: dapp.author.username,
         avatar: dapp.author.avatar,

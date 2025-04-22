@@ -1,7 +1,8 @@
 import FormHeader from '@/components/form/FormHeader';
 
 import { Button } from '@/components/base';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
+import { useRepositories } from '@/context/RepositoryContext';
 import { Dapp } from '@/types';
 import { Image } from '@heroui/react';
 import { Eye, NotePencil } from '@phosphor-icons/react';
@@ -9,8 +10,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 interface OwnedDappListProps {
-  onViewDapp: (dapp: Dapp) => void;
-  onEditDapp: (dapp: Dapp) => void;
+  onViewDapp: (_dapp: Dapp) => void;
+  onEditDapp: (_dapp: Dapp) => void;
   handleClose: () => void;
 }
 
@@ -19,20 +20,14 @@ export default function OwnedDappList({
   onEditDapp,
   handleClose,
 }: OwnedDappListProps) {
+  const { dappRepository } = useRepositories();
   const { data: dapps } = useQuery({
     queryKey: ['GET_DAPP_LIST_QUERY'],
-    select: (data: any) => {
-      if (data.data.zucityDappInfoIndex?.edges) {
-        return data.data.zucityDappInfoIndex.edges.map(
-          (edge: any) => edge.node,
-        ) as Dapp[];
-      }
-      return [];
-    },
+    queryFn: () => dappRepository.getDapps(),
   });
 
-  const { ceramic } = useCeramicContext();
-  const userDID = ceramic.did?.parent;
+  const { profile } = useAbstractAuthContext();
+  const userDID = profile?.id;
 
   const ownedDapps = useMemo(() => {
     return dapps?.filter((dapp) => dapp.profile.author.id === userDID) || [];
