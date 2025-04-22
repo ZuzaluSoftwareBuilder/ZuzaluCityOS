@@ -1,4 +1,4 @@
-import { CreateDappInput, Dapp } from '@/models/dapp';
+import { CreateDappInput, Dapp, UpdateDappInput } from '@/models/dapp';
 import {
   CREATE_DAPP_MUTATION,
   GET_DAPP_LIST_QUERY,
@@ -66,7 +66,7 @@ export class CeramicDappRepository extends BaseDappRepository {
     return result?.data?.createZucityDappInfo?.document?.id || null;
   }
 
-  async update(id: string, dappInput: any): Promise<string | null> {
+  async update(id: string, dappInput: UpdateDappInput): Promise<string | null> {
     const {
       appName,
       developerName,
@@ -85,36 +85,31 @@ export class CeramicDappRepository extends BaseDappRepository {
       isSCApp,
       scAddresses,
       auditLogUrl,
+      appType,
     } = dappInput;
 
     const result = await executeQuery(UPDATE_DAPP_MUTATION, {
       input: {
         id,
         content: {
-          appUrl: !appUrl || appUrl === '' ? null : appUrl,
+          appType,
           appName,
-          appLogoUrl,
           developerName,
           description,
           tagline,
+          categories,
+          appLogoUrl,
           bannerUrl,
           devStatus,
-          categories: Array.isArray(categories)
-            ? categories.join(',')
-            : categories,
-          openSource,
-          websiteUrl: this.getValue(websiteUrl),
+          openSource: this.getBooleanValue(openSource),
           repositoryUrl: this.getValue(repositoryUrl),
+          isSCApp: this.getBooleanValue(isSCApp),
+          scAddresses: this.getValue(scAddresses),
+          isInstallable: this.getBooleanValue(isInstallable),
+          websiteUrl: this.getValue(websiteUrl),
           docsUrl: this.getValue(docsUrl),
-          isSCApp,
-          scAddresses:
-            isSCApp && scAddresses
-              ? scAddresses.split(',').map((item: string) => ({
-                  address: item,
-                }))
-              : null,
-          isInstallable,
           auditLogUrl: this.getValue(auditLogUrl),
+          appUrl: this.getValue(appUrl),
         },
       },
     });

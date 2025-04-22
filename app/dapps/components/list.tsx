@@ -31,8 +31,6 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
     queryFn: () => dappRepository.getDapps(),
   });
 
-  console.log(data);
-
   const { data: legacyDappData, isLoading: legacyDappLoading } = useQuery({
     queryKey: ['GET_LEGACY_DAPP_LIST_QUERY'],
     queryFn: () => supabase.from('betaDapps').select('*'),
