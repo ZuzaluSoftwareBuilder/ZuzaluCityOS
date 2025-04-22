@@ -2,9 +2,9 @@ import { Profile, UpdateProfileInput } from '@/models/profile';
 import { Nullable } from '@/types/common';
 import { getDidByAddress } from '@/utils/did';
 import { supabase } from '@/utils/supabase/client';
-import { IProfileRepository } from './type';
+import { BaseProfileRepository } from './type';
 
-export class SupaProfileRepository implements IProfileRepository {
+export class SupaProfileRepository extends BaseProfileRepository {
   async update(
     _id: string,
     _data: UpdateProfileInput,

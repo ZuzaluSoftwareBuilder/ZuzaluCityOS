@@ -7,9 +7,9 @@ import {
 import { Nullable } from '@/types/common';
 import { getDidByAddress } from '@/utils/did';
 import { getWalletAddressFromProfile } from '@/utils/profile';
-import { IProfileRepository } from './type';
+import { BaseProfileRepository } from './type';
 
-export class CeramicProfileRepository implements IProfileRepository {
+export class CeramicProfileRepository extends BaseProfileRepository {
   async update(
     _id: string,
     _data: UpdateProfileInput,

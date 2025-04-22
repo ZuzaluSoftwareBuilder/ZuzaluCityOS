@@ -1,5 +1,5 @@
 import { Divider } from '@/components/base';
-import { Dapp } from '@/types';
+import { Dapp } from '@/models/dapp';
 import { Image } from '@heroui/react';
 import { BoxArrowDown, Plugs } from '@phosphor-icons/react';
 interface ItemProps {
@@ -29,7 +29,7 @@ export default function Item({ data, onClick }: ItemProps) {
           width="100%"
           className="aspect-[620/280] rounded-[10px] border border-white/10 object-cover"
         />
-        {isInstallable === '1' && (
+        {isInstallable && (
           <div className="flex items-center gap-[10px]">
             <div className="flex size-[24px] items-center justify-center rounded-[8px] border border-[#7dffd1]/10 bg-[#7dffd1]/10">
               <Plugs size={16} color="#7DFFD1" weight="fill" />

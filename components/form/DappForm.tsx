@@ -1,7 +1,7 @@
-'use client';
 import { DAPP_TAGS } from '@/constant';
 import { useFormScrollToError } from '@/hooks/useFormScrollToError';
-import { Dapp, FilmOptionType } from '@/types';
+import { Dapp } from '@/models/dapp';
+import { FilmOptionType } from '@/types';
 import Yup from '@/utils/yupExtensions';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, FormHelperText, Stack, Typography } from '@mui/material';
@@ -20,6 +20,7 @@ import FormHeader from './FormHeader';
 
 import EditorPro from '@/components/editorPro';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
+import { useRepositories } from '@/context/RepositoryContext';
 import { createDapp, updateDapp } from '@/services/dapp';
 import { Check } from '@phosphor-icons/react';
 import { isAddress } from 'viem';
@@ -88,6 +89,7 @@ const DappForm: React.FC<DappFormProps> = ({
   refetch,
 }) => {
   const { profile } = useAbstractAuthContext();
+  const { dappRepository } = useRepositories();
   const queryClient = useQueryClient();
   // TODO wait supabase update, confirm profile.id of dapp
   const profileId = profile?.id || '';
@@ -98,7 +100,6 @@ const DappForm: React.FC<DappFormProps> = ({
     handleSubmit,
     formState: { errors },
     setValue,
-    setError,
     reset,
     watch,
   } = useForm<FormData>({
@@ -112,12 +113,12 @@ const DappForm: React.FC<DappFormProps> = ({
       appLogoUrl: initialData?.appLogoUrl || '',
       bannerUrl: initialData?.bannerUrl || '',
       developmentStatus: initialData?.devStatus || '',
-      openSource: Number(initialData?.openSource) === 1 || false,
+      openSource: !!initialData?.openSource,
       repositoryUrl: initialData?.repositoryUrl || '',
-      isSCApp: Number(initialData?.isSCApp) === 1 || false,
+      isSCApp: !!initialData?.isSCApp,
       scAddresses:
         initialData?.scAddresses?.map((item) => item.address).join(',') || '',
-      isInstallable: Number(initialData?.isInstallable) === 1 || false,
+      isInstallable: !!initialData?.isInstallable,
       websiteUrl: initialData?.websiteUrl || '',
       docsUrl: initialData?.docsUrl || '',
       appUrl: initialData?.appUrl || '',
@@ -133,9 +134,9 @@ const DappForm: React.FC<DappFormProps> = ({
   const submitMutation = useMutation({
     mutationFn: ({ type, data }: { type: 'create' | 'edit'; data: any }) => {
       if (type === 'create') {
-        return createDapp({ ...data, profileId });
+        return createDapp({ ...data, profileId }, dappRepository);
       } else {
-        return updateDapp({ ...data, id: initialData?.id });
+        return updateDapp({ ...data, id: initialData?.id }, dappRepository);
       }
     },
     onSuccess: () => {

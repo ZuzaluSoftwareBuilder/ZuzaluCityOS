@@ -4,8 +4,8 @@ import { Box, Divider, Stack, Typography } from '@mui/material';
 
 import EditorProWithMore from '@/app/spaces/[spaceid]/components/home/EditorProWithMore';
 import DAppDetailDrawer from '@/app/spaces/[spaceid]/setting/apps/components/DAppDetailDrawer';
+import { Dapp } from '@/models/dapp';
 import theme from '@/theme/theme';
-import { Dapp } from '@/types';
 import { Image } from '@heroui/react';
 import { BoxArrowDown, Plugs } from '@phosphor-icons/react';
 
@@ -49,7 +49,7 @@ export default function DappDetail({ handleClose, data }: DappDetailProps) {
             wrapper: '!max-w-none w-full',
           }}
         />
-        {isInstallable === '1' && (
+        {isInstallable && (
           <div className="flex items-center gap-[10px]">
             <div className="flex items-center justify-center gap-[5px] rounded-[8px] border border-[#7dffd1]/10 bg-[#7dffd1]/10 p-[4px_8px] text-[13px] text-[#7DFFD1]">
               <Plugs size={16} color="#7DFFD1" weight="fill" />

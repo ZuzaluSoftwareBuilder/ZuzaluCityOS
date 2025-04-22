@@ -21,7 +21,7 @@ const NavButton = styled(Button)(
   }),
 );
 
-const Indicator = styled(Box)(({ theme }) => ({
+const Indicator = styled(Box)(() => ({
   position: 'absolute',
   bottom: 0,
   height: '1px',

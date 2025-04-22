@@ -7,9 +7,8 @@ import { Shapes } from '@phosphor-icons/react';
 
 import { Drawer, DrawerContent } from '@/components/base';
 import DappForm from '@/components/form/DappForm';
-import { Dapp } from '@/types';
+import { Dapp } from '@/models/dapp';
 import { useDisclosure } from '@heroui/react';
-import { useMediaQuery, useTheme } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { DappDetail, List } from './components';
 import OwnedDappList from './components/ownedDappList';
@@ -20,8 +19,6 @@ const NavItems: INavItem[] = [
 ];
 
 export default function DappsPage() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [showOwnedDapps, setShowOwnedDapps] = useState(false);
   const [showEditDapp, setShowEditDapp] = useState(false);
   const [detailData, setDetailData] = useState<Dapp | undefined>(undefined);
@@ -118,6 +115,7 @@ export default function DappsPage() {
           base: 'w-[700px] max-w-[700px] mobile:w-[100%] mobile:max-w-[100%]',
         }}
         onOpenChange={onOpenChangeOwnedDapps}
+        isKeyboardDismissDisabled
       >
         <DrawerContent>
           {(onClose) => {

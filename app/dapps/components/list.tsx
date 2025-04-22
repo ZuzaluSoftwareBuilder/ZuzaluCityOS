@@ -4,10 +4,10 @@ import {
   ResponsiveGrid,
   ResponsiveGridItem,
 } from '@/components/layout/explore/responsiveGridItem';
-import { useCeramicContext } from '@/context/CeramicContext';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
-import { Dapp } from '@/types';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
+import { useRepositories } from '@/context/RepositoryContext';
+import { Result } from '@/models/base';
+import { Dapp } from '@/models/dapp';
 import { supabase } from '@/utils/supabase/client';
 import { Skeleton } from '@heroui/react';
 import { useQuery } from '@tanstack/react-query';
@@ -16,33 +16,27 @@ import { Item } from '.';
 import Filter from './filter';
 
 interface ListProps {
-  onDetailClick: (data: Dapp) => void;
+  onDetailClick: (_data: Dapp) => void;
   onOwnedDappsClick: () => void;
 }
 
 export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
-  const { ceramic } = useCeramicContext();
-  const userDID = ceramic.did?.parent;
+  const { profile } = useAbstractAuthContext();
+  const { dappRepository } = useRepositories();
+  const userDID = profile?.id;
   const [filter, setFilter] = useState<string[]>([]);
   const [searchVal, setSearchVal] = useState<string>('');
 
-  const { data, isLoading } = useGraphQL(
-    ['GET_DAPP_LIST_QUERY'],
-    GET_DAPP_LIST_QUERY,
-    {
-      first: 100,
-    },
-    {
-      select: (data) => {
-        if (data.data.zucityDappInfoIndex?.edges) {
-          return data.data.zucityDappInfoIndex.edges.map(
-            (edge: any) => edge.node,
-          );
-        }
+  const { data, isLoading } = useQuery({
+    queryKey: ['GET_DAPP_LIST_QUERY'],
+    queryFn: () => dappRepository.getDapps(),
+    select: (data: Result<Dapp[]>) => {
+      if (data.error) {
         return [];
-      },
+      }
+      return data.data;
     },
-  );
+  });
 
   const { data: legacyDappData, isLoading: legacyDappLoading } = useQuery({
     queryKey: ['GET_LEGACY_DAPP_LIST_QUERY'],
