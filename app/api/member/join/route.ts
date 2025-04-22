@@ -64,7 +64,7 @@ export const POST = async (req: Request) => {
     }
 
     const spaceRepository = getSpaceRepository();
-    const space = await spaceRepository.getById(spaceId);
+    const { data: space } = await spaceRepository.getById(spaceId);
 
     if (!space) {
       return createErrorResponse('Space not found', 404);

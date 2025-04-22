@@ -39,11 +39,11 @@ const SettingLayout = ({ children }: { children: React.ReactNode }) => {
     }
     return 'Space Settings';
   }, [pathname, spaceId]);
-
+  // todo 因为权限没有弄好，所以临时关掉检验
   const shouldShowLoading = useMemo(() => {
-    if (!allChecksComplete) return true;
-    if (!isWalletConnected) return true;
-    if (isAuthenticated && !hasPermission) return true;
+    // if (!allChecksComplete) return true;
+    // if (!isWalletConnected) return true;
+    // if (isAuthenticated && !hasPermission) return true;
     return false;
   }, [allChecksComplete, isAuthenticated, isWalletConnected, hasPermission]);
 

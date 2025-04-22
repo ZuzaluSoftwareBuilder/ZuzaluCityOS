@@ -1,137 +1,179 @@
-import {
-  CreateSpaceInput,
-  Space,
-  SpaceFilters,
-  UpdateSpaceInput,
-} from '@/models/space';
+import { Result } from '@/models/base';
+import { CreateSpaceInput, Space, UpdateSpaceInput } from '@/models/space';
 import { supabase } from '@/utils/supabase/client';
-import { ISpaceRepository } from './type';
+import { BaseSpaceRepository } from './type';
 
-export class SupaSpaceRepository implements ISpaceRepository {
+export class SupaSpaceRepository extends BaseSpaceRepository {
   private readonly tableName = 'spaces';
 
-  async create(data: CreateSpaceInput): Promise<Space | null> {
-    const { data: createdSpace, error } = await supabase
-      .from(this.tableName)
-      .insert({
-        name: data.name,
-        description: data.description,
-        profile_id: data.profileId,
-        avatar: data.avatar,
-        banner: data.banner,
-        category: data.category,
-        tagline: data.tagline,
-        color: data.color,
-        tags: data.tags,
-        social_links: data.socialLinks,
-        custom_links: data.customLinks,
-        custom_attributes: data.customAttributes,
-        gated: data.gated,
-        owner_id: data.ownerId,
-      })
-      .select()
-      .single();
+  async create(data: CreateSpaceInput): Promise<Result<Space>> {
+    try {
+      const { data: createdSpace, error } = await supabase
+        .from(this.tableName)
+        .insert({
+          name: this.getValue(data.name),
+          description: this.getValue(data.description),
+          avatar: this.getValue(data.avatar),
+          banner: this.getValue(data.banner),
+          category: this.getValue(data.category),
+          tagline: this.getValue(data.tagline),
+          color: this.getValue(data.color),
+          tags: this.getValue(data.tags),
+          social_links: this.getValue(data.socialLinks),
+          custom_links: this.getValue(data.customLinks),
+          gated: this.getBooleanValue(data.gated),
+          author: this.getValue(data.author),
+          owner: this.getValue(data.owner),
+        })
+        .select(
+          `
+          *,
+          owner_profile:profiles!fk_spaces_owner(user_id, username, avatar),
+          author_profile:profiles!fk_spaces_author(user_id, username, avatar)
+        `,
+        )
+        .single();
 
-    if (error) {
-      console.error('Failed to create space in Supabase:', error);
-      throw new Error(error.message);
-    }
-
-    return this.transformSupaToSpace(createdSpace);
-  }
-
-  async update(id: string, data: UpdateSpaceInput): Promise<Space | null> {
-    const updateData: any = {};
-
-    if (data.name) updateData.name = data.name;
-    if (data.description) updateData.description = data.description;
-    if (data.avatar) updateData.avatar = data.avatar;
-    if (data.banner) updateData.banner = data.banner;
-    if (data.category) updateData.category = data.category;
-    if (data.tagline) updateData.tagline = data.tagline;
-    if (data.color) updateData.color = data.color;
-    if (data.tags) updateData.tags = data.tags;
-    if (data.socialLinks) updateData.social_links = data.socialLinks;
-    if (data.customLinks) updateData.custom_links = data.customLinks;
-    if (data.customAttributes)
-      updateData.custom_attributes = data.customAttributes;
-    if (data.gated) updateData.gated = data.gated;
-
-    const { data: updatedSpace, error } = await supabase
-      .from(this.tableName)
-      .update(updateData)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Failed to update space in Supabase:', error);
-      throw new Error(error.message);
-    }
-
-    return this.transformSupaToSpace(updatedSpace);
-  }
-
-  async getById(id: string): Promise<Space | null> {
-    const { data: space, error } = await supabase
-      .from(this.tableName)
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (error) {
-      console.error('Failed to get space from Supabase:', error);
-      throw new Error(error.message);
-    }
-
-    return this.transformSupaToSpace(space);
-  }
-
-  async getAll(filters?: SpaceFilters): Promise<Space[]> {
-    let query = supabase.from(this.tableName).select('*');
-
-    if (filters) {
-      if (filters.category) {
-        query = query.eq('category', filters.category);
+      if (error) {
+        return this.createResponse(null, error);
       }
-      if (filters.name) {
-        query = query.ilike('name', `%${filters.name}%`);
+
+      const space = this.transformToSpace(createdSpace);
+      if (!space) {
+        return this.createResponse(null, new Error('Invalid space data'));
       }
-      if (filters.ownerId) {
-        query = query.eq('owner_id', filters.ownerId);
-      }
-      // 处理tags可能需要更复杂的查询，这里简化处理
+      return this.createResponse(space);
+    } catch (error) {
+      return this.createResponse(null, error);
     }
-
-    const { data: spaces, error } = await query;
-
-    if (error) {
-      console.error('Failed to get spaces from Supabase:', error);
-      throw new Error(error.message);
-    }
-
-    return spaces.map((space) => this.transformSupaToSpace(space));
   }
 
-  private transformSupaToSpace(supaData: any): Space {
+  async update(id: string, data: UpdateSpaceInput): Promise<Result<Space>> {
+    try {
+      const updateData: any = {};
+
+      if (data.name !== undefined) updateData.name = this.getValue(data.name);
+      if (data.description !== undefined)
+        updateData.description = this.getValue(data.description);
+      if (data.avatar !== undefined)
+        updateData.avatar = this.getValue(data.avatar);
+      if (data.banner !== undefined)
+        updateData.banner = this.getValue(data.banner);
+      if (data.category !== undefined)
+        updateData.category = this.getValue(data.category);
+      if (data.tagline !== undefined)
+        updateData.tagline = this.getValue(data.tagline);
+      if (data.color !== undefined)
+        updateData.color = this.getValue(data.color);
+      if (data.tags !== undefined) updateData.tags = this.getValue(data.tags);
+      if (data.socialLinks !== undefined)
+        updateData.social_links = this.getValue(data.socialLinks);
+      if (data.customLinks !== undefined)
+        updateData.custom_links = this.getValue(data.customLinks);
+      if (data.gated !== undefined)
+        updateData.gated = this.getBooleanValue(data.gated);
+
+      const { data: updatedSpace, error } = await supabase
+        .from(this.tableName)
+        .update(updateData)
+        .eq('id', id)
+        .select(
+          `
+          *,
+          owner_profile:profiles!fk_spaces_owner(user_id, username, avatar),
+          author_profile:profiles!fk_spaces_author(user_id, username, avatar)
+        `,
+        )
+        .single();
+
+      if (error) {
+        return this.createResponse(null, error);
+      }
+
+      const space = this.transformToSpace(updatedSpace);
+      if (!space) {
+        return this.createResponse(null, new Error('Invalid space data'));
+      }
+      return this.createResponse(space);
+    } catch (error) {
+      return this.createResponse(null, error);
+    }
+  }
+
+  async getById(id: string): Promise<Result<Space>> {
+    try {
+      const { data: space, error } = await supabase
+        .from(this.tableName)
+        .select(
+          `
+          *,
+          owner_profile:profiles!fk_spaces_owner(user_id, username, avatar),
+          author_profile:profiles!fk_spaces_author(user_id, username, avatar)
+        `,
+        )
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        return this.createResponse(null, error);
+      }
+
+      const transformedSpace = this.transformToSpace(space);
+      if (!transformedSpace) {
+        return this.createResponse(null, new Error('Space not found'));
+      }
+      return this.createResponse(transformedSpace);
+    } catch (error) {
+      return this.createResponse(null, error);
+    }
+  }
+
+  async getAll(): Promise<Result<Space[]>> {
+    try {
+      let query = supabase.from(this.tableName).select(`
+        *,
+        owner_profile:profiles!fk_spaces_owner(user_id, username, avatar),
+        author_profile:profiles!fk_spaces_author(user_id, username, avatar)
+      `);
+      const { data: spaces, error } = await query;
+      if (error) {
+        return this.createResponse(null, error);
+      }
+      const transformedSpaces = (spaces || [])
+        .map((space) => this.transformToSpace(space))
+        .filter(Boolean) as Space[];
+
+      return this.createResponse(transformedSpaces);
+    } catch (error) {
+      return this.createResponse(null, error);
+    }
+  }
+
+  protected transformToSpace(supaData: any): Space | null {
+    if (!supaData) return null;
+
     return {
       id: supaData.id,
       name: supaData.name,
       description: supaData.description,
-      profileId: supaData.profile_id,
       avatar: supaData.avatar,
       banner: supaData.banner,
       category: supaData.category,
       tagline: supaData.tagline,
       color: supaData.color,
-      tags: supaData.tags,
-      socialLinks: supaData.social_links,
-      customLinks: supaData.custom_links,
-      customAttributes: supaData.custom_attributes,
+      tags: supaData.tags || [],
+      socialLinks: supaData.social_links || [],
+      customLinks: supaData.custom_links || [],
       gated: supaData.gated,
       createdAt: supaData.created_at,
       updatedAt: supaData.updated_at,
-      ownerId: supaData.owner_id,
+      author: supaData['owner_profile'],
+      owner: supaData['author_profile'],
+      announcements: { edges: [] },
+      events: { edges: [] },
+      installedApps: { edges: [] },
+      spaceGating: { edges: [] },
+      userRoles: { edges: [] },
     };
   }
 }

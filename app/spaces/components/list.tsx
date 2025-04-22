@@ -14,6 +14,7 @@ import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
 import dayjs from '@/utils/dayjs';
 import { supabase } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
+import { getSpaceRepository } from 'repositories/space';
 
 const SpaceList = () => {
   const [searchVal, setSearchVal] = useState<string>('');
@@ -23,6 +24,7 @@ const SpaceList = () => {
   const { adminRole, memberRole, isRoleLoading } = useBuildInRole();
 
   const { data: spaces, isLoading } = useGraphQL(
+    // todo 这里涉及role，之后需要替换
     ['GET_ALL_SPACE_AND_MEMBER_QUERY'],
     GET_ALL_SPACE_AND_MEMBER_QUERY,
     {
@@ -63,20 +65,36 @@ const SpaceList = () => {
       })) as Space[];
     },
   });
+  // 临时显示supabase的,之后要换掉GET_ALL_SPACE_AND_MEMBER_QUERY
+  const { data: supabaseData, isLoading: isSupbaseDataLoading } = useQuery({
+    queryKey: ['GET_SUPABASE_SPACES_DATA'],
+    queryFn: () => {
+      return getSpaceRepository().getAll();
+    },
+    select: (data: any) => {
+      if (!data.data) {
+        return [];
+      }
+      return data.data.map((item: any) => ({
+        ...item,
+      })) as Space[];
+    },
+  });
 
   const filteredSpacesData = useMemo(() => {
     const sortedData = (spaces || [])
       .sort((a, b) => {
         return dayjs(b.createdAt).diff(dayjs(a.createdAt));
       })
-      .concat(legacySpacesData || []);
+      .concat(legacySpacesData || [])
+      .concat(supabaseData || []);
     if (searchVal === '') {
       return sortedData;
     }
     return sortedData?.filter((space) =>
       space.name.toLowerCase().includes(searchVal.toLowerCase()),
     );
-  }, [spaces, legacySpacesData, searchVal]);
+  }, [spaces, legacySpacesData, searchVal, supabaseData]);
 
   return (
     <div className="flex flex-1 flex-col gap-[20px] p-[20px] mobile:gap-[10px] mobile:p-[20px_10px]">
@@ -88,7 +106,7 @@ const SpaceList = () => {
       />
 
       <ResponsiveGrid>
-        {isLoading || isRoleLoading || isLegacyLoading
+        {isLoading || isRoleLoading || isLegacyLoading || isSupbaseDataLoading
           ? Array.from({ length: 8 }).map((_, index) => (
               <ResponsiveGridItem key={index}>
                 <SpaceCardSkeleton autoWidth={true} key={index} />

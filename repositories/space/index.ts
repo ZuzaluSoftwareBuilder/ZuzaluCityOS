@@ -2,13 +2,19 @@ import { DatabaseType } from '../type';
 import { CeramicSpaceRepository } from './ceramic';
 import { SupaSpaceRepository } from './supa';
 import { ISpaceRepository } from './type';
+
 /**
- * 获取空间仓储实例
- * @param dataSource 数据源类型（'supabase' 或 'ceramic'）
- * @returns 空间仓储实例
+ * Get space repository instance
+ *
+ * Factory method that returns the corresponding space repository implementation
+ * based on the selected data source
+ *
+ * @param dataSource Data source type ('supabase' or 'ceramic')
+ * @returns Space repository instance
+ *
  */
 export function getSpaceRepository(
-  dataSource: DatabaseType = 'ceramic',
+  dataSource: DatabaseType = 'supabase',
 ): ISpaceRepository {
   if (dataSource === 'supabase') {
     return new SupaSpaceRepository();

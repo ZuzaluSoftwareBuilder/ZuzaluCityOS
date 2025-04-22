@@ -25,8 +25,11 @@ export const SpaceDataProvider: React.FC<{
     queryKey: ['space', spaceId],
     queryFn: async () => {
       if (!spaceId) return undefined;
-      const spaceData = await spaceRepository.getById(spaceId);
-      return spaceData || undefined;
+      const { data, error } = await spaceRepository.getById(spaceId);
+      if (error) {
+        return undefined;
+      }
+      return data;
     },
     enabled: !!spaceId,
   });
@@ -35,7 +38,7 @@ export const SpaceDataProvider: React.FC<{
     spaceData: data,
     refreshSpaceData: refetch,
   };
-
+  console.log('SpaceDataProvider', data);
   return (
     <SpaceDataContext.Provider value={value}>
       {children}

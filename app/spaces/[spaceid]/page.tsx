@@ -9,11 +9,11 @@ import {
   DrawerContent,
 } from '@/components/base';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
-import { useGraphQL } from '@/hooks/useGraphQL';
 import useOpenDraw from '@/hooks/useOpenDraw';
-import { GET_SPACE_AND_EVENTS_QUERY_BY_ID } from '@/services/graphql/space';
-import { Event, Space } from '@/types';
+import { getSpaceRepository } from '@/repositories/space';
+import { Event } from '@/types';
 import { CaretUpDown } from '@phosphor-icons/react';
+import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import React, { useMemo } from 'react';
 import SpaceSection from './components/home/spaceSection';
@@ -23,31 +23,44 @@ const SpaceHomePage: React.FC = () => {
   const spaceId = params?.spaceid?.toString() ?? '';
   const { adminRole, memberRole } = useBuildInRole();
   const { open, handleClose, handleOpen } = useOpenDraw();
-
-  const { data: spaceData, isLoading } = useGraphQL(
-    ['getSpaceAndEvents', spaceId],
-    GET_SPACE_AND_EVENTS_QUERY_BY_ID,
-    {
-      id: spaceId,
-      first: 100,
-      userRolesFilters: {
-        where: {
-          roleId: {
-            in: [adminRole, memberRole].map((role) => role?.id ?? ''),
-          },
-        },
-      },
+  // todo 这里涉及event，暂时用getSpacebyID
+  // const { data: spaceData, isLoading } = useGraphQL(
+  //   ['getSpaceAndEvents', spaceId],
+  //   GET_SPACE_AND_EVENTS_QUERY_BY_ID,
+  //   {
+  //     id: spaceId,
+  //     first: 100,
+  //     userRolesFilters: {
+  //       where: {
+  //         roleId: {
+  //           in: [adminRole, memberRole].map((role) => role?.id ?? ''),
+  //         },
+  //       },
+  //     },
+  //   },
+  //   {
+  //     select: (data) => {
+  //       return data?.data?.node as Space;
+  //     },
+  //     enabled: !!adminRole && !!memberRole,
+  //   },
+  // );
+  const { data: spaceData, isLoading } = useQuery({
+    queryKey: ['GET_SUPABASE_SPACES_DATA', spaceId],
+    queryFn: () => {
+      return getSpaceRepository().getById(spaceId);
     },
-    {
-      select: (data) => {
-        return data?.data?.node as Space;
-      },
-      enabled: !!adminRole && !!memberRole,
+    select: (data: any) => {
+      if (!data?.data) {
+        return null;
+      }
+      return data.data;
     },
-  );
+  });
 
   const eventsData = useMemo(() => {
-    return (spaceData?.events?.edges.map((edge) => edge.node) || []) as Event[];
+    return (spaceData?.events?.edges.map((edge: any) => edge.node) ||
+      []) as Event[];
   }, [spaceData]);
 
   return (

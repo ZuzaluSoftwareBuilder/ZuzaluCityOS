@@ -1,11 +1,11 @@
 'use client';
-import { Space } from '@/types';
 import { Avatar, cn, Image, Skeleton, useDisclosure } from '@heroui/react';
 
 import { formatMemberCount } from '@/components/biz/space/SpaceCard';
 import SpaceChip from '@/components/biz/space/SpaceChip';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import useUserSpace from '@/hooks/useUserSpace';
+import { Space } from '@/models/space';
 import { Users } from '@phosphor-icons/react';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';

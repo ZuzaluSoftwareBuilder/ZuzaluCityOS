@@ -1,17 +1,9 @@
 'use client';
 import { SpaceCard } from '@/components/biz/space/SpaceCard';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
-import {
-  CreateZucitySpaceMutationMutation,
-  CreateZucitySpaceMutationMutationVariables,
-  ZucitySpaceInput,
-} from '@/graphql/graphql';
 import { Mobile, NotMobile, useMediaQuery } from '@/hooks/useMediaQuery';
-import { CREATE_SPACE_MUTATION } from '@/services/graphql/space';
 import { createUrl } from '@/services/url';
 import { uint8ArrayToBase64 } from '@/utils';
-import { executeQuery } from '@/utils/ceramic';
-import dayjs from '@/utils/dayjs';
 import { covertNameToUrlName } from '@/utils/format';
 import { supabase } from '@/utils/supabase/client';
 import { addToast, cn } from '@heroui/react';
@@ -19,9 +11,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { DID } from 'dids';
 import { Ed25519Provider } from 'key-did-provider-ed25519';
 import { getResolver } from 'key-did-resolver';
+import { CreateSpaceInput } from 'models/space';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { getSpaceRepository } from 'repositories/space';
 import {
   AccessRule,
   CategoriesContent,
@@ -64,6 +58,7 @@ const Create = () => {
   const router = useRouter();
   const { isMobile } = useMediaQuery();
   const { ceramic, profile } = useAbstractAuthContext();
+  const spaceRepository = getSpaceRepository();
   const profileForm = useForm<ProfileFormData>({
     resolver: yupResolver(ProfilValidationSchema),
     mode: 'all',
@@ -173,12 +168,12 @@ const Create = () => {
     }
   };
 
-  const transformFormData = (): ZucitySpaceInput => {
+  const transformFormData = (): CreateSpaceInput => {
     const { name, tagline, avatar, banner, description } =
       profileForm.getValues();
     const { tags, category } = categoriesForm.getValues();
     const { socialLinks, customLinks } = linksForm.getValues();
-    const adminId = ceramic?.did?.parent || '';
+    // const adminId = ceramic?.did?.parent || '';
     const profileId = profile?.id || '';
     return {
       customLinks,
@@ -186,41 +181,23 @@ const Create = () => {
       name,
       tagline,
       description,
-      owner: adminId,
-      profileId: profileId,
+      author: profileId, // todo 需要确认
+      owner: profileId, // todo 需要确认
       avatar: avatar || DEFAULT_AVATAR,
       banner: banner || DEFAULT_BANNER,
       tags: tags.map((i) => ({ tag: i })),
       category: category,
-      createdAt: dayjs().utc().toISOString(),
-      updatedAt: dayjs().utc().toISOString(),
       gated: isGated ? '1' : '0',
     };
   };
 
-  const createSpace = async (content: ZucitySpaceInput): Promise<string> => {
+  const createSpace = async (content: CreateSpaceInput): Promise<string> => {
     try {
-      const result = await executeQuery<
-        CreateZucitySpaceMutationMutation,
-        CreateZucitySpaceMutationMutationVariables
-      >(CREATE_SPACE_MUTATION, {
-        input: {
-          content,
-        },
-      });
-      if (result.errors?.length) {
-        console.error('Detailed error info:', result.errors);
-        addToast({
-          title: 'Failed to create space',
-          description: `Error creating space: ${JSON.stringify(result.errors)}`,
-          color: 'danger',
-        });
-        throw new Error(
-          `Error creating space: ${JSON.stringify(result.errors)}`,
-        );
+      const { data, error } = await spaceRepository.create(content);
+      if (error) {
+        throw error;
       }
-      const spaceId = result.data?.createZucitySpace?.document?.id || '';
-
+      const spaceId = data?.id || '';
       if (!spaceId) {
         throw new Error('Result data is empty');
       }

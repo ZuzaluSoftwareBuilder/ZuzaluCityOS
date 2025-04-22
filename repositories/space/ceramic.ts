@@ -1,285 +1,219 @@
 import { composeClient } from '@/constant';
-import {
-  CreateSpaceInput,
-  Space,
-  SpaceFilters,
-  UpdateSpaceInput,
-} from '@/models/space';
+import { Result } from '@/models/base';
+import { CreateSpaceInput, Space, UpdateSpaceInput } from '@/models/space';
 import {
   CREATE_SPACE_MUTATION,
   GET_ALL_SPACE_QUERY,
   GET_SPACE_QUERY_BY_ID,
   UPDATE_SPACE_MUTATION,
 } from '@/services/graphql/space';
-import { ISpaceRepository } from './type';
+import { executeQuery } from '@/utils/ceramic';
+import { BaseSpaceRepository } from './type';
 
-export class CeramicSpaceRepository implements ISpaceRepository {
-  async create(data: CreateSpaceInput): Promise<Space | null> {
+export class CeramicSpaceRepository extends BaseSpaceRepository {
+  async create(data: CreateSpaceInput): Promise<Result<Space>> {
     try {
-      const { data: responseData, errors } = await composeClient.executeQuery(
-        CREATE_SPACE_MUTATION,
-        {
-          input: {
-            content: {
-              name: data.name,
-              description: data.description,
-              profileId: data.profileId,
-              avatar: data.avatar,
-              banner: data.banner,
-              category: data.category,
-              tagline: data.tagline,
-              color: data.color,
-              tags: data.tags,
-              socialLinks: data.socialLinks,
-              customLinks: data.customLinks,
-              gated: data.gated,
-            },
+      const response = await composeClient.executeQuery(CREATE_SPACE_MUTATION, {
+        input: {
+          content: {
+            name: this.getValue(data.name),
+            description: this.getValue(data.description),
+            avatar: this.getValue(data.avatar),
+            banner: this.getValue(data.banner),
+            category: this.getValue(data.category),
+            tagline: this.getValue(data.tagline),
+            color: this.getValue(data.color),
+            tags: data.tags,
+            socialLinks: data.socialLinks,
+            customLinks: data.customLinks,
+            gated: this.getBooleanValue(data.gated),
+            owner: this.getValue(data.owner),
           },
         },
+      });
+
+      const result = this.handleGraphQLResponse(
+        response,
+        'Failed to create space',
       );
-
-      if (errors) {
-        throw new Error(errors.map((e: Error) => e.message).join(', '));
+      if (result.error) {
+        return { data: null, error: result.error };
       }
 
-      const spaceData = responseData?.createZucitySpace?.document;
-      // 创建后获取完整数据
-      if (spaceData?.id) {
-        return this.getById(spaceData.id);
+      const spaceData = response.data?.createZucitySpace?.document;
+      if (!spaceData) {
+        return this.createResponse(
+          null,
+          new Error('Failed to create space: No valid data returned'),
+        );
       }
-      return this.transformCeramicToSpace(spaceData);
+
+      const space = this.transformToSpace(spaceData);
+      if (!space) {
+        return this.createResponse(
+          null,
+          new Error('Failed to create space: Data transformation error'),
+        );
+      }
+
+      return this.createResponse(space);
     } catch (error) {
-      console.error('Failed to create space in Ceramic:', error);
-      throw error;
+      return this.createResponse(null, error);
     }
   }
 
-  async update(id: string, data: UpdateSpaceInput): Promise<Space | null> {
+  async update(id: string, data: UpdateSpaceInput): Promise<Result<Space>> {
     try {
-      const { data: responseData, errors } = await composeClient.executeQuery(
-        UPDATE_SPACE_MUTATION,
-        {
-          input: {
-            id: id,
-            content: {
-              name: data.name,
-              description: data.description,
-              avatar: data.avatar,
-              banner: data.banner,
-              category: data.category,
-              tagline: data.tagline,
-              color: data.color,
-              tags: data.tags,
-              socialLinks: data.socialLinks,
-              customLinks: data.customLinks,
-              gated: data.gated,
-            },
-          },
+      const content: Record<string, any> = {};
+
+      if (data.name !== undefined) content.name = this.getValue(data.name);
+      if (data.description !== undefined)
+        content.description = this.getValue(data.description);
+      if (data.avatar !== undefined)
+        content.avatar = this.getValue(data.avatar);
+      if (data.banner !== undefined)
+        content.banner = this.getValue(data.banner);
+      if (data.category !== undefined)
+        content.category = this.getValue(data.category);
+      if (data.tagline !== undefined)
+        content.tagline = this.getValue(data.tagline);
+      if (data.color !== undefined) content.color = this.getValue(data.color);
+      if (data.tags !== undefined) content.tags = data.tags;
+      if (data.socialLinks !== undefined)
+        content.socialLinks = data.socialLinks;
+      if (data.customLinks !== undefined)
+        content.customLinks = data.customLinks;
+      if (data.gated !== undefined) content.gated = data.gated;
+
+      const response = await composeClient.executeQuery(UPDATE_SPACE_MUTATION, {
+        input: {
+          id: id,
+          content,
         },
+      });
+
+      const result = this.handleGraphQLResponse(
+        response,
+        'Failed to update space',
       );
-
-      if (errors) {
-        throw new Error(errors.map((e: Error) => e.message).join(', '));
+      if (result.error) {
+        return { data: null, error: result.error };
       }
 
-      const spaceData = responseData?.updateZucitySpace?.document;
-      // 更新后获取完整数据
-      if (spaceData?.id) {
-        return this.getById(spaceData.id);
+      const spaceData = response.data?.updateZucitySpace?.document;
+      if (!spaceData) {
+        return this.createResponse(
+          null,
+          new Error('Failed to update space: No valid data returned'),
+        );
       }
-      return this.transformCeramicToSpace(spaceData);
+
+      const space = this.transformToSpace(spaceData);
+      if (!space) {
+        return this.createResponse(
+          null,
+          new Error('Failed to update space: Data transformation error'),
+        );
+      }
+
+      return this.createResponse(space);
     } catch (error) {
-      console.error('Failed to update space in Ceramic:', error);
-      throw error;
+      return this.createResponse(null, error);
     }
   }
 
-  async getById(id: string): Promise<Space | null> {
+  async getById(id: string): Promise<Result<Space>> {
     try {
-      // 使用包含事件的查询以获取更完整的数据
-      const { data, errors } = await composeClient.executeQuery(
-        GET_SPACE_QUERY_BY_ID,
-        {
-          id,
-          userRolesFirst: 100,
-          userRolesFilters: {},
-        },
-      );
+      const response = await executeQuery(GET_SPACE_QUERY_BY_ID, {
+        id,
+      });
 
-      if (errors) {
-        throw new Error(errors.map((e: Error) => e.message).join(', '));
+      const result = this.handleGraphQLResponse(
+        response,
+        'Failed to get space details',
+      );
+      if (result.error) {
+        return { data: null, error: result.error };
       }
 
-      return this.transformCeramicToSpace(data?.node);
+      const spaceData = response.data?.node;
+      if (!spaceData) {
+        return this.createResponse(
+          null,
+          new Error('Failed to get space details: No valid data returned'),
+        );
+      }
+
+      const space = this.transformToSpace(spaceData);
+      if (!space) {
+        return this.createResponse(
+          null,
+          new Error('Failed to get space details: Data transformation error'),
+        );
+      }
+
+      return this.createResponse(space);
     } catch (error) {
-      console.error('Failed to get space from Ceramic:', error);
-      throw error;
+      return this.createResponse(null, error);
     }
   }
 
-  async getAll(filters?: SpaceFilters): Promise<Space[]> {
-    const variables: Record<string, any> = { first: 100 };
-
-    // 注意：GET_ALL_SPACE_QUERY不支持过滤，如果需要过滤则需要构建自定义查询
-    if (
-      filters &&
-      (filters.category ||
-        filters.name ||
-        filters.ownerId ||
-        filters.tags?.length)
-    ) {
-      // 构建自定义过滤查询
-      return this.getAllWithFilters(filters);
-    }
-
+  async getAll(): Promise<Result<Space[]>> {
     try {
-      const { data, errors } = await composeClient.executeQuery(
+      const variables: Record<string, any> = { first: 100 };
+      const response = await composeClient.executeQuery(
         GET_ALL_SPACE_QUERY,
         variables,
       );
 
-      if (errors) {
-        throw new Error(errors.map((e: Error) => e.message).join(', '));
+      const result = this.handleGraphQLResponse(
+        response,
+        'Failed to get space list',
+      );
+      if (result.error) {
+        return { data: null, error: result.error };
       }
 
-      return (data?.zucitySpaceIndex?.edges || []).map((edge: any) =>
-        this.transformCeramicToSpace(edge.node),
-      );
+      const edges = response.data?.zucitySpaceIndex?.edges || [];
+      const spaces = edges
+        .map((edge: any) => this.transformToSpace(edge.node))
+        .filter(Boolean) as Space[];
+
+      return this.createResponse(spaces);
     } catch (error) {
-      console.error('Failed to get spaces from Ceramic:', error);
-      throw error;
+      return this.createResponse(null, error);
     }
   }
 
-  // 用于处理带过滤条件的查询
-  private async getAllWithFilters(filters: SpaceFilters): Promise<Space[]> {
-    // 自定义查询，支持过滤
-    const query = `
-      query GetSpacesWithFilters($first: Int, $filters: ZucitySpaceFiltersInput) {
-        zucitySpaceIndex(first: $first, filters: $filters) {
-          edges {
-            node {
-              id
-              name
-              description
-              profileId
-              avatar
-              banner
-              category
-              tagline
-              color
-              createdAt
-              updatedAt
-              tags {
-                tag
-              }
-              socialLinks {
-                title
-                links
-              }
-              customLinks {
-                title
-                links
-              }
-              gated
-              author {
-                id
-                isViewer
-              }
-              owner {
-                id
-                isViewer
-              }
-            }
-          }
-        }
-      }
-    `;
-
-    const variables: Record<string, any> = { first: 100 };
-
-    if (filters) {
-      variables.filters = {};
-      if (filters.category)
-        variables.filters.category = { equalTo: filters.category };
-      if (filters.name)
-        variables.filters.name = { containsInsensitive: filters.name };
-      if (filters.ownerId)
-        variables.filters.owner = { equalTo: filters.ownerId };
-      // 处理tags是个复杂类型，这里简化处理
-    }
-
-    try {
-      const { data, errors } = await composeClient.executeQuery(
-        query,
-        variables,
-      );
-
-      if (errors) {
-        throw new Error(errors.map((e: Error) => e.message).join(', '));
-      }
-
-      return (data?.zucitySpaceIndex?.edges || []).map((edge: any) =>
-        this.transformCeramicToSpace(edge.node),
-      );
-    } catch (error) {
-      console.error('Failed to get filtered spaces from Ceramic:', error);
-      throw error;
-    }
-  }
-
-  private transformCeramicToSpace(ceramicData: any): Space | null {
+  protected transformToSpace(ceramicData: any): Space | null {
     if (!ceramicData) return null;
 
     return {
       id: ceramicData.id,
       name: ceramicData.name,
       description: ceramicData.description,
-      profileId: ceramicData.profileId,
       avatar: ceramicData.avatar,
       banner: ceramicData.banner,
       category: ceramicData.category,
       tagline: ceramicData.tagline,
       color: ceramicData.color,
-      tags: ceramicData.tags,
-      socialLinks: ceramicData.socialLinks,
-      customLinks: ceramicData.customLinks,
-      customAttributes: ceramicData.customAttributes,
+      tags: ceramicData.tags || [],
+      socialLinks: ceramicData.socialLinks || [],
+      customLinks: ceramicData.customLinks || [],
       gated: ceramicData.gated,
       createdAt: ceramicData.createdAt,
       updatedAt: ceramicData.updatedAt,
 
-      // 账户相关
-      author: ceramicData.author
-        ? {
-            id: ceramicData.author.id,
-            isViewer: ceramicData.author.isViewer,
-          }
-        : undefined,
+      // Account related
+      owner: ceramicData.owner,
+      author: ceramicData.author,
 
-      owner: ceramicData.owner
-        ? {
-            id: ceramicData.owner.id,
-            isViewer: ceramicData.owner.isViewer || false,
-          }
-        : undefined,
-
-      ownerId: ceramicData.owner?.id,
-
-      profile: ceramicData.owner?.zucityProfile
-        ? {
-            id: ceramicData.owner.zucityProfile.id,
-            username: ceramicData.owner.zucityProfile.username,
-            avatar: ceramicData.owner.zucityProfile.avatar,
-          }
-        : undefined,
-
-      // 关联数据
-      announcements: ceramicData.announcements,
-      events: ceramicData.events,
-      installedApps: ceramicData.installedApps,
-      spaceGating: ceramicData.spaceGating,
-      userRoles: ceramicData.userRoles,
+      // Related data - using edges.node pattern
+      announcements: ceramicData.announcements || { edges: [] },
+      events: ceramicData.events || { edges: [] },
+      installedApps: ceramicData.installedApps || { edges: [] },
+      spaceGating: ceramicData.spaceGating || { edges: [] },
+      userRoles: ceramicData.userRoles || { edges: [] },
     };
   }
 }

@@ -2,7 +2,6 @@
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/sidebarHeader';
 import { TableIcon } from '@/components/icons';
-import { InstalledApp } from '@/types';
 import { dayjs } from '@/utils/dayjs';
 import { cn, Image, Skeleton } from '@heroui/react';
 import {
@@ -43,9 +42,7 @@ const SpaceSubSidebar = ({
   const { spaceData, isSpaceDataLoading } = useSpaceData();
 
   const installedAppsData = useMemo(() => {
-    return spaceData?.installedApps?.edges.map(
-      (edge) => edge.node,
-    ) as InstalledApp[];
+    return spaceData?.installedApps?.edges?.map((edge) => edge.node) || [];
   }, [spaceData]);
 
   const isRouteActive = useCallback(
@@ -142,14 +139,14 @@ const SpaceSubSidebar = ({
     const lastViewTime = getSpaceLastViewTime(spaceId as string);
     if (lastViewTime) {
       setUnViewedAnnouncementsCount(
-        spaceData?.announcements?.edges.filter((edge) =>
+        spaceData?.announcements?.edges?.filter((edge) =>
           dayjs(edge.node.createdAt).isAfter(dayjs(lastViewTime)),
         ).length ?? 0,
       );
     }
     return subscribeSpaceLastViewTime(spaceId as string, (lastViewTime) => {
       setUnViewedAnnouncementsCount(
-        spaceData?.announcements?.edges.filter((edge) =>
+        spaceData?.announcements?.edges?.filter((edge) =>
           dayjs(edge.node.createdAt).isAfter(dayjs(lastViewTime)),
         ).length ?? 0,
       );

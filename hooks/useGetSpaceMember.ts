@@ -18,7 +18,7 @@ export default function useGetSpaceMember(spaceId: string) {
     queryFn: async () => {
       if (!spaceId) return undefined;
       const spaceData = await spaceRepository.getById(spaceId);
-      return spaceData || undefined;
+      return spaceData.data || undefined;
     },
     enabled: !!spaceId,
   });
@@ -36,7 +36,7 @@ export default function useGetSpaceMember(spaceId: string) {
   });
 
   const owner = useMemo(() => {
-    return spaceData?.ownerId ? { id: spaceData.ownerId } : undefined;
+    return spaceData?.owner || null;
   }, [spaceData]);
   console.log('getSapceMember', spaceData);
   return {

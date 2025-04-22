@@ -1,7 +1,6 @@
 import Copy from '@/components/biz/common/Copy';
 import { CheckCircleIcon } from '@/components/icons';
 import { followSpace, unFollowSpace } from '@/services/member';
-import { Space } from '@/types';
 import { addToast, Skeleton } from '@heroui/react';
 import { ArrowSquareRight, Heart } from '@phosphor-icons/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -9,6 +8,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/base';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useModal } from '@/context/ModalContext';
+import { Space } from '@/models/space';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface SpaceActionsProps {

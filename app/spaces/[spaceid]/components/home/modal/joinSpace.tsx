@@ -10,6 +10,7 @@ import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { useZupassContext } from '@/context/ZupassContext';
 import { usePOAPVerify } from '@/hooks/useRuleVerify';
 import useUserSpace from '@/hooks/useUserSpace';
+import { SpaceGating } from '@/models/space';
 import { CREATE_ROLE_QUERY, UPDATE_ROLE_QUERY } from '@/services/graphql/role';
 import { joinSpace } from '@/services/member';
 import { getPOAPs } from '@/services/poap';
@@ -275,14 +276,17 @@ const JoinSpaceWithGate = ({
   const rules = useMemo(() => {
     return (
       spaceData?.spaceGating?.edges
-        .map((edge) => edge.node)
-        .filter((v) => v.gatingStatus === '1') ?? []
+        ?.map((edge) => edge.node)
+        .filter((v: SpaceGating) => v.gatingStatus === '1') ?? []
     );
-  }, [spaceData?.spaceGating?.edges]);
+  }, [spaceData?.spaceGating]);
 
   useEffect(() => {
     if (authState === 'authenticated') {
-      setVerifiedRules((prev) => [...prev, ...rules.map((v) => v.id)]);
+      setVerifiedRules((prev) => [
+        ...prev,
+        ...rules.map((v: SpaceGating) => v.id),
+      ]);
       setVerifyingRules((prev) => ({
         ...prev,
         zupass: false,
@@ -334,11 +338,13 @@ const JoinSpaceWithGate = ({
   const anyRuleVerified = verifiedRules.length > 0;
 
   const rulesContent = useMemo(() => {
-    return rules?.map((v) => {
+    return rules?.map((v: SpaceGating) => {
       const isZuPass = v.zuPassInfo?.eventId;
       const isRuleVerified = isZuPass
         ? verifiedRules.includes(v.zuPassInfo?.eventId ?? '')
-        : v.poapsId?.some((p) => verifiedRules.includes(p.poapId.toString()));
+        : v.poapsId?.some((p: { poapId: number }) =>
+            verifiedRules.includes(p.poapId.toString()),
+          );
 
       return (
         <AccordionItem
@@ -369,7 +375,7 @@ const JoinSpaceWithGate = ({
             />
           ) : (
             <div className="flex flex-wrap items-center gap-2">
-              {v.poapsId?.map((p, index) => (
+              {v.poapsId?.map((p: { poapId: number }, index: number) => (
                 <Fragment key={p.poapId}>
                   <PoapItem
                     poapId={p.poapId}

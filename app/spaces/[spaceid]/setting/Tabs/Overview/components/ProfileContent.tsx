@@ -105,6 +105,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
               <EditorPro
                 value={value}
                 onChange={onChange}
+                isEdit={!isDisabled}
                 className={{ base: 'min-h-[190px]' }}
                 placeholder="This is a description greeting for new members. You can also update descriptions."
               />

@@ -1,10 +1,11 @@
 import { PipelineEdDSATicketZuAuthConfig } from '@pcd/passport-interface';
 import { Announcement } from './announcement';
 import { UserRole } from './author';
-import { Link, SpaceTag, TBD } from './base';
+import { Edge, Link, SpaceTag } from './base';
 import { InstalledApp } from './dapp';
 import { Event } from './event';
 import { Profile } from './profile';
+
 /**
  * 空间属性接口
  */
@@ -17,25 +18,21 @@ export interface Space {
   tagline?: string;
   category?: string;
   color?: string;
-  profileId?: string;
   tags?: SpaceTag[];
   socialLinks?: Link[];
   customLinks?: Link[];
-  customAttributes?: TBD[];
   gated?: string;
   createdAt: string;
   updatedAt: string;
   // 匹配ZucitySpace
-  owner: {
-    id: string;
-    zucityProfile: Profile;
-  };
-  // 关联数据 这里要修改
-  announcements?: Announcement;
-  events?: Event;
-  installedApps?: InstalledApp;
-  spaceGating?: SpaceGating;
-  userRoles?: UserRole;
+  owner: Profile;
+  author: Profile;
+  // 关联数据，使用 edges.node 模式
+  announcements?: Edge<Announcement>;
+  events?: Edge<Event>;
+  installedApps?: Edge<InstalledApp>;
+  spaceGating?: Edge<SpaceGating>;
+  userRoles?: Edge<UserRole>;
 }
 
 /**
