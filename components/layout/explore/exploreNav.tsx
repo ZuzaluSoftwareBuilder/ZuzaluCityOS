@@ -10,7 +10,7 @@ export interface INavItem {
 
 export interface IExploreNavProps {
   navItems: INavItem[];
-  onNavChange?: (item: INavItem, index: number) => void;
+  onNavChange?: (_item: INavItem, _index: number) => void;
 }
 
 export default function ExploreNav({

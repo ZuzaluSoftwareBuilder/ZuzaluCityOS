@@ -115,6 +115,7 @@ export default function DappsPage() {
           base: 'w-[700px] max-w-[700px] mobile:w-[100%] mobile:max-w-[100%]',
         }}
         onOpenChange={onOpenChangeOwnedDapps}
+        isKeyboardDismissDisabled
       >
         <DrawerContent>
           {(onClose) => {

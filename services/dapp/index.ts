@@ -97,7 +97,7 @@ export const updateDapp = async (
     bannerUrl,
     devStatus: developmentStatus,
     openSource,
-    repositoryUrl,
+    repositoryUrl: openSource ? repositoryUrl : null,
     isSCApp,
     scAddresses:
       isSCApp && scAddresses
@@ -106,9 +106,9 @@ export const updateDapp = async (
           }))
         : null,
     isInstallable,
+    appUrl: isInstallable ? appUrl : null,
     websiteUrl,
     docsUrl,
     auditLogUrl,
-    appUrl,
   });
 };

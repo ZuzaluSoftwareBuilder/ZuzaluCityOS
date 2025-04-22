@@ -4,7 +4,7 @@ import {
   ResponsiveGrid,
   ResponsiveGridItem,
 } from '@/components/layout/explore/responsiveGridItem';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useRepositories } from '@/context/RepositoryContext';
 import { Dapp } from '@/types';
 import { supabase } from '@/utils/supabase/client';
@@ -20,9 +20,9 @@ interface ListProps {
 }
 
 export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
-  const { ceramic } = useCeramicContext();
+  const { profile } = useAbstractAuthContext();
   const { dappRepository } = useRepositories();
-  const userDID = ceramic.did?.parent;
+  const userDID = profile?.id;
   const [filter, setFilter] = useState<string[]>([]);
   const [searchVal, setSearchVal] = useState<string>('');
 

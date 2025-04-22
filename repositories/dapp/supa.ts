@@ -153,7 +153,7 @@ export class SupaDappRepository extends BaseDappRepository {
       appType: dapp.app_type,
       profile: {
         author: {
-          id: dapp.author.id,
+          id: dapp.author.user_id,
         },
         username: dapp.author.username,
         avatar: dapp.author.avatar,
