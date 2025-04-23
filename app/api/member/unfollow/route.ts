@@ -1,8 +1,5 @@
-import {
-  CHECK_EXISTING_ROLE_QUERY,
-  DELETE_ROLE_QUERY,
-} from '@/services/graphql/role';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { getRoleRepository } from '@/repositories/role';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import { dayjs } from '@/utils/dayjs';
 import {
   createErrorResponse,
@@ -32,14 +29,13 @@ export const POST = async (req: Request) => {
     }
     const { spaceId, userId } = validationResult.data;
 
-    const existingRoleResult = await executeQuery(CHECK_EXISTING_ROLE_QUERY, {
+    const existingRoleResult = await getRoleRepository().getUserRole(
+      spaceId,
+      'space',
       userId,
-      resourceId: spaceId,
-      resource: 'space',
-    });
+    );
 
-    const data = existingRoleResult.data;
-    const existingRoles = data?.zucityUserRolesIndex?.edges || [];
+    const existingRoles = existingRoleResult.data || [];
 
     if (!existingRoles || existingRoles.length === 0) {
       return createErrorResponse(
@@ -48,7 +44,7 @@ export const POST = async (req: Request) => {
       );
     }
 
-    const userRole = existingRoles[0]?.node;
+    const userRole = existingRoles[0];
     if (!userRole?.id || !userRole.roleId) {
       return createErrorResponse('User role not found', 404);
     }
@@ -68,14 +64,14 @@ export const POST = async (req: Request) => {
       .or(`and(resource.is.null,resource_id.is.null)`);
 
     const followerRole = rolePermissionResult?.find(
-      (rp) => rp.role.level === 'follower',
+      (rp) => rp.role?.level === 'follower',
     );
 
     if (!followerRole) {
       return createErrorResponse('Follower role not found for this space', 404);
     }
 
-    if (userRole.roleId !== followerRole.role.id) {
+    if (userRole.roleId !== followerRole.role?.id) {
       return createErrorResponse('User is not a follower of this space', 400);
     }
 
@@ -84,14 +80,8 @@ export const POST = async (req: Request) => {
       return createErrorResponse('Error getting private key', 500);
     }
 
-    const result = await executeQuery(DELETE_ROLE_QUERY, {
-      input: {
-        id: userRole.id!,
-        shouldIndex: false,
-      },
-    });
-
-    if (result.errors) {
+    const result = await getRoleRepository().deleteRole(userRole.id!);
+    if (result.error) {
       return createErrorResponse('Failed to unfollow space', 500);
     }
 

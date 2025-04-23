@@ -15,6 +15,7 @@ export interface RolePermission {
 }
 
 export interface UserRole {
+  id: string;
   roleId: string;
   resourceId: string;
   source: string;
@@ -22,3 +23,7 @@ export interface UserRole {
     zucityProfile: Profile;
   };
 }
+
+export type CreateUserRole = Omit<UserRole, 'userId'> & {
+  userId: string;
+};

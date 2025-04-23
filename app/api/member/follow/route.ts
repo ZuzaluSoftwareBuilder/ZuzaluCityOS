@@ -1,8 +1,5 @@
-import {
-  CHECK_EXISTING_ROLE_QUERY,
-  CREATE_ROLE_QUERY,
-} from '@/services/graphql/role';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { getRoleRepository } from '@/repositories/role';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import { dayjs } from '@/utils/dayjs';
 import {
   createErrorResponse,
@@ -49,21 +46,20 @@ export const POST = async (req: Request) => {
       .or(`and(resource.is.null,resource_id.is.null)`);
 
     const followerRole = rolePermissionResult?.find(
-      (rp) => rp.role.level === 'follower',
+      (rp) => rp.role?.level === 'follower',
     );
 
     if (!followerRole) {
       return createErrorResponse('Follower role not found for this space', 404);
     }
 
-    const existingRoleResult = await executeQuery(CHECK_EXISTING_ROLE_QUERY, {
+    const existingRoleResult = await getRoleRepository().getUserRole(
+      spaceId,
+      'space',
       userId,
-      resourceId: spaceId,
-      resource: 'space',
-    });
+    );
 
-    const data = existingRoleResult.data as any;
-    const existingRoles = (data?.zucityUserRolesIndex?.edges as []) || [];
+    const existingRoles = existingRoleResult.data || [];
 
     if (existingRoles.length > 0) {
       return createErrorResponse(
@@ -77,21 +73,14 @@ export const POST = async (req: Request) => {
       return createErrorResponse('Error getting private key', 500);
     }
 
-    const result = await executeQuery(CREATE_ROLE_QUERY, {
-      input: {
-        content: {
-          userId,
-          resourceId: spaceId,
-          source: 'space',
-          roleId: followerRole.role.id,
-          spaceId,
-          created_at: dayjs().utc().toISOString(),
-          updated_at: dayjs().utc().toISOString(),
-        },
-      },
+    const result = await getRoleRepository().createRole({
+      userId,
+      roleId: followerRole.role!.id,
+      resourceId: spaceId,
+      source: 'space',
     });
 
-    if (result.errors) {
+    if (result.error) {
       return createErrorResponse('Failed to unfollow space', 500);
     }
 
