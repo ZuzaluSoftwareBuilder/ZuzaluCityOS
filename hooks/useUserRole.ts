@@ -15,7 +15,7 @@ const useUserRole = () => {
     isLoading: isUserRoleLoading,
     isFetched: isUserRoleFetched,
   } = useQuery({
-    queryKey: ['GET_USER_ROLES', userDId],
+    queryKey: ['GET_USER_ROLES_QUERY', userDId],
     queryFn: () => getRoleRepository().getOwnedRole(userDId as string),
     enabled: !!userDId,
     select: (data) => data.data,
