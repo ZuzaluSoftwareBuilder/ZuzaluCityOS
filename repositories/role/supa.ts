@@ -19,7 +19,7 @@ export class SupaRoleRepository extends BaseRoleRepository {
     return this.createResponse(data.map((role) => this.transformRole(role)));
   }
 
-  async getOwnedRole(id: string): Promise<Result<UserRole>> {
+  async getOwnedRole(id: string): Promise<Result<UserRole[]>> {
     const { data, error } = await supabase
       .from('user_roles')
       .select('*, role(*)')
@@ -35,6 +35,8 @@ export class SupaRoleRepository extends BaseRoleRepository {
   private transformRole(data: any): UserRole {
     return {
       roleId: data.role_id,
+      resourceId: data.space_id,
+      source: data.source,
       userId: {
         zucityProfile: formatProfile(data.role, 'supabase'),
       },

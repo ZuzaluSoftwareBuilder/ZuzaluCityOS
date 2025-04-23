@@ -4,7 +4,7 @@ import { BaseRepository } from '../base/repository';
 
 export interface IRoleRepository {
   getMembers(_resource: string, _id: string): Promise<Result<UserRole[]>>;
-  getOwnedRole(_id: string): Promise<Result<UserRole>>;
+  getOwnedRole(_id: string): Promise<Result<UserRole[]>>;
 }
 
 export abstract class BaseRoleRepository
@@ -15,5 +15,5 @@ export abstract class BaseRoleRepository
     _resource: string,
     _id: string,
   ): Promise<Result<UserRole[]>>;
-  abstract getOwnedRole(_id: string): Promise<Result<UserRole>>;
+  abstract getOwnedRole(_id: string): Promise<Result<UserRole[]>>;
 }

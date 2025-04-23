@@ -16,6 +16,8 @@ export interface RolePermission {
 
 export interface UserRole {
   roleId: string;
+  resourceId: string;
+  source: string;
   userId: {
     zucityProfile: Profile;
   };
