@@ -5,8 +5,6 @@ import dayjs from 'dayjs';
 import { BaseDappRepository } from './type';
 
 export class SupaDappRepository extends BaseDappRepository {
-  private readonly TABLE_NAME = 'dapp_infos';
-
   async create(dappInput: CreateDappInput): Promise<Result<Dapp>> {
     const {
       appName,
@@ -31,7 +29,7 @@ export class SupaDappRepository extends BaseDappRepository {
     } = dappInput;
 
     const { data, error } = await supabase
-      .from(this.TABLE_NAME)
+      .from('dapp_infos')
       .insert({
         author: profileId,
         created_at: dayjs().toISOString(),
@@ -91,7 +89,7 @@ export class SupaDappRepository extends BaseDappRepository {
     } = dappInput;
 
     const { data, error } = await supabase
-      .from(this.TABLE_NAME)
+      .from('dapp_infos')
       .update({
         app_type: appType,
         app_name: appName,
@@ -120,23 +118,24 @@ export class SupaDappRepository extends BaseDappRepository {
       return this.createResponse(null, error);
     }
 
-    const dapp = this.transformDapp(data);
-    if (!dapp) {
+    if (!data) {
       return this.createResponse(null, new Error('Invalid dapp data'));
     }
-    return this.createResponse(dapp);
+    return this.createResponse(data);
   }
 
   async getDapps(): Promise<Result<Dapp[]>> {
     const { data, error } = await supabase
-      .from(this.TABLE_NAME)
+      .from('dapp_infos')
       .select(`*, author(*)`);
 
     if (error) {
       return this.createResponse(null, error);
     }
 
-    const transformedDapps = data.map(this.transformDapp) as Dapp[];
+    const transformedDapps = data.map((item) =>
+      this.transformDapp(item),
+    ) as Dapp[];
     if (!transformedDapps) {
       return this.createResponse(null, new Error('Dapps not found'));
     }
