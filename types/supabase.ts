@@ -973,6 +973,58 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_roles: {
+        Row: {
+          author: string;
+          created_at: string;
+          id: string;
+          role_id: string;
+          source: string;
+          space_id: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          author: string;
+          created_at?: string;
+          id?: string;
+          role_id: string;
+          source: string;
+          space_id?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          author?: string;
+          created_at?: string;
+          id?: string;
+          role_id?: string;
+          source?: string;
+          space_id?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'user_roles_author_fkey';
+            columns: ['author'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'user_roles_role_id_fkey';
+            columns: ['role_id'];
+            isOneToOne: false;
+            referencedRelation: 'role';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'user_roles_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       venues: {
         Row: {
           avatar: string | null;
