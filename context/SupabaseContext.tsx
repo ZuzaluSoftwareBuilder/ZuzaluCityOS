@@ -190,7 +190,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         );
       }
     },
-    [chainId, handleError, updateAuthState],
+    [handleError, updateAuthState],
   );
 
   useEffect(() => {
