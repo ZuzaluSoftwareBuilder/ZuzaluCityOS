@@ -5,7 +5,8 @@ import { GET_USER_ROLES_QUERY } from '@/services/graphql/role';
 
 const useUserRole = () => {
   const { profile } = useAbstractAuthContext();
-  const userDId = profile?.author?.id;
+  // TODO wait supabase update
+  const userDId = profile?.did;
 
   const { followerRole } = useBuildInRole();
 

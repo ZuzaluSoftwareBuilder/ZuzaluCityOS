@@ -179,6 +179,7 @@ const Create = () => {
     const { tags, category } = categoriesForm.getValues();
     const { socialLinks, customLinks } = linksForm.getValues();
     const adminId = ceramic?.did?.parent || '';
+    // TODO wait supabase update, confirm profile.id of space
     const profileId = profile?.id || '';
     return {
       customLinks,

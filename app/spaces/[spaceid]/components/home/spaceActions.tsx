@@ -35,6 +35,8 @@ const SpaceActions = ({
   isMobile = false,
 }: SpaceActionsProps) => {
   const { profile, isAuthenticated, showAuthPrompt } = useAbstractAuthContext();
+  // TODO wait supabase update , confirm did of space
+  const userDid = profile?.did;
   const queryClient = useQueryClient();
   const { showModal } = useModal();
 
@@ -67,7 +69,7 @@ const SpaceActions = ({
   }, [spaceData?.gated, spaceData?.spaceGating?.edges?.length]);
 
   const followMutation = useMutation({
-    mutationFn: () => followSpace(spaceId, profile!.author!.id),
+    mutationFn: () => followSpace(spaceId, userDid!),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['GET_USER_ROLES_QUERY'],
@@ -83,7 +85,7 @@ const SpaceActions = ({
   });
 
   const unfollowMutation = useMutation({
-    mutationFn: () => unFollowSpace(spaceId, profile!.author!.id),
+    mutationFn: () => unFollowSpace(spaceId, userDid!),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ['GET_USER_ROLES_QUERY'],
@@ -102,7 +104,7 @@ const SpaceActions = ({
   const isFollowPending = followMutation.isPending;
 
   const onFollow = useCallback(async () => {
-    if (!isAuthenticated || !profile?.author?.id) {
+    if (!isAuthenticated || !userDid) {
       showAuthPrompt('connectButton');
       return;
     }
@@ -125,7 +127,7 @@ const SpaceActions = ({
     isAuthenticated,
     isFollowPending,
     isUserFollowed,
-    profile?.author?.id,
+    userDid,
     showAuthPrompt,
     showModal,
     spaceData?.name,

@@ -34,7 +34,7 @@ import {
   FormLabelDesc,
 } from '@/components/typography/formTypography';
 import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useLitContext } from '@/context/LitContext';
 import { Anchor, Event, Profile, ProfileEdge, Session, Venue } from '@/types';
 import dayjs, { Dayjs } from '@/utils/dayjs';
@@ -98,9 +98,10 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const { ceramic, composeClient, isAuthenticated, profile } =
-    useCeramicContext();
+    useAbstractAuthContext();
   const params = useParams();
   const eventId = params.eventid?.toString() ?? '';
+  // TODO wait supabase update, confirm profile.id
   const profileId = profile?.id || '';
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [directions, setDirections] = useState<string>('');

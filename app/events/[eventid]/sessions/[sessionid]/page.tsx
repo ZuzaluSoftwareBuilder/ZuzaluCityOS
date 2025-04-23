@@ -28,7 +28,7 @@ import {
 } from '@/components/typography/formTypography';
 import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
 import { StorageKey_CeramicEthDid } from '@/constant/StorageKey';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { supaEditSession } from '@/services/session';
 import {
   Anchor,
@@ -96,7 +96,7 @@ const Home = () => {
   const searchParams = useSearchParams();
   const [eventData, setEventData] = useState<Event>();
   const { authenticate, composeClient, ceramic, isAuthenticated, profile } =
-    useCeramicContext();
+    useAbstractAuthContext();
   const [sessionView, setSessionView] = useState<boolean>(false);
   const [verify, setVerify] = useState<boolean>(false);
   const eventId = params.eventid?.toString() ?? '';
@@ -122,6 +122,7 @@ const Home = () => {
     bottom: false,
     right: false,
   });
+  // TODO wait for supabase update, confirm profileId usage
   const profileId = profile?.id || '';
   const [directions, setDirections] = useState<string>('');
   const [customLocation, setCustomLocation] = useState<string>('');

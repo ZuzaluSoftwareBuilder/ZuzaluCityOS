@@ -78,7 +78,8 @@ const About: React.FC<IAbout> = ({ eventData, setVerify, canEdit }) => {
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('sm'));
 
-  const { composeClient, profile } = useAbstractAuthContext();
+  const { profile } = useAbstractAuthContext();
+  // TODO wait supabase update, confirm profile.id of event
   const profileId = profile?.id || '';
 
   const [state, setState] = useState({

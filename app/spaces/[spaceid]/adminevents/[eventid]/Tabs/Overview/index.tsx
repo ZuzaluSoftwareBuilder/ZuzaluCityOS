@@ -122,6 +122,7 @@ const Overview = ({ event, refetch, setTabName }: PropTypes) => {
   const [track, setTrack] = useState<string>('');
   const [tracks, setTracks] = useState<string[]>([]);
   const [error, setError] = useState(false);
+  // TODO wait supabase update, confirm profile.id of space and events
   const profileId = profile?.id || '';
   const adminId = ceramic?.did?.parent || '';
 

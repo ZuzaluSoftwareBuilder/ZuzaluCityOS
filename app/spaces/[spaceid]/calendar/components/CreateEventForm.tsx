@@ -211,7 +211,7 @@ const CreateEventForm: React.FC<EventFormProps> = ({
 
   const [blockClickModal, setBlockClickModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
+  // TODO wait supabase update, confirm profile of event
   const { profile } = useAbstractAuthContext();
 
   const eventMutation = useMutation({

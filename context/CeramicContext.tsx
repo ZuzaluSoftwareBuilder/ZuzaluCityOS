@@ -1,6 +1,5 @@
 import { ceramic, composeClient } from '@/constant';
 import {
-  StorageKey_CeramicAuthPending,
   StorageKey_CeramicEthDid,
   StorageKey_DisplayDid,
   StorageKey_LoggedIn,
@@ -22,6 +21,7 @@ import {
   safeRemoveLocalStorage,
   safeSetLocalStorage,
 } from '@/utils/localStorage';
+import { getWalletAddressFromProfile } from '@/utils/profile';
 import {
   createContext,
   useCallback,
@@ -170,7 +170,11 @@ export const CeramicProvider = ({ children }: any) => {
 
       if (basicProfile?.id) {
         safeSetLocalStorage(StorageKey_Username, basicProfile.username);
-        setProfile(basicProfile);
+        setProfile({
+          ...basicProfile,
+          did: basicProfile.author?.id,
+          address: getWalletAddressFromProfile(basicProfile),
+        });
         setUsername(basicProfile.username);
         setNewUser(false);
         setAuthStatus('authenticated');
@@ -199,13 +203,11 @@ export const CeramicProvider = ({ children }: any) => {
     if (authStatus === 'authenticating' || authStatus === 'authenticated') {
       return;
     }
-    safeSetLocalStorage(StorageKey_CeramicAuthPending, '1');
     setAuthStatus('authenticating');
     setAuthError(null);
     try {
       await authenticateCeramic(ceramic, composeClient);
       await getProfile();
-      safeRemoveLocalStorage(StorageKey_CeramicAuthPending);
     } catch (error: any) {
       console.error('[CeramicContext] Authentication failed:', error);
       const errorMessageLower = error.message?.toLowerCase() || '';
@@ -282,15 +284,13 @@ export const CeramicProvider = ({ children }: any) => {
 
   const showAuthPrompt = useCallback(
     async (source: ConnectSource = 'invalidAction') => {
-      // in case of pending auth / reload page without disconnect wallet
-      if (safeGetLocalStorage(StorageKey_CeramicAuthPending)) {
+      if (isConnected) {
         await disconnectAsync();
-        safeRemoveLocalStorage(StorageKey_CeramicAuthPending);
       }
       setConnectSource(source);
       setAuthPromptVisible(true);
     },
-    [disconnectAsync],
+    [disconnectAsync, isConnected],
   );
 
   return (

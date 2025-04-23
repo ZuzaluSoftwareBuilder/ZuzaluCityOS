@@ -31,7 +31,7 @@ import {
   FormLabelDesc,
 } from '@/components/typography/formTypography';
 import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { supaCreateSession } from '@/services/session';
 import {
   Anchor,
@@ -100,10 +100,11 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const { ceramic, composeClient, isAuthenticated, profile } =
-    useCeramicContext();
+    useAbstractAuthContext();
   const params = useParams();
   const eventId = params.eventid?.toString() ?? '';
   const spaceId = params.spaceid?.toString() ?? '';
+  // TODO wait confirm supabase update
   const profileId = profile?.id || '';
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [directions, setDirections] = useState<string>('');
