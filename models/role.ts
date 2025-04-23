@@ -19,11 +19,9 @@ export interface UserRole {
   roleId: string;
   resourceId: string;
   source: string;
-  userId: {
-    zucityProfile: Profile;
-  };
+  userId: Profile;
 }
 
-export type CreateUserRole = Omit<UserRole, 'userId'> & {
+export type CreateUserRole = Omit<UserRole, 'userId' | 'id'> & {
   userId: string;
 };

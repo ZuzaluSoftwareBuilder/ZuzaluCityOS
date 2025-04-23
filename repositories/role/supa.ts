@@ -86,9 +86,7 @@ export class SupaRoleRepository extends BaseRoleRepository {
       roleId: data.role_id,
       resourceId: data.space_id,
       source: data.source,
-      userId: {
-        zucityProfile: formatProfile(data.role, 'supabase'),
-      },
+      userId: formatProfile(data.role, 'supabase'),
     };
   }
 }
