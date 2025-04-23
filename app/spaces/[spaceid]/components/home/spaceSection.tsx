@@ -27,8 +27,7 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
     useUserSpace();
 
   const formattedMemberCount = useMemo(() => {
-    const totalMembers =
-      spaceData?.userRoles?.edges.map((item) => item.node).length ?? 0;
+    const totalMembers = spaceData?.userRoles?.length ?? 0;
     return formatMemberCount(totalMembers + 1);
   }, [spaceData?.userRoles]);
 

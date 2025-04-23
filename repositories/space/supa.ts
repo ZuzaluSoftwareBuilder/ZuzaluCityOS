@@ -1,5 +1,6 @@
 import { Result } from '@/models/base';
 import { CreateSpaceInput, Space, UpdateSpaceInput } from '@/models/space';
+import { formatProfile } from '@/utils/profile';
 import { supabase } from '@/utils/supabase/client';
 import { BaseSpaceRepository } from './type';
 
@@ -153,7 +154,13 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
     try {
       const { data: spaces, error } = await supabase
         .from(this.tableName)
-        .select('*')
+        .select(
+          `
+          *,
+          owner_profile:profiles!fk_spaces_owner(user_id, username, avatar),
+          author_profile:profiles!fk_spaces_author(user_id, username, avatar)
+        `,
+        )
         .eq('owner', did);
 
       if (error) {
@@ -163,7 +170,6 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
       const transformedSpaces = (spaces || [])
         .map((space) => this.transformToSpace(space))
         .filter(Boolean) as Space[];
-
       return this.createResponse(transformedSpaces);
     } catch (error) {
       return this.createResponse(null, error);
@@ -174,7 +180,13 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
     try {
       const { data: spaces, error } = await supabase
         .from(this.tableName)
-        .select('*')
+        .select(
+          `
+          *,
+          owner_profile:profiles!fk_spaces_owner(user_id, username, avatar),
+          author_profile:profiles!fk_spaces_author(user_id, username, avatar)
+        `,
+        )
         .in('id', ids);
 
       if (error) {
@@ -195,7 +207,14 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
     try {
       const { data: spaces, error } = await supabase
         .from(this.tableName)
-        .select('*, user_roles ( * )')
+        .select(
+          `
+          *,
+          user_roles ( * ),
+          owner_profile:profiles!fk_spaces_owner(user_id, username, avatar),
+          author_profile:profiles!fk_spaces_author(user_id, username, avatar)
+        `,
+        )
         .in('user_roles.role_id', roleIds);
 
       if (error) {
@@ -230,13 +249,13 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
       gated: supaData.gated,
       createdAt: supaData.created_at,
       updatedAt: supaData.updated_at,
-      author: supaData['owner_profile'],
-      owner: supaData['author_profile'],
+      author: formatProfile(supaData['author_profile'], 'supabase'),
+      owner: formatProfile(supaData['owner_profile'], 'supabase'),
       announcements: { edges: [] },
       events: { edges: [] },
       installedApps: { edges: [] },
       spaceGating: { edges: [] },
-      userRoles: supaData.user_roles,
+      userRoles: supaData.user_roles || [],
     };
   }
 }

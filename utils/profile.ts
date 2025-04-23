@@ -16,15 +16,15 @@ export const formatProfile = (profile: any, type: DatabaseType): Profile => {
   if (type === 'supabase') {
     return {
       ...profile,
-      id: profile.user_id,
-      did: profile.user_id,
+      id: profile?.user_id,
+      did: profile?.user_id,
     };
   }
   return {
-    id: profile.id,
-    username: profile.username,
-    avatar: profile.avatar || '',
+    id: profile?.id,
+    username: profile?.username,
+    avatar: profile?.avatar || '',
     address: getWalletAddressFromProfile(profile),
-    did: profile.author?.id,
+    did: profile?.author?.id,
   };
 };

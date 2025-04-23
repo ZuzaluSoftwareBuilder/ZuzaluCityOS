@@ -30,8 +30,7 @@ const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
   const { owner, members, roles } = useGetSpaceMember(spaceId as string);
 
   const formattedMemberCount = useMemo(() => {
-    const totalMembers =
-      spaceData?.userRoles?.edges.map((item) => item.node).length ?? 0;
+    const totalMembers = spaceData?.userRoles?.length ?? 0;
     return formatMemberCount(totalMembers + 1);
   }, [spaceData?.userRoles]);
 

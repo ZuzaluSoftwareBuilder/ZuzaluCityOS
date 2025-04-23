@@ -38,7 +38,6 @@ export const SpaceDataProvider: React.FC<{
     spaceData: data,
     refreshSpaceData: refetch,
   };
-  console.log('SpaceDataProvider', data);
   return (
     <SpaceDataContext.Provider value={value}>
       {children}

@@ -21,8 +21,6 @@ const useUserRole = () => {
     select: (data) => data.data,
   });
 
-  console.log('userRoles', userRoles);
-
   return {
     userRoles,
     isUserRoleLoading,
