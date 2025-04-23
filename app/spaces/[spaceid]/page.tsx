@@ -10,6 +10,8 @@ import {
 } from '@/components/base';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
 import useOpenDraw from '@/hooks/useOpenDraw';
+import { Result } from '@/models/base';
+import { Space } from '@/models/space';
 import { getSpaceRepository } from '@/repositories/space';
 import { Event } from '@/types';
 import { CaretUpDown } from '@phosphor-icons/react';
@@ -47,12 +49,10 @@ const SpaceHomePage: React.FC = () => {
   // );
   const { data: spaceData, isLoading } = useQuery({
     queryKey: ['GET_SUPABASE_SPACES_DATA', spaceId],
-    queryFn: () => {
-      return getSpaceRepository().getById(spaceId);
-    },
-    select: (data: any) => {
+    queryFn: () => getSpaceRepository().getById(spaceId),
+    select: (data: Result<Space>) => {
       if (!data?.data) {
-        return null;
+        return undefined;
       }
       return data.data;
     },

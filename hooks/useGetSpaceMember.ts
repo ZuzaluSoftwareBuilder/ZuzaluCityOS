@@ -38,7 +38,7 @@ export default function useGetSpaceMember(spaceId: string) {
   const owner = useMemo(() => {
     return spaceData?.owner || null;
   }, [spaceData]);
-  console.log('getSapceMember', spaceData);
+
   return {
     owner,
     roles,

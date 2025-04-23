@@ -2,7 +2,7 @@
 
 import { formatMemberCount } from '@/components/biz/space/SpaceCard';
 import useGetSpaceMember from '@/hooks/useGetSpaceMember';
-import { Space } from '@/types';
+import { Space } from '@/models/space';
 import { getWalletAddressFromDid } from '@/utils/did';
 import { Skeleton } from '@heroui/react';
 import dayjs from 'dayjs';

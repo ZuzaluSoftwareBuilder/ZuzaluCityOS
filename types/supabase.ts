@@ -943,68 +943,38 @@ export type Database = {
         };
         Relationships: [];
       };
-      user_role: {
-        Row: {
-          created_at: string;
-          id: number;
-          resource: string | null;
-          resource_id: string | null;
-          role_id: number | null;
-          updated_at: string | null;
-          user_id: string | null;
-        };
-        Insert: {
-          created_at?: string;
-          id?: number;
-          resource?: string | null;
-          resource_id?: string | null;
-          role_id?: number | null;
-          updated_at?: string | null;
-          user_id?: string | null;
-        };
-        Update: {
-          created_at?: string;
-          id?: number;
-          resource?: string | null;
-          resource_id?: string | null;
-          role_id?: number | null;
-          updated_at?: string | null;
-          user_id?: string | null;
-        };
-        Relationships: [];
-      };
       user_roles: {
         Row: {
-          author: string;
           created_at: string;
           id: string;
           role_id: string;
           source: string;
           space_id: string | null;
           updated_at: string;
+          user_id: string;
         };
         Insert: {
-          author: string;
           created_at?: string;
           id?: string;
           role_id: string;
           source: string;
           space_id?: string | null;
           updated_at?: string;
+          user_id: string;
         };
         Update: {
-          author?: string;
           created_at?: string;
           id?: string;
           role_id?: string;
           source?: string;
           space_id?: string | null;
           updated_at?: string;
+          user_id?: string;
         };
         Relationships: [
           {
             foreignKeyName: 'user_roles_author_fkey';
-            columns: ['author'];
+            columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
             referencedColumns: ['user_id'];
