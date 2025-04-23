@@ -1,10 +1,10 @@
 import { ZuButton, ZuInput } from '@/components/core';
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useLitContext } from '@/context/LitContext';
 import { useZupassContext } from '@/context/ZupassContext';
 import { updateScrollpassMember } from '@/services/event/addScrollpassMember';
 import { updateZupassMember } from '@/services/event/addZupassMember';
-import { getWalletAddressFromDid } from '@/utils/did';
+import { getWalletAddressFromProfile } from '@/utils/profile';
 import {
   Box,
   Checkbox,
@@ -52,7 +52,7 @@ export default function NewUserPromptModal({
     authenticate,
     logout: CeramicLogout,
     createProfile,
-  } = useCeramicContext();
+  } = useAbstractAuthContext();
   const {
     pcdStr,
     authState,
@@ -152,9 +152,7 @@ export default function NewUserPromptModal({
                 throw new Error('Failed to connect to Lit Network');
               }
 
-              const encryptString = getWalletAddressFromDid(
-                ceramic?.did?.parent,
-              );
+              const encryptString = getWalletAddressFromProfile(profile);
 
               const accessControlConditions = [
                 {
