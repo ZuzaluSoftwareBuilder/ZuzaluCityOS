@@ -1,6 +1,5 @@
 import { Profile, UpdateProfileInput } from '@/models/profile';
 import { Nullable } from '@/types/common';
-import { getDidByAddress } from '@/utils/did';
 import { supabase } from '@/utils/supabase/client';
 import { BaseProfileRepository } from './type';
 
@@ -33,7 +32,7 @@ export class SupaProfileRepository extends BaseProfileRepository {
     return (data || []).map((profile) => ({
       ...profile,
       id: profile.user_id,
-      did: getDidByAddress(profile.address, _chainId),
+      did: profile.user_id,
     }));
   }
 
@@ -54,7 +53,7 @@ export class SupaProfileRepository extends BaseProfileRepository {
     return {
       ...data,
       id: data.user_id,
-      did: getDidByAddress(data.address, _chainId),
+      did: data.user_id,
     };
   }
 }
