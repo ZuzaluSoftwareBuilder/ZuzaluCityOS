@@ -8,7 +8,8 @@ import { useGraphQL } from './useGraphQL';
 
 const useUserSpace = () => {
   const { profile } = useAbstractAuthContext();
-  const userDId = profile?.author?.id;
+  // TODO wait supabase update
+  const userDId = profile?.did;
 
   const { userRoles, isUserRoleLoading, isUserRoleFetched, followerRoleId } =
     useUserRole();

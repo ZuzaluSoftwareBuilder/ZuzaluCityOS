@@ -115,7 +115,8 @@ const useJoinSpace = ({
   const { memberRole } = useBuildInRole();
   const queryClient = useQueryClient();
   const { userFollowedSpaceIds, userFollowedSpaces } = useUserSpace();
-  const userId = profile?.author?.id ?? '';
+  // TODO wait supabase update, confirm space
+  const userId = profile?.did!;
   const spaceId = spaceData?.id ?? '';
   const roleId = memberRole?.id ?? '';
   const isUserFollowed = userFollowedSpaceIds.has(spaceId);

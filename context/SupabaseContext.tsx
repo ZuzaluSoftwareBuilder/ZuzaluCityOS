@@ -1,7 +1,4 @@
-import {
-  StorageKey_SupabaseAuthPending,
-  StorageKey_Username,
-} from '@/constant/StorageKey';
+import { StorageKey_Username } from '@/constant/StorageKey';
 import { CreateProfileErrorPrefix } from '@/context/CeramicContext';
 import { useLitContext } from '@/context/LitContext';
 import { checkRegistration, getNonce, verify } from '@/services/auth';
@@ -17,7 +14,6 @@ import { Nullable } from '@/types/common';
 import { Profile } from '@/types/index.js';
 import { isUserDenied } from '@/utils/handleError';
 import {
-  safeGetLocalStorage,
   safeRemoveLocalStorage,
   safeSetLocalStorage,
 } from '@/utils/localStorage';
@@ -88,7 +84,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const isFetchingProfile = authState.status === 'fetching_profile';
   const isCreatingProfile = authState.status === 'creating_profile';
 
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const { litDisconnect } = useLitContext();
   const { disconnectAsync } = useDisconnect();
   const { signMessageAsync } = useSignMessage();
@@ -162,6 +158,11 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
               id: profile.user_id,
               username: profile.username,
               avatar: profile.avatar,
+              address: profile.address,
+              /**
+               * pay attention to this field, it's the user_id
+               */
+              did: profile.user_id,
             },
             username: profile.username,
             newUser: false,
@@ -264,7 +265,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   }, [isConnected, performFullLogoutAndReload, authState.status]);
 
   const authenticate = useCallback(async () => {
-    if (!isConnected || !address) {
+    if (!address) {
       handleError('Wallet not connected, cannot authenticate.', false, false);
       return;
     }
@@ -276,7 +277,6 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    safeSetLocalStorage(StorageKey_SupabaseAuthPending, '1');
     updateAuthState('authenticating');
     setUserState((pre) => ({
       ...pre,
@@ -348,11 +348,8 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           backendError || error.message || 'Please try again';
         handleError(errorMessage);
       }
-    } finally {
-      safeRemoveLocalStorage(StorageKey_SupabaseAuthPending);
     }
   }, [
-    isConnected,
     address,
     authState.status,
     signMessageAsync,
@@ -430,9 +427,12 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
   const showAuthPrompt = useCallback(
     async (source: ConnectSource = 'invalidAction') => {
-      if (safeGetLocalStorage(StorageKey_SupabaseAuthPending)) {
+      if (isConnected) {
         await disconnectAsync();
-        safeRemoveLocalStorage(StorageKey_SupabaseAuthPending);
+      }
+
+      if (authState.status === 'error') {
+        resetAuthState();
       }
 
       setAuthState((prev) => ({
@@ -440,12 +440,8 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         connectSource: source,
         isPromptVisible: true,
       }));
-
-      if (authState.status === 'error') {
-        resetAuthState();
-      }
     },
-    [disconnectAsync, authState.status, resetAuthState],
+    [isConnected, authState.status, disconnectAsync, resetAuthState],
   );
 
   const setConnectSource = useCallback((source: ConnectSource) => {

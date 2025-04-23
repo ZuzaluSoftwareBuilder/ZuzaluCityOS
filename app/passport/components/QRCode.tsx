@@ -14,7 +14,8 @@ interface PropTypes {
 const QRCode = ({ ticketAddress, eventId, onClose }: PropTypes) => {
   const { Canvas } = useQRCode();
   const { username, profile } = useAbstractAuthContext();
-  const authorId = profile?.author?.id || '';
+  // TODO wait supabase update, confirm did usage of qrcode
+  const authorId = profile?.did;
 
   const [errorCorrectionLevel, setErrorCorrectionLevel] = useState<string>('M');
   const [isRotated, setIsRotated] = useState<boolean>(false);

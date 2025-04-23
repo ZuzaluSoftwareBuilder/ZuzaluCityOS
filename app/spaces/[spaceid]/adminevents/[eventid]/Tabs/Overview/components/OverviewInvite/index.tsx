@@ -6,6 +6,7 @@ import { updateAdmin } from '@/services/event/addAdmin';
 import { updateMember } from '@/services/event/addMember';
 import { tempUpdateTrack } from '@/services/event/tempAddTrack';
 import { AddAdminRequest, AddMemberRequest, Event } from '@/types';
+import { getWalletAddressFromDid } from '@/utils/did';
 import { download } from '@/utils/download';
 import { Box, Stack, Typography } from '@mui/material';
 import { useParams } from 'next/navigation';
@@ -197,7 +198,7 @@ const OverviewInvite = ({ event }: PropTypes) => {
   const handleClickExport = () => {
     let txt = 'Members: \n\n';
     members.forEach((member) => {
-      txt += member.id.split(':').pop() + '\n';
+      txt += getWalletAddressFromDid(member.id) + '\n';
     });
     download('members.text', txt);
   };
@@ -330,7 +331,7 @@ const OverviewInvite = ({ event }: PropTypes) => {
                   {admin.mvpProfile?.username}
                 </Typography>*/}
                 <Typography variant="bodyM" flex={2}>
-                  {admin.id.split(':').pop()}
+                  {getWalletAddressFromDid(admin.id)}
                 </Typography>
                 <Typography variant="bodyM" flex={1}>
                   Admin
@@ -441,7 +442,7 @@ const OverviewInvite = ({ event }: PropTypes) => {
                   {member.mvpProfile?.username}
                 </Typography>*/}
                 <Typography variant="bodyM" flex={2}>
-                  {member.id.split(':').pop()}
+                  {getWalletAddressFromDid(member.id)}
                 </Typography>
                 <Typography variant="bodyM" flex={1}>
                   Member

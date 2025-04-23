@@ -15,7 +15,7 @@ import { isDev } from '@/constant';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { updateRegAndAccess } from '@/services/event/regAndAccess';
 import { RegistrationAndAccess } from '@/types';
-import { getWalletAddressFromDid } from '@/utils/did';
+import { getDidByAddress, getWalletAddressFromDid } from '@/utils/did';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Box,
@@ -71,6 +71,7 @@ export default function Form({ regAndAccess, onClose }: FormProps) {
       addresses: [{ address: '' }],
       whitelist:
         regAndAccess?.registrationWhitelist?.map((q) => ({
+          // TODO wait supabase update, confirm q.id source logic
           address: getWalletAddressFromDid(q.id),
         })) || [],
     },
@@ -88,6 +89,7 @@ export default function Form({ regAndAccess, onClose }: FormProps) {
   const queryClient = useQueryClient();
   const pathname = useParams();
   const { profile } = useAbstractAuthContext();
+  // TODO wait supabase update, confirm profile.id of RegAndAccess
   const profileId = profile?.id || '';
   const eventId = pathname.eventid?.toString() ?? '';
 
@@ -114,9 +116,8 @@ export default function Form({ regAndAccess, onClose }: FormProps) {
         ?.map((q) => q.address)
         .concat(whitelistFields.map((v) => v.address || ''))
         .filter(Boolean)
-        .map(
-          (address) =>
-            `did:pkh:eip155:${isDev ? sepolia.id : mainnet.id}:${address}`,
+        .map((address) =>
+          getDidByAddress(address, isDev ? sepolia.id : mainnet.id),
         );
       updateMutation.mutate({
         type: 'whitelist',
@@ -148,9 +149,8 @@ export default function Form({ regAndAccess, onClose }: FormProps) {
       ?.map((q) => q.address)
       .filter(Boolean)
       .filter((v, index) => index !== removeIndex)
-      .map(
-        (address) =>
-          `did:pkh:eip155:${isDev ? sepolia.id : mainnet.id}:${address}`,
+      .map((address) =>
+        getDidByAddress(address!, isDev ? sepolia.id : mainnet.id),
       );
     queryClient.cancelQueries({
       queryKey: ['fetchEventById'],

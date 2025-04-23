@@ -2,6 +2,7 @@
 import { ZuButton, ZuInput } from '@/components/core';
 import { PlusCircleIcon, XCricleIcon } from '@/components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { getWalletAddressFromDid } from '@/utils/did';
 import { Box, Stack, Typography } from '@mui/material';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -223,7 +224,7 @@ const Invite = () => {
                   drivenfast
                 </Typography>
                 <Typography variant="bodyM" flex={1}>
-                  {member.id.split(':').pop()?.substring(0, 8)}
+                  {getWalletAddressFromDid(member.id).substring(0, 8)}
                 </Typography>
                 <Typography variant="bodyM" flex={1}>
                   Creator

@@ -1,5 +1,6 @@
 import { ceramic, chainID, composeClient } from '@/constant';
 import { base64ToUint8Array } from '@/utils';
+import { getDidByAddress } from '@/utils/did';
 import { supabase } from '@/utils/supabase/client';
 import { DID } from 'dids';
 import { Ed25519Provider } from 'key-did-provider-ed25519';
@@ -65,9 +66,9 @@ export async function POST(req: Request) {
     const updatedAdmins = getEventResponse.data.node.admins
       ? [
           ...getEventResponse.data.node.admins.map((admin: any) => admin.id),
-          `did:pkh:eip155:${chainID.toString()}:${adminAddress}`,
+          getDidByAddress(adminAddress, chainID),
         ]
-      : [`did:pkh:eip155:${chainID.toString()}:${adminAddress}`];
+      : [getDidByAddress(adminAddress, chainID)];
     const query = `
             mutation UpdateZucityEvent($i: UpdateZucityEventInput!) {
             updateZucityEvent(input: $i) {

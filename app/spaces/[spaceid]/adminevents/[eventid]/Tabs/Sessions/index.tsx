@@ -9,7 +9,6 @@ import {
   FormTitle,
 } from '@/components/typography/formTypography';
 import { EXPREIENCE_LEVEL_TYPES } from '@/constant';
-import { useCeramicContext } from '@/context/CeramicContext';
 import { supaCreateSession } from '@/services/session';
 import {
   Anchor,
@@ -60,6 +59,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import dynamic from 'next/dynamic';
 const SuperEditor = dynamic(() => import('@/components/editor/SuperEditor'), {
   ssr: false,
@@ -109,12 +109,13 @@ const Sessions = () => {
   const [sessionTimezone, setSessionTimezone] = useState<string>('');
 
   const { composeClient, profile, isAuthenticated, ceramic } =
-    useCeramicContext();
+    useAbstractAuthContext();
 
   const [directions, setDirections] = useState<string>('');
   const [customLocation, setCustomLocation] = useState<string>('');
   const [isDirections, setIsDirections] = useState<boolean>(false);
 
+  // TODO wait supabase update, confirm profile.id
   const profileId = profile?.id || '';
   const eventId = params.eventid?.toString() ?? '';
 

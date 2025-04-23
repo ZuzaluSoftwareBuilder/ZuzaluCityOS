@@ -8,7 +8,8 @@ import { useMemo } from 'react';
 
 const useUserEvent = () => {
   const { profile } = useAbstractAuthContext();
-  const userDId = profile?.author?.id;
+  // TODO wait supabase update
+  const userDId = profile?.did;
 
   const { userRoles, isUserRoleLoading, isUserRoleFetched, followerRoleId } =
     useUserRole();

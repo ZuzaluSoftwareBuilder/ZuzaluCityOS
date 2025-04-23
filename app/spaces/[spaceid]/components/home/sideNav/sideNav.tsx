@@ -3,7 +3,7 @@
 import { formatMemberCount } from '@/components/biz/space/SpaceCard';
 import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 import { Space } from '@/models/space';
-import { getWalletAddressFromDid } from '@/utils/did';
+import { getWalletAddressFromProfile } from '@/utils/profile';
 import { Skeleton } from '@heroui/react';
 import dayjs from 'dayjs';
 import { useParams } from 'next/navigation';
@@ -43,11 +43,11 @@ const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
   const formatedMembers = useMemo(() => {
     let res = [];
     if (owner) {
-      const { username, avatar, author } = owner;
+      const { username, avatar } = owner;
       const ownerProfile = {
         name: username,
         avatarUrl: avatar || '',
-        address: getWalletAddressFromDid(author?.id),
+        address: getWalletAddressFromProfile(owner),
         roleName: 'Owner',
         order: ShowRoleOrder.owner,
       };
@@ -70,11 +70,10 @@ const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
       const roleName = matchedRole.role.name || 'Member';
       const roleLevel = matchedRole.role.level || 'member';
 
-      const did = profile.author?.id;
       const item = {
         name: profile.username,
         avatarUrl: profile.avatar || '',
-        address: getWalletAddressFromDid(did),
+        address: getWalletAddressFromProfile(profile),
         roleName: roleName,
         order: ShowRoleOrder[roleLevel],
       };
