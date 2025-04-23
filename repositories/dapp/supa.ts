@@ -118,11 +118,10 @@ export class SupaDappRepository extends BaseDappRepository {
       return this.createResponse(null, error);
     }
 
-    const dapp = this.transformDapp(data);
-    if (!dapp) {
+    if (!data) {
       return this.createResponse(null, new Error('Invalid dapp data'));
     }
-    return this.createResponse(dapp);
+    return this.createResponse(data);
   }
 
   async getDapps(): Promise<Result<Dapp[]>> {
@@ -134,7 +133,9 @@ export class SupaDappRepository extends BaseDappRepository {
       return this.createResponse(null, error);
     }
 
-    const transformedDapps = data.map(this.transformDapp) as Dapp[];
+    const transformedDapps = data.map((item) =>
+      this.transformDapp(item),
+    ) as Dapp[];
     if (!transformedDapps) {
       return this.createResponse(null, new Error('Dapps not found'));
     }
