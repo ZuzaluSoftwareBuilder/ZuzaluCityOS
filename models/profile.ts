@@ -5,7 +5,7 @@ export interface Profile {
    */
   id: string;
   username: string;
-  avatar: string;
+  avatar?: string;
   address: string;
   /**
    * when use ceramic, id equals profile.author.id

@@ -1,7 +1,7 @@
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_USER_ROLES_QUERY } from '@/services/graphql/role';
+import { getRoleRepository } from '@/repositories/role';
+import { useQuery } from '@tanstack/react-query';
 
 const useUserRole = () => {
   const { profile } = useAbstractAuthContext();
@@ -14,21 +14,14 @@ const useUserRole = () => {
     data: userRoles,
     isLoading: isUserRoleLoading,
     isFetched: isUserRoleFetched,
-  } = useGraphQL(
-    ['GET_USER_ROLES_QUERY', userDId],
-    GET_USER_ROLES_QUERY,
-    {
-      userId: userDId,
-    },
-    {
-      select: ({ data }) => {
-        return (
-          data?.zucityUserRolesIndex?.edges?.map((edge) => edge?.node) || []
-        );
-      },
-      enabled: !!userDId,
-    },
-  );
+  } = useQuery({
+    queryKey: ['GET_USER_ROLES', userDId],
+    queryFn: () => getRoleRepository().getOwnedRole(userDId as string),
+    enabled: !!userDId,
+    select: (data) => data.data,
+  });
+
+  console.log('userRoles', userRoles);
 
   return {
     userRoles,

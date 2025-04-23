@@ -1,5 +1,6 @@
 import { Result } from '@/models/base';
 import { UserRole } from '@/models/role';
+import { formatProfile } from '@/utils/profile';
 import { supabase } from '@/utils/supabase/client';
 import { BaseRoleRepository } from './type';
 
@@ -18,10 +19,25 @@ export class SupaRoleRepository extends BaseRoleRepository {
     return this.createResponse(data.map((role) => this.transformRole(role)));
   }
 
-  private transformRole(role: any): UserRole {
+  async getOwnedRole(id: string): Promise<Result<UserRole>> {
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('*, role(*)')
+      .eq('user_id', id);
+
+    if (error) {
+      return this.createResponse(null, error);
+    }
+
+    return this.createResponse(data.map((role) => this.transformRole(role)));
+  }
+
+  private transformRole(data: any): UserRole {
     return {
-      roleId: role.role_id,
-      userId: role.user_id,
+      roleId: data.role_id,
+      userId: {
+        zucityProfile: formatProfile(data.role, 'supabase'),
+      },
     };
   }
 }

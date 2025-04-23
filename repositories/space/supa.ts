@@ -149,6 +149,48 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
     }
   }
 
+  async getUserOwnedSpaces(did: string): Promise<Result<Space[]>> {
+    try {
+      const { data: spaces, error } = await supabase
+        .from(this.tableName)
+        .select('*')
+        .eq('owner', did);
+
+      if (error) {
+        return this.createResponse(null, error);
+      }
+
+      const transformedSpaces = (spaces || [])
+        .map((space) => this.transformToSpace(space))
+        .filter(Boolean) as Space[];
+
+      return this.createResponse(transformedSpaces);
+    } catch (error) {
+      return this.createResponse(null, error);
+    }
+  }
+
+  async getByIds(ids: string[]): Promise<Result<Space[]>> {
+    try {
+      const { data: spaces, error } = await supabase
+        .from(this.tableName)
+        .select('*')
+        .in('id', ids);
+
+      if (error) {
+        return this.createResponse(null, error);
+      }
+
+      const transformedSpaces = (spaces || [])
+        .map((space) => this.transformToSpace(space))
+        .filter(Boolean) as Space[];
+
+      return this.createResponse(transformedSpaces);
+    } catch (error) {
+      return this.createResponse(null, error);
+    }
+  }
+
   protected transformToSpace(supaData: any): Space | null {
     if (!supaData) return null;
 

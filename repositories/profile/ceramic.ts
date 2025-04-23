@@ -6,7 +6,7 @@ import {
 } from '@/services/graphql/profile';
 import { Nullable } from '@/types/common';
 import { getDidByAddress } from '@/utils/did';
-import { getWalletAddressFromProfile } from '@/utils/profile';
+import { formatProfile } from '@/utils/profile';
 import { BaseProfileRepository } from './type';
 
 export class CeramicProfileRepository extends BaseProfileRepository {
@@ -51,13 +51,7 @@ export class CeramicProfileRepository extends BaseProfileRepository {
     }
 
     const profile = data.node.zucityProfile;
-    return {
-      id: profile.id,
-      username: profile.username,
-      avatar: profile.avatar || '',
-      address: getWalletAddressFromProfile(profile),
-      did: profile.author?.id,
-    };
+    return formatProfile(profile, 'ceramic');
   }
 
   async getProfileByUsername(
@@ -79,13 +73,7 @@ export class CeramicProfileRepository extends BaseProfileRepository {
 
     return data.zucityProfileIndex.edges.map((edge: any) => {
       const profile = edge.node;
-      return {
-        id: profile.id,
-        username: profile.username,
-        avatar: profile.avatar || '',
-        address: getWalletAddressFromProfile(profile),
-        did: profile.author?.id,
-      };
+      return formatProfile(profile, 'ceramic');
     });
   }
 }

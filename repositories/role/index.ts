@@ -3,7 +3,9 @@ import { CeramicRoleRepository } from './ceramic';
 import { SupaRoleRepository } from './supa';
 import { IRoleRepository } from './type';
 
-export const getRoleRepository = (type: DatabaseType): IRoleRepository => {
+export const getRoleRepository = (
+  type: DatabaseType = 'supabase',
+): IRoleRepository => {
   if (type === 'ceramic') {
     return new CeramicRoleRepository();
   }

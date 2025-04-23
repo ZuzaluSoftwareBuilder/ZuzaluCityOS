@@ -1,3 +1,5 @@
+import { Profile } from './profile';
+
 export interface Role {
   id: string;
   name: string;
@@ -14,5 +16,7 @@ export interface RolePermission {
 
 export interface UserRole {
   roleId: string;
-  userId: string;
+  userId: {
+    zucityProfile: Profile;
+  };
 }
