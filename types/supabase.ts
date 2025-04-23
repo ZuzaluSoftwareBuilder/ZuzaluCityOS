@@ -34,6 +34,54 @@ export type Database = {
   };
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          author: string;
+          created_at: string;
+          description: string | null;
+          id: string;
+          space_id: string | null;
+          tags: Json | null;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          author: string;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          space_id?: string | null;
+          tags?: Json | null;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          author?: string;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          space_id?: string | null;
+          tags?: Json | null;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'announcements_author_fkey';
+            columns: ['author'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'announcements_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       betaDapps: {
         Row: {
           appName: string | null;
