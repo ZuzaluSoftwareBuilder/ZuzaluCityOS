@@ -12,7 +12,6 @@ import {
 } from '@/types/auth';
 import { Nullable } from '@/types/common';
 import { Profile } from '@/types/index.js';
-import { getDidByAddress } from '@/utils/did';
 import { isUserDenied } from '@/utils/handleError';
 import {
   safeRemoveLocalStorage,
@@ -161,9 +160,9 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
               avatar: profile.avatar,
               address: profile.address,
               /**
-               * useless in supabase, but For compatibility with Ceramic logic
+               * pay attention to this field, it's the user_id
                */
-              did: getDidByAddress(profile.address, chainId!),
+              did: profile.user_id,
             },
             username: profile.username,
             newUser: false,
