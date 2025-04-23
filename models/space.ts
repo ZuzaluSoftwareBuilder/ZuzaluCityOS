@@ -1,7 +1,7 @@
 import { PipelineEdDSATicketZuAuthConfig } from '@pcd/passport-interface';
 import { Announcement } from './announcement';
 import { UserRole } from './author';
-import { Edge, Link, SpaceTag } from './base';
+import { Edge, Link, Tag } from './base';
 import { InstalledApp } from './dapp';
 import { Event } from './event';
 import { Profile } from './profile';
@@ -18,7 +18,7 @@ export interface Space {
   tagline?: string;
   category?: string;
   color?: string;
-  tags?: SpaceTag[];
+  tags?: Tag[];
   socialLinks?: Link[];
   customLinks?: Link[];
   gated?: string;

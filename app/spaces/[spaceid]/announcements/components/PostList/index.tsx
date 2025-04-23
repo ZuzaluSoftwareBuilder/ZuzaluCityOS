@@ -15,7 +15,7 @@ import dayjs from 'dayjs';
 import { memo } from 'react';
 
 import EditorProWithMore from '@/app/spaces/[spaceid]/components/home/EditorProWithMore';
-import { Announcement, PermissionName } from '@/types';
+import { Announcement } from '@/types';
 import CreateOrEditorPostDrawer, {
   useCreateOrEditorPostDrawer,
 } from '../CreateOrEditorPostDrawer';
@@ -30,9 +30,11 @@ const PostList = () => {
   const { posts, loading } = usePostListData();
   const { checkPermission } = useSpacePermissions();
 
-  const hasManageSpaceAccess = checkPermission(
-    PermissionName.MANAGE_ANNOUNCEMENTS,
-  );
+  // const hasManageSpaceAccess = checkPermission(
+  //   PermissionName.MANAGE_ANNOUNCEMENTS,
+  // );
+  // 临时放开权限
+  const hasManageSpaceAccess = true;
 
   return (
     <div className="flex flex-1 flex-col gap-5">
