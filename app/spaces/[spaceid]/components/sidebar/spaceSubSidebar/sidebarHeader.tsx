@@ -188,8 +188,7 @@ const SidebarHeader = ({
             ? ['InvitePeople', 'PrivacySettings', 'NotificationSettings']
             : [
                 'InvitePeople',
-                // todo 临时开放权限
-                // 'SpaceSettings',
+                'SpaceSettings',
                 'PrivacySettings',
                 'NotificationSettings',
               ]
