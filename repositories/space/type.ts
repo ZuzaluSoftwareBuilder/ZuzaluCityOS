@@ -7,6 +7,7 @@ export interface ISpaceRepository {
   update(_id: string, _data: UpdateSpaceInput): Promise<Result<Space>>;
   getById(_id: string): Promise<Result<Space>>;
   getAll(): Promise<Result<Space[]>>;
+  getAllAndMembers(_roleIds: string[]): Promise<Result<Space[]>>;
   getUserOwnedSpaces(_did: string): Promise<Result<Space[]>>;
   getByIds(_ids: string[]): Promise<Result<Space[]>>;
 }
@@ -19,6 +20,7 @@ export abstract class BaseSpaceRepository
   abstract update(_id: string, _data: UpdateSpaceInput): Promise<Result<Space>>;
   abstract getById(_id: string): Promise<Result<Space>>;
   abstract getAll(): Promise<Result<Space[]>>;
+  abstract getAllAndMembers(_roleIds: string[]): Promise<Result<Space[]>>;
   abstract getUserOwnedSpaces(_did: string): Promise<Result<Space[]>>;
   abstract getByIds(_ids: string[]): Promise<Result<Space[]>>;
   /**

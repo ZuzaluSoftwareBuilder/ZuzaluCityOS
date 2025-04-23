@@ -191,6 +191,27 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
     }
   }
 
+  async getAllAndMembers(roleIds: string[]): Promise<Result<Space[]>> {
+    try {
+      const { data: spaces, error } = await supabase
+        .from(this.tableName)
+        .select('*, user_roles ( * )')
+        .in('user_roles.role_id', roleIds);
+
+      if (error) {
+        return this.createResponse(null, error);
+      }
+
+      const transformedSpaces = (spaces || [])
+        .map((space) => this.transformToSpace(space))
+        .filter(Boolean) as Space[];
+
+      return this.createResponse(transformedSpaces);
+    } catch (error) {
+      return this.createResponse(null, error);
+    }
+  }
+
   protected transformToSpace(supaData: any): Space | null {
     if (!supaData) return null;
 
@@ -215,7 +236,7 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
       events: { edges: [] },
       installedApps: { edges: [] },
       spaceGating: { edges: [] },
-      userRoles: { edges: [] },
+      userRoles: supaData.user_roles,
     };
   }
 }

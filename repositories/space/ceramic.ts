@@ -3,6 +3,7 @@ import { Result } from '@/models/base';
 import { CreateSpaceInput, Space, UpdateSpaceInput } from '@/models/space';
 import {
   CREATE_SPACE_MUTATION,
+  GET_ALL_SPACE_AND_MEMBER_QUERY,
   GET_ALL_SPACE_QUERY,
   GET_SPACE_QUERY_BY_ID,
   UPDATE_SPACE_MUTATION,
@@ -185,6 +186,42 @@ export class CeramicSpaceRepository extends BaseSpaceRepository {
     }
   }
 
+  async getAllAndMembers(roleIds: string[]): Promise<Result<Space[]>> {
+    try {
+      const variables: Record<string, any> = {
+        first: 100,
+        userRolesFilters: {
+          where: {
+            roleId: {
+              in: roleIds,
+            },
+          },
+        },
+      };
+      const response = await composeClient.executeQuery(
+        GET_ALL_SPACE_AND_MEMBER_QUERY,
+        variables,
+      );
+
+      const result = this.handleGraphQLResponse(
+        response,
+        'Failed to get space list',
+      );
+      if (result.error) {
+        return { data: null, error: result.error };
+      }
+
+      const edges = response.data?.zucitySpaceIndex?.edges || [];
+      const spaces = edges
+        .map((edge: any) => this.transformToSpace(edge.node))
+        .filter(Boolean) as Space[];
+
+      return this.createResponse(spaces);
+    } catch (error) {
+      return this.createResponse(null, error);
+    }
+  }
+
   protected transformToSpace(ceramicData: any): Space | null {
     if (!ceramicData) return null;
 
@@ -213,7 +250,7 @@ export class CeramicSpaceRepository extends BaseSpaceRepository {
       events: ceramicData.events || { edges: [] },
       installedApps: ceramicData.installedApps || { edges: [] },
       spaceGating: ceramicData.spaceGating || { edges: [] },
-      userRoles: ceramicData.userRoles || { edges: [] },
+      userRoles: ceramicData.userRoles?.edges.map((edge: any) => edge.node),
     };
   }
 }

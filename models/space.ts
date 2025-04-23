@@ -32,7 +32,8 @@ export interface Space {
   events?: Edge<Event>;
   installedApps?: Edge<InstalledApp>;
   spaceGating?: Edge<SpaceGating>;
-  userRoles?: Edge<UserRole>;
+  userRoles?: UserRole[];
+  isLegacy?: boolean;
 }
 
 /**
