@@ -1,9 +1,9 @@
-import { SpaceTag } from './base';
+import { Tag } from './base';
 import { Profile } from './profile';
 export interface Announcement {
   id: string;
   title: string;
-  tags: SpaceTag[];
+  tags: Tag[];
   description: string;
   createdAt: string;
   updatedAt: string;
@@ -12,4 +12,5 @@ export interface Announcement {
     id: string;
     zucityProfile: Profile;
   };
+  spaceId: string;
 }

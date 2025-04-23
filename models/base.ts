@@ -9,7 +9,7 @@ export interface Link {
 /**
  * 空间标签接口
  */
-export interface SpaceTag {
+export interface Tag {
   tag: string;
 }
 
