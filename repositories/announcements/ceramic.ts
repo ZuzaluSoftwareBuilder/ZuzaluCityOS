@@ -16,7 +16,7 @@ import {
 
 export class CeramicAnnouncementRepository extends BaseAnnouncementRepository {
   async create(input: CreateAnnouncementInput): Promise<Result<Announcement>> {
-    const { title, description, tags, authorId, spaceId } = input;
+    const { title, description, tags, author, spaceId } = input;
 
     const now = dayjs().toISOString();
 
@@ -26,7 +26,7 @@ export class CeramicAnnouncementRepository extends BaseAnnouncementRepository {
           title,
           description,
           tags: tags.map((tag) => ({ tag })),
-          authorId,
+          authorId: author,
           spaceId,
           createdAt: now,
           updatedAt: now,
@@ -185,17 +185,7 @@ export class CeramicAnnouncementRepository extends BaseAnnouncementRepository {
       tags: data.tags || [],
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
-      sourceId: data.sourceId,
-      author: {
-        id: data.author?.id,
-        zucityProfile: data.author?.zucityProfile || {
-          id: data.author?.id,
-          username: data.author?.zucityProfile?.username,
-          avatar: data.author?.zucityProfile?.avatar,
-          address: '',
-          did: data.author?.id || '',
-        },
-      },
+      author: data.author,
       spaceId: data.spaceId,
     };
   }

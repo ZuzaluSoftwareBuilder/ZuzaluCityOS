@@ -2,7 +2,8 @@ import { ErrorResult, Result, SuccessResult } from '@/models/base';
 
 export abstract class BaseRepository {
   protected getBooleanValue(value: any): string {
-    return value ? '1' : '0';
+    if (!value || value === '0') return '0';
+    return '1';
   }
   protected setBooleanValue(value: string): boolean {
     return value === '1';

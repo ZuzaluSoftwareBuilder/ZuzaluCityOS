@@ -181,8 +181,8 @@ const Create = () => {
       name,
       tagline,
       description,
-      author: profileId, // todo 需要确认
-      owner: profileId, // todo 需要确认
+      author: profileId,
+      owner: profileId,
       avatar: avatar || DEFAULT_AVATAR,
       banner: banner || DEFAULT_BANNER,
       tags: tags.map((i) => ({ tag: i })),
@@ -387,15 +387,22 @@ const Create = () => {
               avatar: spaceAvatar,
               owner: {
                 id: '',
-                zucityProfile: {
-                  id: '',
-                  avatar: '',
-                  username: '',
-                },
+                username: '',
+                avatar: '',
+                address: '',
+                did: '',
               },
-              userRoles: { edges: [] },
-              customAttributes: [],
-              installedApps: { edges: [] },
+              author: {
+                id: '',
+                username: '',
+                avatar: '',
+                address: '',
+                did: '',
+              },
+              userRoles: [],
+              installedApps: {
+                edges: [],
+              },
               createdAt: '',
               updatedAt: '',
               gated: '0',

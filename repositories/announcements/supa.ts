@@ -1,5 +1,6 @@
 import { Announcement } from '@/models/announcement';
-import { Result } from '@/models/base';
+import { Result, Tag } from '@/models/base';
+import { formatProfile } from '@/utils/profile';
 import { supabase } from '@/utils/supabase/client';
 import {
   BaseAnnouncementRepository,
@@ -9,7 +10,7 @@ import {
 
 export class SupaAnnouncementRepository extends BaseAnnouncementRepository {
   async create(input: CreateAnnouncementInput): Promise<Result<Announcement>> {
-    const { title, description, tags, authorId, spaceId } = input;
+    const { title, description, tags, author, spaceId } = input;
 
     const { data, error } = await supabase
       .from('announcements')
@@ -17,10 +18,10 @@ export class SupaAnnouncementRepository extends BaseAnnouncementRepository {
         title,
         description,
         tags: tags.map((tag) => ({ tag })),
-        author: authorId,
+        author: author,
         space_id: spaceId,
       })
-      .select('*, profiles!announcements_author_fkey(*)')
+      .select('*, authorProfile:profiles!announcements_author_fkey(*)')
       .single();
 
     if (error) {
@@ -71,7 +72,7 @@ export class SupaAnnouncementRepository extends BaseAnnouncementRepository {
   ): Promise<Result<Announcement[]>> {
     const { data, error } = await supabase
       .from('announcements')
-      .select('*, profiles!announcements_author_fkey(*)')
+      .select('*, authorProfile:profiles!announcements_author_fkey(*)')
       .eq('space_id', spaceId)
       .order('created_at', { ascending: false });
 
@@ -88,7 +89,7 @@ export class SupaAnnouncementRepository extends BaseAnnouncementRepository {
   async getAnnouncement(id: string): Promise<Result<Announcement>> {
     const { data, error } = await supabase
       .from('announcements')
-      .select('*, profiles!announcements_author_fkey(*)')
+      .select('*, authorProfile:profiles!announcements_author_fkey(*)')
       .eq('id', id)
       .single();
 
@@ -117,28 +118,18 @@ export class SupaAnnouncementRepository extends BaseAnnouncementRepository {
     return this.createResponse(true);
   }
 
-  private transformAnnouncement(data: any): Announcement | null {
-    if (!data) return null;
-
+  private transformAnnouncement(supaData: any): Announcement | null {
+    if (!supaData) return null;
+    console.log('supaData', supaData);
     return {
-      id: data.id,
-      title: data.title,
-      description: data.description,
-      tags: data.tags || [],
-      createdAt: data.created_at,
-      updatedAt: data.updated_at,
-      sourceId: `supabase:${data.id}`,
-      author: {
-        id: data.profiles.user_id,
-        zucityProfile: {
-          id: data.profiles.user_id,
-          username: data.profiles.username,
-          avatar: data.profiles.avatar,
-          address: data.profiles.wallet_address || '',
-          did: data.profiles.did || '',
-        },
-      },
-      spaceId: data.space_id,
+      id: supaData.id,
+      title: supaData.title,
+      description: supaData.description,
+      tags: supaData.tags as Tag[],
+      createdAt: supaData.created_at,
+      updatedAt: supaData.updated_at,
+      author: formatProfile(supaData['authorProfile'], 'supabase'),
+      spaceId: supaData.space_id,
     };
   }
 }

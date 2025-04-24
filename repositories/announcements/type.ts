@@ -6,7 +6,7 @@ export interface CreateAnnouncementInput {
   title: string;
   description: string;
   tags: string[];
-  authorId: string;
+  author: string;
   spaceId: string;
 }
 

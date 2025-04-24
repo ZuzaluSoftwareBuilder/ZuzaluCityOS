@@ -7,10 +7,6 @@ export interface Announcement {
   description: string;
   createdAt: string;
   updatedAt: string;
-  sourceId: string;
-  author: {
-    id: string;
-    zucityProfile: Profile;
-  };
+  author: Profile;
   spaceId: string;
 }

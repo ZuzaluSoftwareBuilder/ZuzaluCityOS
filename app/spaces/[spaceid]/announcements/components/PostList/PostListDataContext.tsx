@@ -3,7 +3,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { createContext, useCallback, useContext, useState } from 'react';
 
-import { Announcement } from '@/types';
+import { Announcement } from '@/models/announcement';
 
 import {
   CommonModalHeader,
@@ -12,9 +12,9 @@ import {
   ModalContent,
   ModalFooter,
 } from '@/components/base/modal';
-import { Announcement as AnnouncementModel } from '@/models/announcement';
 import { getAnnouncementRepository } from '@/repositories/announcements';
 
+const repository = getAnnouncementRepository();
 const PostListDataContext = createContext<{
   loading: boolean;
   posts: { node: Announcement }[];
@@ -43,7 +43,6 @@ export const PostListDataProvider = ({
     enabled: !!spaceId,
     queryKey: ['getAnnouncements', spaceId],
     queryFn: async () => {
-      const repository = getAnnouncementRepository('ceramic');
       const result = await repository.getAnnouncementsBySpace(
         spaceId as string,
       );
@@ -54,7 +53,7 @@ export const PostListDataProvider = ({
 
       return result.data;
     },
-    select: (announcements: AnnouncementModel[]) => {
+    select: (announcements: Announcement[]) => {
       return announcements
         .map((announcement) => ({ node: announcement }))
         .sort((a, b) => {
@@ -65,7 +64,6 @@ export const PostListDataProvider = ({
         });
     },
   });
-  console.log('usePostListData', posts);
 
   // delete dialog
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -74,7 +72,6 @@ export const PostListDataProvider = ({
   );
   const { mutate: removeAnnouncement, isPending: isDeleting } = useMutation({
     mutationFn: async (announcementId: string) => {
-      const repository = getAnnouncementRepository('ceramic');
       const result = await repository.deleteAnnouncement(announcementId);
 
       if (result.error) {

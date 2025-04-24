@@ -222,6 +222,79 @@ export class CeramicSpaceRepository extends BaseSpaceRepository {
     }
   }
 
+  async getUserOwnedSpaces(userId: string): Promise<Result<Space[]>> {
+    try {
+      const variables: Record<string, any> = {
+        first: 100,
+        filters: {
+          where: {
+            owner: {
+              equalTo: userId,
+            },
+          },
+        },
+      };
+
+      const response = await composeClient.executeQuery(
+        GET_ALL_SPACE_QUERY,
+        variables,
+      );
+
+      const result = this.handleGraphQLResponse(
+        response,
+        'Failed to get user owned spaces',
+      );
+      if (result.error) {
+        return { data: null, error: result.error };
+      }
+
+      const edges = response.data?.zucitySpaceIndex?.edges || [];
+      const spaces = edges
+        .map((edge: any) => this.transformToSpace(edge.node))
+        .filter(Boolean) as Space[];
+
+      return this.createResponse(spaces);
+    } catch (error) {
+      return this.createResponse(null, error);
+    }
+  }
+
+  async getByIds(ids: string[]): Promise<Result<Space[]>> {
+    try {
+      const variables: Record<string, any> = {
+        filters: {
+          where: {
+            id: {
+              in: ids,
+            },
+          },
+        },
+      };
+
+      const response = await composeClient.executeQuery(
+        GET_ALL_SPACE_QUERY,
+        variables,
+      );
+
+      const result = this.handleGraphQLResponse(
+        response,
+        'Failed to get spaces by ids',
+      );
+      if (result.error) {
+        return { data: null, error: result.error };
+      }
+
+      const edges = response.data?.zucitySpaceIndex?.edges || [];
+      const spaces = edges
+        .map((edge: any) => this.transformToSpace(edge.node))
+        .filter(Boolean) as Space[];
+
+      return this.createResponse(spaces);
+    } catch (error) {
+      return this.createResponse(null, error);
+    }
+  }
+
   protected transformToSpace(ceramicData: any): Space | null {
     if (!ceramicData) return null;
 
