@@ -10,7 +10,7 @@ import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { useZupassContext } from '@/context/ZupassContext';
 import { usePOAPVerify } from '@/hooks/useRuleVerify';
 import useUserSpace from '@/hooks/useUserSpace';
-import { SpaceGating } from '@/models/space';
+import { SpaceGating } from '@/models/spaceGating';
 import { CREATE_ROLE_QUERY, UPDATE_ROLE_QUERY } from '@/services/graphql/role';
 import { joinSpace } from '@/services/member';
 import { getPOAPs } from '@/services/poap';
@@ -276,9 +276,9 @@ const JoinSpaceWithGate = ({
 
   const rules = useMemo(() => {
     return (
-      spaceData?.spaceGating?.edges
-        ?.map((edge) => edge.node)
-        .filter((v: SpaceGating) => v.gatingStatus === '1') ?? []
+      spaceData?.spaceGating?.filter(
+        (v: SpaceGating) => v.gatingStatus === '1',
+      ) ?? []
     );
   }, [spaceData?.spaceGating]);
 
@@ -370,7 +370,7 @@ const JoinSpaceWithGate = ({
               onVerify={() =>
                 handleVerifyItem(v.zuPassInfo?.eventId ?? '', {
                   type: 'zuPass',
-                  zuPassInfo: v.zuPassInfo!,
+                  zuPassInfo: v.zuPassInfo! as ZuPassInfo,
                 })
               }
             />
