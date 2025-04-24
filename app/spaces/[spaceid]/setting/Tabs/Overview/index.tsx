@@ -46,8 +46,6 @@ const EditSpace = () => {
   const isCategoriesChange = useRef<boolean>(false);
   const isLinksChange = useRef<boolean>(false);
   const { spaceData, isSpaceDataLoading, refreshSpaceData } = useSpaceData();
-  // todo 临时放开权限
-  // const { isOwner } = useSpacePermissions();
   const isOwner = true;
   const spaceRepository = getSpaceRepository();
   const profileForm = useForm<ProfileFormData>({

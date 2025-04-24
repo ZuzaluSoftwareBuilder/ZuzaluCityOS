@@ -1,5 +1,5 @@
 /**
- * 空间链接接口
+ * Space link interface
  */
 export interface Link {
   title: string;
@@ -7,22 +7,22 @@ export interface Link {
 }
 
 /**
- * 空间标签接口
+ * Space tag interface
  */
 export interface Tag {
   tag: string;
 }
 
 /**
- * TBD类型
+ * TBD type
  */
 export interface TBD {
   tbd: string;
 }
 
 /**
- * Edge节点接口
- * @template T - 节点类型
+ * Edge node interface
+ * @template T - Node type
  */
 export type Edge<T> = {
   edges: Array<{
@@ -31,12 +31,12 @@ export type Edge<T> = {
 };
 
 /**
- * 统一的返回值类型
+ * Unified return type
  */
 export type Result<T, E = Error> = SuccessResult<T> | ErrorResult<E>;
 
 /**
- * 成功结果
+ * Success result
  */
 export interface SuccessResult<T> {
   data: T;
@@ -44,7 +44,7 @@ export interface SuccessResult<T> {
 }
 
 /**
- * 错误结果
+ * Error result
  */
 export interface ErrorResult<E = Error> {
   data: null;
@@ -52,14 +52,14 @@ export interface ErrorResult<E = Error> {
 }
 
 /**
- * 创建成功结果
+ * Create success result
  */
 export function createSuccessResult<T>(data: T): SuccessResult<T> {
   return { data, error: null };
 }
 
 /**
- * 创建错误结果
+ * Create error result
  */
 export function createErrorResult<E extends Error = Error>(
   error: E | string | any,

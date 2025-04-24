@@ -31,8 +31,8 @@ export interface Event {
   profile?: Profile;
   customLinks?: Link[];
   tracks?: string;
-  regAndAccess?: any; // todo
-  applicationForms?: any; // todo
+  regAndAccess?: any;
+  applicationForms?: any;
   sessionStorage?: string;
   supportChain?: string;
   admins?: {
