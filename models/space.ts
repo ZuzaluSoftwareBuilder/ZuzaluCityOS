@@ -1,10 +1,10 @@
-import { PipelineEdDSATicketZuAuthConfig } from '@pcd/passport-interface';
 import { Announcement } from './announcement';
 import { UserRole } from './author';
 import { Edge, Link, Tag } from './base';
 import { InstalledApp } from './dapp';
 import { Event } from './event';
 import { Profile } from './profile';
+import { SpaceGating } from './spaceGating';
 
 /**
  * Space properties interface
@@ -31,38 +31,9 @@ export interface Space {
   announcements?: Edge<Announcement>;
   events?: Edge<Event>;
   installedApps?: Edge<InstalledApp>;
-  spaceGating?: Edge<SpaceGating>;
+  spaceGating?: SpaceGating[];
   userRoles?: UserRole[];
   isLegacy?: boolean;
-}
-
-/**
- * ZuPassInfo interface
- * @todo Consider whether to remove chain information
- */
-export interface ZuPassInfo extends PipelineEdDSATicketZuAuthConfig {
-  access?: string;
-  eventId: string;
-  eventName: string;
-  registration: string;
-}
-
-/**
- * PoapsId interface
- */
-export interface PoapsId {
-  poapId: number;
-}
-
-/**
- * Space access control interface
- */
-export interface SpaceGating {
-  id: string;
-  spaceId: string;
-  gatingStatus: string;
-  poapsId?: { poapId: number }[];
-  zuPassInfo?: ZuPassInfo;
 }
 
 /**

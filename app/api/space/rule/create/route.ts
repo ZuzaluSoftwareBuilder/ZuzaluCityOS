@@ -11,7 +11,7 @@ import { z } from 'zod';
 
 const createRuleSchema = z.object({
   id: z.string().min(1, 'Resource ID is required'),
-  poapsId: z.array(z.number()).optional(),
+  poapsId: z.array(z.any()).optional(),
   zuPassInfo: z
     .object({
       registration: z.string().min(1, 'Registration is required'),
@@ -44,7 +44,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     }
     const result = await getSpaceGatingRepository().create({
       spaceId: id,
-      poapsId: poapsId ? poapsId.map((id) => ({ poapId: id })) : undefined,
+      poapsId: poapsId ? poapsId : undefined,
       zuPassInfo: zuPassInfo,
     });
 

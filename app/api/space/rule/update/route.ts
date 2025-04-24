@@ -13,7 +13,7 @@ const updateRuleSchema = z.object({
   id: z.string().min(1, 'Resource ID is required'),
   ruleId: z.string().min(1, 'Rule ID is required'),
   gatingStatus: z.string().optional(),
-  poapsId: z.array(z.number()).nullable().optional(),
+  poapsId: z.array(z.any()).nullable().optional(),
   zuPassInfo: z
     .object({
       registration: z.string().min(1, 'Registration is required'),
@@ -28,6 +28,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
   try {
     const body = await request.json();
     const validationResult = updateRuleSchema.safeParse(body);
+    console.log(validationResult.error);
     if (!validationResult.success) {
       return createErrorResponse(
         'Invalid request parameters',
@@ -52,7 +53,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
         poapsId: undefined,
         zuPassInfo: undefined,
       }),
-      ...(poapsId && { poapsId: poapsId.map((id) => ({ poapId: id })) }),
+      ...(poapsId && { poapsId }),
       ...(zuPassInfo && { zuPassInfo }),
       ...(gatingStatus && { gatingStatus }),
     });

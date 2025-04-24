@@ -14,8 +14,6 @@ export default function AccessSettingPage() {
   const { isOwner } = useSpacePermissions();
   const { spaceRepository } = useRepositories();
 
-  console.log(spaceData);
-
   const { mutate: updateSpace, isPending: isUpdating } = useMutation({
     mutationFn: (input: any) => {
       return spaceRepository.update(spaceData?.id as string, input);

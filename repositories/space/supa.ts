@@ -2,6 +2,7 @@ import { Result } from '@/models/base';
 import { CreateSpaceInput, Space, UpdateSpaceInput } from '@/models/space';
 import { formatProfile } from '@/utils/profile';
 import { supabase } from '@/utils/supabase/client';
+import { SupaSpaceGatingRepository } from '../spaceGating/supa';
 import { BaseSpaceRepository } from './type';
 
 export class SupaSpaceRepository extends BaseSpaceRepository {
@@ -108,7 +109,8 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
           `
           *,
           owner_profile:profiles!fk_spaces_owner(user_id, username, avatar),
-          author_profile:profiles!fk_spaces_author(user_id, username, avatar)
+          author_profile:profiles!fk_spaces_author(user_id, username, avatar),
+          space_gating(*)
         `,
         )
         .eq('id', id)
@@ -233,6 +235,10 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
   protected transformToSpace(supaData: any): Space | null {
     if (!supaData) return null;
 
+    const spaceGating = (supaData.space_gating || []).map((gating: any) =>
+      new SupaSpaceGatingRepository().transformSpaceGating(gating),
+    );
+
     return {
       id: supaData.id,
       name: supaData.name,
@@ -253,7 +259,7 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
       announcements: { edges: [] },
       events: { edges: [] },
       installedApps: { edges: [] },
-      spaceGating: { edges: [] },
+      spaceGating,
       userRoles: supaData.user_roles || [],
     };
   }

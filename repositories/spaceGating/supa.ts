@@ -98,7 +98,7 @@ export class SupaSpaceGatingRepository extends BaseSpaceGatingRepository {
     return this.createResponse(true);
   }
 
-  private transformSpaceGating(data: any): SpaceGating {
+  public transformSpaceGating(data: any): SpaceGating {
     return {
       id: data.id,
       spaceId: data.space_id,

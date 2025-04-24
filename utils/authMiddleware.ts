@@ -113,7 +113,6 @@ export function withSessionValidation(
     if (!isValid) {
       return NextResponse.json({ error }, { status: 401 });
     }
-
     return handler(request, { ...rest });
   };
 }
