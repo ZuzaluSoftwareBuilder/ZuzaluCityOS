@@ -22,7 +22,7 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
           tags: this.getValue(data.tags),
           social_links: this.getValue(data.socialLinks),
           custom_links: this.getValue(data.customLinks),
-          gated: this.getBooleanValue(data.gated),
+          gated: data.gated,
           author: this.getValue(data.author),
           owner: this.getValue(data.owner),
         })
@@ -71,8 +71,7 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
         updateData.social_links = this.getValue(data.socialLinks);
       if (data.customLinks !== undefined)
         updateData.custom_links = this.getValue(data.customLinks);
-      if (data.gated !== undefined)
-        updateData.gated = this.getBooleanValue(data.gated);
+      if (data.gated !== undefined) updateData.gated = data.gated;
 
       const { data: updatedSpace, error } = await supabase
         .from(this.tableName)

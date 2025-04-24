@@ -1,7 +1,7 @@
-import { CREATE_SPACE_GATING_RULE } from '@/services/graphql/spaceGating';
+import { getSpaceGatingRepository } from '@/repositories/spaceGating';
 import { PermissionName } from '@/types';
 import { withSessionValidation } from '@/utils/authMiddleware';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -42,17 +42,13 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     if (error) {
       return createErrorResponse('Error getting private key', 500);
     }
-    const result = await executeQuery(CREATE_SPACE_GATING_RULE, {
-      input: {
-        content: {
-          spaceId: id,
-          ...(poapsId && { poapsId: poapsId.map((id) => ({ poapId: id })) }),
-          ...(zuPassInfo && { zuPassInfo }),
-        },
-      },
+    const result = await getSpaceGatingRepository().create({
+      spaceId: id,
+      poapsId: poapsId ? poapsId.map((id) => ({ poapId: id })) : undefined,
+      zuPassInfo: zuPassInfo,
     });
 
-    if (result.errors) {
+    if (result.error) {
       return createErrorResponse('Failed to create rule', 500);
     }
 
