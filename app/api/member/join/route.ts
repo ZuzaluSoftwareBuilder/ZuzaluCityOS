@@ -54,12 +54,12 @@ export const POST = async (req: Request) => {
         `and(resource.eq.${resource},resource_id.eq.${spaceId}),and(resource.is.null,resource_id.is.null)`,
       );
 
-    const addedRole = rolePermissionResult?.find((r) => r.role.id === roleId);
+    const addedRole = rolePermissionResult?.find((r) => r.role?.id === roleId);
     if (!addedRole) {
       return createErrorResponse('Role not found', 404);
     }
 
-    if (addedRole.role.level === 'owner') {
+    if (addedRole.role?.level === 'owner') {
       return createErrorResponse('Owner role cannot be added', 400);
     }
 

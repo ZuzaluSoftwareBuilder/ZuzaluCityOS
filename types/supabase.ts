@@ -820,6 +820,66 @@ export type Database = {
         };
         Relationships: [];
       };
+      space_gating: {
+        Row: {
+          created_at: string;
+          erc1155_contract_address: string | null;
+          erc20_contract_address: string | null;
+          erc721_contract_address: string | null;
+          gating_condition: string | null;
+          gating_status: string | null;
+          id: string;
+          poaps_id: Json | null;
+          role_id: string | null;
+          space_id: string;
+          updated_at: string;
+          zu_pass_info: Json | null;
+        };
+        Insert: {
+          created_at?: string;
+          erc1155_contract_address?: string | null;
+          erc20_contract_address?: string | null;
+          erc721_contract_address?: string | null;
+          gating_condition?: string | null;
+          gating_status?: string | null;
+          id?: string;
+          poaps_id?: Json | null;
+          role_id?: string | null;
+          space_id: string;
+          updated_at?: string;
+          zu_pass_info?: Json | null;
+        };
+        Update: {
+          created_at?: string;
+          erc1155_contract_address?: string | null;
+          erc20_contract_address?: string | null;
+          erc721_contract_address?: string | null;
+          gating_condition?: string | null;
+          gating_status?: string | null;
+          id?: string;
+          poaps_id?: Json | null;
+          role_id?: string | null;
+          space_id?: string;
+          updated_at?: string;
+          zu_pass_info?: Json | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'space_gating_role_id_fkey';
+            columns: ['role_id'];
+            isOneToOne: false;
+            referencedRelation: 'role';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'space_gating_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       spaceAgent: {
         Row: {
           agentDID: string | null;
