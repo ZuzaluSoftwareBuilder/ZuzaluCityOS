@@ -1,4 +1,5 @@
-import { RolePermission, UserRole } from '@/types';
+import { UserRole } from '@/models/role';
+import { RolePermission } from '@/types';
 import { RoleItem, RoleItemSkeleton } from './roleItem';
 
 export default function ViewRole({

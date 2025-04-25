@@ -12,7 +12,7 @@ interface SpacePermissionContextType {
   isAdmin: boolean;
   isMember: boolean;
   isLoading: boolean;
-  checkPermission: (name: PermissionName) => boolean;
+  checkPermission: (_name: PermissionName) => boolean;
 }
 
 const SpacePermissionContext = createContext<

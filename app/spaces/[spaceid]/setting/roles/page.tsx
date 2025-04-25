@@ -19,7 +19,7 @@ export default function RolesPage() {
           roleData={roles?.data || []}
           isLoading={isLoading}
           members={members || []}
-          owner={owner}
+          owner={owner!}
         />
       ) : (
         <ViewRole

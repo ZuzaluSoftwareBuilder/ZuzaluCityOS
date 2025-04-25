@@ -1,6 +1,6 @@
 import { Key, useMemo } from 'react';
 
-import { Role, RolePermission, UserRole } from '@/types';
+import { Role, RolePermission, UserRole } from '@/models/role';
 import {
   Button,
   Dropdown,
