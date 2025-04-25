@@ -70,6 +70,26 @@ export class SupaRoleRepository extends BaseRoleRepository {
     return this.createResponse(this.transformRole(data));
   }
 
+  async updateRole(
+    id: string,
+    role: CreateUserRole,
+  ): Promise<Result<UserRole>> {
+    const { data, error } = await supabase
+      .from('user_roles')
+      .update({
+        role_id: role.roleId,
+      })
+      .eq('id', id)
+      .select('*, role(*)')
+      .single();
+
+    if (error) {
+      return this.createResponse(null, error);
+    }
+
+    return this.createResponse(this.transformRole(data));
+  }
+
   async deleteRole(id: string): Promise<Result<UserRole>> {
     const { error } = await supabase.from('user_roles').delete().eq('id', id);
 

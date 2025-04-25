@@ -25,3 +25,5 @@ export interface UserRole {
 export type CreateUserRole = Omit<UserRole, 'userId' | 'id'> & {
   userId: string;
 };
+
+export type UpdateUserRole = Pick<UserRole, 'roleId'>;

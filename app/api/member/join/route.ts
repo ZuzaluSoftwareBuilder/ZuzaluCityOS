@@ -1,10 +1,6 @@
+import { getRoleRepository } from '@/repositories/role';
 import { getSpaceRepository } from '@/repositories/space';
-import {
-  CHECK_EXISTING_ROLE_QUERY,
-  CREATE_ROLE_QUERY,
-  UPDATE_ROLE_QUERY,
-} from '@/services/graphql/role';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import { dayjs } from '@/utils/dayjs';
 import {
   createErrorResponse,
@@ -79,43 +75,32 @@ export const POST = async (req: Request) => {
       return createErrorResponse('Error getting private key', 500);
     }
 
-    const existingRoleResult = await executeQuery(CHECK_EXISTING_ROLE_QUERY, {
+    const existingRoleResult = await getRoleRepository().getUserRole(
+      spaceId,
+      'space',
       userId,
-      resourceId: spaceId,
-      resource: 'space',
-    });
+    );
 
-    const data = existingRoleResult.data;
-    const existingRoles = data?.zucityUserRolesIndex?.edges || [];
+    const existingRoles = existingRoleResult.data || [];
 
     let result;
     if (existingRoles.length > 0) {
-      result = await executeQuery(UPDATE_ROLE_QUERY, {
-        input: {
-          id: existingRoles[0]?.node?.id ?? '',
-          content: {
-            roleId,
-            updated_at: dayjs().utc().toISOString(),
-          },
+      result = await getRoleRepository().updateRole(
+        existingRoles[0]?.id ?? '',
+        {
+          roleId,
         },
-      });
+      );
     } else {
-      result = await executeQuery(CREATE_ROLE_QUERY, {
-        input: {
-          content: {
-            userId,
-            resourceId: spaceId,
-            source: 'space',
-            roleId,
-            spaceId,
-            created_at: dayjs().utc().toISOString(),
-            updated_at: dayjs().utc().toISOString(),
-          },
-        },
+      result = await getRoleRepository().createRole({
+        userId,
+        roleId,
+        resourceId: spaceId,
+        source: 'space',
       });
     }
 
-    if (result.errors) {
+    if (result.error) {
       return createErrorResponse('Failed to join space', 500);
     }
 
