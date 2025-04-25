@@ -43,9 +43,7 @@ export const SpacePermissionProvider: React.FC<{
 
   const userRoleId = useMemo(() => {
     if (!members || !userId) return null;
-    const userMember = members.find(
-      (member) => member.userId.zucityProfile?.author?.id === userId,
-    );
+    const userMember = members.find((member) => member.userId?.id === userId);
 
     if (!userMember) return null;
 
