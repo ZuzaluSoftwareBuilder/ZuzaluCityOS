@@ -1,10 +1,7 @@
-import {
-  CHECK_EXISTING_ROLE_QUERY,
-  DELETE_ROLE_QUERY,
-} from '@/services/graphql/role';
+import { getRoleRepository } from '@/repositories/role';
 import { PermissionName } from '@/types';
 import { withSessionValidation } from '@/utils/authMiddleware';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import { dayjs } from '@/utils/dayjs';
 import {
   createErrorResponse,
@@ -38,14 +35,13 @@ export const POST = withSessionValidation(async (request, sessionData) => {
 
     const { role } = sessionData;
 
-    const existingRoleResult = await executeQuery(CHECK_EXISTING_ROLE_QUERY, {
-      userId,
-      resourceId: id,
+    const existingRoleResult = await getRoleRepository().getUserRole(
+      id,
       resource,
-    });
+      userId,
+    );
 
-    const data = existingRoleResult.data;
-    const existingRoles = data?.zucityUserRolesIndex?.edges || [];
+    const existingRoles = existingRoleResult.data || [];
 
     if (existingRoles.length === 0) {
       return NextResponse.json(
@@ -55,8 +51,8 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     }
 
     const userExistingRole = existingRoles[0];
-    const roleId = userExistingRole?.node?.roleId;
-    const userRoleId = userExistingRole?.node?.id;
+    const roleId = userExistingRole?.roleId;
+    const userRoleId = userExistingRole?.id;
 
     const removedRole = role?.find((r) => r.role.id === roleId);
 
@@ -81,14 +77,9 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Error getting private key', 500);
     }
 
-    const result = await executeQuery(DELETE_ROLE_QUERY, {
-      input: {
-        id: userRoleId!,
-        shouldIndex: false,
-      },
-    });
+    const result = await getRoleRepository().deleteRole(userRoleId!);
 
-    if (result.errors) {
+    if (result.error) {
       return createErrorResponse('Failed to remove member', 500);
     }
 
