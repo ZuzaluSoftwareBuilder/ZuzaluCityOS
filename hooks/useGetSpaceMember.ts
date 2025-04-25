@@ -1,7 +1,7 @@
+import { UserRole } from '@/models/role';
 import { getSpaceRepository } from '@/repositories/space';
 import { getMembers } from '@/services/member';
 import { getRoles } from '@/services/role';
-import { UserRole } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 

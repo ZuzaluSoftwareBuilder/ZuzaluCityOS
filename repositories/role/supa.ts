@@ -8,7 +8,7 @@ export class SupaRoleRepository extends BaseRoleRepository {
   async getMembers(resource: string, id: string): Promise<Result<UserRole[]>> {
     const { data, error } = await supabase
       .from('user_roles')
-      .select('*, role(*)')
+      .select('*, role(*), profiles(*)')
       .eq('source', resource)
       .eq('space_id', id);
 
@@ -22,7 +22,7 @@ export class SupaRoleRepository extends BaseRoleRepository {
   async getOwnedRole(id: string): Promise<Result<UserRole[]>> {
     const { data, error } = await supabase
       .from('user_roles')
-      .select('*, role(*)')
+      .select('*, role(*), profiles(*)')
       .eq('user_id', id);
 
     if (error) {
@@ -39,7 +39,7 @@ export class SupaRoleRepository extends BaseRoleRepository {
   ): Promise<Result<UserRole[]>> {
     const { data, error } = await supabase
       .from('user_roles')
-      .select('*, role(*)')
+      .select('*, role(*), profiles(*)')
       .eq('source', resource)
       .eq('space_id', id)
       .eq('user_id', userId);
@@ -60,7 +60,7 @@ export class SupaRoleRepository extends BaseRoleRepository {
         space_id: role.resourceId,
         source: role.source,
       })
-      .select('*, role(*)')
+      .select('*, role(*), profiles(*)')
       .single();
 
     if (error) {
@@ -80,7 +80,7 @@ export class SupaRoleRepository extends BaseRoleRepository {
         role_id: role.roleId,
       })
       .eq('id', id)
-      .select('*, role(*)')
+      .select('*, role(*), profiles(*)')
       .single();
 
     if (error) {
@@ -100,13 +100,13 @@ export class SupaRoleRepository extends BaseRoleRepository {
     return this.createResponse({});
   }
 
-  private transformRole(data: any): UserRole {
+  public transformRole(data: any): UserRole {
     return {
       id: data.id,
       roleId: data.role_id,
       resourceId: data.space_id,
       source: data.source,
-      userId: formatProfile(data.role, 'supabase'),
+      userId: formatProfile(data.profiles, 'supabase'),
     };
   }
 }

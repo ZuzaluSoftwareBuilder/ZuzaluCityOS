@@ -56,7 +56,8 @@ const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
     if (!members || !members.length) return res;
 
     members.forEach((member) => {
-      const profile = member.userId.zucityProfile;
+      console.log(member);
+      const profile = member.userId;
       if (!profile) return;
       const memberRoleId = member.roleId;
 

@@ -2,6 +2,7 @@ import { Result } from '@/models/base';
 import { CreateSpaceInput, Space, UpdateSpaceInput } from '@/models/space';
 import { formatProfile } from '@/utils/profile';
 import { supabase } from '@/utils/supabase/client';
+import { SupaRoleRepository } from '../role/supa';
 import { SupaSpaceGatingRepository } from '../spaceGating/supa';
 import { BaseSpaceRepository } from './type';
 
@@ -110,7 +111,8 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
           *,
           owner_profile:profiles!fk_spaces_owner(user_id, username, avatar),
           author_profile:profiles!fk_spaces_author(user_id, username, avatar),
-          space_gating(*)
+          space_gating(*),
+          user_roles (*, profiles(*))
         `,
         )
         .eq('id', id)
@@ -211,7 +213,7 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
         .select(
           `
           *,
-          user_roles ( * ),
+          user_roles (*, profiles(*)),
           owner_profile:profiles!fk_spaces_owner(user_id, username, avatar),
           author_profile:profiles!fk_spaces_author(user_id, username, avatar)
         `,
@@ -239,6 +241,10 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
       new SupaSpaceGatingRepository().transformSpaceGating(gating),
     );
 
+    const userRoles = (supaData.user_roles || []).map((role: any) =>
+      new SupaRoleRepository().transformRole(role),
+    );
+
     return {
       id: supaData.id,
       name: supaData.name,
@@ -260,7 +266,7 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
       events: { edges: [] },
       installedApps: { edges: [] },
       spaceGating,
-      userRoles: supaData.user_roles || [],
+      userRoles,
     };
   }
 }
