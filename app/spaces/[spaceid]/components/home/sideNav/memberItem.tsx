@@ -39,7 +39,7 @@ const MemberItem: React.FC<IMemberItemProps> = ({
 
 export const MemberItemSkeleton = () => {
   return (
-    <div className="flex w-full items-center justify-between gap-[10px]">
+    <div className="flex w-full items-center justify-between gap-[10px] px-[10px] py-[4px]">
       <div className="flex flex-1 items-center gap-[10px]">
         <Skeleton className="size-8 rounded-full" />
         <Skeleton className="h-[22px] flex-1 rounded-[4px]" />

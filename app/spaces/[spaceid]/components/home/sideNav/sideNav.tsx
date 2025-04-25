@@ -27,7 +27,9 @@ const ShowRoleOrder: Record<string, number> = {
 
 const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
   const spaceId = useParams()?.spaceid;
-  const { owner, members, roles } = useGetSpaceMember(spaceId as string);
+  const { owner, members, roles, isLoadingMembers } = useGetSpaceMember(
+    spaceId as string,
+  );
 
   const formattedMemberCount = useMemo(() => {
     const totalMembers = spaceData?.userRoles?.length ?? 0;
@@ -56,7 +58,6 @@ const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
     if (!members || !members.length) return res;
 
     members.forEach((member) => {
-      console.log(member);
       const profile = member.userId;
       if (!profile) return;
       const memberRoleId = member.roleId;
@@ -159,7 +160,9 @@ const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
         </div>
 
         <div className="mt-[20px] flex flex-col gap-[4px]">
-          {formatedMembers && formatedMembers.length > 0 ? (
+          {!isLoadingMembers &&
+          formatedMembers &&
+          formatedMembers.length > 0 ? (
             formatedMembers.map((member) => (
               <div key={member.address} className="px-[8px] py-[4px]">
                 <MemberItem
