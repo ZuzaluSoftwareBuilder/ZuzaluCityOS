@@ -173,6 +173,7 @@ const SpaceActions = ({
                     />
                   )
                 }
+                isDisabled={isUserJoined}
                 onPress={onJoin}
                 className={isMobile ? 'w-full flex-1 shrink-0' : ''}
               >
