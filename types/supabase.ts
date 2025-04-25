@@ -393,6 +393,45 @@ export type Database = {
         };
         Relationships: [];
       };
+      installed_apps: {
+        Row: {
+          created_at: string;
+          id: string;
+          installed_app_id: string | null;
+          native_app_name: string | null;
+          space_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          installed_app_id?: string | null;
+          native_app_name?: string | null;
+          space_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          installed_app_id?: string | null;
+          native_app_name?: string | null;
+          space_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'installed_apps_installed_app_id_fkey';
+            columns: ['installed_app_id'];
+            isOneToOne: false;
+            referencedRelation: 'dapp_infos';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'installed_apps_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       legacyEvents: {
         Row: {
           created_at: string;
