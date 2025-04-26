@@ -1,5 +1,6 @@
 import { composeClient } from '@/constant';
-import { CeramicResponseType, EventEdge, Space } from '@/types';
+import { getSpaceRepository } from '@/repositories/space';
+import { CeramicResponseType, EventEdge } from '@/types';
 import { supabase } from '@/utils/supabase/client';
 import { ImageResponse } from '@vercel/og';
 import dayjs from 'dayjs';
@@ -88,21 +89,8 @@ const getEventDetailInfo = async (eventId: string) => {
 };
 
 const getSpaceByID = async (spaceId: string) => {
-  const GET_SPACE_QUERY = `
-      query GetSpace($id: ID!) {
-        node(id: $id) {
-          ...on ZucitySpace {
-            avatar
-            name
-          }
-        }
-      }
-      `;
-
-  const response: any = await composeClient.executeQuery(GET_SPACE_QUERY, {
-    id: spaceId,
-  });
-  return response.data.node as Space;
+  const response = await getSpaceRepository().getById(spaceId!);
+  return response.data;
 };
 
 const getEventImage = async (eventId: string, origin: string) => {
@@ -268,6 +256,12 @@ const getSessionImage = async (
       .single(),
     getEventDetailInfo(eventId!),
   ]);
+
+  if (!data || !eventData) {
+    return new ImageResponse(<div>Error</div>, {
+      fonts: await getFonts(),
+    });
+  }
 
   const startTime = dayjs(data.startTime).tz(eventData?.timezone);
   const gmtOffset = startTime.utcOffset() / 60;
