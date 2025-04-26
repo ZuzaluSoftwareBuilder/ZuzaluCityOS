@@ -70,15 +70,15 @@ const SpaceSubSidebar = ({
 
   const installedApps = useMemo(() => {
     const hasCalendar = installedAppsData?.some(
-      (app) => app.nativeAppName === 'calendar',
+      (app) => app?.nativeAppName === 'calendar',
     );
 
     const hasZuland = installedAppsData?.some(
-      (app) => app.nativeAppName === 'zuland',
+      (app) => app?.nativeAppName === 'zuland',
     );
 
     installedAppsData
-      ?.filter((app) => app.nativeAppName)
+      ?.filter((app) => app?.nativeAppName)
       .map((app) => (
         <TabItem
           key={app.installedAppId}

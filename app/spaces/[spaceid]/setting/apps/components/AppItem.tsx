@@ -7,16 +7,17 @@ import { useParams } from 'next/navigation';
 import { memo, useCallback, useMemo } from 'react';
 
 import { Button } from '@/components/base';
+import { Dapp } from '@/models/dapp';
 import {
   installDApp,
   InstallDAppParams,
   uninstallDApp,
   UninstallDAppParams,
 } from '@/services/space/apps';
-import { Dapp } from '@/types';
+import { NativeDApp } from '../constants';
 
 import { USER_AVATAR_URL } from '@/constant';
-import { isNativeDApp, NativeDApp } from '../constants';
+import { isNativeDApp } from '../constants';
 import { useDAppDetailDrawer } from './DAppDetailDrawer';
 import { useInstalledAppsData } from './InstalledAppsData';
 
@@ -93,8 +94,8 @@ const AppItem = (props: Props) => {
   const handleInstall = useCallback(() => {
     if (!data) return;
     const params: InstallDAppParams = isNativeDApp(data)
-      ? { spaceId, nativeAppName: data.appIdentifier }
-      : { spaceId, appId: data.id };
+      ? { spaceId, appId: '', nativeAppName: data.appIdentifier }
+      : { spaceId, appId: data.id, nativeAppName: '' };
     installMutation(params);
   }, [data, spaceId, installMutation]);
 

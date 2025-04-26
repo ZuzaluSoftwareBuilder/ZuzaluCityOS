@@ -1,7 +1,9 @@
-import { Result } from '@/models/base';
+import { Edge, Result } from '@/models/base';
+import { InstalledApp } from '@/models/dapp';
 import { CreateSpaceInput, Space, UpdateSpaceInput } from '@/models/space';
 import { formatProfile } from '@/utils/profile';
 import { supabase } from '@/utils/supabase/client';
+import { SupaDappRepository } from '../dapp/supa';
 import { SupaRoleRepository } from '../role/supa';
 import { SupaSpaceGatingRepository } from '../spaceGating/supa';
 import { BaseSpaceRepository } from './type';
@@ -112,12 +114,12 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
           owner_profile:profiles!fk_spaces_owner(user_id, username, avatar),
           author_profile:profiles!fk_spaces_author(user_id, username, avatar),
           space_gating(*),
-          user_roles (*, profiles(*))
+          user_roles (*, profiles(*)),
+          installed_apps(*, dapp_info:dapp_infos(*))
         `,
         )
         .eq('id', id)
         .single();
-
       if (error) {
         return this.createResponse(null, error);
       }
@@ -245,6 +247,14 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
       new SupaRoleRepository().transformRole(role),
     );
 
+    // Transform installed_apps data
+    const installedApps: Edge<InstalledApp> = {
+      edges: (supaData.installed_apps || [])
+        // .filter((app: any) => app.space_id === supaData.id)
+        .map((app: any) => {
+          return { node: new SupaDappRepository().transformInstalledApp(app) };
+        }),
+    };
     return {
       id: supaData.id,
       name: supaData.name,
@@ -264,7 +274,7 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
       owner: formatProfile(supaData['owner_profile'], 'supabase'),
       announcements: { edges: [] },
       events: { edges: [] },
-      installedApps: { edges: [] },
+      installedApps: installedApps,
       spaceGating,
       userRoles,
     };

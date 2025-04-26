@@ -25,13 +25,13 @@ import {
 import ShowMoreEdit from '@/components/editor/ShowMoreEdit';
 import FormHeader from '@/components/form/FormHeader';
 import { ArrowUpRightIcon } from '@/components/icons';
+import { Dapp } from '@/models/dapp';
 import {
   installDApp,
   InstallDAppParams,
   uninstallDApp,
   UninstallDAppParams,
 } from '@/services/space/apps';
-import { Dapp } from '@/types';
 import { NOOP } from '@/utils/function';
 
 import { NativeDApp } from '../constants';

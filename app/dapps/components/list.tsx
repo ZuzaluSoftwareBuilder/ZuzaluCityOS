@@ -91,7 +91,7 @@ export default function List({ onDetailClick, onOwnedDappsClick }: ListProps) {
   }, [data, filter, legacyDappData, searchVal]);
 
   const ownedDapps = useMemo(() => {
-    return data?.filter((dapp) => dapp.profile.author.id === userDID) || [];
+    return data?.filter((dapp) => dapp.profile.id === userDID) || [];
   }, [data, userDID]);
 
   const isAllLoading = isLoading || legacyDappLoading;

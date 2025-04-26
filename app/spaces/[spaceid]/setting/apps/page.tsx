@@ -12,65 +12,52 @@ import React, {
   useRef,
 } from 'react';
 
+import { useRepositories } from '@/context/RepositoryContext';
 import { useScrollSection } from '@/hooks/useScrollSection';
-import { GET_DAPP_LIST_QUERY } from '@/services/graphql/dApp';
-import { Dapp } from '@/types';
-import { executeQuery } from '@/utils/ceramic';
+import { Dapp } from '@/models/dapp';
 
 import AppItem from './components/AppItem';
 import DAppDetailDrawer from './components/DAppDetailDrawer';
 import InstalledAppsData from './components/InstalledAppsData';
 import { NATIVE_APPS, NativeDApp } from './constants';
 
-const APP_CATEGORY: Record<
-  string,
-  {
-    hash: string;
-    title: string;
-    subTitle: string;
-    getApps: () => Promise<Dapp[] | NativeDApp[]>;
-  }
-> = {
-  NativeApps: {
-    hash: 'native-apps',
-    title: 'Native Apps',
-    subTitle: 'Install apps integrated directly in Zuzalu City',
-    getApps: async () => NATIVE_APPS,
-  },
-  CommunityApps: {
-    hash: 'community-apps',
-    title: 'Community Apps',
-    subTitle: 'Install apps built by the community',
-    getApps: async () => {
-      const response = await executeQuery(GET_DAPP_LIST_QUERY, {
-        filters: {
-          where: {
-            isInstallable: {
-              equalTo: '1',
-            },
-          },
-        },
-      });
-
-      if (
-        response &&
-        response.data &&
-        'zucityDappInfoIndex' in response.data &&
-        response.data.zucityDappInfoIndex?.edges
-      ) {
-        return response.data.zucityDappInfoIndex.edges.map((edge: any) => {
-          const current: Dapp = edge.node;
-          return current;
-        });
-      }
-      return [];
-    },
-  },
-};
-
-const CATEGORIES = Object.values(APP_CATEGORY);
-
 export default function ExploreAppsPage() {
+  // 使用仓库
+  const { dappRepository } = useRepositories();
+
+  const APP_CATEGORY: Record<
+    string,
+    {
+      hash: string;
+      title: string;
+      subTitle: string;
+      getApps: () => Promise<(Dapp | NativeDApp)[]>;
+    }
+  > = {
+    NativeApps: {
+      hash: 'native-apps',
+      title: 'Native Apps',
+      subTitle: 'Install apps integrated directly in Zuzalu City',
+      getApps: async () => NATIVE_APPS,
+    },
+    CommunityApps: {
+      hash: 'community-apps',
+      title: 'Community Apps',
+      subTitle: 'Install apps built by the community',
+      getApps: async () => {
+        const result = await dappRepository.getDapps();
+
+        if (result.error) {
+          return [];
+        }
+
+        return result.data.filter((dapp) => dapp.isInstallable === true);
+      },
+    },
+  };
+
+  const CATEGORIES = Object.values(APP_CATEGORY);
+
   // ------------ scroll logic ------------
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { activeSection, setActiveSection, scrollToSection } = useScrollSection(
@@ -95,7 +82,7 @@ export default function ExploreAppsPage() {
       setActiveSection(hash);
       scrollToSection(hash);
     }
-  }, [scrollToSection, setActiveSection]);
+  }, [scrollToSection, setActiveSection, CATEGORIES]);
 
   // Handle nav click
   const handleNavClick = useCallback(
@@ -190,7 +177,7 @@ export default function ExploreAppsPage() {
   );
 }
 
-function AppList(props: { appsPromise: Promise<Dapp[] | NativeDApp[]> }) {
+function AppList(props: { appsPromise: Promise<(Dapp | NativeDApp)[]> }) {
   const { appsPromise } = props;
   const apps = use(appsPromise);
   return (

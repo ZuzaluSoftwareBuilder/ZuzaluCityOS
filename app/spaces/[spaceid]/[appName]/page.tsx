@@ -1,8 +1,7 @@
 'use client';
-import { useGraphQL } from '@/hooks/useGraphQL';
-import { GET_DAPP_QUERY } from '@/services/graphql/dApp';
-import { Dapp } from '@/types';
+import { getDappRepository } from '@/repositories/dapp';
 import { CircularProgress, cn, Image, Skeleton } from '@heroui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -18,17 +17,19 @@ export default function AppPage() {
     setIsLoaded(true);
   }, []);
 
-  const { data, isLoading } = useGraphQL(
-    ['GET_DAPP_QUERY', appId],
-    GET_DAPP_QUERY,
-    {
-      id: appId!,
+  const { data, isLoading } = useQuery({
+    queryKey: ['dapp', appId],
+    queryFn: async () => {
+      if (!appId) return null;
+      const dappRepository = getDappRepository();
+      const result = await dappRepository.getDappById(appId);
+      if (result.error) {
+        throw result.error;
+      }
+      return result.data;
     },
-    {
-      enabled: !!appId,
-      select: (data) => data?.data?.node as Dapp,
-    },
-  );
+    enabled: !!appId,
+  });
 
   useEffect(() => {
     if (!appId) {

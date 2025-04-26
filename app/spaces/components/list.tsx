@@ -20,7 +20,6 @@ const SpaceList = () => {
   const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
   const { spaceRepository } = useRepositories();
   const { adminRole, memberRole, isRoleLoading } = useBuildInRole();
-
   const { data: spaces, isLoading } = useQuery({
     queryKey: ['GET_ALL_SPACE_AND_MEMBER_QUERY'],
     queryFn: () => {

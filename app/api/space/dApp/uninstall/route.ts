@@ -1,7 +1,7 @@
-import { UNINSTALL_DAPP_FROM_SPACE } from '@/services/graphql/space';
+import { getDappRepository } from '@/repositories/dapp';
 import { PermissionName } from '@/types';
 import { withSessionValidation } from '@/utils/authMiddleware';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import { dayjs } from '@/utils/dayjs';
 import {
   createErrorResponse,
@@ -41,14 +41,10 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Error getting private key', 500);
     }
 
-    const result = await executeQuery(UNINSTALL_DAPP_FROM_SPACE, {
-      input: {
-        id: installedAppIndexId,
-        shouldIndex: false,
-      },
-    });
+    const dappRepository = getDappRepository();
+    const result = await dappRepository.uninstallDapp(installedAppIndexId);
 
-    if (result.errors) {
+    if (result.error) {
       return createErrorResponse('Failed to uninstall dApp', 500);
     }
 

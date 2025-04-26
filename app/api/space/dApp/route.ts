@@ -1,5 +1,6 @@
-import { GET_SPACE_INSTALLED_APPS } from '@/services/graphql/space';
-import { executeQuery } from '@/utils/ceramic';
+import { Result } from '@/models/base';
+import { InstalledApp } from '@/models/dapp';
+import { getDappRepository } from '@/repositories/dapp';
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -17,27 +18,22 @@ export const GET = async (request: NextRequest) => {
       return createErrorResponse('Missing spaceId', 400);
     }
 
-    const result = await executeQuery(GET_SPACE_INSTALLED_APPS, {
-      filters: {
-        where: {
-          sourceId: { equalTo: id },
-        },
-      },
-      first: 100,
-    });
+    const dappRepository = getDappRepository();
+    const result: Result<InstalledApp[]> =
+      await dappRepository.getSpaceInstalledApps(id);
 
-    if (result.errors) {
+    if (result.error) {
       return createErrorResponse(
         'Failed to query application installation status',
         500,
       );
     }
 
-    const installedApps = result.data.zucityInstalledAppIndex?.edges;
+    const installedApps = result.data;
 
     return createSuccessResponse({
       installedApps,
-      pageInfo: result.data.zucityInstalledAppIndex?.pageInfo,
+      pageInfo: {}, // Note: pageInfo may need adjustment based on the actual return structure
     });
   } catch (error: unknown) {
     console.error('Error querying application installation status:', error);

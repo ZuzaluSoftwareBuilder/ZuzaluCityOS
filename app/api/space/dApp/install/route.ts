@@ -1,10 +1,9 @@
-import {
-  GET_SPACE_INSTALLED_APPS,
-  INSTALL_DAPP_TO_SPACE,
-} from '@/services/graphql/space';
+import { Result } from '@/models/base';
+import { InstalledApp } from '@/models/dapp';
+import { getDappRepository } from '@/repositories/dapp';
 import { PermissionName } from '@/types';
 import { withSessionValidation } from '@/utils/authMiddleware';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import { dayjs } from '@/utils/dayjs';
 import {
   createErrorResponse,
@@ -42,7 +41,6 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     }
     const { spaceId, appId, nativeAppName } = validationResult.data;
     const sourceId = spaceId;
-
     if (!hasRequiredPermission(sessionData, PermissionName.MANAGE_APPS)) {
       return createErrorResponse('Permission denied', 403);
     }
@@ -52,34 +50,27 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Error getting private key', 500);
     }
 
-    const installedAppsResult = await executeQuery(GET_SPACE_INSTALLED_APPS, {
-      filters: {
-        where: {
-          sourceId: { equalTo: spaceId },
-        },
-      },
-      first: 100,
-    });
+    const dappRepository = getDappRepository();
+    const installedAppsResult: Result<InstalledApp[]> =
+      await dappRepository.getSpaceInstalledApps(spaceId);
 
-    if (installedAppsResult.errors) {
+    if (installedAppsResult.error) {
       return createErrorResponse(
         'Failed to query application installation status',
         500,
       );
     }
 
-    const installedApps =
-      installedAppsResult.data?.zucityInstalledAppIndex?.edges || [];
+    const installedApps = installedAppsResult.data || [];
 
     const isAppAlreadyInstalled = installedApps.some((app) => {
-      const node = app?.node;
-      if (!node) return false;
+      if (!app) return false;
 
-      if (appId && node.installedAppId === appId) {
+      if (appId && app.installedAppId === appId) {
         return true;
       }
 
-      if (nativeAppName && node.nativeAppName === nativeAppName) {
+      if (nativeAppName && app.nativeAppName === nativeAppName) {
         return true;
       }
 
@@ -88,48 +79,45 @@ export const POST = withSessionValidation(async (request, sessionData) => {
 
     if (isAppAlreadyInstalled && installedApps.length > 0) {
       const installedApp = installedApps.find((app) => {
-        const node = app?.node;
-        if (!node) return false;
+        if (!app) return false;
 
-        if (appId && node.installedAppId === appId) {
+        if (appId && app.installedAppId === appId) {
           return true;
         }
 
-        if (nativeAppName && node.nativeAppName === nativeAppName) {
+        if (nativeAppName && app.nativeAppName === nativeAppName) {
           return true;
         }
 
         return false;
-      })?.node;
+      });
 
       if (installedApp) {
-        return createSuccessResponse({
-          installedAppIndexId: installedApp.id,
-          message: 'dApp already installed',
-        });
+        return createSuccessResponse(
+          {
+            installedAppIndexId: installedApp.id,
+          },
+          'dApp already installed',
+        );
       }
     }
 
-    const result = await executeQuery(INSTALL_DAPP_TO_SPACE, {
-      input: {
-        content: {
-          spaceId,
-          sourceId,
-          installedAppId: appId,
-          nativeAppName,
-          createdAt: dayjs().utc().toISOString(),
-          updatedAt: dayjs().utc().toISOString(),
-        },
-      },
-    });
-
-    if (result.errors) {
+    const installResult = await dappRepository.installDapp(
+      spaceId,
+      appId || '',
+      nativeAppName,
+    );
+    console.log('installResult', installResult);
+    if (installResult.error) {
       return createErrorResponse('Failed to install dApp', 500);
     }
 
-    return createSuccessResponse({
-      installedAppIndexId: result.data.createZucityInstalledApp?.document.id,
-    });
+    return createSuccessResponse(
+      {
+        installedAppIndexId: installResult.data?.id,
+      },
+      'dApp installed successfully',
+    );
   } catch (error: unknown) {
     console.error('Error installing dApp:', error);
     return createErrorResponse('Internal server error', 500);
