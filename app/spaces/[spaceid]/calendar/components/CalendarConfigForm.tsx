@@ -64,7 +64,6 @@ export default function CalendarConfigForm({
 
   const configCalendarMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      const customAttributes = space.customAttributes || [];
       const result = await composeClient.executeQuery(
         `
       mutation updateZucitySpaceMutation($input: UpdateZucitySpaceInput!) {
@@ -82,7 +81,6 @@ export default function CalendarConfigForm({
             id: space.id,
             content: {
               customAttributes: [
-                ...customAttributes,
                 {
                   tbd: JSON.stringify({
                     key: 'calendarConfig',

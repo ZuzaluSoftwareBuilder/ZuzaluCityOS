@@ -7,16 +7,15 @@ import {
 import { ArrowSquareRightIcon } from '@/components/icons';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
+import { useRepositories } from '@/context/RepositoryContext';
 import { useZupassContext } from '@/context/ZupassContext';
 import { usePOAPVerify } from '@/hooks/useRuleVerify';
 import useUserSpace from '@/hooks/useUserSpace';
 import { SpaceGating } from '@/models/spaceGating';
-import { CREATE_ROLE_QUERY, UPDATE_ROLE_QUERY } from '@/services/graphql/role';
 import { joinSpace } from '@/services/member';
 import { getPOAPs } from '@/services/poap';
 import { ZuPassInfo } from '@/types';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
-import { dayjs } from '@/utils/dayjs';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import {
   Accordion,
   AccordionItem,
@@ -111,6 +110,7 @@ const useJoinSpace = ({
   gated?: boolean;
 }) => {
   const { profile } = useAbstractAuthContext();
+  const { roleRepository } = useRepositories();
   const { spaceData } = useSpaceData();
   const { memberRole } = useBuildInRole();
   const queryClient = useQueryClient();
@@ -134,32 +134,20 @@ const useJoinSpace = ({
         if (error) throw new Error('Failed to authenticate with space id');
         let result;
         if (isUserFollowed) {
-          result = await executeQuery(UPDATE_ROLE_QUERY, {
-            input: {
-              id:
-                userFollowedSpaces.find((role) => role?.resourceId === spaceId)
-                  ?.id ?? '',
-              content: {
-                roleId,
-                updated_at: dayjs().utc().toISOString(),
-              },
-            },
+          const id =
+            userFollowedSpaces.find((role) => role?.resourceId === spaceId)
+              ?.id ?? '';
+          result = await roleRepository.updateRole(id, {
+            roleId,
           });
         }
-        result = await executeQuery(CREATE_ROLE_QUERY, {
-          input: {
-            content: {
-              userId,
-              resourceId: spaceId,
-              source: 'space',
-              roleId,
-              spaceId,
-              created_at: dayjs().utc().toISOString(),
-              updated_at: dayjs().utc().toISOString(),
-            },
-          },
+        result = await roleRepository.createRole({
+          userId,
+          resourceId: spaceId,
+          source: 'space',
+          roleId,
         });
-        if (result.errors) throw new Error('Failed to join');
+        if (result.error) throw new Error('Failed to join');
       }
     },
     onSuccess: async () => {
