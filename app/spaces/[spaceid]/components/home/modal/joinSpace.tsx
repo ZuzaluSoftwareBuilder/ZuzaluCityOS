@@ -11,10 +11,9 @@ import { useRepositories } from '@/context/RepositoryContext';
 import { useZupassContext } from '@/context/ZupassContext';
 import { usePOAPVerify } from '@/hooks/useRuleVerify';
 import useUserSpace from '@/hooks/useUserSpace';
-import { SpaceGating } from '@/models/spaceGating';
+import { SpaceGating, ZuPassInfo } from '@/models/spaceGating';
 import { joinSpace } from '@/services/member';
 import { getPOAPs } from '@/services/poap';
-import { ZuPassInfo } from '@/types';
 import { authenticateWithSpaceId } from '@/utils/ceramic';
 import {
   Accordion,
