@@ -1,7 +1,9 @@
 'use client';
 import { useSpaceData } from '@/app/spaces/[spaceid]/components/context/spaceData';
+import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import { Button } from '@/components/base';
 import { Categories } from '@/constant';
+import { useRepositories } from '@/context/RepositoryContext';
 import { useMediaQuery } from '@/hooks';
 import { createUrlWhenEdit } from '@/services/url';
 import { covertNameToUrlName } from '@/utils/format';
@@ -12,7 +14,7 @@ import { Space, UpdateSpaceInput } from 'models/space';
 import { useParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { getSpaceRepository } from 'repositories/space';
+
 import {
   CategoriesContent,
   CategoriesFormData,
@@ -46,8 +48,8 @@ const EditSpace = () => {
   const isCategoriesChange = useRef<boolean>(false);
   const isLinksChange = useRef<boolean>(false);
   const { spaceData, isSpaceDataLoading, refreshSpaceData } = useSpaceData();
-  const isOwner = true;
-  const spaceRepository = getSpaceRepository();
+  const { isOwner } = useSpacePermissions();
+  const { spaceRepository } = useRepositories();
   const profileForm = useForm<ProfileFormData>({
     resolver: yupResolver(ProfilValidationSchema),
     mode: 'all',

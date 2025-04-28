@@ -132,9 +132,6 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
       if (result.error) {
         throw result.error;
       }
-
-      // We're not returning the data to avoid type conflicts
-      // The refetch will get the latest data anyway
     },
     onSuccess: () => {
       refetch();

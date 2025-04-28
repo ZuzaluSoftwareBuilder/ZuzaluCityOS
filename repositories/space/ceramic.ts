@@ -318,12 +318,15 @@ export class CeramicSpaceRepository extends BaseSpaceRepository {
       owner: ceramicData.owner,
       author: ceramicData.author,
 
-      // Related data - using edges.node pattern
-      announcements: ceramicData.announcements || { edges: [] },
-      events: ceramicData.events || { edges: [] },
-      installedApps: ceramicData.installedApps || { edges: [] },
-      spaceGating: ceramicData.spaceGating || { edges: [] },
-      userRoles: ceramicData.userRoles?.edges.map((edge: any) => edge.node),
+      // Related data
+      announcements:
+        ceramicData.announcements?.edges?.map((edge: any) => edge.node) || [],
+      events: ceramicData.events?.edges?.map((edge: any) => edge.node) || [],
+      installedApps:
+        ceramicData.installedApps?.edges?.map((edge: any) => edge.node) || [],
+      spaceGating: ceramicData.spaceGating || [],
+      userRoles:
+        ceramicData.userRoles?.edges?.map((edge: any) => edge.node) || [],
     };
   }
 }

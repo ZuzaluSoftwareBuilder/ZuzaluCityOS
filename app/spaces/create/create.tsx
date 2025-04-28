@@ -1,6 +1,7 @@
 'use client';
 import { SpaceCard } from '@/components/biz/space/SpaceCard';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
+import { useRepositories } from '@/context/RepositoryContext';
 import { Mobile, NotMobile, useMediaQuery } from '@/hooks/useMediaQuery';
 import { createUrl } from '@/services/url';
 import { uint8ArrayToBase64 } from '@/utils';
@@ -15,7 +16,6 @@ import { CreateSpaceInput } from 'models/space';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { getSpaceRepository } from 'repositories/space';
 import {
   AccessRule,
   CategoriesContent,
@@ -58,7 +58,7 @@ const Create = () => {
   const router = useRouter();
   const { isMobile } = useMediaQuery();
   const { ceramic, profile } = useAbstractAuthContext();
-  const spaceRepository = getSpaceRepository();
+  const { spaceRepository } = useRepositories();
   const profileForm = useForm<ProfileFormData>({
     resolver: yupResolver(ProfilValidationSchema),
     mode: 'all',
@@ -400,9 +400,7 @@ const Create = () => {
                 did: '',
               },
               userRoles: [],
-              installedApps: {
-                edges: [],
-              },
+              installedApps: [],
               createdAt: '',
               updatedAt: '',
               gated: '0',

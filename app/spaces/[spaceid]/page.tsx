@@ -9,10 +9,10 @@ import {
   DrawerContent,
 } from '@/components/base';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
+import { useRepositories } from '@/context/RepositoryContext';
 import useOpenDraw from '@/hooks/useOpenDraw';
 import { Result } from '@/models/base';
 import { Space } from '@/models/space';
-import { getSpaceRepository } from '@/repositories/space';
 import { Event } from '@/types';
 import { CaretUpDown } from '@phosphor-icons/react';
 import { useQuery } from '@tanstack/react-query';
@@ -25,6 +25,7 @@ const SpaceHomePage: React.FC = () => {
   const spaceId = params?.spaceid?.toString() ?? '';
   const { adminRole, memberRole } = useBuildInRole();
   const { open, handleClose, handleOpen } = useOpenDraw();
+  const { spaceRepository } = useRepositories();
   // todo 这里涉及event，暂时用getSpacebyID
   // const { data: spaceData, isLoading } = useGraphQL(
   //   ['getSpaceAndEvents', spaceId],
@@ -49,7 +50,7 @@ const SpaceHomePage: React.FC = () => {
   // );
   const { data: spaceData, isLoading } = useQuery({
     queryKey: ['GET_SUPABASE_SPACES_DATA', spaceId],
-    queryFn: () => getSpaceRepository().getById(spaceId),
+    queryFn: () => spaceRepository.getById(spaceId),
     select: (data: Result<Space>) => {
       if (!data?.data) {
         return undefined;
@@ -59,8 +60,7 @@ const SpaceHomePage: React.FC = () => {
   });
 
   const eventsData = useMemo(() => {
-    return (spaceData?.events?.edges.map((edge: any) => edge.node) ||
-      []) as Event[];
+    return (spaceData?.events || []) as Event[];
   }, [spaceData]);
 
   return (

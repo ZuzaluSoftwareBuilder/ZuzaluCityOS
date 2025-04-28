@@ -1,7 +1,7 @@
 'use client';
 
+import { RolePermission } from '@/models/role';
 import { getAllPermission } from '@/services/permission';
-import { RolePermission } from '@/types';
 import { Skeleton, Switch } from '@heroui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';

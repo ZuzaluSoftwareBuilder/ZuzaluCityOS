@@ -63,10 +63,9 @@ const SpaceActions = ({
 
   const showJoinButton = useMemo(() => {
     return (
-      spaceData?.gated === '0' ||
-      (spaceData?.spaceGating?.edges?.length ?? 0) > 0
+      spaceData?.gated === '0' || (spaceData?.spaceGating?.length ?? 0) > 0
     );
-  }, [spaceData?.gated, spaceData?.spaceGating?.edges?.length]);
+  }, [spaceData?.gated, spaceData?.spaceGating?.length]);
 
   const followMutation = useMutation({
     mutationFn: () => followSpace(spaceId, userDid!),

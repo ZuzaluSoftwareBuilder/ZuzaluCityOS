@@ -1,14 +1,14 @@
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
+import { useRepositories } from '@/context/RepositoryContext';
 import useUserRole from '@/hooks/useUserRole';
-import { getSpaceRepository } from '@/repositories/space';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 const useUserSpace = () => {
   const { profile } = useAbstractAuthContext();
+  const { spaceRepository } = useRepositories();
   // TODO wait supabase update
   const userDId = profile?.did;
-  const spaceRepository = getSpaceRepository();
 
   const { userRoles, isUserRoleLoading, isUserRoleFetched, followerRoleId } =
     useUserRole();

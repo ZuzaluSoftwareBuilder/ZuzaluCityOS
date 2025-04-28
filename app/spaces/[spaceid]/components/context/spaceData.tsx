@@ -1,6 +1,6 @@
 'use client';
+import { useRepositories } from '@/context/RepositoryContext';
 import { Space } from '@/models/space';
-import { getSpaceRepository } from '@/repositories/space';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import React, { createContext, useContext } from 'react';
@@ -19,7 +19,7 @@ export const SpaceDataProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const spaceId = useParams().spaceid as string;
-  const spaceRepository = getSpaceRepository();
+  const { spaceRepository } = useRepositories();
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['space', spaceId],

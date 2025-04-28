@@ -1,5 +1,5 @@
 'use client';
-import { InstalledApp } from '@/types';
+import { InstalledApp } from '@/models/dapp';
 import { NOOP } from '@/utils/function';
 import {
   createContext,
@@ -50,9 +50,7 @@ const InstalledAppsData = ({ children }: PropsWithChildren) => {
   const { spaceData, isSpaceDataLoading, refreshSpaceData } = useSpaceData();
 
   const installedAppsData = useMemo(() => {
-    return spaceData?.installedApps?.edges.map(
-      (edge) => edge.node,
-    ) as InstalledApp[];
+    return spaceData?.installedApps as InstalledApp[];
   }, [spaceData]);
 
   useEffect(() => {

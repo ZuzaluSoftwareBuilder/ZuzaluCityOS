@@ -11,7 +11,7 @@ import {
   ModalFooter,
 } from '@/components/base/modal';
 import useOpenDraw from '@/hooks/useOpenDraw';
-import { RolePermission } from '@/types';
+import { RolePermission } from '@/models/role';
 import { Button } from '@heroui/react';
 import { X } from '@phosphor-icons/react';
 import React, { useCallback, useState } from 'react';

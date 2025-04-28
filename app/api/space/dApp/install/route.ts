@@ -107,7 +107,6 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       appId || '',
       nativeAppName,
     );
-    console.log('installResult', installResult);
     if (installResult.error) {
       return createErrorResponse('Failed to install dApp', 500);
     }

@@ -1,5 +1,5 @@
 'use client';
-import { getDappRepository } from '@/repositories/dapp';
+import { useRepositories } from '@/context/RepositoryContext';
 import { CircularProgress, cn, Image, Skeleton } from '@heroui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
@@ -10,6 +10,7 @@ export default function AppPage() {
   const appId = searchParams?.get('id');
   const spaceId = useParams()?.spaceid;
   const router = useRouter();
+  const { dappRepository } = useRepositories();
   const [isLoaded, setIsLoaded] = useState(false);
 
   const handleIframeLoad = useCallback(() => {
@@ -18,10 +19,9 @@ export default function AppPage() {
   }, []);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['dapp', appId],
+    queryKey: ['GET_DAPP_QUERY', appId],
     queryFn: async () => {
       if (!appId) return null;
-      const dappRepository = getDappRepository();
       const result = await dappRepository.getDappById(appId);
       if (result.error) {
         throw result.error;

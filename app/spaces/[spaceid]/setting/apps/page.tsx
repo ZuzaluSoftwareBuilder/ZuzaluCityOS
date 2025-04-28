@@ -22,7 +22,6 @@ import InstalledAppsData from './components/InstalledAppsData';
 import { NATIVE_APPS, NativeDApp } from './constants';
 
 export default function ExploreAppsPage() {
-  // 使用仓库
   const { dappRepository } = useRepositories();
 
   const APP_CATEGORY: Record<
@@ -51,7 +50,7 @@ export default function ExploreAppsPage() {
           return [];
         }
 
-        return result.data.filter((dapp) => dapp.isInstallable === true);
+        return result.data.filter((dapp) => dapp.isInstallable);
       },
     },
   };

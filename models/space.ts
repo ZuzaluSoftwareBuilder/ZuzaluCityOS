@@ -1,6 +1,6 @@
 import { Announcement } from './announcement';
 import { UserRole } from './author';
-import { Edge, Link, Tag } from './base';
+import { Link, Tag } from './base';
 import { InstalledApp } from './dapp';
 import { Event } from './event';
 import { Profile } from './profile';
@@ -27,10 +27,10 @@ export interface Space {
   // Match ZucitySpace
   owner: Profile;
   author: Profile;
-  // Related data using edges.node pattern
-  announcements?: Edge<Announcement>;
-  events?: Edge<Event>;
-  installedApps?: Edge<InstalledApp>;
+  // Related data
+  announcements?: Announcement[];
+  events?: Event[];
+  installedApps?: InstalledApp[];
   spaceGating?: SpaceGating[];
   userRoles?: UserRole[];
   isLegacy?: boolean;
@@ -58,7 +58,6 @@ export type UpdateSpaceInput = Partial<
   Omit<
     Space,
     | 'id'
-    | 'profileId'
     | 'createdAt'
     | 'updatedAt'
     | 'announcements'

@@ -1,4 +1,4 @@
-import { Edge, Result } from '@/models/base';
+import { Result } from '@/models/base';
 import { InstalledApp } from '@/models/dapp';
 import { CreateSpaceInput, Space, UpdateSpaceInput } from '@/models/space';
 import { formatProfile } from '@/utils/profile';
@@ -248,13 +248,10 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
     );
 
     // Transform installed_apps data
-    const installedApps: Edge<InstalledApp> = {
-      edges: (supaData.installed_apps || [])
-        // .filter((app: any) => app.space_id === supaData.id)
-        .map((app: any) => {
-          return { node: new SupaDappRepository().transformInstalledApp(app) };
-        }),
-    };
+    const installedApps: InstalledApp[] = (supaData.installed_apps || [])
+      // .filter((app: any) => app.space_id === supaData.id)
+      .map((app: any) => new SupaDappRepository().transformInstalledApp(app));
+
     return {
       id: supaData.id,
       name: supaData.name,
@@ -272,8 +269,8 @@ export class SupaSpaceRepository extends BaseSpaceRepository {
       updatedAt: supaData.updated_at,
       author: formatProfile(supaData['author_profile'], 'supabase'),
       owner: formatProfile(supaData['owner_profile'], 'supabase'),
-      announcements: { edges: [] },
-      events: { edges: [] },
+      announcements: [],
+      events: [],
       installedApps: installedApps,
       spaceGating,
       userRoles,

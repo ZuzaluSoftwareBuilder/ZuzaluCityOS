@@ -1,17 +1,17 @@
+import { useRepositories } from '@/context/RepositoryContext';
 import { UserRole } from '@/models/role';
-import { getSpaceRepository } from '@/repositories/space';
 import { getMembers } from '@/services/member';
 import { getRoles } from '@/services/role';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 export default function useGetSpaceMember(spaceId: string) {
+  const { spaceRepository } = useRepositories();
+
   const { data: roles, isLoading: isLoadingRoles } = useQuery({
     queryKey: ['getRoles'],
     queryFn: () => getRoles('space', spaceId as string),
   });
-
-  const spaceRepository = getSpaceRepository();
 
   const { data: spaceData, isLoading: isLoadingOwner } = useQuery({
     queryKey: ['space', spaceId],
