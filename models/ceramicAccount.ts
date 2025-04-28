@@ -1,207 +1,207 @@
 import { Profile } from './profile';
 
 /**
- * 通用连接边接口
+ * Generic connection edge interface
  */
 export interface ConnectionEdge<T> {
   node: T;
 }
 
 /**
- * 通用连接接口
+ * Generic connection interface
  */
 export interface Connection<T> {
   edges: ConnectionEdge<T>[];
 }
 
 /**
- * 筛选条件输入类型
+ * Filters input type
  */
 export interface FiltersInput {
   [key: string]: any;
 }
 
 /**
- * 排序输入类型
+ * Sorting input type
  */
 export interface SortingInput {
   [key: string]: 'ASC' | 'DESC';
 }
 
 /**
- * Ceramic账户接口
- * 对应GraphQL schema中的CeramicAccount类型
+ * Ceramic account interface
+ * Corresponds to the CeramicAccount type in GraphQL schema
  */
 export interface CeramicAccount {
   /**
-   * 账户的全局唯一标识符(DID字符串)
+   * Globally unique identifier for the account (DID string)
    */
   id: string;
 
   /**
-   * 表示Ceramic实例是否使用该账户进行身份验证
+   * Indicates whether the Ceramic instance is authenticated with this account
    */
   isViewer: boolean;
 
   /**
-   * 关联的用户资料
+   * Associated user profile
    */
   zucityProfile?: Profile;
 
   /**
-   * 公告列表
+   * Announcement list
    */
   zucityAnnouncementList?: Connection<any>;
 
   /**
-   * 公告总数
+   * Total number of announcements
    */
   zucityAnnouncementListCount?: number;
 
   /**
-   * 应用表单列表
+   * Application form list
    */
   zucityApplicationFormList?: Connection<any>;
 
   /**
-   * 应用表单总数
+   * Total number of application forms
    */
   zucityApplicationFormListCount?: number;
 
   /**
-   * Dapp信息列表
+   * Dapp information list
    */
   zucityDappInfoList?: Connection<any>;
 
   /**
-   * Dapp信息总数
+   * Total number of Dapp information entries
    */
   zucityDappInfoListCount?: number;
 
   /**
-   * 事件列表
+   * Event list
    */
   zucityEventList?: Connection<any>;
 
   /**
-   * 事件总数
+   * Total number of events
    */
   zucityEventListCount?: number;
 
   /**
-   * 事件帖子列表
+   * Event post list
    */
   zucityEventPostList?: Connection<any>;
 
   /**
-   * 事件帖子总数
+   * Total number of event posts
    */
   zucityEventPostListCount?: number;
 
   /**
-   * 事件注册和访问列表
+   * Event registration and access list
    */
   zucityEventRegistrationAndAccessList?: Connection<any>;
 
   /**
-   * 事件注册和访问总数
+   * Total number of event registrations and accesses
    */
   zucityEventRegistrationAndAccessListCount?: number;
 
   /**
-   * 已安装应用列表
+   * Installed app list
    */
   zucityInstalledAppList?: Connection<any>;
 
   /**
-   * 已安装应用总数
+   * Total number of installed apps
    */
   zucityInstalledAppListCount?: number;
 
   /**
-   * 邀请列表
+   * Invitation list
    */
   zucityInvitationList?: Connection<any>;
 
   /**
-   * 邀请总数
+   * Total number of invitations
    */
   zucityInvitationListCount?: number;
 
   /**
-   * 权限列表
+   * Permission list
    */
   zucityPermissionList?: Connection<any>;
 
   /**
-   * 权限总数
+   * Total number of permissions
    */
   zucityPermissionListCount?: number;
 
   /**
-   * 角色列表
+   * Role list
    */
   zucityRoleList?: Connection<any>;
 
   /**
-   * 角色总数
+   * Total number of roles
    */
   zucityRoleListCount?: number;
 
   /**
-   * 角色权限列表
+   * Role permission list
    */
   zucityRolePermissionList?: Connection<any>;
 
   /**
-   * 角色权限总数
+   * Total number of role permissions
    */
   zucityRolePermissionListCount?: number;
 
   /**
-   * 会话列表
+   * Session list
    */
   zucitySessionList?: Connection<any>;
 
   /**
-   * 会话总数
+   * Total number of sessions
    */
   zucitySessionListCount?: number;
 
   /**
-   * 空间访问控制列表
+   * Space gating list
    */
   zucitySpaceGatingList?: Connection<any>;
 
   /**
-   * 空间访问控制总数
+   * Total number of space gatings
    */
   zucitySpaceGatingListCount?: number;
 
   /**
-   * 空间列表
+   * Space list
    */
   zucitySpaceList?: Connection<any>;
 
   /**
-   * 空间总数
+   * Total number of spaces
    */
   zucitySpaceListCount?: number;
 
   /**
-   * 用户角色列表
+   * User roles list
    */
   zucityUserRolesList?: Connection<any>;
 
   /**
-   * 用户角色总数
+   * Total number of user roles
    */
   zucityUserRolesListCount?: number;
 }
 
 /**
- * 简化版Ceramic账户接口
- * 用于引用账户而无需完整账户信息
+ * Simplified Ceramic account interface
+ * Used for referencing accounts without requiring the full account information
  */
 export interface CeramicAccountRef {
   id: string;

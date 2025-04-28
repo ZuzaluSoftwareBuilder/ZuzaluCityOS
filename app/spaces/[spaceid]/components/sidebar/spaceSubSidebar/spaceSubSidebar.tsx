@@ -2,6 +2,7 @@
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/sidebarHeader';
 import { TableIcon } from '@/components/icons';
+import { InstalledApp } from '@/models/dapp';
 import { dayjs } from '@/utils/dayjs';
 import { cn, Image, Skeleton } from '@heroui/react';
 import {
@@ -41,7 +42,7 @@ const SpaceSubSidebar = ({
 
   const { spaceData, isSpaceDataLoading } = useSpaceData();
 
-  const installedAppsData = useMemo(() => {
+  const installedAppsData: InstalledApp[] = useMemo(() => {
     return spaceData?.installedApps || [];
   }, [spaceData]);
 
@@ -70,16 +71,16 @@ const SpaceSubSidebar = ({
 
   const installedApps = useMemo(() => {
     const hasCalendar = installedAppsData?.some(
-      (app: any) => app?.nativeAppName === 'calendar',
+      (app) => app?.nativeAppName === 'calendar',
     );
 
     const hasZuland = installedAppsData?.some(
-      (app: any) => app?.nativeAppName === 'zuland',
+      (app) => app?.nativeAppName === 'zuland',
     );
 
     const nativeApps = installedAppsData
-      ?.filter((app: any) => app?.nativeAppName)
-      .map((app: any) => (
+      ?.filter((app) => app?.nativeAppName)
+      .map((app) => (
         <TabItem
           key={app.installedAppId}
           label={app.installedApp?.appName ?? ''}

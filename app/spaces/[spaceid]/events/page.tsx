@@ -69,7 +69,7 @@ const Home = () => {
       const fetchedEvents: Event[] = eventData.edges.map((edge) => edge.node);
       setEvents(fetchedEvents);
     } catch (error) {
-      console.error('获取事件数据失败:', error);
+      console.error('fetched events is fail:', error);
     } finally {
       setIsEventsLoading(false);
     }

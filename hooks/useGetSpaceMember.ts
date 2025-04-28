@@ -14,7 +14,7 @@ export default function useGetSpaceMember(spaceId: string) {
   });
 
   const { data: spaceData, isLoading: isLoadingOwner } = useQuery({
-    queryKey: ['space', spaceId],
+    queryKey: ['GET_SPACE_QUERY_BY_ID', spaceId],
     queryFn: async () => {
       if (!spaceId) return undefined;
       const spaceData = await spaceRepository.getById(spaceId);

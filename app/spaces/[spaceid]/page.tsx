@@ -26,7 +26,7 @@ const SpaceHomePage: React.FC = () => {
   const { adminRole, memberRole } = useBuildInRole();
   const { open, handleClose, handleOpen } = useOpenDraw();
   const { spaceRepository } = useRepositories();
-  // todo 这里涉及event，暂时用getSpacebyID
+  // todo: Temporarily using getSpacebyID since it involves events
   // const { data: spaceData, isLoading } = useGraphQL(
   //   ['getSpaceAndEvents', spaceId],
   //   GET_SPACE_AND_EVENTS_QUERY_BY_ID,
@@ -49,7 +49,7 @@ const SpaceHomePage: React.FC = () => {
   //   },
   // );
   const { data: spaceData, isLoading } = useQuery({
-    queryKey: ['GET_SUPABASE_SPACES_DATA', spaceId],
+    queryKey: ['GET_SPACE_QUERY_BY_ID', spaceId],
     queryFn: () => spaceRepository.getById(spaceId),
     select: (data: Result<Space>) => {
       if (!data?.data) {

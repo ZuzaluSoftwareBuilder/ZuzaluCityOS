@@ -22,7 +22,7 @@ export const SpaceDataProvider: React.FC<{
   const { spaceRepository } = useRepositories();
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ['space', spaceId],
+    queryKey: ['GET_SPACE_QUERY_BY_ID', spaceId],
     queryFn: async () => {
       if (!spaceId) return undefined;
       const { data, error } = await spaceRepository.getById(spaceId);
