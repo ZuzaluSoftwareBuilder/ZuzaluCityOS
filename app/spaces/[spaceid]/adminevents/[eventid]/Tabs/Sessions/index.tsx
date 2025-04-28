@@ -219,9 +219,9 @@ const Sessions = () => {
         .select('*')
         .eq('eventId', eventId);
       if (data !== null) {
-        setVenues(data);
+        setVenues(data as any);
         const locations = data.map((item) => item.name);
-        setLocations(locations);
+        setLocations(locations as string[]);
       }
     } catch (err) {
       console.log(err);
@@ -235,7 +235,7 @@ const Sessions = () => {
         .select('*')
         .eq('eventId', eventId);
       if (data) {
-        setSessions(data);
+        setSessions(data as any);
       }
     } catch (err) {
       console.log(err);
@@ -371,7 +371,7 @@ const Sessions = () => {
         .select('*')
         .eq('location', sessionLocation);
       if (data) {
-        setBookedSessions(data);
+        setBookedSessions(data as any);
       }
     } catch (err) {
       console.log(err);

@@ -36,7 +36,7 @@ const createUrl = async (
   }
   const { data, error } = await supabase.from('url').insert({
     name,
-    hash,
+    hash: hash.toString(),
     ceramicId,
     type,
   });
@@ -58,7 +58,7 @@ const createUrlWhenEdit = async (
   let hash = url.data ? Number(url.data.hash) + 1 : 0;
   const { data, error } = await supabase.from('url').insert({
     name,
-    hash,
+    hash: hash.toString(),
     ceramicId,
     type,
   });

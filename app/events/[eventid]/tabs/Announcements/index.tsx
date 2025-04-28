@@ -96,7 +96,7 @@ const Announcements: React.FC<IAbout> = ({ eventData, setVerify, canEdit }) => {
 
   const tags = useMemo(() => {
     const tagsData = postsData?.data
-      ?.map((post) => post.tags.split(','))
+      ?.map((post) => post.tags?.split(',') ?? [])
       .flat();
     const set = new Set(tagsData);
     if (set.size === 0) return [];
@@ -105,7 +105,7 @@ const Announcements: React.FC<IAbout> = ({ eventData, setVerify, canEdit }) => {
 
   const filteredPosts = useMemo(() => {
     if (activeTag === 'All') return postsData?.data;
-    return postsData?.data?.filter((post) => post.tags.includes(activeTag));
+    return postsData?.data?.filter((post) => post.tags?.includes(activeTag));
   }, [activeTag, postsData]);
 
   const getLocation = async () => {
@@ -115,7 +115,7 @@ const Announcements: React.FC<IAbout> = ({ eventData, setVerify, canEdit }) => {
         .select('*')
         .eq('eventId', eventId);
       if (data !== null) {
-        setLocation(data[0].name);
+        setLocation(data[0].name ?? '');
       }
     } catch (err) {
       console.log(err);
@@ -434,7 +434,7 @@ const Announcements: React.FC<IAbout> = ({ eventData, setVerify, canEdit }) => {
                     />
                   ))
                 : filteredPosts?.map((post) => {
-                    return <PostCard post={post} key={post.id} />;
+                    return <PostCard post={post as any} key={post.id} />;
                   })}
             </Stack>
             {isMobile && eventData.regAndAccess?.edges[0] ? (

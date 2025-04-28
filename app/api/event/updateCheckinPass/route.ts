@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       console.error('Error getting private key:', error);
       return new NextResponse('Error getting private key', { status: 500 });
     }
-    const seed = base64ToUint8Array(data.privateKey);
+    const seed = base64ToUint8Array(data.privateKey!);
     const provider = new Ed25519Provider(seed);
     const did = new DID({ provider, resolver: getResolver() });
     await did.authenticate();

@@ -151,27 +151,29 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           .single();
 
         if (profile) {
-          safeSetLocalStorage(StorageKey_Username, profile.username);
+          safeSetLocalStorage(StorageKey_Username, profile.username ?? '');
           setUserState((prev) => ({
             ...prev,
             profile: {
               id: profile.user_id,
-              username: profile.username,
-              avatar: profile.avatar,
+              username: profile.username ?? '',
+              avatar: profile.avatar ?? undefined,
               address: profile.address,
               /**
                * pay attention to this field, it's the user_id
                */
               did: profile.user_id,
             },
-            username: profile.username,
+            username: profile.username ?? '',
             newUser: false,
           }));
           updateAuthState('authenticated');
           return {
             ...profile,
             id: profile.user_id,
-            username: profile.username,
+            did: profile.user_id,
+            username: profile.username ?? '',
+            avatar: profile.avatar ?? undefined,
           };
         } else {
           safeRemoveLocalStorage(StorageKey_Username);

@@ -180,7 +180,7 @@ const Home = () => {
       const { data, error } = await supabase
         .from('sessions')
         .update({ isPublic })
-        .eq('id', session?.id);
+        .eq('id', session?.id ?? '');
 
       if (error) throw error;
       return data;
@@ -290,10 +290,10 @@ const Home = () => {
         .eq('uuid', params.sessionid?.toString() ?? '')
         .single();
       if (sessionData) {
-        setSession(sessionData);
-        setSessionName(sessionData.title);
-        setSessionTrack(sessionData.track);
-        setSessionTags(sessionData.tags);
+        setSession(sessionData as any);
+        setSessionName(sessionData.title ?? '');
+        setSessionTrack(sessionData.track ?? '');
+        setSessionTags(sessionData.tags as any);
         sessionData.tags &&
           setIntialSessionTags(
             sessionData.tags.split(',').map((item: string) => ({
@@ -301,11 +301,11 @@ const Home = () => {
               label: item.trim(),
             })),
           );
-        setSessionType(sessionData.type);
-        setSessionExperienceLevel(sessionData.experience_level);
-        setSessionLiveStreamLink(sessionData.liveStreamLink);
-        setSessionVideoURL(sessionData.video_url);
-        setSessionRecordingLink(sessionData.recording_link);
+        setSessionType(sessionData.type ?? '');
+        setSessionExperienceLevel(sessionData.experience_level ?? '');
+        setSessionLiveStreamLink(sessionData.liveStreamLink ?? '');
+        setSessionVideoURL(sessionData.video_url ?? '');
+        setSessionRecordingLink(sessionData.recording_link ?? '');
         const sessionDate = dayjs(sessionData.startTime).startOf('day');
         setSessionDate(sessionDate);
         const sessionStartTime = dayjs(sessionDate)
@@ -318,8 +318,8 @@ const Home = () => {
           .hour(dayjs(sessionData.endTime).tz(eventData?.timezone).hour())
           .minute(dayjs(sessionData.endTime).tz(eventData?.timezone).minute());
         setSessionEndTime(sessionEndTime);
-        setSessionOrganizers(JSON.parse(sessionData.organizers));
-        setSessionSpeakers(JSON.parse(sessionData.speakers));
+        setSessionOrganizers(JSON.parse(sessionData.organizers ?? '[]'));
+        setSessionSpeakers(JSON.parse(sessionData.speakers ?? '[]'));
         sessionDescriptionEditorStore.setValue(
           JSON.stringify(sessionData.description)
             .slice(1, -1)
@@ -327,12 +327,14 @@ const Home = () => {
             .replace(/\\"/g, '"'),
         );
         const isCustomLocation =
-          sessionData.location.startsWith('Custom Location:');
-        setSessionLocation(isCustomLocation ? 'Custom' : sessionData.location);
+          sessionData.location?.startsWith('Custom Location:');
+        setSessionLocation(
+          isCustomLocation ? 'Custom' : (sessionData.location ?? ''),
+        );
 
         if (isCustomLocation) {
           setCustomLocation(
-            sessionData.location.replace('Custom Location: ', ''),
+            sessionData.location?.replace('Custom Location: ', '') ?? '',
           );
         }
 
@@ -342,7 +344,9 @@ const Home = () => {
         }
         if (sessionData.format === 'person' && !isCustomLocation) {
           setSelectedRoom(
-            venueData?.filter((item) => item.name === sessionData.location)[0],
+            venueData?.filter(
+              (item) => item.name === sessionData.location,
+            )[0] as any,
           );
           const dayName = sessionDate.format('dddd');
           const selectedDay = sessionDate.format('YYYY-MM-DD');
@@ -351,13 +355,13 @@ const Home = () => {
           }
           const available = JSON.parse(
             venueData?.filter((item) => item.name === sessionData.location)[0]
-              .bookings,
+              .bookings ?? '',
           );
           setAvailableTimeSlots(available[dayName.toLowerCase()] || []);
           const { data: bookedSessions } = await supabase
             .from('sessions')
             .select('*')
-            .eq('location', sessionData.location);
+            .eq('location', sessionData?.location ?? '');
           if (bookedSessions) {
             const bookedSessionsDay = bookedSessions.filter((session) => {
               const sessionStartDay = dayjs(session.startTime).format(
@@ -369,33 +373,33 @@ const Home = () => {
               );
             });
 
-            setBookedSessionsForDay(bookedSessionsDay);
+            setBookedSessionsForDay(bookedSessionsDay as any);
           }
         }
       }
       const { data: rsvpData } = await supabase
         .from('rsvp')
         .select('*')
-        .eq('sessionID', sessionData.id)
-        .eq('userDID', ceramic?.did?.parent.toString().toLowerCase());
+        .eq('sessionID', sessionData?.id ?? '')
+        .eq('userDID', ceramic?.did?.parent.toString().toLowerCase() ?? '');
       if (rsvpData && rsvpData.length > 0) {
         setIsRsvped(true);
       }
       const { data: locationData, error: locationError } = await supabase
         .from('venues')
         .select('avatar')
-        .eq('name', sessionData.location)
-        .eq('eventId', sessionData.eventId)
+        .eq('name', sessionData?.location ?? '')
+        .eq('eventId', sessionData?.eventId ?? '')
         .single();
       if (locationError) {
         console.error('Error fetching data:', locationError);
       }
-      setLocationAvatar(locationData?.avatar);
+      setLocationAvatar(locationData?.avatar ?? '');
       const { data: deleteData, error: deleteError } = await supabase
         .from('sessions')
         .select('*')
-        .eq('creatorDID', ceramic?.did?.parent.toString().toLowerCase())
-        .eq('id', sessionData.id)
+        .eq('creatorDID', ceramic?.did?.parent.toString().toLowerCase() ?? '')
+        .eq('id', sessionData?.id ?? '')
         .single();
       if (deleteError) {
         console.error('Error fetching data:', deleteError);
@@ -411,8 +415,8 @@ const Home = () => {
     setIsLoading(true);
     try {
       const { error: rsvpError } = await supabase.from('rsvp').insert({
-        userDID: ceramic?.did?.parent.toString().toLowerCase(),
-        sessionID: sessionID,
+        userDID: ceramic?.did?.parent.toString().toLowerCase() ?? '',
+        sessionID: parseInt(sessionID),
       });
 
       if (rsvpError) {
@@ -481,7 +485,7 @@ const Home = () => {
           return sessionStartDay === selectedDay;
         });
 
-        setBookedSessionsForDay(bookedSessionsDay);
+        setBookedSessionsForDay(bookedSessionsDay as any);
       }
     }
     setSessionDate(date);
@@ -635,7 +639,7 @@ const Home = () => {
         .select('*')
         .eq('location', sessionLocation);
       if (data) {
-        setBookedSessions(data);
+        setBookedSessions(data as any);
         return data;
       }
     } catch (err) {
@@ -649,8 +653,8 @@ const Home = () => {
         .select('*')
         .eq('eventId', eventId);
       if (data !== null) {
-        setVenues(data);
-        const locations = data.map((item) => item.name);
+        setVenues(data as any);
+        const locations = data.map((item) => item.name ?? '');
         setLocations(locations);
       }
     } catch (err) {

@@ -33,6 +33,8 @@ export class SupaProfileRepository extends BaseProfileRepository {
       ...profile,
       id: profile.user_id,
       did: profile.user_id,
+      username: profile.username ?? '',
+      avatar: profile.avatar ?? undefined,
     }));
   }
 
