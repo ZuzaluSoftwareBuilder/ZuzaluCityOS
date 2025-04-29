@@ -220,6 +220,47 @@ export type Database = {
         };
         Relationships: [];
       };
+      calendars: {
+        Row: {
+          category: string[];
+          created_at: string;
+          description: string;
+          gated: boolean;
+          id: string;
+          name: string;
+          role_ids: string[] | null;
+          space_id: string;
+        };
+        Insert: {
+          category: string[];
+          created_at?: string;
+          description: string;
+          gated: boolean;
+          id?: string;
+          name: string;
+          role_ids?: string[] | null;
+          space_id: string;
+        };
+        Update: {
+          category?: string[];
+          created_at?: string;
+          description?: string;
+          gated?: boolean;
+          id?: string;
+          name?: string;
+          role_ids?: string[] | null;
+          space_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'calendars_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       dapp_infos: {
         Row: {
           app_logo_url: string;
