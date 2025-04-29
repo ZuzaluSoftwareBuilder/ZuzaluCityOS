@@ -238,7 +238,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
         <Button
           type="button"
           size="md"
-          className="w-[120px] gap-[10px] bg-white/[0.05]"
+          className="w-[120px] gap-[10px] bg-white/[0.05]  mobile:w-[100px]"
           startContent={<CaretLeft size={20} />}
           onClick={onBack}
         >
@@ -248,7 +248,7 @@ const LinksContent: React.FC<LinksContentProps> = ({
           type="button"
           color="submit"
           size="md"
-          className="w-[120px]"
+          className="w-[120px]  mobile:w-[100px]"
           endContent={<CaretRight size={20} />}
           isDisabled={!isValid}
           onClick={handleSubmit(onSubmitHandler)}

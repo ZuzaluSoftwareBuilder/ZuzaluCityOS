@@ -39,6 +39,7 @@ import {
   ProfileFormData,
   ProfilValidationSchema,
 } from './components/ProfileContent';
+import StorageOption from './components/StorageOption';
 
 const DEFAULT_AVATAR =
   'https://nftstorage.link/ipfs/bafybeifcplhgttja4hoj5vx4u3x7ucft34acdpiaf62fsqrobesg5bdsqe';
@@ -53,6 +54,7 @@ const Create = () => {
     [TabContentEnum.Categories]: TabStatus.Inactive,
     [TabContentEnum.Links]: TabStatus.Inactive,
     [TabContentEnum.Access]: TabStatus.Inactive,
+    [TabContentEnum.Stoarge]: TabStatus.Inactive,
   });
   const [isSubmit, setIsSubmit] = useState(false);
   const router = useRouter();
@@ -145,6 +147,19 @@ const Create = () => {
       };
     });
     setSelectedTab(TabContentEnum.Access);
+  };
+  const handleAccessRuleSubmit = async () => {
+    setTabStatuses((prev) => {
+      return {
+        ...prev,
+        [TabContentEnum.Access]: TabStatus.Finished,
+        [TabContentEnum.Stoarge]:
+          prev[TabContentEnum.Stoarge] === TabStatus.Inactive
+            ? TabStatus.Active
+            : prev[TabContentEnum.Stoarge],
+      };
+    });
+    setSelectedTab(TabContentEnum.Stoarge);
   };
 
   const validateFormStep = async (
@@ -245,7 +260,7 @@ const Create = () => {
       throw new Error('Error creating space');
     }
   };
-  const handleAccessRuleSubmit = async () => {
+  const handleStorageSumbit = async () => {
     try {
       setIsSubmit(true);
       const validations = await Promise.all([
@@ -297,6 +312,7 @@ const Create = () => {
   const handleCategoriesBack = () => handleBack(TabContentEnum.Profile);
   const handleLinksBack = () => handleBack(TabContentEnum.Categories);
   const handleAccessRuleBack = () => handleBack(TabContentEnum.Links);
+  const handleStorageBack = () => handleBack(TabContentEnum.Access);
 
   const renderTabContent = () => {
     return (
@@ -326,11 +342,17 @@ const Create = () => {
         </div>
         <div className={cn({ hidden: selectedTab !== TabContentEnum.Access })}>
           <AccessRule
-            isSubmit={isSubmit}
             onBack={handleAccessRuleBack}
             onSubmit={handleAccessRuleSubmit}
             isGated={isGated}
             onGatedChange={setIsGated}
+          />
+        </div>
+        <div className={cn({ hidden: selectedTab !== TabContentEnum.Stoarge })}>
+          <StorageOption
+            isSubmit={isSubmit}
+            onBack={handleStorageBack}
+            onSubmit={handleStorageSumbit}
           />
         </div>
       </>
