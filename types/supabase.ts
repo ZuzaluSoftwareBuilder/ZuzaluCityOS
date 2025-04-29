@@ -224,7 +224,6 @@ export type Database = {
         Row: {
           category: string[];
           created_at: string;
-          description: string;
           gated: boolean;
           id: string;
           name: string;
@@ -234,7 +233,6 @@ export type Database = {
         Insert: {
           category: string[];
           created_at?: string;
-          description: string;
           gated: boolean;
           id?: string;
           name: string;
@@ -244,7 +242,6 @@ export type Database = {
         Update: {
           category?: string[];
           created_at?: string;
-          description?: string;
           gated?: boolean;
           id?: string;
           name?: string;
