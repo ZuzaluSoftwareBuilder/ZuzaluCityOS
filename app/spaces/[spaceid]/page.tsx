@@ -8,7 +8,6 @@ import {
   DrawerBody,
   DrawerContent,
 } from '@/components/base';
-import { useBuildInRole } from '@/context/BuildInRoleContext';
 import { useRepositories } from '@/context/RepositoryContext';
 import useOpenDraw from '@/hooks/useOpenDraw';
 import { Result } from '@/models/base';
@@ -23,31 +22,8 @@ import SpaceSection from './components/home/spaceSection';
 const SpaceHomePage: React.FC = () => {
   const params = useParams();
   const spaceId = params?.spaceid?.toString() ?? '';
-  const { adminRole, memberRole } = useBuildInRole();
   const { open, handleClose, handleOpen } = useOpenDraw();
   const { spaceRepository } = useRepositories();
-  // todo: Temporarily using getSpacebyID since it involves events
-  // const { data: spaceData, isLoading } = useGraphQL(
-  //   ['getSpaceAndEvents', spaceId],
-  //   GET_SPACE_AND_EVENTS_QUERY_BY_ID,
-  //   {
-  //     id: spaceId,
-  //     first: 100,
-  //     userRolesFilters: {
-  //       where: {
-  //         roleId: {
-  //           in: [adminRole, memberRole].map((role) => role?.id ?? ''),
-  //         },
-  //       },
-  //     },
-  //   },
-  //   {
-  //     select: (data) => {
-  //       return data?.data?.node as Space;
-  //     },
-  //     enabled: !!adminRole && !!memberRole,
-  //   },
-  // );
   const { data: spaceData, isLoading } = useQuery({
     queryKey: ['GET_SPACE_QUERY_BY_ID', spaceId],
     queryFn: () => spaceRepository.getById(spaceId),

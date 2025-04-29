@@ -23,13 +23,12 @@ export const SpaceDataProvider: React.FC<{
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['GET_SPACE_QUERY_BY_ID', spaceId],
-    queryFn: async () => {
-      if (!spaceId) return undefined;
-      const { data, error } = await spaceRepository.getById(spaceId);
-      if (error) {
+    queryFn: () => spaceRepository.getById(spaceId),
+    select: (data) => {
+      if (!data?.data) {
         return undefined;
       }
-      return data;
+      return data.data;
     },
     enabled: !!spaceId,
   });
