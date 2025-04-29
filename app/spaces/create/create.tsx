@@ -273,11 +273,6 @@ const Create = () => {
       const content = transformFormData();
       const spaceId = await createSpace(content);
       if (spaceId) {
-        addToast({
-          title: 'Space created successfully',
-          description: `Space created successfully`,
-          color: 'success',
-        });
         router.push(`/spaces/${spaceId}`);
       }
     } catch (error) {
@@ -376,35 +371,37 @@ const Create = () => {
 
         <div className="w-[320px] pt-4 tablet:hidden mobile:hidden">
           <SpaceCard
-            data={{
-              id: 'preview',
-              name: spaceName || 'Community Name',
-              tagline: spaceTagline || 'Community tagline',
-              category: category,
-              description: '',
-              tags: tags.map((i) => ({ tag: i })),
-              banner: spaceBanner,
-              avatar: spaceAvatar,
-              owner: {
-                id: '',
-                username: '',
-                avatar: '',
-                address: '',
-                did: '',
-              },
-              author: {
-                id: '',
-                username: '',
-                avatar: '',
-                address: '',
-                did: '',
-              },
-              userRoles: [],
-              installedApps: [],
-              createdAt: '',
-              updatedAt: '',
-              gated: '0',
-            }}
+            data={
+              {
+                id: 'preview',
+                name: spaceName || 'Community Name',
+                tagline: spaceTagline || 'Community tagline',
+                category: category,
+                description: '',
+                tags: tags.map((i) => ({ tag: i })),
+                banner: spaceBanner,
+                avatar: spaceAvatar,
+                owner: {
+                  id: '',
+                  username: '',
+                  avatar: '',
+                  address: '',
+                  did: '',
+                },
+                author: {
+                  id: '',
+                  username: '',
+                  avatar: '',
+                  address: '',
+                  did: '',
+                },
+                userRoles: [],
+                installedApps: [],
+                createdAt: '',
+                updatedAt: '',
+                gated: '0',
+              } as any
+            }
             isJoined={false}
             isFollowed={false}
             autoWidth={true}
