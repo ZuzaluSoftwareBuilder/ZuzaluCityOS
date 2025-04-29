@@ -12,7 +12,6 @@ interface AccessRuleProps {
   onSubmit: () => void;
   isGated: boolean;
   onGatedChange: (isGated: boolean) => void;
-  isSubmit: boolean;
 }
 
 export default function AccessRule({
@@ -20,7 +19,6 @@ export default function AccessRule({
   onSubmit,
   isGated,
   onGatedChange,
-  isSubmit,
 }: AccessRuleProps) {
   return (
     <div className="flex flex-col justify-center gap-[30px] mobile:gap-[20px]">
@@ -123,9 +121,8 @@ export default function AccessRule({
           size="md"
           className="w-[120px] mobile:w-[100px]"
           endContent={<CaretRight className="size-[20px] mobile:size-[16px]" />}
-          isLoading={isSubmit}
         >
-          Create
+          Next
         </Button>
       </div>
     </div>
