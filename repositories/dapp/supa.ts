@@ -171,7 +171,10 @@ export class SupaDappRepository extends BaseDappRepository {
         return this.createResponse(null, error);
       }
 
-      if (!installedApp || !installedApp.dapp) {
+      if (
+        !installedApp ||
+        (!installedApp.dapp && !installedApp.native_app_name)
+      ) {
         return this.createResponse(null, new Error('Failed to install dApp'));
       }
 
@@ -232,8 +235,11 @@ export class SupaDappRepository extends BaseDappRepository {
         return this.createResponse(null, deleteError);
       }
 
-      if (!installedApp || !installedApp.dapp) {
-        return this.createResponse(null, new Error('Failed to uninstall dApp'));
+      if (
+        !installedApp ||
+        (!installedApp.dapp && !installedApp.native_app_name)
+      ) {
+        return this.createResponse(null, new Error('Failed to install dApp'));
       }
 
       const result = this.transformInstalledApp(installedApp);

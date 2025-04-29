@@ -58,7 +58,7 @@ const config = {
         dark: {
           colors: {
             error: '#FF5E5E',
-            success: '#55D7A9',
+            // success: '#55D7A9',
             // heroUI
             secondary: {
               DEFAULT: 'rgba(255, 255, 255, 0.05)',
