@@ -1,11 +1,10 @@
 import { SpaceCard, SpaceCardSkeleton } from '@/components/biz';
 import { BuildingsIcon } from '@/components/icons';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
+import { useRepositories } from '@/context/RepositoryContext';
 import { useMediaQuery } from '@/hooks';
-import { useGraphQL } from '@/hooks/useGraphQL';
 import useUserSpace from '@/hooks/useUserSpace';
-import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
-import { Space } from '@/types';
+import { Space } from '@/models/space';
 import dayjs from '@/utils/dayjs';
 import { supabase } from '@/utils/supabase/client';
 import { ScrollShadow } from '@heroui/react';
@@ -17,34 +16,25 @@ import CommonHeader from './CommonHeader';
 export default function Communities() {
   const router = useRouter();
   const { isMobile } = useMediaQuery();
+  const { spaceRepository } = useRepositories();
 
   const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
   const { adminRole, memberRole, isRoleLoading } = useBuildInRole();
 
-  const { data: spacesData, isLoading } = useGraphQL(
-    ['GET_ALL_SPACE_AND_MEMBER_QUERY'],
-    GET_ALL_SPACE_AND_MEMBER_QUERY,
-    {
-      first: 100,
-      userRolesFilters: {
-        where: {
-          roleId: {
-            in: [adminRole, memberRole].map((role) => role?.id ?? ''),
-          },
-        },
-      },
+  const { data: spacesData, isLoading } = useQuery({
+    queryKey: ['GET_ALL_SPACE_AND_MEMBER_QUERY'],
+    queryFn: () => {
+      return spaceRepository.getAllAndMembers(
+        [adminRole, memberRole].map((role) => role?.id ?? ''),
+      );
     },
-    {
-      select: (data) => {
-        if (!data?.data?.zucitySpaceIndex?.edges) {
-          return [];
-        }
-        return data.data.zucitySpaceIndex.edges.map(
-          (edge) => edge!.node,
-        ) as Space[];
-      },
+    select: (data) => {
+      if (data.error) {
+        return [];
+      }
+      return data.data;
     },
-  );
+  });
 
   const { data: legacySpacesData, isLoading: isLegacyLoading } = useQuery({
     queryKey: ['GET_LEGACY_SPACES_DATA'],

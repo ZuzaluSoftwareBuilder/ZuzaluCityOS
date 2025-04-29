@@ -2,11 +2,10 @@
 import { SpaceCard } from '@/components/cards';
 import { SpaceCardSkeleton } from '@/components/cards/SpaceCard';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
-import { useGraphQL } from '@/hooks/useGraphQL';
+import { useRepositories } from '@/context/RepositoryContext';
 import useUserSpace from '@/hooks/useUserSpace';
-import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
-import { Space } from '@/types';
 import { Grid, Stack, useMediaQuery, useTheme } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
 import { Sidebar } from 'components/layout';
 import { SpaceHeader } from './components';
 
@@ -17,31 +16,22 @@ const Home = () => {
   const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
 
   const { adminRole, memberRole } = useBuildInRole();
-  const { data: spaces, isLoading } = useGraphQL(
-    ['GET_ALL_SPACE_AND_MEMBER_QUERY'],
-    GET_ALL_SPACE_AND_MEMBER_QUERY,
-    {
-      first: 100,
-      userRolesFilters: {
-        where: {
-          roleId: {
-            in: [adminRole, memberRole].map((role) => role?.id ?? ''),
-          },
-        },
-      },
+  const { spaceRepository } = useRepositories();
+  const { data: spaces, isLoading } = useQuery({
+    queryKey: ['GET_ALL_SPACE_AND_MEMBER_QUERY'],
+    queryFn: () => {
+      return spaceRepository.getAllAndMembers(
+        [adminRole, memberRole].map((role) => role?.id ?? ''),
+      );
     },
-    {
-      select: (data) => {
-        if (!data?.data?.zucitySpaceIndex?.edges) {
-          return [];
-        }
-        return data.data.zucitySpaceIndex.edges.map(
-          (edge) => edge!.node,
-        ) as Space[];
-      },
-      enabled: !!adminRole && !!memberRole,
+    select: (data) => {
+      if (data.error) {
+        return [];
+      }
+      return data.data;
     },
-  );
+    enabled: !!adminRole && !!memberRole,
+  });
 
   return (
     <Stack

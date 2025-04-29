@@ -1,11 +1,13 @@
 import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 import useOpenDraw from '@/hooks/useOpenDraw';
+import { Profile } from '@/models/profile';
+import { RolePermission, UserRole } from '@/models/role';
 import {
   addMembersToRole,
   removeMembersFromRole,
   updateMembersRole,
 } from '@/services/member';
-import { PermissionName, Profile, RolePermission, UserRole } from '@/types';
+import { PermissionName } from '@/types';
 import { getWalletAddressFromProfile } from '@/utils/profile';
 import { addToast } from '@heroui/react';
 import { useParams } from 'next/navigation';
@@ -40,7 +42,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
   isLoading,
 }) => {
   const spaceId = useParams()?.spaceid;
-  const { checkPermission, isOwner, isAdmin, isMember } = useSpacePermissions();
+  const { checkPermission } = useSpacePermissions();
   const { refetchMembers } = useGetSpaceMember(spaceId as string);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -68,7 +70,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
       const membersWithoutRoles: string[] = [];
       memberIds.forEach((memberId) => {
         const existingMember = members.find(
-          (member) => member.userId.zucityProfile?.author?.id === memberId,
+          (member) => member.userId?.id === memberId,
         );
 
         if (existingMember?.roleId) {
@@ -181,16 +183,16 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
     const formatedMembers = members
       .map((member) => {
         let roleId = member.roleId;
-        const profile = member.userId.zucityProfile;
+        const profile = member.userId;
         if (!profile) return null;
-        const did = profile.author?.id;
+        const did = profile?.id;
         return {
           id: did,
           name: profile.username,
           avatar: profile.avatar,
           address: getWalletAddressFromProfile(profile),
           roleId,
-          did: profile.author?.id,
+          did,
         } as IMemberItem;
       })
       .filter((v) => !!v)
@@ -199,12 +201,12 @@ const MemberManagement: React.FC<MemberManagementProps> = ({
       roleName === 'Owner'
         ? [
             {
-              id: owner?.author?.id,
+              id: owner?.id,
               name: owner?.username,
               avatar: owner?.avatar,
               address: getWalletAddressFromProfile(owner),
               roleId: null,
-              did: owner?.author?.id,
+              did: owner?.id,
             } as IMemberItem,
           ]
         : formatedMembers;

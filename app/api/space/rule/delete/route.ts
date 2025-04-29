@@ -1,7 +1,7 @@
-import { DELETE_SPACE_GATING_RULE } from '@/services/graphql/spaceGating';
+import { getSpaceGatingRepository } from '@/repositories/spaceGating';
 import { PermissionName } from '@/types';
 import { withSessionValidation } from '@/utils/authMiddleware';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -35,14 +35,9 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     if (error) {
       return createErrorResponse('Error getting private key', 500);
     }
-    const result = await executeQuery(DELETE_SPACE_GATING_RULE, {
-      input: {
-        id: ruleId,
-        shouldIndex: false,
-      },
-    });
+    const result = await getSpaceGatingRepository().delete(ruleId);
 
-    if (result.errors) {
+    if (result.error) {
       return createErrorResponse('Failed to delete rule', 500);
     }
 

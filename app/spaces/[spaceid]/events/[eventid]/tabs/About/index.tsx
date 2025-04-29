@@ -163,7 +163,7 @@ const About: React.FC<IAbout> = ({ eventData, setEventData, setVerify }) => {
         .select('*')
         .eq('eventId', eventId);
       if (data !== null) {
-        setEventLocation(data[0].name);
+        setEventLocation(data[0].name ?? '');
       }
     } catch (err) {
       console.log(err);

@@ -1,7 +1,7 @@
-import { UPDATE_SPACE_GATING_RULE } from '@/services/graphql/spaceGating';
+import { getSpaceGatingRepository } from '@/repositories/spaceGating';
 import { PermissionName } from '@/types';
 import { withSessionValidation } from '@/utils/authMiddleware';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -13,7 +13,7 @@ const updateRuleSchema = z.object({
   id: z.string().min(1, 'Resource ID is required'),
   ruleId: z.string().min(1, 'Rule ID is required'),
   gatingStatus: z.string().optional(),
-  poapsId: z.array(z.number()).nullable().optional(),
+  poapsId: z.array(z.any()).nullable().optional(),
   zuPassInfo: z
     .object({
       registration: z.string().min(1, 'Registration is required'),
@@ -28,6 +28,7 @@ export const POST = withSessionValidation(async (request, sessionData) => {
   try {
     const body = await request.json();
     const validationResult = updateRuleSchema.safeParse(body);
+    console.log(validationResult.error);
     if (!validationResult.success) {
       return createErrorResponse(
         'Invalid request parameters',
@@ -47,22 +48,16 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Error getting private key', 500);
     }
     const updateRule = !!poapsId || !!zuPassInfo;
-    const result = await executeQuery(UPDATE_SPACE_GATING_RULE, {
-      input: {
-        id: ruleId,
-        content: {
-          ...(updateRule && {
-            poapsId: null,
-            zuPassInfo: null,
-          }),
-          ...(poapsId && { poapsId: poapsId.map((id) => ({ poapId: id })) }),
-          ...(zuPassInfo && { zuPassInfo }),
-          ...(gatingStatus && { gatingStatus }),
-        },
-      },
+    const result = await getSpaceGatingRepository().update(ruleId, {
+      ...(updateRule && {
+        poapsId: undefined,
+        zuPassInfo: undefined,
+      }),
+      ...(poapsId && { poapsId }),
+      ...(zuPassInfo && { zuPassInfo }),
+      ...(gatingStatus && { gatingStatus }),
     });
-
-    if (result.errors) {
+    if (result.error) {
       return createErrorResponse('Failed to update rule', 500);
     }
 

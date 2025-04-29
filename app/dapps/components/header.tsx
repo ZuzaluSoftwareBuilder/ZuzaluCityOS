@@ -2,7 +2,6 @@ import { ZuButton } from '@/components/core';
 import { DIcon, HourglassHighIcon, PlusCircleIcon } from '@/components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useCallback } from 'react';
 
@@ -58,24 +57,7 @@ const AddButton = ({
 export default function Header({ onAdd }: { onAdd: () => void }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { isAuthenticated, composeClient, ceramic, showAuthPrompt } =
-    useCeramicContext();
-
-  const { data: hasSpace } = useQuery({
-    queryKey: ['getSpace', ceramic.did?.parent],
-    enabled: isAuthenticated,
-    queryFn: async () => {
-      const response: any = await composeClient.executeQuery(`
-      query MyQuery {
-        viewer {
-          zucitySpaceListCount
-        }
-      }
-    `);
-
-      return response?.data?.viewer?.zucitySpaceListCount > 0;
-    },
-  });
+  const { isAuthenticated, showAuthPrompt } = useCeramicContext();
 
   const handleClick = useCallback(() => {
     if (!isAuthenticated) {

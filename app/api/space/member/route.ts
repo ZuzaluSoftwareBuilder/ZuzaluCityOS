@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const { data, error } = await supabase
-      .from('user_role')
+      .from('user_roles')
       .select(
         `
         *,

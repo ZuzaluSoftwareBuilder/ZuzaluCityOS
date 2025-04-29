@@ -1,9 +1,8 @@
-import { CHECK_EXISTING_ROLE_QUERY } from '@/services/graphql/role';
-import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
-import { Permission, RolePermission, Space, UserRole } from '@/types';
-import { DIDSession } from 'did-session';
+import supabaseAdmin from '@/app/api/utils/supabase';
+import { getRoleRepository } from '@/repositories/role';
+import { getSpaceRepository } from '@/repositories/space';
+import { Permission, RolePermission } from '@/types';
 import { NextRequest, NextResponse } from 'next/server';
-import { executeQuery } from './ceramic';
 import { supabase } from './supabase/client';
 
 export type SessionCheckResult = {
@@ -22,17 +21,10 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
       .get('Authorization')
       ?.replace('Bearer ', '');
 
-    let didSession;
-    if (sessionStr) {
-      try {
-        didSession = (await DIDSession.fromSession(sessionStr)) as any;
-      } catch (error) {
-        return { isValid: false, error: 'Invalid DID session format' };
-      }
-    }
+    const { data: user } = await supabaseAdmin.auth.getUser(sessionStr);
 
-    if (didSession && didSession.isExpired) {
-      return { isValid: false, error: 'Unauthorized: DID session expired' };
+    if (!user) {
+      return { isValid: false, error: 'Unauthorized: user not found' };
     }
 
     const body = await request.json();
@@ -45,7 +37,7 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
       };
     }
 
-    const operatorId = didSession.did._parentId;
+    const operatorId = user.user?.id;
     const { data: rolePermissionResult } = await supabase
       .from('role_permission')
       .select(
@@ -62,38 +54,29 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
         `and(resource.eq.${resource},resource_id.eq.${id}),and(resource.is.null,resource_id.is.null)`,
       );
     if (resource === 'space') {
-      const spaceResult = await executeQuery(GET_SPACE_QUERY_BY_ID, {
-        id,
-      });
+      const spaceResult = await getSpaceRepository().getById(id);
 
-      const space = spaceResult.data?.node as Space;
-      const isOwner = space.owner?.zucityProfile.author?.id === operatorId;
+      const space = spaceResult.data;
+      const isOwner = space?.owner?.id === operatorId;
       if (isOwner) {
         return {
           isValid: true,
           operatorId,
           isOwner: true,
-          role: rolePermissionResult as RolePermission[],
+          role: rolePermissionResult as unknown as RolePermission[],
         };
       }
     }
 
     const [permissionResult, userRolesResult] = await Promise.all([
       supabase.from('permission').select('*'),
-      executeQuery(CHECK_EXISTING_ROLE_QUERY, {
-        userId: operatorId,
-        resourceId: id,
-        resource: resource,
-      }),
+      getRoleRepository().getUserRole(id, resource, operatorId!),
     ]);
 
-    const userRolesData =
-      userRolesResult.data?.zucityUserRolesIndex?.edges?.map(
-        (edge) => edge?.node,
-      ) as UserRole[];
+    const userRolesData = userRolesResult.data || [];
 
     const operatorRole = userRolesData.find(
-      (item) => item.userId.zucityProfile.author?.id === operatorId,
+      (item) => item.userId.id === operatorId,
     );
 
     if (!operatorRole) {
@@ -105,10 +88,10 @@ async function validateSession(request: Request): Promise<SessionCheckResult> {
       operatorId,
       isOwner: false,
       permission: permissionResult.data as Permission[],
-      role: rolePermissionResult as RolePermission[],
+      role: rolePermissionResult as unknown as RolePermission[],
       operatorRole: rolePermissionResult?.find(
-        (role) => role.role.id === operatorRole.roleId,
-      ),
+        (role) => role.role?.id === operatorRole.roleId,
+      ) as unknown as RolePermission,
     };
   } catch (error) {
     console.error('Error validating session:', error);
@@ -130,7 +113,6 @@ export function withSessionValidation(
     if (!isValid) {
       return NextResponse.json({ error }, { status: 401 });
     }
-
     return handler(request, { ...rest });
   };
 }

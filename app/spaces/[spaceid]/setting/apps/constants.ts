@@ -1,4 +1,4 @@
-import { Dapp } from '@/types';
+import { Dapp } from '@/models/dapp';
 
 export interface NativeDApp
   extends Pick<

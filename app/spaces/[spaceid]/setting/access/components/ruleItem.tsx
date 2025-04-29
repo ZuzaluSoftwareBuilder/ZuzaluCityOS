@@ -16,9 +16,10 @@ import { POAP, ZuPass } from './rule';
 
 import { formatAddressString } from '@/components/layout/Header/UserProfileSection';
 import { useModal } from '@/context/ModalContext';
+import { SpaceGating } from '@/models/spaceGating';
 import { getPOAPs } from '@/services/poap';
 import { createRule, deleteRule, updateRule } from '@/services/space/rule';
-import { PermissionName, SpaceGating } from '@/types';
+import { PermissionName } from '@/types';
 import { useParams } from 'next/navigation';
 import { useSpaceData } from '../../../components/context/spaceData';
 import { useSpacePermissions } from '../../../components/permission';
@@ -122,7 +123,7 @@ RuleItem.Edit = memo(function Edit({
       return createRule({
         id: spaceId as string,
         ...(value.rule === 'poap' && {
-          poapsId: value.poap,
+          poapsId: value.poap?.map((item) => ({ poapId: item })),
         }),
         ...(value.rule === 'zupass' && {
           zuPassInfo: {
@@ -148,7 +149,7 @@ RuleItem.Edit = memo(function Edit({
         poapsId: null,
         zuPassInfo: null,
         ...(value.rule === 'poap' && {
-          poapsId: value.poap,
+          poapsId: value.poap?.map((item) => ({ poapId: item })),
         }),
         ...(value.rule === 'zupass' && {
           zuPassInfo: {
@@ -282,6 +283,7 @@ RuleItem.Normal = memo(function Normal({ data, onEdit }: NormalProps) {
   const toggleActiveMutation = useMutation({
     mutationFn: (v: boolean) =>
       updateRule({
+        ...data,
         id: spaceId,
         ruleId: data.id,
         gatingStatus: v ? '1' : '0',

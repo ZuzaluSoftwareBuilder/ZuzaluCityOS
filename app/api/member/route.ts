@@ -1,5 +1,4 @@
-import { GET_MEMBERS_QUERY } from '@/services/graphql/role';
-import { executeQuery } from '@/utils/ceramic';
+import { getRoleRepository } from '@/repositories/role';
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -19,20 +18,14 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const data = await executeQuery(GET_MEMBERS_QUERY, {
-      source: 'space',
-      resourceId: id,
-    });
+    const data = await getRoleRepository().getMembers(resource, id);
 
-    if (data.errors) {
+    if (data.error) {
       return createErrorResponse('Failed to fetch members', 500);
     }
 
-    if ('zucityUserRolesIndex' in data.data!) {
-      return createSuccessResponse(
-        data?.data?.zucityUserRolesIndex?.edges?.map((edge) => edge?.node) ||
-          [],
-      );
+    if (data.data) {
+      return createSuccessResponse(data.data);
     }
 
     return createErrorResponse('Failed to fetch members', 500);

@@ -7,7 +7,8 @@ import {
   DrawerContent,
 } from '@/components/base';
 import useOpenDraw from '@/hooks/useOpenDraw';
-import { Profile, RolePermission, UserRole } from '@/types';
+import { Profile } from '@/models/profile';
+import { RolePermission, UserRole } from '@/models/role';
 import { Button, cn, Skeleton, Tab, Tabs } from '@heroui/react';
 import {
   CaretLeft,
@@ -25,7 +26,7 @@ interface RoleListProps {
   roleData: RolePermission[];
   isLoading: boolean;
   currentRole: string;
-  onRoleSelect: (roleName: string) => void;
+  onRoleSelect: (_roleName: string) => void;
 }
 
 const RoleList: React.FC<RoleListProps> = ({

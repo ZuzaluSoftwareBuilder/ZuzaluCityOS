@@ -172,7 +172,7 @@ export const CeramicProvider = ({ children }: any) => {
         safeSetLocalStorage(StorageKey_Username, basicProfile.username);
         setProfile({
           ...basicProfile,
-          did: basicProfile.author?.id,
+          did: basicProfile.author?.id || '',
           address: getWalletAddressFromProfile(basicProfile),
         });
         setUsername(basicProfile.username);

@@ -371,8 +371,10 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
       return [];
     }
     const validSessions = data
-      .filter((rsvp: { sessionID: string | null }) => rsvp.sessionID !== null)
-      .map((rsvp: { sessionID: string }) => rsvp.sessionID);
+      .filter((rsvp: { sessionID: number | null }) => rsvp.sessionID !== null)
+      .map(
+        (rsvp: { sessionID: number | null }) => rsvp.sessionID as number | null,
+      );
     return validSessions;
   };
   const getSession = async () => {
@@ -382,8 +384,8 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
         .select('*')
         .eq('eventId', eventId);
       if (data) {
-        setSessions(data);
-        return data as Session[];
+        setSessions(data as any);
+        return data as any;
       }
     } catch (err) {
       console.log(err);
@@ -408,34 +410,34 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
         }
         if (isManagedFiltered) {
           filteredSessions = filteredSessions?.filter(
-            (session) => session.creatorDID === adminId,
+            (session: Session) => session.creatorDID === adminId,
           );
         }
         if (isRSVPFiltered) {
           const rsvpSessionIDs = await getRSVPSessions();
-          filteredSessions = filteredSessions?.filter((session) =>
-            rsvpSessionIDs.includes(session.id),
+          filteredSessions = filteredSessions?.filter((session: Session) =>
+            rsvpSessionIDs.includes(session.id as any),
           );
         }
         if (searchQuery) {
-          filteredSessions = filteredSessions?.filter((session) =>
+          filteredSessions = filteredSessions?.filter((session: Session) =>
             session.title?.toLowerCase().includes(searchQuery.toLowerCase()),
           );
         }
 
         if (selectedTracks.length > 0) {
-          filteredSessions = filteredSessions?.filter((session) =>
+          filteredSessions = filteredSessions?.filter((session: Session) =>
             session.track
               ?.split(',')
-              .some((ele) => new Set(selectedTracks).has(ele)),
+              .some((ele: string) => new Set(selectedTracks).has(ele)),
           );
         }
 
         if (selectedLocations.length > 0) {
-          filteredSessions = filteredSessions?.filter((session) =>
+          filteredSessions = filteredSessions?.filter((session: Session) =>
             session.location
               ?.split(',')
-              .some((ele) => new Set(selectedLocations).has(ele)),
+              .some((ele: string) => new Set(selectedLocations).has(ele)),
           );
         }
 
@@ -508,7 +510,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
           return sessionStartDay === selectedDay;
         });
 
-        setBookedSessionsForDay(bookedSessionsDay);
+        setBookedSessionsForDay(bookedSessionsDay as any);
       }
     }
     setSessionDate(date);
@@ -627,9 +629,9 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
         .select('*')
         .eq('eventId', eventId);
       if (data !== null) {
-        setVenues(data);
+        setVenues(data as any);
         const locations = data.map((item) => item.name);
-        setLocations(locations);
+        setLocations(locations as string[]);
       }
     } catch (err) {
       console.log(err);
@@ -660,7 +662,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
         .from('rsvp')
         .insert({
           userDID: adminId,
-          sessionID: sessionID,
+          sessionID: parseInt(sessionID),
         });
 
       if (rsvpError) {
@@ -893,7 +895,7 @@ const Sessions: React.FC<ISessions> = ({ eventData, option }) => {
         .select('*')
         .eq('location', sessionLocation);
       if (data) {
-        setBookedSessions(data);
+        setBookedSessions(data as any);
         return data;
       }
     } catch (err) {

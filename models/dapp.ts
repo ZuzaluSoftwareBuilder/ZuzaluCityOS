@@ -1,3 +1,4 @@
+import { Profile } from './profile';
 export interface InstalledApp {
   id: string;
   installedAppId?: string;
@@ -28,13 +29,7 @@ export interface Dapp {
     chain: string;
   }[];
   auditLogUrl: string;
-  profile: {
-    author: {
-      id: string;
-    };
-    username: string;
-    avatar: string;
-  };
+  profile: Profile;
   isLegacy?: boolean;
 }
 

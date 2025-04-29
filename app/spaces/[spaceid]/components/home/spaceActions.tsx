@@ -1,7 +1,6 @@
 import Copy from '@/components/biz/common/Copy';
 import { CheckCircleIcon } from '@/components/icons';
 import { followSpace, unFollowSpace } from '@/services/member';
-import { Space } from '@/types';
 import { addToast, Skeleton } from '@heroui/react';
 import { ArrowSquareRight, Heart } from '@phosphor-icons/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -9,6 +8,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/base';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useModal } from '@/context/ModalContext';
+import { Space } from '@/models/space';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface SpaceActionsProps {
@@ -63,10 +63,9 @@ const SpaceActions = ({
 
   const showJoinButton = useMemo(() => {
     return (
-      spaceData?.gated === '0' ||
-      (spaceData?.spaceGating?.edges?.length ?? 0) > 0
+      spaceData?.gated === '0' || (spaceData?.spaceGating?.length ?? 0) > 0
     );
-  }, [spaceData?.gated, spaceData?.spaceGating?.edges?.length]);
+  }, [spaceData?.gated, spaceData?.spaceGating?.length]);
 
   const followMutation = useMutation({
     mutationFn: () => followSpace(spaceId, userDid!),
@@ -173,6 +172,7 @@ const SpaceActions = ({
                     />
                   )
                 }
+                isDisabled={isUserJoined}
                 onPress={onJoin}
                 className={isMobile ? 'w-full flex-1 shrink-0' : ''}
               >

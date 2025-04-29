@@ -6,7 +6,7 @@ import {
   UsersIcon,
 } from '@/components/icons';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
-import { Space } from '@/types';
+import { Space } from '@/models/space';
 import { Avatar, Image, Skeleton, cn } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
@@ -88,7 +88,7 @@ export function SpaceCard({
   const { profile } = useAbstractAuthContext();
 
   const formattedMemberCount = useMemo(() => {
-    const totalMembers = userRoles?.edges.map((item) => item.node).length ?? 0;
+    const totalMembers = userRoles?.length ?? 0;
     return formatMemberCount(totalMembers + 1);
   }, [userRoles]);
 

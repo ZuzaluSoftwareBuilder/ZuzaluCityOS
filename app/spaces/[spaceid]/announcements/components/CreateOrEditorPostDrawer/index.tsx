@@ -11,13 +11,7 @@ import FormHeader from '@/components/form/FormHeader';
 import { CloseIcon, PlusCircleIcon } from '@/components/icons';
 import { FormTitle } from '@/components/typography/formTypography';
 import useOpenDraw from '@/hooks/useOpenDraw';
-import {
-  CREATE_ANNOUNCEMENT_MUTATION,
-  UPDATE_ANNOUNCEMENT_MUTATION,
-} from '@/services/graphql/announcements';
-import { Announcement } from '@/types';
-import { executeQuery } from '@/utils/ceramic';
-import { dayjs } from '@/utils/dayjs';
+import { Announcement } from '@/models/announcement';
 import { useMutation } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import {
@@ -30,10 +24,16 @@ import {
   useState,
 } from 'react';
 
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
+import { getAnnouncementRepository } from '@/repositories/announcements';
+import {
+  CreateAnnouncementInput,
+  UpdateAnnouncementInput,
+} from '@/repositories/announcements/type';
 import { setSpaceLastViewTime } from '../../lastViewTime';
 import PostForm, { PostFormHandle, PostFormResult } from '../PostForm';
 import { usePostListData } from '../PostList/PostListDataContext';
-
+const repository = getAnnouncementRepository();
 const CreateOrEditorPostDrawerContext = createContext({
   startCreate: () => {},
   startEdit: (post: Announcement) => {},
@@ -47,6 +47,8 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
   const spaceId = useParams()?.spaceid;
   const { refetch } = usePostListData();
   const { open, setOpen, handleOpen, handleClose } = useOpenDraw();
+  const { profile } = useAbstractAuthContext();
+  const profileId = profile?.id || '';
   const [mode, setMode] = useState<'create' | 'edit'>('create');
   const title = useMemo(() => {
     if (mode === 'create') return 'Create Post';
@@ -89,21 +91,21 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
 
   const { mutate: createAnnouncement, isPending: isCreating } = useMutation({
     mutationFn: async (data: PostFormResult) => {
-      const response = await executeQuery(CREATE_ANNOUNCEMENT_MUTATION, {
-        input: {
-          content: {
-            title: data.title,
-            sourceId: spaceId as string,
-            spaceId: spaceId as string,
-            description: data.description,
-            tags: data.tags.map((tag) => ({ tag })),
-            createdAt: dayjs().utc().toISOString(),
-            updatedAt: dayjs().utc().toISOString(),
-          },
-        },
-      });
+      const input: CreateAnnouncementInput = {
+        title: data.title,
+        description: data.description,
+        tags: data.tags,
+        spaceId: spaceId as string,
+        author: profileId,
+      };
 
-      return response.data;
+      const result = await repository.create(input);
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      return result.data;
     },
     onSuccess: () => {
       refetch();
@@ -118,17 +120,18 @@ const CreateOrEditorPostDrawer = (props: PropsWithChildren) => {
   >({
     mutationFn: async (data: PostFormResult) => {
       if (!defaultAnnouncement?.id) return;
-      await executeQuery(UPDATE_ANNOUNCEMENT_MUTATION, {
-        input: {
-          id: defaultAnnouncement.id,
-          content: {
-            title: data.title,
-            description: data.description,
-            tags: data.tags.map((tag) => ({ tag })),
-            updatedAt: dayjs().utc().toISOString(),
-          },
-        },
-      });
+
+      const input: UpdateAnnouncementInput = {
+        title: data.title,
+        description: data.description,
+        tags: data.tags,
+      };
+
+      const result = await repository.update(defaultAnnouncement.id, input);
+
+      if (result.error) {
+        throw result.error;
+      }
     },
     onSuccess: () => {
       refetch();

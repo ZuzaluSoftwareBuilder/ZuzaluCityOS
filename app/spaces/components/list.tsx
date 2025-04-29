@@ -1,5 +1,5 @@
 import { SpaceCard, SpaceCardSkeleton } from '@/components/biz/space/SpaceCard';
-import { Space } from '@/types';
+import { Space } from '@/models/space';
 import { useMemo, useState } from 'react';
 
 import ExploreSearch from '@/components/layout/explore/exploreSearch';
@@ -8,9 +8,8 @@ import {
   ResponsiveGridItem,
 } from '@/components/layout/explore/responsiveGridItem';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
-import { useGraphQL } from '@/hooks/useGraphQL';
+import { useRepositories } from '@/context/RepositoryContext';
 import useUserSpace from '@/hooks/useUserSpace';
-import { GET_ALL_SPACE_AND_MEMBER_QUERY } from '@/services/graphql/space';
 import dayjs from '@/utils/dayjs';
 import { supabase } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
@@ -19,34 +18,22 @@ const SpaceList = () => {
   const [searchVal, setSearchVal] = useState<string>('');
 
   const { userJoinedSpaceIds, userFollowedSpaceIds } = useUserSpace();
-
+  const { spaceRepository } = useRepositories();
   const { adminRole, memberRole, isRoleLoading } = useBuildInRole();
-
-  const { data: spaces, isLoading } = useGraphQL(
-    ['GET_ALL_SPACE_AND_MEMBER_QUERY'],
-    GET_ALL_SPACE_AND_MEMBER_QUERY,
-    {
-      first: 100,
-      userRolesFilters: {
-        where: {
-          roleId: {
-            in: [adminRole, memberRole].map((role) => role?.id ?? ''),
-          },
-        },
-      },
+  const { data: spaces, isLoading } = useQuery({
+    queryKey: ['GET_ALL_SPACE_AND_MEMBER_QUERY'],
+    queryFn: () => {
+      return spaceRepository.getAllAndMembers(
+        [adminRole, memberRole].map((role) => role?.id ?? ''),
+      );
     },
-    {
-      select: (data) => {
-        if (!data?.data?.zucitySpaceIndex?.edges) {
-          return [];
-        }
-        return data.data.zucitySpaceIndex.edges.map(
-          (edge) => edge!.node,
-        ) as Space[];
-      },
-      enabled: !!adminRole && !!memberRole,
+    select: (data) => {
+      if (data.error) {
+        return [];
+      }
+      return data.data;
     },
-  );
+  });
 
   const { data: legacySpacesData, isLoading: isLegacyLoading } = useQuery({
     queryKey: ['GET_LEGACY_SPACES_DATA'],

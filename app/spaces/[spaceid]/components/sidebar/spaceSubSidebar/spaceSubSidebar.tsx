@@ -2,7 +2,7 @@
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/sidebarHeader';
 import { TableIcon } from '@/components/icons';
-import { InstalledApp } from '@/types';
+import { InstalledApp } from '@/models/dapp';
 import { dayjs } from '@/utils/dayjs';
 import { cn, Image, Skeleton } from '@heroui/react';
 import {
@@ -42,10 +42,8 @@ const SpaceSubSidebar = ({
 
   const { spaceData, isSpaceDataLoading } = useSpaceData();
 
-  const installedAppsData = useMemo(() => {
-    return spaceData?.installedApps?.edges.map(
-      (edge) => edge.node,
-    ) as InstalledApp[];
+  const installedAppsData: InstalledApp[] = useMemo(() => {
+    return spaceData?.installedApps || [];
   }, [spaceData]);
 
   const isRouteActive = useCallback(
@@ -73,15 +71,15 @@ const SpaceSubSidebar = ({
 
   const installedApps = useMemo(() => {
     const hasCalendar = installedAppsData?.some(
-      (app) => app.nativeAppName === 'calendar',
+      (app) => app?.nativeAppName === 'calendar',
     );
 
     const hasZuland = installedAppsData?.some(
-      (app) => app.nativeAppName === 'zuland',
+      (app) => app?.nativeAppName === 'zuland',
     );
 
-    installedAppsData
-      ?.filter((app) => app.nativeAppName)
+    const nativeApps = installedAppsData
+      ?.filter((app) => app?.nativeAppName)
       .map((app) => (
         <TabItem
           key={app.installedAppId}
@@ -142,19 +140,27 @@ const SpaceSubSidebar = ({
     const lastViewTime = getSpaceLastViewTime(spaceId as string);
     if (lastViewTime) {
       setUnViewedAnnouncementsCount(
-        spaceData?.announcements?.edges.filter((edge) =>
-          dayjs(edge.node.createdAt).isAfter(dayjs(lastViewTime)),
+        spaceData?.announcements?.filter((announcement) =>
+          dayjs(announcement.createdAt).isAfter(dayjs(lastViewTime)),
         ).length ?? 0,
       );
     }
     return subscribeSpaceLastViewTime(spaceId as string, (lastViewTime) => {
       setUnViewedAnnouncementsCount(
-        spaceData?.announcements?.edges.filter((edge) =>
-          dayjs(edge.node.createdAt).isAfter(dayjs(lastViewTime)),
+        spaceData?.announcements?.filter((announcement) =>
+          dayjs(announcement.createdAt).isAfter(dayjs(lastViewTime)),
         ).length ?? 0,
       );
     });
   }, [spaceData, spaceId]);
+
+  const [isGated, setIsGated] = useState(false);
+  useEffect(() => {
+    const isGated =
+      (spaceData?.gated && spaceData?.gated !== 'false') ||
+      (spaceData?.spaceGating?.length ?? 0) > 0;
+    setIsGated(isGated);
+  }, [spaceData?.gated, spaceData?.spaceGating?.length]);
 
   return (
     <div

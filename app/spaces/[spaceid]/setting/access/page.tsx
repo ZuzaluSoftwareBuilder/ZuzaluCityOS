@@ -1,8 +1,7 @@
 'use client';
 
 import { Button } from '@/components/base';
-import { UPDATE_SPACE_MUTATION } from '@/services/graphql/space';
-import { executeQuery } from '@/utils/ceramic';
+import { useRepositories } from '@/context/RepositoryContext';
 import { DoorOpen, LockLaminated } from '@phosphor-icons/react';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
@@ -13,12 +12,11 @@ import RuleList from './components/ruleList';
 export default function AccessSettingPage() {
   const { spaceData, refreshSpaceData } = useSpaceData();
   const { isOwner } = useSpacePermissions();
+  const { spaceRepository } = useRepositories();
 
   const { mutate: updateSpace, isPending: isUpdating } = useMutation({
     mutationFn: (input: any) => {
-      return executeQuery(UPDATE_SPACE_MUTATION, {
-        input,
-      });
+      return spaceRepository.update(spaceData?.id as string, input);
     },
     onSuccess: () => {
       refreshSpaceData();
@@ -27,12 +25,9 @@ export default function AccessSettingPage() {
 
   const handleGateSpace = useCallback(() => {
     updateSpace({
-      id: spaceData?.id as string,
-      content: {
-        gated: '1',
-      },
+      gated: '1',
     });
-  }, [spaceData?.id, updateSpace]);
+  }, [updateSpace]);
 
   const hasGated = spaceData?.gated === '1';
 

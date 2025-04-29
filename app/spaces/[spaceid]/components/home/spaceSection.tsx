@@ -1,11 +1,11 @@
 'use client';
-import { Space } from '@/types';
 import { Avatar, cn, Image, Skeleton, useDisclosure } from '@heroui/react';
 
 import { formatMemberCount } from '@/components/biz/space/SpaceCard';
 import SpaceChip from '@/components/biz/space/SpaceChip';
 import useGetShareLink from '@/hooks/useGetShareLink';
 import useUserSpace from '@/hooks/useUserSpace';
+import { Space } from '@/models/space';
 import { Users } from '@phosphor-icons/react';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
@@ -27,8 +27,7 @@ const SpaceSection = ({ spaceData }: SpaceSectionProps) => {
     useUserSpace();
 
   const formattedMemberCount = useMemo(() => {
-    const totalMembers =
-      spaceData?.userRoles?.edges.map((item) => item.node).length ?? 0;
+    const totalMembers = spaceData?.userRoles?.length ?? 0;
     return formatMemberCount(totalMembers + 1);
   }, [spaceData?.userRoles]);
 

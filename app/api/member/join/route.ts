@@ -1,11 +1,6 @@
-import {
-  CHECK_EXISTING_ROLE_QUERY,
-  CREATE_ROLE_QUERY,
-  UPDATE_ROLE_QUERY,
-} from '@/services/graphql/role';
-import { GET_SPACE_QUERY_BY_ID } from '@/services/graphql/space';
-import { Space } from '@/types';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { getRoleRepository } from '@/repositories/role';
+import { getSpaceRepository } from '@/repositories/space';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import { dayjs } from '@/utils/dayjs';
 import {
   createErrorResponse,
@@ -55,20 +50,21 @@ export const POST = async (req: Request) => {
         `and(resource.eq.${resource},resource_id.eq.${spaceId}),and(resource.is.null,resource_id.is.null)`,
       );
 
-    const addedRole = rolePermissionResult?.find((r) => r.role.id === roleId);
+    const addedRole = rolePermissionResult?.find((r) => r.role?.id === roleId);
     if (!addedRole) {
       return createErrorResponse('Role not found', 404);
     }
 
-    if (addedRole.role.level === 'owner') {
+    if (addedRole.role?.level === 'owner') {
       return createErrorResponse('Owner role cannot be added', 400);
     }
 
-    const spaceResult = await executeQuery(GET_SPACE_QUERY_BY_ID, {
-      id: spaceId,
-    });
+    const spaceRepository = getSpaceRepository();
+    const { data: space } = await spaceRepository.getById(spaceId);
 
-    const space = spaceResult.data?.node as Space;
+    if (!space) {
+      return createErrorResponse('Space not found', 404);
+    }
 
     if (space.gated === '1') {
       return createErrorResponse('Space is gated', 400);
@@ -79,43 +75,32 @@ export const POST = async (req: Request) => {
       return createErrorResponse('Error getting private key', 500);
     }
 
-    const existingRoleResult = await executeQuery(CHECK_EXISTING_ROLE_QUERY, {
+    const existingRoleResult = await getRoleRepository().getUserRole(
+      spaceId,
+      'space',
       userId,
-      resourceId: spaceId,
-      resource: 'space',
-    });
+    );
 
-    const data = existingRoleResult.data;
-    const existingRoles = data?.zucityUserRolesIndex?.edges || [];
+    const existingRoles = existingRoleResult.data || [];
 
     let result;
     if (existingRoles.length > 0) {
-      result = await executeQuery(UPDATE_ROLE_QUERY, {
-        input: {
-          id: existingRoles[0]?.node?.id ?? '',
-          content: {
-            roleId,
-            updated_at: dayjs().utc().toISOString(),
-          },
+      result = await getRoleRepository().updateRole(
+        existingRoles[0]?.id ?? '',
+        {
+          roleId,
         },
-      });
+      );
     } else {
-      result = await executeQuery(CREATE_ROLE_QUERY, {
-        input: {
-          content: {
-            userId,
-            resourceId: spaceId,
-            source: 'space',
-            roleId,
-            spaceId,
-            created_at: dayjs().utc().toISOString(),
-            updated_at: dayjs().utc().toISOString(),
-          },
-        },
+      result = await getRoleRepository().createRole({
+        userId,
+        roleId,
+        resourceId: spaceId,
+        source: 'space',
       });
     }
 
-    if (result.errors) {
+    if (result.error) {
       return createErrorResponse('Failed to join space', 500);
     }
 

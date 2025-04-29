@@ -43,19 +43,25 @@ const Calendar = () => {
   const searchParams = useSearchParams();
   const { spaceData, isSpaceDataLoading, refreshSpaceData } = useSpaceData();
 
-  const calendarConfig = useMemo(() => {
-    if (spaceData && spaceData.customAttributes) {
-      const tbd = spaceData.customAttributes.map((item) =>
-        JSON.parse(item.tbd),
-      );
-      return tbd.find((item) => {
-        if (item.key === 'calendarConfig') {
-          return item.value;
-        }
-      })?.value as CalendarConfig;
-    }
-    return null;
-  }, [spaceData]);
+  // const calendarConfig = useMemo(() => {
+  //   if (spaceData && spaceData.customAttributes) {
+  //     const tbd = spaceData.customAttributes.map((item) =>
+  //       JSON.parse(item.tbd),
+  //     );
+  //     return tbd.find((item) => {
+  //       if (item.key === 'calendarConfig') {
+  //         return item.value;
+  //       }
+  //     })?.value as CalendarConfig;
+  //   }
+  //   return null;
+  // }, [spaceData]);
+  // Wait for Calendar refactoring
+  const calendarConfig: CalendarConfig = {
+    name: 'name',
+    category: 'category',
+    accessRule: 'accessRule',
+  };
 
   const canAccessCalendar = true;
 

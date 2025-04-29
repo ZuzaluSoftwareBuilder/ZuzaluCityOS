@@ -1,10 +1,7 @@
-import {
-  CHECK_EXISTING_ROLE_QUERY,
-  CREATE_ROLE_QUERY,
-} from '@/services/graphql/role';
+import { getRoleRepository } from '@/repositories/role';
 import { PermissionName } from '@/types';
 import { withSessionValidation } from '@/utils/authMiddleware';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import { dayjs } from '@/utils/dayjs';
 import {
   createErrorResponse,
@@ -55,14 +52,13 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Permission denied', 403);
     }
 
-    const existingRoleResult = await executeQuery(CHECK_EXISTING_ROLE_QUERY, {
-      userId,
-      resourceId: id,
+    const existingRoleResult = await getRoleRepository().getUserRole(
+      id,
       resource,
-    });
+      userId,
+    );
 
-    const data = existingRoleResult.data as any;
-    const existingRoles = (data?.zucityUserRolesIndex?.edges as []) || [];
+    const existingRoles = existingRoleResult.data || [];
 
     if (existingRoles.length > 0) {
       return createErrorResponse(
@@ -75,21 +71,14 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     if (error) {
       return createErrorResponse('Error getting private key', 500);
     }
-    const result = await executeQuery(CREATE_ROLE_QUERY, {
-      input: {
-        content: {
-          userId,
-          resourceId: id,
-          source: resource,
-          created_at: dayjs().utc().toISOString(),
-          updated_at: dayjs().utc().toISOString(),
-          roleId,
-          ...(resource === 'space' && { spaceId: id }),
-        },
-      },
+    const result = await getRoleRepository().createRole({
+      userId,
+      roleId: roleId,
+      resourceId: id,
+      source: resource,
     });
 
-    if (result.errors) {
+    if (result.error) {
       return createErrorResponse('Failed to add member', 500);
     }
 

@@ -1,6 +1,6 @@
 import { Input, Select, SelectItem } from '@/components/base';
 import { SOCIAL_TYPES } from '@/constant';
-import { Link } from '@/types';
+import { Link } from '@/models/base';
 import { Plus, XCircle } from '@phosphor-icons/react';
 import React from 'react';
 import { Controller, useFieldArray, UseFormReturn } from 'react-hook-form';

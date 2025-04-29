@@ -34,6 +34,54 @@ export type Database = {
   };
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          author: string;
+          created_at: string;
+          description: string | null;
+          id: string;
+          space_id: string | null;
+          tags: Json | null;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          author: string;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          space_id?: string | null;
+          tags?: Json | null;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          author?: string;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          space_id?: string | null;
+          tags?: Json | null;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'announcements_author_fkey';
+            columns: ['author'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'announcements_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       betaDapps: {
         Row: {
           appName: string | null;
@@ -344,6 +392,45 @@ export type Database = {
           privateKey?: string | null;
         };
         Relationships: [];
+      };
+      installed_apps: {
+        Row: {
+          created_at: string;
+          id: string;
+          installed_app_id: string | null;
+          native_app_name: string | null;
+          space_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          installed_app_id?: string | null;
+          native_app_name?: string | null;
+          space_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          installed_app_id?: string | null;
+          native_app_name?: string | null;
+          space_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'installed_apps_installed_app_id_fkey';
+            columns: ['installed_app_id'];
+            isOneToOne: false;
+            referencedRelation: 'dapp_infos';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'installed_apps_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       legacyEvents: {
         Row: {
@@ -772,6 +859,66 @@ export type Database = {
         };
         Relationships: [];
       };
+      space_gating: {
+        Row: {
+          created_at: string;
+          erc1155_contract_address: string | null;
+          erc20_contract_address: string | null;
+          erc721_contract_address: string | null;
+          gating_condition: string | null;
+          gating_status: string | null;
+          id: string;
+          poaps_id: Json | null;
+          role_id: string | null;
+          space_id: string;
+          updated_at: string;
+          zu_pass_info: Json | null;
+        };
+        Insert: {
+          created_at?: string;
+          erc1155_contract_address?: string | null;
+          erc20_contract_address?: string | null;
+          erc721_contract_address?: string | null;
+          gating_condition?: string | null;
+          gating_status?: string | null;
+          id?: string;
+          poaps_id?: Json | null;
+          role_id?: string | null;
+          space_id: string;
+          updated_at?: string;
+          zu_pass_info?: Json | null;
+        };
+        Update: {
+          created_at?: string;
+          erc1155_contract_address?: string | null;
+          erc20_contract_address?: string | null;
+          erc721_contract_address?: string | null;
+          gating_condition?: string | null;
+          gating_status?: string | null;
+          id?: string;
+          poaps_id?: Json | null;
+          role_id?: string | null;
+          space_id?: string;
+          updated_at?: string;
+          zu_pass_info?: Json | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'space_gating_role_id_fkey';
+            columns: ['role_id'];
+            isOneToOne: false;
+            referencedRelation: 'role';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'space_gating_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       spaceAgent: {
         Row: {
           agentDID: string | null;
@@ -895,35 +1042,57 @@ export type Database = {
         };
         Relationships: [];
       };
-      user_role: {
+      user_roles: {
         Row: {
           created_at: string;
-          id: number;
-          resource: string | null;
-          resource_id: string | null;
-          role_id: number | null;
-          updated_at: string | null;
-          user_id: string | null;
+          id: string;
+          role_id: string;
+          source: string;
+          space_id: string | null;
+          updated_at: string;
+          user_id: string;
         };
         Insert: {
           created_at?: string;
-          id?: number;
-          resource?: string | null;
-          resource_id?: string | null;
-          role_id?: number | null;
-          updated_at?: string | null;
-          user_id?: string | null;
+          id?: string;
+          role_id: string;
+          source: string;
+          space_id?: string | null;
+          updated_at?: string;
+          user_id: string;
         };
         Update: {
           created_at?: string;
-          id?: number;
-          resource?: string | null;
-          resource_id?: string | null;
-          role_id?: number | null;
-          updated_at?: string | null;
-          user_id?: string | null;
+          id?: string;
+          role_id?: string;
+          source?: string;
+          space_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'user_roles_author_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'user_roles_role_id_fkey';
+            columns: ['role_id'];
+            isOneToOne: false;
+            referencedRelation: 'role';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'user_roles_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       venues: {
         Row: {

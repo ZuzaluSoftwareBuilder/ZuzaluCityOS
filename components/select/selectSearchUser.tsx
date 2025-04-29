@@ -95,6 +95,8 @@ export default function SelectSearchUser({
                   author: {
                     id: '',
                   },
+                  address: '',
+                  did: '',
                 });
               }
 

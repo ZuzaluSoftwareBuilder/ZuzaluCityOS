@@ -1,5 +1,6 @@
 import { Button } from '@/components/base';
-import { PermissionName, SpaceGating } from '@/types';
+import { SpaceGating } from '@/models/spaceGating';
+import { PermissionName } from '@/types';
 import { Plus } from '@phosphor-icons/react';
 import { useCallback, useState } from 'react';
 import { useSpaceData } from '../../../components/context/spaceData';
@@ -16,8 +17,7 @@ function RuleList() {
   }, []);
 
   const hasPermission = checkPermission(PermissionName.MANAGE_ACCESS);
-  const accessRules =
-    spaceData?.spaceGating?.edges.map((edge) => edge.node) || [];
+  const accessRules = spaceData?.spaceGating || [];
 
   return (
     <div className="flex flex-col gap-5">

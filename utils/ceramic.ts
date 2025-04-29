@@ -18,7 +18,7 @@ const authenticateWithSpaceId = async (spaceId: string) => {
   if (error) {
     return error;
   }
-  const seed = base64ToUint8Array(data.agentKey);
+  const seed = base64ToUint8Array(data.agentKey!);
   const provider = new Ed25519Provider(seed);
   const did = new DID({ provider, resolver: getResolver() });
   await did.authenticate();

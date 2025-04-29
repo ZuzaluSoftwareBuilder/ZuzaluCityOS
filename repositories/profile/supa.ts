@@ -33,6 +33,8 @@ export class SupaProfileRepository extends BaseProfileRepository {
       ...profile,
       id: profile.user_id,
       did: profile.user_id,
+      username: profile.username ?? '',
+      avatar: profile.avatar ?? undefined,
     }));
   }
 
@@ -50,10 +52,13 @@ export class SupaProfileRepository extends BaseProfileRepository {
       throw new Error(error.message);
     }
 
+    if (!data) return null;
     return {
       ...data,
       id: data.user_id,
       did: data.user_id,
+      username: data.username ?? '',
+      avatar: data.avatar ?? undefined,
     };
   }
 }

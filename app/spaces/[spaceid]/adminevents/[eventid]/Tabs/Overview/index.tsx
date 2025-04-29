@@ -152,10 +152,10 @@ const Overview = ({ event, refetch, setTabName }: PropTypes) => {
       const { data } = await supabase
         .from('locations')
         .select('*')
-        .eq('eventId', event?.id)
+        .eq('eventId', event?.id ?? '')
         .single();
       if (data !== null) {
-        setLocations(data.name.split(','));
+        setLocations(data.name?.split(',') ?? []);
       }
     } catch (err) {
       console.log(err);

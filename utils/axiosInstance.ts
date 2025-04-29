@@ -1,5 +1,5 @@
-import { StorageKey_CeramicEthDid } from '@/constant/StorageKey';
 import axios, { AxiosInstance } from 'axios';
+import { supabase } from './supabase/client';
 
 const getBaseUrl = () => {
   if (typeof window !== 'undefined') {
@@ -17,11 +17,13 @@ const axiosInstance: AxiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(
-  (config) => {
+  async (config) => {
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem(StorageKey_CeramicEthDid);
-      if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`;
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        config.headers['Authorization'] = `Bearer ${session.access_token}`;
       }
     }
     return config;

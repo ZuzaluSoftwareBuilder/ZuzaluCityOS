@@ -93,7 +93,7 @@ const EventsPage: React.FC = () => {
       }
 
       if (legacyEvents) {
-        const convertedLegacyEvents: Event[] = legacyEvents
+        const convertedLegacyEvents: any = legacyEvents
           .filter((legacy): legacy is NonNullable<typeof legacy> => !!legacy.id)
           .map((legacy) => ({
             id: legacy.id,

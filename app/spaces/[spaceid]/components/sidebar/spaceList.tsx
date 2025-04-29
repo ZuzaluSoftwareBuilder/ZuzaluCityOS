@@ -2,7 +2,7 @@
 
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import useUserSpace from '@/hooks/useUserSpace';
-import { Space } from '@/types';
+import { Space } from '@/models/space';
 import { Image, Skeleton, Tooltip } from '@heroui/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

@@ -89,7 +89,7 @@ const Home: React.FC<IVenue> = ({ event }) => {
   });
 
   const venuesData = useMemo(() => {
-    return data?.data?.filter((item) => item.name.includes(searchValue)) || [];
+    return data?.data?.filter((item) => item.name?.includes(searchValue)) || [];
   }, [data?.data, searchValue]);
 
   const List = (anchor: Anchor) => {
@@ -403,7 +403,7 @@ const Home: React.FC<IVenue> = ({ event }) => {
       <VenueHeader onToggle={toggleDrawer} count={venuesData.length} />
       <VenueList
         event={event}
-        venues={venuesData}
+        venues={venuesData as any}
         refetch={refetch}
         onToggle={toggleDrawer}
         setSearchValue={setSearchValue}

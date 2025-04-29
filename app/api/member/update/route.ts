@@ -1,10 +1,7 @@
-import {
-  CHECK_EXISTING_ROLE_QUERY,
-  UPDATE_ROLE_QUERY,
-} from '@/services/graphql/role';
+import { getRoleRepository } from '@/repositories/role';
 import { PermissionName } from '@/types';
 import { withSessionValidation } from '@/utils/authMiddleware';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import { dayjs } from '@/utils/dayjs';
 import {
   createErrorResponse,
@@ -55,14 +52,13 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       return createErrorResponse('Permission denied', 403);
     }
 
-    const existingRoleResult = await executeQuery(CHECK_EXISTING_ROLE_QUERY, {
-      userId,
-      resourceId: id,
+    const existingRoleResult = await getRoleRepository().getUserRole(
+      id,
       resource,
-    });
+      userId,
+    );
 
-    const data = existingRoleResult.data;
-    const existingRoles = data?.zucityUserRolesIndex?.edges || [];
+    const existingRoles = existingRoleResult.data || [];
 
     if (existingRoles.length === 0) {
       return createErrorResponse(
@@ -72,8 +68,8 @@ export const POST = withSessionValidation(async (request, sessionData) => {
     }
 
     const userExistingRole = existingRoles[0];
-    const currentRoleId = userExistingRole?.node?.roleId;
-    const userRoleDocId = userExistingRole?.node?.id;
+    const currentRoleId = userExistingRole?.roleId;
+    const userRoleDocId = userExistingRole?.id;
 
     if (currentRoleId === roleId) {
       return createSuccessResponse(
@@ -91,21 +87,15 @@ export const POST = withSessionValidation(async (request, sessionData) => {
       );
     }
 
-    const result = await executeQuery(UPDATE_ROLE_QUERY, {
-      input: {
-        id: userRoleDocId!,
-        content: {
-          roleId,
-          updated_at: dayjs().utc().toISOString(),
-        },
-      },
+    const result = await getRoleRepository().updateRole(userRoleDocId!, {
+      roleId,
     });
 
-    if (result.errors) {
+    if (result.error) {
       return createErrorResponse(
         'Failed to update member role',
         500,
-        result.errors,
+        result.error,
       );
     }
 

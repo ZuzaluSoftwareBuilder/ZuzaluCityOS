@@ -37,7 +37,7 @@ export default function OwnedDappList({
   const userDID = profile?.id;
 
   const ownedDapps = useMemo(() => {
-    return dapps?.filter((dapp) => dapp.profile.author.id === userDID) || [];
+    return dapps?.filter((dapp) => dapp.profile.id === userDID) || [];
   }, [dapps, userDID]);
 
   return (

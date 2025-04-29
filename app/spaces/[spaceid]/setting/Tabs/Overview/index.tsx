@@ -3,18 +3,18 @@ import { useSpaceData } from '@/app/spaces/[spaceid]/components/context/spaceDat
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import { Button } from '@/components/base';
 import { Categories } from '@/constant';
+import { useRepositories } from '@/context/RepositoryContext';
 import { useMediaQuery } from '@/hooks';
-import { UPDATE_SPACE_MUTATION } from '@/services/graphql/space';
 import { createUrlWhenEdit } from '@/services/url';
-import { Space } from '@/types';
-import { executeQuery } from '@/utils/ceramic';
 import { covertNameToUrlName } from '@/utils/format';
 import { addToast, cn } from '@heroui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ArrowLineDown, X as XIcon } from '@phosphor-icons/react';
+import { Space, UpdateSpaceInput } from 'models/space';
 import { useParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+
 import {
   CategoriesContent,
   CategoriesFormData,
@@ -49,7 +49,7 @@ const EditSpace = () => {
   const isLinksChange = useRef<boolean>(false);
   const { spaceData, isSpaceDataLoading, refreshSpaceData } = useSpaceData();
   const { isOwner } = useSpacePermissions();
-
+  const { spaceRepository } = useRepositories();
   const profileForm = useForm<ProfileFormData>({
     resolver: yupResolver(ProfilValidationSchema),
     mode: 'all',
@@ -125,7 +125,7 @@ const EditSpace = () => {
   const setFormData = (data: Space) => {
     if (!data) return;
     profileForm.setValue('name', data.name);
-    profileForm.setValue('tagline', data.tagline);
+    profileForm.setValue('tagline', data.tagline || '');
     profileForm.setValue('description', data.description);
     profileForm.setValue('avatar', data.avatar || '');
     profileForm.setValue('banner', data.banner || '');
@@ -161,7 +161,7 @@ const EditSpace = () => {
     }
   };
 
-  const transformFormData = (): Partial<Space> => {
+  const transformFormData = (): Partial<UpdateSpaceInput> => {
     const { name, tagline, description, avatar, banner } =
       profileForm.getValues();
     const { tags, category } = categoriesForm.getValues();
@@ -177,7 +177,6 @@ const EditSpace = () => {
       socialLinks,
       category,
       tags: tags.map((i) => ({ tag: i })),
-      updatedAt: new Date().toISOString(),
     };
   };
 
@@ -185,17 +184,10 @@ const EditSpace = () => {
     try {
       const contentData = transformFormData();
       setIsSubmit(true);
-
-      const response = await executeQuery(UPDATE_SPACE_MUTATION, {
-        input: {
-          id: spaceId,
-          content: contentData,
-        },
-      });
-
-      if (response.errors) {
-        console.error('update space error:', response.errors);
-        throw new Error(response.errors[0]?.message || 'unknown error');
+      const { error } = await spaceRepository.update(spaceId, contentData);
+      if (error) {
+        console.error('update space error:', error);
+        throw error;
       }
 
       if (contentData.name !== spaceData?.name) {

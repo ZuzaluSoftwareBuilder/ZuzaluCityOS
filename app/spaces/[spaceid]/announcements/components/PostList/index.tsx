@@ -15,12 +15,13 @@ import dayjs from 'dayjs';
 import { memo } from 'react';
 
 import EditorProWithMore from '@/app/spaces/[spaceid]/components/home/EditorProWithMore';
-import { Announcement, PermissionName } from '@/types';
+import { Announcement } from '@/models/announcement';
 import CreateOrEditorPostDrawer, {
   useCreateOrEditorPostDrawer,
 } from '../CreateOrEditorPostDrawer';
 
-import { useCeramicContext } from '@/context/CeramicContext';
+import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
+import { PermissionName } from '@/types';
 import clsx from 'clsx';
 import { useSpacePermissions } from '../../../components/permission';
 import { PostListDataProvider, usePostListData } from './PostListDataContext';
@@ -99,15 +100,15 @@ PostList.Empty = memo(function Empty() {
 PostList.Post = memo(function Post({ post }: { post: Announcement }) {
   const { startEdit } = useCreateOrEditorPostDrawer();
   const { onDelete } = usePostListData();
-  const { ceramic } = useCeramicContext();
-  const userDID = ceramic.did?.parent;
+  const { profile } = useAbstractAuthContext();
+  const userDID = profile?.id;
 
   return (
     <Card className="border-[rgba(255,255,255,0.06)] bg-[#2d2d2d] p-2.5">
       <div className="flex gap-2.5">
         <div className="size-10 shrink-0 overflow-hidden rounded-full">
           <Image
-            src={post.author.zucityProfile?.avatar ?? '/user/avatar_p.png'}
+            src={post.author?.avatar ?? '/user/avatar_p.png'}
             alt="avatar"
             className="rounded-full object-cover"
             width={40}
@@ -118,7 +119,7 @@ PostList.Post = memo(function Post({ post }: { post: Announcement }) {
           {/* author */}
           <div className="truncate">
             <span className="text-[14px] font-bold leading-[160%] opacity-60">
-              {post.author.zucityProfile?.username || 'Anonymous'}
+              {post.author?.username || 'Anonymous'}
             </span>
           </div>
           {/* title */}

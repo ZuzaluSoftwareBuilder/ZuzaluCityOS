@@ -7,15 +7,14 @@ import {
 import { ArrowSquareRightIcon } from '@/components/icons';
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
 import { useBuildInRole } from '@/context/BuildInRoleContext';
+import { useRepositories } from '@/context/RepositoryContext';
 import { useZupassContext } from '@/context/ZupassContext';
 import { usePOAPVerify } from '@/hooks/useRuleVerify';
 import useUserSpace from '@/hooks/useUserSpace';
-import { CREATE_ROLE_QUERY, UPDATE_ROLE_QUERY } from '@/services/graphql/role';
+import { SpaceGating, ZuPassInfo } from '@/models/spaceGating';
 import { joinSpace } from '@/services/member';
 import { getPOAPs } from '@/services/poap';
-import { ZuPassInfo } from '@/types';
-import { authenticateWithSpaceId, executeQuery } from '@/utils/ceramic';
-import { dayjs } from '@/utils/dayjs';
+import { authenticateWithSpaceId } from '@/utils/ceramic';
 import {
   Accordion,
   AccordionItem,
@@ -110,6 +109,7 @@ const useJoinSpace = ({
   gated?: boolean;
 }) => {
   const { profile } = useAbstractAuthContext();
+  const { roleRepository } = useRepositories();
   const { spaceData } = useSpaceData();
   const { memberRole } = useBuildInRole();
   const queryClient = useQueryClient();
@@ -133,32 +133,20 @@ const useJoinSpace = ({
         if (error) throw new Error('Failed to authenticate with space id');
         let result;
         if (isUserFollowed) {
-          result = await executeQuery(UPDATE_ROLE_QUERY, {
-            input: {
-              id:
-                userFollowedSpaces.find((role) => role?.resourceId === spaceId)
-                  ?.id ?? '',
-              content: {
-                roleId,
-                updated_at: dayjs().utc().toISOString(),
-              },
-            },
+          const id =
+            userFollowedSpaces.find((role) => role?.resourceId === spaceId)
+              ?.id ?? '';
+          result = await roleRepository.updateRole(id, {
+            roleId,
           });
         }
-        result = await executeQuery(CREATE_ROLE_QUERY, {
-          input: {
-            content: {
-              userId,
-              resourceId: spaceId,
-              source: 'space',
-              roleId,
-              spaceId,
-              created_at: dayjs().utc().toISOString(),
-              updated_at: dayjs().utc().toISOString(),
-            },
-          },
+        result = await roleRepository.createRole({
+          userId,
+          resourceId: spaceId,
+          source: 'space',
+          roleId,
         });
-        if (result.errors) throw new Error('Failed to join');
+        if (result.error) throw new Error('Failed to join');
       }
     },
     onSuccess: async () => {
@@ -275,15 +263,18 @@ const JoinSpaceWithGate = ({
 
   const rules = useMemo(() => {
     return (
-      spaceData?.spaceGating?.edges
-        .map((edge) => edge.node)
-        .filter((v) => v.gatingStatus === '1') ?? []
+      spaceData?.spaceGating?.filter(
+        (v: SpaceGating) => v.gatingStatus === '1',
+      ) ?? []
     );
-  }, [spaceData?.spaceGating?.edges]);
+  }, [spaceData?.spaceGating]);
 
   useEffect(() => {
     if (authState === 'authenticated') {
-      setVerifiedRules((prev) => [...prev, ...rules.map((v) => v.id)]);
+      setVerifiedRules((prev) => [
+        ...prev,
+        ...rules.map((v: SpaceGating) => v.id),
+      ]);
       setVerifyingRules((prev) => ({
         ...prev,
         zupass: false,
@@ -335,11 +326,13 @@ const JoinSpaceWithGate = ({
   const anyRuleVerified = verifiedRules.length > 0;
 
   const rulesContent = useMemo(() => {
-    return rules?.map((v) => {
+    return rules?.map((v: SpaceGating) => {
       const isZuPass = v.zuPassInfo?.eventId;
       const isRuleVerified = isZuPass
         ? verifiedRules.includes(v.zuPassInfo?.eventId ?? '')
-        : v.poapsId?.some((p) => verifiedRules.includes(p.poapId.toString()));
+        : v.poapsId?.some((p: { poapId: number }) =>
+            verifiedRules.includes(p.poapId.toString()),
+          );
 
       return (
         <AccordionItem
@@ -364,13 +357,13 @@ const JoinSpaceWithGate = ({
               onVerify={() =>
                 handleVerifyItem(v.zuPassInfo?.eventId ?? '', {
                   type: 'zuPass',
-                  zuPassInfo: v.zuPassInfo!,
+                  zuPassInfo: v.zuPassInfo! as ZuPassInfo,
                 })
               }
             />
           ) : (
             <div className="flex flex-wrap items-center gap-2">
-              {v.poapsId?.map((p, index) => (
+              {v.poapsId?.map((p: { poapId: number }, index: number) => (
                 <Fragment key={p.poapId}>
                   <PoapItem
                     poapId={p.poapId}

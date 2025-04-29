@@ -1,13 +1,12 @@
 import { useAbstractAuthContext } from '@/context/AbstractAuthContext';
+import { useRepositories } from '@/context/RepositoryContext';
 import useUserRole from '@/hooks/useUserRole';
-import { GET_USER_OWN_SPACE } from '@/services/graphql/profile';
-import { GET_SPACE_QUERY_BY_IDS } from '@/services/graphql/space';
-import { IUserProfileWithSpaceAndEvent } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useGraphQL } from './useGraphQL';
 
 const useUserSpace = () => {
   const { profile } = useAbstractAuthContext();
+  const { spaceRepository } = useRepositories();
   // TODO wait supabase update
   const userDId = profile?.did;
 
@@ -18,23 +17,15 @@ const useUserSpace = () => {
     data: userOwnSpace,
     isLoading: isUserOwnSpaceLoading,
     isFetched: isUserOwnSpaceFetched,
-  } = useGraphQL(
-    ['GET_USER_OWN_SPACE', userDId],
-    GET_USER_OWN_SPACE,
-    {
-      did: userDId as string,
-    },
-    {
-      select: ({ data }) => {
-        return (data.node as IUserProfileWithSpaceAndEvent)?.zucityProfile;
-      },
-      enabled: !!userDId,
-      placeholderData: (previousData) => previousData,
-    },
-  );
+  } = useQuery({
+    queryKey: ['GET_USER_OWN_SPACE', userDId],
+    queryFn: () => spaceRepository.getUserOwnedSpaces(userDId as string),
+    enabled: !!userDId,
+    placeholderData: (previousData) => previousData,
+  });
 
   const ownerSpaces = useMemo(() => {
-    return (userOwnSpace?.spaces?.edges || []).map((edge) => edge.node);
+    return userOwnSpace?.data || [];
   }, [userOwnSpace]);
 
   const userJoinedSpaceIds = useMemo(() => {
@@ -56,16 +47,13 @@ const useUserSpace = () => {
     data: userJoinedSpaces,
     isLoading: isUserJoinedSpaceLoading,
     isFetched: isUserJoinedSpaceFetched,
-  } = useGraphQL(
-    ['GET_SPACE_QUERY_BY_IDS', userJoinedSpaceIdArray],
-    GET_SPACE_QUERY_BY_IDS,
-    { ids: userJoinedSpaceIdArray as string[] },
-    {
-      select: (data) => data.data?.nodes || [],
-      enabled: userJoinedSpaceIdArray.length > 0,
-      placeholderData: (previousData) => previousData,
-    },
-  );
+  } = useQuery({
+    queryKey: ['GET_SPACE_QUERY_BY_IDS', userJoinedSpaceIdArray],
+    queryFn: () => spaceRepository.getByIds(userJoinedSpaceIdArray as string[]),
+    enabled: userJoinedSpaceIdArray.length > 0,
+    placeholderData: (previousData) => previousData,
+    select: (data) => data.data || [],
+  });
 
   const userFollowedSpaces = useMemo(() => {
     return (userRoles || []).filter(

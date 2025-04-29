@@ -3,7 +3,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { createContext, useCallback, useContext, useState } from 'react';
 
-import { Announcement } from '@/types';
+import { Announcement } from '@/models/announcement';
 
 import {
   CommonModalHeader,
@@ -12,13 +12,9 @@ import {
   ModalContent,
   ModalFooter,
 } from '@/components/base/modal';
-import {
-  ENABLE_ANNOUNCEMENT_INDEXING_MUTATION,
-  GET_SPACE_ANNOUNCEMENTS_QUERY,
-} from '@/services/graphql/announcements';
-import { executeQuery } from '@/utils/ceramic';
-import { get } from 'lodash';
+import { getAnnouncementRepository } from '@/repositories/announcements';
 
+const repository = getAnnouncementRepository();
 const PostListDataContext = createContext<{
   loading: boolean;
   posts: { node: Announcement }[];
@@ -38,7 +34,7 @@ export const PostListDataProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const spaceId = useParams()?.spaceid;
+  const spaceId = useParams()?.spaceid || '';
   const {
     data: posts = [],
     refetch,
@@ -46,21 +42,26 @@ export const PostListDataProvider = ({
   } = useQuery({
     enabled: !!spaceId,
     queryKey: ['getAnnouncements', spaceId],
-    queryFn: () =>
-      executeQuery(GET_SPACE_ANNOUNCEMENTS_QUERY, {
-        id: spaceId as string,
-      }),
-    select: (data) => {
-      return (
-        get(data, 'data.node.announcements.edges', []) as {
-          node: Announcement;
-        }[]
-      ).sort((a, b) => {
-        return (
-          new Date(b.node.createdAt).getTime() -
-          new Date(a.node.createdAt).getTime()
-        );
-      });
+    queryFn: async () => {
+      const result = await repository.getAnnouncementsBySpace(
+        spaceId as string,
+      );
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      return result.data;
+    },
+    select: (announcements: Announcement[]) => {
+      return announcements
+        .map((announcement) => ({ node: announcement }))
+        .sort((a, b) => {
+          return (
+            new Date(b.node.createdAt).getTime() -
+            new Date(a.node.createdAt).getTime()
+          );
+        });
     },
   });
 
@@ -70,13 +71,15 @@ export const PostListDataProvider = ({
     null,
   );
   const { mutate: removeAnnouncement, isPending: isDeleting } = useMutation({
-    mutationFn: (announcementId: string) =>
-      executeQuery(ENABLE_ANNOUNCEMENT_INDEXING_MUTATION, {
-        input: {
-          id: announcementId,
-          shouldIndex: false,
-        },
-      }),
+    mutationFn: async (announcementId: string) => {
+      const result = await repository.deleteAnnouncement(announcementId);
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      return result.data;
+    },
     onSuccess: () => {
       setDeleteDialogOpen(false);
       refetch();

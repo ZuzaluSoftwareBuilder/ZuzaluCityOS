@@ -12,7 +12,7 @@ interface SpacePermissionContextType {
   isAdmin: boolean;
   isMember: boolean;
   isLoading: boolean;
-  checkPermission: (name: PermissionName) => boolean;
+  checkPermission: (_name: PermissionName) => boolean;
 }
 
 const SpacePermissionContext = createContext<
@@ -38,14 +38,12 @@ export const SpacePermissionProvider: React.FC<{
 
   const isOwner = useMemo(() => {
     if (!owner || !userId) return false;
-    return owner?.author?.id === userId;
+    return owner?.id === userId;
   }, [owner, userId]);
 
   const userRoleId = useMemo(() => {
     if (!members || !userId) return null;
-    const userMember = members.find(
-      (member) => member.userId.zucityProfile?.author?.id === userId,
-    );
+    const userMember = members.find((member) => member.userId?.id === userId);
 
     if (!userMember) return null;
 

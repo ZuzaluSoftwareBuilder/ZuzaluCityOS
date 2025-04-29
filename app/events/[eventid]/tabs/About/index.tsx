@@ -102,7 +102,7 @@ const About: React.FC<IAbout> = ({ eventData, setVerify, canEdit }) => {
         .select('*')
         .eq('eventId', eventId);
       if (data !== null) {
-        setLocation(data[0].name);
+        setLocation(data[0].name ?? '');
       }
     } catch (err) {
       console.log(err);

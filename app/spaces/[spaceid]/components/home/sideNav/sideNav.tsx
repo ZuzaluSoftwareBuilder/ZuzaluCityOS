@@ -2,7 +2,7 @@
 
 import { formatMemberCount } from '@/components/biz/space/SpaceCard';
 import useGetSpaceMember from '@/hooks/useGetSpaceMember';
-import { Space } from '@/types';
+import { Space } from '@/models/space';
 import { getWalletAddressFromProfile } from '@/utils/profile';
 import { Skeleton } from '@heroui/react';
 import dayjs from 'dayjs';
@@ -27,11 +27,12 @@ const ShowRoleOrder: Record<string, number> = {
 
 const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
   const spaceId = useParams()?.spaceid;
-  const { owner, members, roles } = useGetSpaceMember(spaceId as string);
+  const { owner, members, roles, isLoadingMembers } = useGetSpaceMember(
+    spaceId as string,
+  );
 
   const formattedMemberCount = useMemo(() => {
-    const totalMembers =
-      spaceData?.userRoles?.edges.map((item) => item.node).length ?? 0;
+    const totalMembers = spaceData?.userRoles?.length ?? 0;
     return formatMemberCount(totalMembers + 1);
   }, [spaceData?.userRoles]);
 
@@ -57,7 +58,7 @@ const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
     if (!members || !members.length) return res;
 
     members.forEach((member) => {
-      const profile = member.userId.zucityProfile;
+      const profile = member.userId;
       if (!profile) return;
       const memberRoleId = member.roleId;
 
@@ -159,7 +160,9 @@ const SideNav = ({ spaceData, inDrawer }: ISideNavProps) => {
         </div>
 
         <div className="mt-[20px] flex flex-col gap-[4px]">
-          {formatedMembers && formatedMembers.length > 0 ? (
+          {!isLoadingMembers &&
+          formatedMembers &&
+          formatedMembers.length > 0 ? (
             formatedMembers.map((member) => (
               <div key={member.address} className="px-[8px] py-[4px]">
                 <MemberItem
