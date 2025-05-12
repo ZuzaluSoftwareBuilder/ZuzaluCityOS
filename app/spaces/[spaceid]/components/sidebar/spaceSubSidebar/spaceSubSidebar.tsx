@@ -1,15 +1,17 @@
 'use client';
+import CreateChannelModal from '@/app/spaces/[spaceid]/components/modal/CreateChannelModal';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/sidebarHeader';
 import { TableIcon } from '@/components/icons';
 import { InstalledApp } from '@/models/dapp';
 import { dayjs } from '@/utils/dayjs';
-import { cn, Image, Skeleton } from '@heroui/react';
+import { cn, Image, Skeleton, useDisclosure } from '@heroui/react';
 import {
   CalendarDots,
   Gear,
   House,
   Megaphone,
+  PlusCircle,
   Ticket,
 } from '@phosphor-icons/react';
 import Link from 'next/link';
@@ -162,6 +164,9 @@ const SpaceSubSidebar = ({
     setIsGated(isGated);
   }, [spaceData?.gated, spaceData?.spaceGating?.length]);
 
+  // State for the create channel modal
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+
   return (
     <div
       className={cn(
@@ -215,10 +220,16 @@ const SpaceSubSidebar = ({
       </div>
 
       <div className="flex-1 overflow-y-auto px-2.5 pt-5">
-        <div className="flex h-[20px] items-center">
-          <span className="h-[14px] px-2.5 text-[12px] leading-[14px] text-white">
-            Community Apps
+        <div className="flex h-[20px] items-center justify-between">
+          <span className="h-[14px] px-[10px] text-[12px] leading-[14px] text-white">
+            Channels
           </span>
+          <PlusCircle
+            size={20}
+            weight="fill"
+            className="cursor-pointer text-white opacity-50 hover:opacity-100"
+            onClick={onOpen}
+          />
         </div>
 
         <div className="mt-[20px] flex flex-col gap-[5px]">
@@ -254,6 +265,14 @@ const SpaceSubSidebar = ({
           </div>
         </div>
       )}
+
+      {/* Create Channel Modal */}
+      <CreateChannelModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onOpenChange={onOpenChange}
+        spaceId={spaceId}
+      />
     </div>
   );
 };
