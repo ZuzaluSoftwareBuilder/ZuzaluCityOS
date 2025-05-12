@@ -8,6 +8,7 @@ export enum TabContentEnum {
   Categories = 'Categories',
   Links = 'Links',
   Access = 'Access',
+  Stoarge = 'Stoarge',
 }
 
 export enum TabStatus {
@@ -85,6 +86,7 @@ const CreateSpaceTabs: React.FC<CreateSpaceTabsProps> = ({
     { key: TabContentEnum.Categories, label: '2. Categories' },
     { key: TabContentEnum.Links, label: '3. Links' },
     { key: TabContentEnum.Access, label: '4. Access' },
+    { key: TabContentEnum.Stoarge, label: '5. Storage' },
   ];
 
   const getTabStatus = (key: TabContentEnum) => {

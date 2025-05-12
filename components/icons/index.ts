@@ -100,6 +100,7 @@ import { SparklesIcon } from './Sparkles';
 import { Square2StackIcon } from './Square2Stack';
 import { StorefrontIcon } from './Storefront';
 import { StreamIcon } from './Stream';
+import { SupabaseIcon } from './Supabase';
 import { TableIcon } from './Table';
 import { TagIcon } from './Tag';
 import TelegramIcon from './Telegram';
@@ -225,6 +226,7 @@ export {
   Square2StackIcon,
   StorefrontIcon,
   StreamIcon,
+  SupabaseIcon,
   TableIcon,
   TagIcon,
   TelegramIcon,
