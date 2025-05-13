@@ -1,4 +1,5 @@
 'use client';
+import CalendarDrawer from '@/app/spaces/[spaceid]/components/drawer/CalendarDrawer';
 import CreateChannelModal from '@/app/spaces/[spaceid]/components/modal/CreateChannelModal';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/sidebarHeader';
@@ -42,7 +43,7 @@ const SpaceSubSidebar = ({
 
   const { isOwner, isAdmin } = useSpacePermissions();
 
-  const { spaceData, isSpaceDataLoading } = useSpaceData();
+  const { spaceData, isSpaceDataLoading, refreshSpaceData } = useSpaceData();
 
   const installedAppsData: InstalledApp[] = useMemo(() => {
     return spaceData?.installedApps || [];
@@ -80,19 +81,6 @@ const SpaceSubSidebar = ({
       (app) => app?.nativeAppName === 'zuland',
     );
 
-    const nativeApps = installedAppsData
-      ?.filter((app) => app?.nativeAppName)
-      .map((app) => (
-        <TabItem
-          key={app.installedAppId}
-          label={app.installedApp?.appName ?? ''}
-          icon={<TableIcon size={20} />}
-          href={`/spaces/${spaceId}/app?id=${app.installedAppId}`}
-          isActive={isRouteActive('app')}
-          onClick={onCloseDrawer}
-        />
-      ));
-
     return [
       hasCalendar ? (
         <TabItem
@@ -100,7 +88,10 @@ const SpaceSubSidebar = ({
           href={`/spaces/${spaceId}/calendar`}
           icon={<CalendarDots />}
           isActive={isRouteActive('calendar')}
-          onClick={onCloseDrawer}
+          onClick={() => {
+            onCalendarDrawerOpen();
+            if (onCloseDrawer) onCloseDrawer();
+          }}
         />
       ) : null,
       hasZuland ? (
@@ -156,16 +147,16 @@ const SpaceSubSidebar = ({
     });
   }, [spaceData, spaceId]);
 
-  const [isGated, setIsGated] = useState(false);
-  useEffect(() => {
-    const isGated =
-      (spaceData?.gated && spaceData?.gated !== 'false') ||
-      (spaceData?.spaceGating?.length ?? 0) > 0;
-    setIsGated(isGated);
-  }, [spaceData?.gated, spaceData?.spaceGating?.length]);
-
   // State for the create channel modal
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+
+  // State for the calendar drawer
+  const {
+    isOpen: isCalendarDrawerOpen,
+    onOpen: onCalendarDrawerOpen,
+    onClose: onCalendarDrawerClose,
+    onOpenChange: onCalendarDrawerOpenChange,
+  } = useDisclosure();
 
   return (
     <div
@@ -273,6 +264,17 @@ const SpaceSubSidebar = ({
         onOpenChange={onOpenChange}
         spaceId={spaceId}
       />
+
+      {/* Calendar Drawer */}
+      {spaceData && (
+        <CalendarDrawer
+          isOpen={true}
+          onOpenChange={onCalendarDrawerOpenChange}
+          space={spaceData}
+          onClose={onCalendarDrawerClose}
+          refetch={refreshSpaceData}
+        />
+      )}
     </div>
   );
 };

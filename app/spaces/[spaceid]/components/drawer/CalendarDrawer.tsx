@@ -1,39 +1,85 @@
 'use client';
 
+import POAPAutocomplete from '@/app/spaces/[spaceid]/setting/access/components/poapAutocomplete';
+import { Button } from '@/components/base/button';
 import {
   CommonDrawerHeader,
   Drawer,
   DrawerBody,
   DrawerContent,
 } from '@/components/base/drawer';
-import ZuInput from '@/components/core/Input';
 import {
+  FormFooter,
   FormLabel,
   FormLabelDesc,
-} from '@/components/typography/formTypography';
+  FormSection,
+  FormSectionTitle,
+} from '@/components/base/form';
+import { Input } from '@/components/base/input';
+import { Switch } from '@/components/base/switch';
+import SelectCategories from '@/components/select/selectCategories';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { Space } from '@/models/space';
 import Yup from '@/utils/yupExtensions';
-import { Button } from '@heroui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Stack, Typography } from '@mui/material';
 import {
+  ArrowUpRight,
+  CaretLeft,
   CaretRight,
   Check,
   DoorOpen,
+  IdentificationBadge,
   LockLaminated,
-  PlusCircle,
-  X,
+  Plus,
 } from '@phosphor-icons/react';
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+
+// Define RegistrationAccess enum to match Figma design
+enum RegistrationAccess {
+  OpenApp = 'Open App',
+  GatedApp = 'Gated App',
+}
+
+// Define access type enum
+enum AccessType {
+  ByRole = 'ByRole',
+  ByCredential = 'ByCredential',
+}
+
+// Define role type for role selection
+interface RoleType {
+  id: string;
+  name: string;
+  isEnabled: boolean;
+  color?: string;
+}
+
+// Define ItemType interface for access items
+interface ItemType {
+  id: string;
+  name?: string;
+  description: React.ReactNode;
+  expandedContent?: React.ReactNode;
+  icon?: React.ReactNode;
+}
+
+// Define POAP type
+interface POAP {
+  id: number;
+  name: string;
+  image_url?: string;
+}
 
 // Define the form data type
 export type CalendarFormData = {
   name: string;
   categories: string[];
-  accessRule: 'open' | 'gated';
+  accessRule: string;
+  accessType?: AccessType;
+  roles?: RoleType[];
+  poaps?: POAP[];
 };
 
 interface CalendarDrawerProps {
@@ -80,8 +126,13 @@ const CalendarDrawer = ({
                     key: 'calendarConfig',
                     value: {
                       name: data.name,
-                      category: data.categories.join(','),
+                      category: data.categories
+                        .map((item) => item?.trim())
+                        .join(','),
                       accessRule: data.accessRule,
+                      accessType: data.accessType,
+                      roles: data.roles,
+                      poaps: data.poaps,
                     },
                   }),
                 },
@@ -141,6 +192,22 @@ const schema = Yup.object({
     .required('At least one category is required')
     .min(1, 'At least one category is required'),
   accessRule: Yup.string().required('Access rule is required'),
+  accessType: Yup.string(),
+  roles: Yup.array().of(
+    Yup.object({
+      id: Yup.string().required(),
+      name: Yup.string().required(),
+      isEnabled: Yup.boolean().required(),
+      color: Yup.string(),
+    }),
+  ),
+  poaps: Yup.array().of(
+    Yup.object({
+      id: Yup.number().required(),
+      name: Yup.string().required(),
+      image_url: Yup.string(),
+    }),
+  ),
 });
 
 interface CalendarFormProps {
@@ -156,9 +223,6 @@ const CalendarForm = ({
   initialData,
   isSubmitting = false,
 }: CalendarFormProps) => {
-  // Form state
-  const [newCategory, setNewCategory] = useState('');
-
   // Initialize form with react-hook-form
   const {
     control,
@@ -171,38 +235,71 @@ const CalendarForm = ({
     defaultValues: {
       name: initialData?.name || '',
       categories: (initialData?.categories?.filter(Boolean) as string[]) || [],
-      accessRule: (initialData?.accessRule as 'open' | 'gated') || 'open',
+      accessRule: initialData?.accessRule || RegistrationAccess.OpenApp,
+      accessType: initialData?.accessType || AccessType.ByRole,
+      roles: initialData?.roles || [
+        { id: 'member', name: 'Member', isEnabled: true },
+        {
+          id: 'customRole1',
+          name: 'CustomRole1',
+          isEnabled: true,
+          color: '#333333',
+        },
+        {
+          id: 'customRole2',
+          name: 'CustomRole2',
+          isEnabled: false,
+          color: '#333333',
+        },
+      ],
+      poaps: initialData?.poaps || [],
     },
+    shouldFocusError: true,
   });
 
   const accessRule = watch('accessRule');
-  const categories = watch('categories');
+  const roles = watch('roles');
+  const poaps = watch('poaps');
 
-  // Handle adding a new category
-  const handleAddCategory = useCallback(() => {
-    if (newCategory.trim() && !categories.includes(newCategory.trim())) {
-      setValue('categories', [...categories, newCategory.trim()]);
-      setNewCategory('');
-    }
-  }, [newCategory, categories, setValue]);
+  // State to track expanded sections
+  const [expandedSection, setExpandedSection] = useState<AccessType | null>(
+    null,
+  );
 
-  // Handle removing a category
-  const handleRemoveCategory = useCallback(
-    (category: string) => {
-      setValue(
-        'categories',
-        categories.filter((c) => c !== category),
-      );
-    },
-    [categories, setValue],
+  // Define access items based on Figma design
+  const accessItems = useMemo<ItemType[]>(
+    () => [
+      {
+        id: RegistrationAccess.OpenApp,
+        name: 'Open App',
+        description: 'Anybody can access',
+        icon: <DoorOpen size={24} />,
+      },
+      {
+        id: RegistrationAccess.GatedApp,
+        name: 'Gated App',
+        description:
+          'A Gated App requires users to verify a credential or hold a specific role to gain access',
+        icon: <LockLaminated size={24} />,
+      },
+    ],
+    [],
   );
 
   // Handle form submission
   const onFormSubmit = useCallback(
     (data: CalendarFormData) => {
-      onSubmit(data);
+      // Include the expanded section in the form data
+      const formData = {
+        ...data,
+        accessType: expandedSection || data.accessType,
+        // Only include POAPs if the access type is ByCredential
+        poaps:
+          expandedSection === AccessType.ByCredential ? data.poaps : undefined,
+      };
+      onSubmit(formData);
     },
-    [onSubmit],
+    [onSubmit, expandedSection],
   );
 
   return (
@@ -211,178 +308,355 @@ const CalendarForm = ({
       className="flex flex-col gap-[20px]"
     >
       {/* Details Section */}
-      <Typography className="text-[16px] font-semibold text-white opacity-60">
-        Details
-      </Typography>
+      <FormSectionTitle>Details</FormSectionTitle>
 
-      <Box className="rounded-[10px] border border-white/10 bg-white/[0.02] p-[20px]">
-        <Stack direction="column" spacing={2}>
-          <Stack direction="column" spacing={1}>
-            <FormLabel>Calendar Name</FormLabel>
-            <Typography className="text-[13px] font-normal opacity-80">
-              For multiple keys, use comma for separation
-            </Typography>
+      <FormSection>
+        <div className="flex flex-col gap-[30px]">
+          <div className="flex flex-col gap-[10px]">
+            <div className="flex flex-col gap-[6px]">
+              <FormLabel>Calendar Name</FormLabel>
+              <FormLabelDesc>
+                For multiple keys, use comma for separation
+              </FormLabelDesc>
+            </div>
             <Controller
               name="name"
               control={control}
               render={({ field }) => (
-                <ZuInput
-                  {...field}
-                  placeholder="type a name"
-                  error={!!errors.name}
-                />
+                <Input {...field} placeholder="type a name" />
               )}
             />
             {errors.name && (
-              <Typography color="error" fontSize="12px">
+              <div className="text-[12px] text-error">
                 {errors.name.message}
-              </Typography>
+              </div>
             )}
-          </Stack>
+          </div>
 
           {/* Categories Section */}
-          <Stack direction="column" spacing={1}>
-            <FormLabel>Calendar Categories</FormLabel>
-            <FormLabelDesc>Create categories for this Calendar</FormLabelDesc>
-
-            <div className="flex items-center rounded-[10px] border border-white/10 bg-white/[0.05] px-[10px] py-[13px]">
-              <input
-                className="w-full border-none bg-transparent text-[16px] text-white opacity-50 outline-none"
-                placeholder="Add a category"
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddCategory();
-                  }
-                }}
-              />
-              <div
-                className="flex cursor-pointer items-center opacity-50"
-                onClick={handleAddCategory}
-              >
-                <PlusCircle size={20} />
-              </div>
+          <div className="flex flex-col gap-[20px]">
+            <div className="flex flex-col gap-[10px]">
+              <FormLabel>Calendar Categories</FormLabel>
+              <FormLabelDesc>Create categories for this Calendar</FormLabelDesc>
             </div>
 
-            {/* Display categories as tags */}
-            {categories.length > 0 && (
-              <div className="mt-[10px] flex flex-wrap gap-[10px]">
-                {categories.map((category) => (
-                  <div
-                    key={category}
-                    className="flex items-center rounded-[10px] bg-white/[0.05] px-[10px] py-[4px]"
-                  >
-                    <span className="text-[14px] font-semibold text-white">
-                      {category}
-                    </span>
-                    <div
-                      className="ml-[10px] cursor-pointer opacity-50"
-                      onClick={() => handleRemoveCategory(category)}
-                    >
-                      <X size={16} />
-                    </div>
-                  </div>
-                ))}
+            <Controller
+              name="categories"
+              control={control}
+              render={({ field }) => (
+                <SelectCategories
+                  onChange={field.onChange}
+                  value={field.value}
+                />
+              )}
+            />
+            {errors.categories && (
+              <div className="text-[12px] text-error">
+                {errors.categories.message}
               </div>
             )}
-          </Stack>
-        </Stack>
-      </Box>
+          </div>
+        </div>
+      </FormSection>
 
       {/* Access Rules Section */}
-      <Typography className="text-[16px] font-semibold text-white opacity-60">
-        Access Rules
-      </Typography>
+      <FormSectionTitle>Access Rules</FormSectionTitle>
 
-      <Box className="rounded-[10px] border border-white/10 bg-white/[0.02] p-[20px]">
-        <Stack direction="column" spacing={3}>
+      <FormSection>
+        <div className="flex flex-col gap-[24px]">
           {/* Access Type Selection */}
-          <Stack direction="row" spacing={2}>
-            <div
-              className={`flex flex-1 cursor-pointer flex-row items-center rounded-[10px] border border-white/10 bg-white/[0.05] p-[10px] ${accessRule === 'open' ? 'opacity-100' : 'opacity-60'}`}
-              onClick={() => setValue('accessRule', 'open')}
-            >
-              <DoorOpen size={24} />
-              <Typography className="ml-[10px] font-semibold">
-                Open App
-              </Typography>
-            </div>
+          <div className="flex flex-row gap-[20px]">
+            {accessItems.map((item) => (
+              <div
+                key={item.id}
+                className={`flex-1 flex-col ${accessRule === item.id ? 'border-white/10 bg-white/10' : 'border-white/10 bg-white/[0.05] opacity-60'} cursor-pointer rounded-[10px] border p-[10px]`}
+                onClick={() => setValue('accessRule', item.id)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-[10px]">
+                    {item.icon}
+                    <div className="text-[16px] font-semibold">{item.name}</div>
+                  </div>
+                  {accessRule === item.id && <Check size={20} />}
+                </div>
+              </div>
+            ))}
+          </div>
 
-            <div
-              className={`flex flex-row items-center ${accessRule === 'gated' ? 'bg-white/[0.1]' : 'bg-white/[0.05]'} relative flex-1 cursor-pointer rounded-[10px] border border-white/10 p-[10px]`}
-              onClick={() => setValue('accessRule', 'gated')}
-            >
-              <LockLaminated size={24} />
-              <Typography className="ml-[10px] font-semibold">
-                Gated App
-              </Typography>
-              {accessRule === 'gated' && (
-                <div className="absolute right-[10px]">
-                  <Check size={20} />
+          <div className="text-[14px] font-normal">
+            {accessItems.find((item) => item.id === accessRule)?.description}
+          </div>
+
+          <div className="text-[14px] opacity-80">
+            Choose who can access this calendar
+          </div>
+
+          {/* Access Rules Options (only visible when GatedApp is selected) */}
+          {accessRule === RegistrationAccess.GatedApp && (
+            <div className="flex flex-col gap-[20px]">
+              {/* By Role Section */}
+              <div className="flex flex-col">
+                <div
+                  className="cursor-pointer rounded-[10px] border border-white/[0.06] bg-white/[0.02] p-[14px]"
+                  onClick={() =>
+                    setExpandedSection(
+                      expandedSection === AccessType.ByRole
+                        ? null
+                        : AccessType.ByRole,
+                    )
+                  }
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col">
+                      <div className="text-[16px] font-semibold leading-[1.4em]">
+                        By Role
+                      </div>
+                      <div className="text-[13px] leading-[1.4em] opacity-60">
+                        Select spaces roles
+                      </div>
+                    </div>
+                    <CaretRight size={20} className="opacity-60" />
+                  </div>
+                </div>
+
+                {/* Expanded Role Content */}
+                {expandedSection === AccessType.ByRole && (
+                  <div className="mt-[20px] flex flex-col gap-[14px]">
+                    {/* Member Role */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-[5px]">
+                        <IdentificationBadge size={24} className="opacity-40" />
+                        <span className="text-[16px] font-medium">Member</span>
+                      </div>
+                      <Switch
+                        isSelected={
+                          roles?.find((r) => r.id === 'member')?.isEnabled
+                        }
+                        onValueChange={(isSelected) => {
+                          const updatedRoles = [...(roles || [])];
+                          const index = updatedRoles.findIndex(
+                            (r) => r.id === 'member',
+                          );
+                          if (index !== -1) {
+                            updatedRoles[index] = {
+                              ...updatedRoles[index],
+                              isEnabled: isSelected,
+                            };
+                            setValue('roles', updatedRoles, {
+                              shouldDirty: true,
+                            });
+                          }
+                        }}
+                      />
+                    </div>
+
+                    {/* CustomRole1 */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-[10px]">
+                        <div className="size-[24px] rounded-full bg-[#333333]" />
+                        <span className="text-[16px] font-medium">
+                          CustomRole1
+                        </span>
+                      </div>
+                      <Switch
+                        isSelected={
+                          roles?.find((r) => r.id === 'customRole1')?.isEnabled
+                        }
+                        onValueChange={(isSelected) => {
+                          const updatedRoles = [...(roles || [])];
+                          const index = updatedRoles.findIndex(
+                            (r) => r.id === 'customRole1',
+                          );
+                          if (index !== -1) {
+                            updatedRoles[index] = {
+                              ...updatedRoles[index],
+                              isEnabled: isSelected,
+                            };
+                            setValue('roles', updatedRoles, {
+                              shouldDirty: true,
+                            });
+                          }
+                        }}
+                      />
+                    </div>
+
+                    {/* CustomRole2 */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-[10px]">
+                        <div className="size-[24px] rounded-full bg-[#333333]" />
+                        <span className="text-[16px] font-medium">
+                          CustomRole2
+                        </span>
+                      </div>
+                      <Switch
+                        isSelected={
+                          roles?.find((r) => r.id === 'customRole2')?.isEnabled
+                        }
+                        onValueChange={(isSelected) => {
+                          const updatedRoles = [...(roles || [])];
+                          const index = updatedRoles.findIndex(
+                            (r) => r.id === 'customRole2',
+                          );
+                          if (index !== -1) {
+                            updatedRoles[index] = {
+                              ...updatedRoles[index],
+                              isEnabled: isSelected,
+                            };
+                            setValue('roles', updatedRoles, {
+                              shouldDirty: true,
+                            });
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* By Credential Section */}
+              <div
+                className="cursor-pointer rounded-[10px] border border-white/[0.06] bg-white/[0.02] p-[14px]"
+                onClick={() =>
+                  setExpandedSection(
+                    expandedSection === AccessType.ByCredential
+                      ? null
+                      : AccessType.ByCredential,
+                  )
+                }
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <div className="text-[16px] font-semibold leading-[1.4em]">
+                      By Credential
+                    </div>
+                    <div className="text-[13px] leading-[1.4em] opacity-60">
+                      Add Credentials
+                    </div>
+                  </div>
+                  <CaretRight size={20} className="opacity-60" />
+                </div>
+              </div>
+
+              {/* Expanded Credential Content */}
+              {expandedSection === AccessType.ByCredential && (
+                <div className="mt-[20px] flex flex-col gap-[20px]">
+                  {/* Credential Selection */}
+                  <div className="flex flex-col gap-[10px]">
+                    <div className="flex flex-row items-center gap-[10px] p-[14px]">
+                      <div className="h-[40px] flex-1 rounded-[8px] bg-[#404040]">
+                        <div className="flex h-full items-center justify-between px-[10px]">
+                          <span className="text-[14px] font-medium">
+                            Become Member
+                          </span>
+                          <CaretLeft size={16} className="opacity-30" />
+                        </div>
+                      </div>
+                      <span className="text-[16px] opacity-60">with</span>
+                      <div className="h-[40px] flex-1 rounded-[8px] bg-[#363636]">
+                        <div className="flex h-full items-center justify-between px-[10px]">
+                          <span className="text-[14px] font-medium">POAPs</span>
+                          <CaretLeft size={16} />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Search POAPs */}
+                    <div className="flex flex-col gap-[20px] p-[20px]">
+                      <POAPAutocomplete
+                        initialValue={poaps?.map((poap) => poap.id)}
+                        onChange={(poapIds) => {
+                          // When POAPAutocomplete changes, update the form's poaps value
+                          // The component returns an array of POAP IDs, but we need to maintain the full POAP objects
+                          // We'll keep existing POAPs that are still in the selection and add any new ones
+                          const currentPoaps = poaps || [];
+                          const updatedPoaps = currentPoaps.filter((poap) =>
+                            poapIds.includes(poap.id),
+                          );
+
+                          // If there are new IDs that aren't in our current list, we need to add them
+                          // This would require fetching the POAP details, but for now we'll just use what we have
+                          setValue('poaps', updatedPoaps, {
+                            shouldDirty: true,
+                          });
+                        }}
+                      />
+
+                      {/* "OR" text after the selected POAPs */}
+                      <div className="flex flex-row flex-wrap items-center gap-[10px]">
+                        <span className="text-[14px] uppercase opacity-50">
+                          OR
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Create POAP Link */}
+                    <div className="flex flex-row items-center justify-between border-t border-white/[0.1] p-[10px]">
+                      <a
+                        href="https://poap.xyz/create"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex cursor-pointer items-center gap-[5px] hover:opacity-80"
+                      >
+                        <span className="text-[12px]">Create a POAP</span>
+                        <ArrowUpRight size={16} />
+                      </a>
+                      <Button
+                        color="functional"
+                        className="h-[30px] rounded-[10px] border border-[rgba(103,219,255,0.2)] bg-[rgba(103,219,255,0.1)] px-[14px] py-[8px]"
+                        onClick={() => {
+                          // Create a new rule with the selected POAPs
+                          if (poaps && poaps.length > 0) {
+                            // Here you would typically create a rule with the selected POAPs
+                            // For now, we'll just show a console log
+                            console.log('Creating rule with POAPs:', poaps);
+                          }
+                        }}
+                        isDisabled={!poaps || poaps.length === 0}
+                      >
+                        <span className="text-[14px] font-medium text-white">
+                          Create Rule
+                        </span>
+                      </Button>
+                    </div>
+
+                    {/* Create a Rule Button */}
+                    <div className="mx-[20px] flex h-[40px] cursor-pointer items-center justify-center gap-[10px] rounded-[8px] bg-[#2A2A2A]">
+                      <span className="text-[14px] font-medium">
+                        Create a Rule
+                      </span>
+                      <Plus size={16} />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
-          </Stack>
-
-          <Typography className="text-[14px] opacity-80">
-            A Gated App requires users to verify a credential or hold a specific
-            role to gain access
-          </Typography>
-
-          {/* Access Rules Options (only visible when gated is selected) */}
-          {accessRule === 'gated' && (
-            <Stack direction="column" spacing={2}>
-              <div className="cursor-pointer rounded-[10px] border border-white/[0.06] bg-white/[0.02] p-[10px_20px]">
-                <div className="flex items-center justify-between">
-                  <Stack>
-                    <Typography className="font-semibold">By Role</Typography>
-                    <Typography className="text-[13px] opacity-60">
-                      Select spaces roles
-                    </Typography>
-                  </Stack>
-                  <CaretRight size={20} className="opacity-60" />
-                </div>
-              </div>
-
-              <div className="cursor-pointer rounded-[10px] border border-white/[0.06] bg-white/[0.02] p-[10px_20px]">
-                <div className="flex items-center justify-between">
-                  <Stack>
-                    <Typography className="font-semibold">
-                      By Credential
-                    </Typography>
-                    <Typography className="text-[13px] opacity-60">
-                      Select spaces roles
-                    </Typography>
-                  </Stack>
-                  <CaretRight size={20} className="opacity-60" />
-                </div>
-              </div>
-            </Stack>
           )}
-        </Stack>
-      </Box>
+        </div>
+      </FormSection>
 
       {/* Form Footer */}
-      <div className="mt-[20px] flex justify-end gap-[10px]">
+      <FormFooter>
         <Button
-          className="rounded-[10px] border border-white/10 bg-white/[0.05] px-[14px] py-[8px] text-[14px] font-bold"
-          onPress={onCancel}
+          color="functional"
+          radius="md"
+          size="md"
+          onClick={onCancel}
           isDisabled={isSubmitting}
         >
           Cancel
         </Button>
 
         <Button
-          className="rounded-[10px] border border-[rgba(103,219,255,0.2)] bg-[rgba(103,219,255,0.1)] px-[14px] py-[8px] text-[14px] font-bold text-[#67DBFF]"
+          color="submit"
+          radius="md"
+          size="md"
           type="submit"
           isDisabled={isSubmitting || !isDirty || !isValid}
           isLoading={isSubmitting}
         >
           {initialData ? 'Update Calendar' : 'Create Calendar'}
         </Button>
-      </div>
+      </FormFooter>
     </form>
   );
 };
