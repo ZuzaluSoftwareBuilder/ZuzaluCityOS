@@ -75,7 +75,6 @@ export const FormLabelDesc = ({
  */
 export const FormHelperText = ({
   children,
-  error = false,
   className,
 }: Readonly<{
   children: React.ReactNode;
@@ -83,13 +82,7 @@ export const FormHelperText = ({
   className?: string;
 }>) => {
   return (
-    <p
-      className={cn(
-        'text-[12px] mt-1',
-        error ? 'text-error' : 'text-white/60',
-        className,
-      )}
-    >
+    <p className={cn('text-[12px] mt-1', 'text-error', className)}>
       {children}
     </p>
   );
