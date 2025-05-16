@@ -1,17 +1,23 @@
 'use client';
+import CalendarDrawer from '@/app/spaces/[spaceid]/components/drawer/CalendarDrawer';
+import CreateChannelModal from '@/app/spaces/[spaceid]/components/modal/CreateChannelModal';
 import { useSpacePermissions } from '@/app/spaces/[spaceid]/components/permission';
 import SidebarHeader from '@/app/spaces/[spaceid]/components/sidebar/spaceSubSidebar/sidebarHeader';
 import { TableIcon } from '@/components/icons';
+import { useRepositories } from '@/context/RepositoryContext';
+import { Calendar } from '@/models/calendar';
 import { InstalledApp } from '@/models/dapp';
 import { dayjs } from '@/utils/dayjs';
-import { cn, Image, Skeleton } from '@heroui/react';
+import { cn, Image, Skeleton, useDisclosure } from '@heroui/react';
 import {
   CalendarDots,
   Gear,
   House,
   Megaphone,
+  PlusCircle,
   Ticket,
 } from '@phosphor-icons/react';
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -40,7 +46,41 @@ const SpaceSubSidebar = ({
 
   const { isOwner, isAdmin } = useSpacePermissions();
 
-  const { spaceData, isSpaceDataLoading } = useSpaceData();
+  const { spaceData, isSpaceDataLoading, refreshSpaceData } = useSpaceData();
+
+  // Get calendar repository from context
+  const { calendarRepository } = useRepositories();
+
+  // Get calendars for this space using calendarRepository
+  const {
+    data: calendars,
+    isLoading: isCalendarsLoading,
+    error: calendarsError,
+    refetch: refetchCalendars,
+  } = useQuery({
+    queryKey: ['calendars', spaceId],
+    queryFn: async () => {
+      try {
+        const result = await calendarRepository.getBySpaceId(spaceId);
+        if (result.error) {
+          throw result.error;
+        }
+        return result.data;
+      } catch (error) {
+        console.error('Error fetching calendars:', error);
+        throw error;
+      }
+    },
+    select: (data: Calendar[]) => {
+      return data || [];
+    },
+    enabled: !!spaceId, // Only run query if spaceId is available
+  });
+  const calendarsUser = useMemo(() => {
+    const calendarsOpen =
+      calendars?.filter((calendar) => !calendar.gated) || [];
+    return [...calendarsOpen];
+  }, [calendars]);
 
   const installedAppsData: InstalledApp[] = useMemo(() => {
     return spaceData?.installedApps || [];
@@ -78,31 +118,28 @@ const SpaceSubSidebar = ({
       (app) => app?.nativeAppName === 'zuland',
     );
 
-    const nativeApps = installedAppsData
-      ?.filter((app) => app?.nativeAppName)
-      .map((app) => (
-        <TabItem
-          key={app.installedAppId}
-          label={app.installedApp?.appName ?? ''}
-          icon={<TableIcon size={20} />}
-          href={`/spaces/${spaceId}/app?id=${app.installedAppId}`}
-          isActive={isRouteActive('app')}
-          onClick={onCloseDrawer}
-        />
-      ));
+    // Check if we have calendar data
+    const hasCalendarData =
+      !isCalendarsLoading && calendars && calendars.length > 0;
 
     return [
       hasCalendar ? (
         <TabItem
+          key="calendar"
           label="Calendar"
           href={`/spaces/${spaceId}/calendar`}
           icon={<CalendarDots />}
           isActive={isRouteActive('calendar')}
-          onClick={onCloseDrawer}
+          onClick={() => {
+            onCalendarDrawerOpen();
+            if (onCloseDrawer) onCloseDrawer();
+          }}
+          count={hasCalendarData ? calendars.length : undefined}
         />
       ) : null,
       hasZuland ? (
         <TabItem
+          key="zuland"
           label="Zuland"
           href={`/spaces/${spaceId}/zuland`}
           icon={<CalendarDots />}
@@ -131,7 +168,14 @@ const SpaceSubSidebar = ({
           />
         )) ?? []),
     ].filter(Boolean);
-  }, [installedAppsData, isRouteActive, onCloseDrawer, spaceId]);
+  }, [
+    installedAppsData,
+    isRouteActive,
+    onCloseDrawer,
+    spaceId,
+    calendars,
+    isCalendarsLoading,
+  ]);
 
   // uot viewed announcements
   const [unViewedAnnouncementsCount, setUnViewedAnnouncementsCount] =
@@ -154,13 +198,28 @@ const SpaceSubSidebar = ({
     });
   }, [spaceData, spaceId]);
 
-  const [isGated, setIsGated] = useState(false);
+  // Effect to refetch calendars when spaceId changes
   useEffect(() => {
-    const isGated =
-      (spaceData?.gated && spaceData?.gated !== 'false') ||
-      (spaceData?.spaceGating?.length ?? 0) > 0;
-    setIsGated(isGated);
-  }, [spaceData?.gated, spaceData?.spaceGating?.length]);
+    if (spaceId) {
+      refetchCalendars();
+    }
+
+    // Clean up any subscriptions or pending requests when component unmounts
+    return () => {
+      // Any cleanup code if needed
+    };
+  }, [spaceId, refetchCalendars]);
+
+  // State for the create channel modal
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+
+  // State for the calendar drawer
+  const {
+    isOpen: isCalendarDrawerOpen,
+    onOpen: onCalendarDrawerOpen,
+    onClose: onCalendarDrawerClose,
+    onOpenChange: onCalendarDrawerOpenChange,
+  } = useDisclosure();
 
   return (
     <div
@@ -215,14 +274,20 @@ const SpaceSubSidebar = ({
       </div>
 
       <div className="flex-1 overflow-y-auto px-2.5 pt-5">
-        <div className="flex h-[20px] items-center">
-          <span className="h-[14px] px-2.5 text-[12px] leading-[14px] text-white">
-            Community Apps
+        <div className="flex h-[20px] items-center justify-between">
+          <span className="h-[14px] px-[10px] text-[12px] leading-[14px] text-white">
+            Channels
           </span>
+          <PlusCircle
+            size={20}
+            weight="fill"
+            className="cursor-pointer text-white opacity-50 hover:opacity-100"
+            onClick={onOpen}
+          />
         </div>
 
         <div className="mt-[20px] flex flex-col gap-[5px]">
-          {isSpaceDataLoading ? (
+          {isSpaceDataLoading || isCalendarsLoading ? (
             <div className="flex flex-col gap-[20px]">
               {Array.from({ length: 3 }).map((_, index) => (
                 <Skeleton
@@ -233,6 +298,11 @@ const SpaceSubSidebar = ({
             </div>
           ) : (
             installedApps
+          )}
+          {calendarsError && (
+            <div className="mx-[10px] mt-2 text-xs text-red-500">
+              Failed to load calendars
+            </div>
           )}
         </div>
       </div>
@@ -254,6 +324,30 @@ const SpaceSubSidebar = ({
           </div>
         </div>
       )}
+
+      {/* Create Channel Modal */}
+      <CreateChannelModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onOpenChange={onOpenChange}
+        onpenCalendarDrawer={onCalendarDrawerOpen}
+      />
+
+      {/* Calendar Drawer */}
+      <CalendarDrawer
+        isOpen={isCalendarDrawerOpen}
+        onOpenChange={onCalendarDrawerOpenChange}
+        isEdit={false}
+        onClose={() => {
+          onCalendarDrawerClose();
+          // Refresh calendars data when drawer is closed
+          refetchCalendars();
+        }}
+        refetch={() => {
+          refreshSpaceData();
+          refetchCalendars();
+        }}
+      />
     </div>
   );
 };

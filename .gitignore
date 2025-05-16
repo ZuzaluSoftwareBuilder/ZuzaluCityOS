@@ -45,3 +45,5 @@ yarn.lock
 *.local.sh
 .cursor
 supabase/
+
+memory-bank/
