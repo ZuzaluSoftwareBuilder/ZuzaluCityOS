@@ -1,3 +1,5 @@
+import { getCalendarRepository } from '@/repositories/calendar';
+import { ICalendarRepository } from '@/repositories/calendar/type';
 import { getDappRepository } from '@/repositories/dapp';
 import { IDappRepository } from '@/repositories/dapp/type';
 import { getProfileRepository } from '@/repositories/profile';
@@ -12,6 +14,7 @@ interface RepositoryContextValue {
   dappRepository: IDappRepository;
   spaceRepository: ISpaceRepository;
   roleRepository: IRoleRepository;
+  calendarRepository: ICalendarRepository;
 }
 
 const RepositoryContext = createContext<RepositoryContextValue | null>(null);
@@ -23,12 +26,17 @@ export const RepositoryProvider: React.FC<{ children: React.ReactNode }> = ({
   const dappRepository = useMemo(() => getDappRepository('supabase'), []);
   const spaceRepository = useMemo(() => getSpaceRepository('supabase'), []);
   const roleRepository = useMemo(() => getRoleRepository('supabase'), []);
+  const calendarRepository = useMemo(
+    () => getCalendarRepository('supabase'),
+    [],
+  );
 
   const value = {
     profileRepository,
     dappRepository,
     spaceRepository,
     roleRepository,
+    calendarRepository,
   };
 
   return (

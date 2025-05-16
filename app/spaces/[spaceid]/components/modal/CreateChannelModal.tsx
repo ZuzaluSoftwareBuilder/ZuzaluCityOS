@@ -46,14 +46,14 @@ interface CreateChannelModalProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenChange: () => void;
-  spaceId?: string; // Made optional since we're not using it yet
+  onpenCalendarDrawer: () => void;
 }
 
 const CreateChannelModal = ({
   isOpen,
   onClose,
   onOpenChange,
-  spaceId,
+  onpenCalendarDrawer,
 }: CreateChannelModalProps) => {
   // We'll keep the state for future functionality
   const [selectedChannelType, setSelectedChannelType] = useState<string | null>(
@@ -64,6 +64,9 @@ const CreateChannelModal = ({
     setSelectedChannelType(channelId);
     // Here you would typically handle the channel creation
     // For now, we'll just close the modal after selection
+    if (channelId === CHANNEL_TYPES[0].id) {
+      onpenCalendarDrawer();
+    }
     onClose();
   };
 

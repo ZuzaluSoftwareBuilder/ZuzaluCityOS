@@ -3,6 +3,8 @@ import { ZuButton } from '@/components/core';
 import Drawer from '@/components/drawer';
 import { PlusCircleIcon } from '@/components/icons';
 import { useCeramicContext } from '@/context/CeramicContext';
+import { useRepositories } from '@/context/RepositoryContext';
+import { Calendar } from '@/models/calendar';
 import { CalendarConfig } from '@/types';
 import { supabase } from '@/utils/supabase/client';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
@@ -15,6 +17,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { rrulestr } from 'rrule';
 import { ConfigPanel } from '../adminevents/[eventid]/Tabs/Ticket/components/Common';
 import { useSpaceData } from '../components/context/spaceData';
+import { RegistrationAccess } from '../components/drawer/CalendarDrawer/form';
 import { useSpacePermissions } from '../components/permission';
 import CalendarConfigForm from './components/CalendarConfigForm';
 import CalendarView from './components/CalendarView';
@@ -24,7 +27,7 @@ import ViewEvent from './components/ViewEvent';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const Calendar = () => {
+const CalendarComponent = () => {
   const params = useParams();
   const router = useRouter();
   const { ceramic } = useCeramicContext();
@@ -42,26 +45,43 @@ const Calendar = () => {
 
   const searchParams = useSearchParams();
   const { spaceData, isSpaceDataLoading, refreshSpaceData } = useSpaceData();
+  const { calendarRepository } = useRepositories();
 
-  // const calendarConfig = useMemo(() => {
-  //   if (spaceData && spaceData.customAttributes) {
-  //     const tbd = spaceData.customAttributes.map((item) =>
-  //       JSON.parse(item.tbd),
-  //     );
-  //     return tbd.find((item) => {
-  //       if (item.key === 'calendarConfig') {
-  //         return item.value;
-  //       }
-  //     })?.value as CalendarConfig;
-  //   }
-  //   return null;
-  // }, [spaceData]);
-  // Wait for Calendar refactoring
-  const calendarConfig: CalendarConfig = {
-    name: 'name',
-    category: 'category',
-    accessRule: 'accessRule',
-  };
+  // Get calendars for this space using calendarRepository
+  const { data: calendars, refetch: refetchCalendars } = useQuery({
+    queryKey: ['calendars', spaceId],
+    queryFn: async () => {
+      const result = await calendarRepository.getBySpaceId(spaceId);
+      if (result.error) {
+        throw result.error;
+      }
+      return result.data;
+    },
+    select: (data: Calendar[]) => {
+      return data;
+    },
+  });
+
+  // Use the first calendar or create a default one
+  const calendarConfig = useMemo(() => {
+    if (calendars && calendars.length > 0) {
+      const calendar = calendars[0];
+      return {
+        name: calendar.name,
+        category: calendar.category.join(','),
+        accessRule: calendar.gated
+          ? RegistrationAccess.GatedApp
+          : RegistrationAccess.OpenApp,
+      } as CalendarConfig;
+    }
+
+    // Fallback to default config if no calendars found
+    return {
+      name: 'Space Calendar',
+      category: 'Events',
+      accessRule: 'Open App',
+    } as CalendarConfig;
+  }, [calendars]);
 
   const canAccessCalendar = true;
 
@@ -431,9 +451,11 @@ const Calendar = () => {
           )}
           {type === 'config' && (
             <CalendarConfigForm
-              space={spaceData!}
               handleClose={handleFormClose}
-              refetch={refreshSpaceData}
+              refetch={() => {
+                refreshSpaceData();
+                refetchCalendars();
+              }}
             />
           )}
         </Drawer>
@@ -442,4 +464,4 @@ const Calendar = () => {
   );
 };
 
-export default Calendar;
+export default CalendarComponent;

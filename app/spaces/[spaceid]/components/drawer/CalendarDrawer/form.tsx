@@ -16,6 +16,7 @@ import useGetSpaceMember from '@/hooks/useGetSpaceMember';
 import Yup from '@/utils/yupExtensions';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
+  CaretDown,
   CaretRight,
   Check,
   DoorOpen,
@@ -44,7 +45,6 @@ export interface RoleType {
   id: string;
   name: string;
   isEnabled: boolean;
-  color?: string;
 }
 
 // Define ItemType interface for access items
@@ -57,40 +57,65 @@ export interface ItemType {
 
 // POAP type is now imported from './rule'
 
-// Define the form data type
+// Define the form data type based on CreateCalendarInput
 export type CalendarFormData = {
+  // Required fields from CreateCalendarInput
   name: string;
-  categories: string[];
-  accessRule: string;
-  accessType?: AccessType;
-  roles?: RoleType[];
-  poaps?: POAP[];
+  categories: string[]; // Maps to category in CreateCalendarInput
+
+  // Form control fields
+  gated: boolean; // Controls if the calendar is gated (true) or open (false)
+  accessType?: AccessType; // Controls which access method is used (ByRole/ByCredential)
+
+  // Role and credential selection
+  roles?: string[]; // Used to generate roleIds for CreateCalendarInput (array of role IDs)
+  poaps?: POAP[]; // Used for credential-based access
+
+  // Optional fields from Calendar model
+  id?: string;
+  spaceId?: string; // Maps to space_id
+  createdAt?: string; // Maps to created_at
 };
 
-// Define the form schema
+// Define the form schema based on CreateCalendarInput type
 export const schema = Yup.object({
+  // Required fields from CreateCalendarInput
   name: Yup.string().required('Calendar name is required'),
   categories: Yup.array()
     .of(Yup.string())
     .required('At least one category is required')
     .min(1, 'At least one category is required'),
-  accessRule: Yup.string().required('Access rule is required'),
+
+  // Form control fields
+  gated: Yup.boolean().required('Access rule is required'),
   accessType: Yup.string(),
-  roles: Yup.array().of(
-    Yup.object({
-      id: Yup.string().required(),
-      name: Yup.string().required(),
-      isEnabled: Yup.boolean().required(),
-      color: Yup.string(),
+
+  // Role selection fields
+  roles: Yup.array()
+    .of(Yup.string())
+    .when(['gated', 'accessType'], {
+      is: (gated: boolean, accessType: string) =>
+        gated && accessType === AccessType.ByRole,
+      then: (schema) => schema.min(1, 'At least one role must be selected'),
+      otherwise: (schema) => schema,
     }),
-  ),
-  poaps: Yup.array().of(
-    Yup.object({
-      id: Yup.number().required(),
-      name: Yup.string().required(),
-      image_url: Yup.string(),
+
+  // POAP selection fields
+  poaps: Yup.array()
+    .of(
+      Yup.object({
+        id: Yup.number().required(),
+        name: Yup.string().required(),
+        image_url: Yup.string(),
+      }),
+    )
+    .when(['gated', 'accessType'], {
+      is: (gated: boolean, accessType: string) =>
+        gated && accessType === AccessType.ByCredential,
+      then: (schema) =>
+        schema.min(1, 'At least one credential must be selected'),
+      otherwise: (schema) => schema,
     }),
-  ),
 });
 
 export interface CalendarFormProps {
@@ -115,22 +140,28 @@ const CalendarForm = ({
     if (!spaceRoles?.data) return [];
 
     // Filter roles that should be displayed (excluding system roles if needed)
-    const filteredRoles = spaceRoles.data
+    const filteredRoleIds = spaceRoles.data
       .filter(
         (role) => role.role.level !== 'owner' && role.role.level !== 'follower',
       )
-      .map((role) => ({
-        id: role.role.id,
-        name: role.role.name,
-        isEnabled: false,
-        color: '#333333', // Default color
-      }));
+      .map((role) => role.role.id);
 
     // Always include the member role as the first item
-    return [
-      { id: 'member', name: 'Member', isEnabled: false },
-      ...filteredRoles,
-    ];
+    return ['member', ...filteredRoleIds];
+  }, [spaceRoles]);
+
+  // Map of role IDs to role names for display purposes
+  const roleNameMap = useMemo(() => {
+    const map = new Map<string, string>();
+    map.set('member', 'Member');
+
+    if (spaceRoles?.data) {
+      spaceRoles.data.forEach((role) => {
+        map.set(role.role.id, role.role.name);
+      });
+    }
+
+    return map;
   }, [spaceRoles]);
 
   // Initialize form with react-hook-form
@@ -143,12 +174,22 @@ const CalendarForm = ({
   } = useForm<CalendarFormData>({
     resolver: yupResolver(schema) as any,
     defaultValues: {
+      // Required fields
       name: initialData?.name || '',
       categories: (initialData?.categories?.filter(Boolean) as string[]) || [],
-      accessRule: initialData?.accessRule || RegistrationAccess.OpenApp,
+
+      // Form control fields
+      gated: initialData?.gated ?? false, // Default to false (Open App)
       accessType: initialData?.accessType || AccessType.ByRole,
+
+      // Role and credential selection
       roles: initialData?.roles || formattedRoles,
       poaps: initialData?.poaps || [],
+
+      // Optional fields
+      id: initialData?.id,
+      spaceId: initialData?.spaceId,
+      createdAt: initialData?.createdAt,
     },
     shouldFocusError: true,
   });
@@ -160,70 +201,71 @@ const CalendarForm = ({
     }
   }, [formattedRoles, setValue, initialData?.roles]);
 
-  const accessRule = watch('accessRule');
+  const gated = watch('gated');
   const roles = watch('roles');
   const poaps = watch('poaps');
+
+  // State to track selected roles
+  const [selectedRoles, setSelectedRoles] = useState<Set<string>>(new Set());
+
+  // Update selectedRoles when roles change
+  useEffect(() => {
+    if (roles) {
+      setSelectedRoles(new Set(roles));
+    }
+  }, [roles]);
 
   // Handle Member role toggle (select/deselect all)
   const handleMemberRoleToggle = useCallback(
     (isSelected: boolean) => {
-      const updatedRoles = [...(roles || [])];
-
-      // Update all roles to match the selected state
-      updatedRoles.forEach((role, idx) => {
-        updatedRoles[idx] = {
-          ...role,
-          isEnabled: isSelected,
-        };
-      });
-
-      setValue('roles', updatedRoles, {
-        shouldDirty: true,
-      });
+      if (isSelected) {
+        // Select all roles
+        const allRoles = new Set(formattedRoles);
+        setValue('roles', Array.from(allRoles), {
+          shouldDirty: true,
+        });
+        setSelectedRoles(allRoles);
+      } else {
+        // Deselect all roles
+        setValue('roles', [], {
+          shouldDirty: true,
+        });
+        setSelectedRoles(new Set());
+      }
     },
-    [roles, setValue],
+    [formattedRoles, setValue],
   );
 
   // Handle regular user role toggle
   const handleUserRoleToggle = useCallback(
     (roleId: string, isSelected: boolean) => {
-      const updatedRoles = [...(roles || [])];
-      const roleIndex = updatedRoles.findIndex((r) => r.id === roleId);
+      const newSelectedRoles = new Set(selectedRoles);
 
-      if (roleIndex !== -1) {
-        updatedRoles[roleIndex] = {
-          ...updatedRoles[roleIndex],
-          isEnabled: isSelected,
-        };
-
-        // Update Member role based on other roles' state
-        const memberIndex = updatedRoles.findIndex((r) => r.id === 'member');
-        if (memberIndex !== -1) {
-          // If this role is being unchecked, Member should also be unchecked
-          if (!isSelected) {
-            updatedRoles[memberIndex] = {
-              ...updatedRoles[memberIndex],
-              isEnabled: false,
-            };
-          } else {
-            // If this role is being checked, check if all other non-member roles are checked
-            const allOtherRolesEnabled = updatedRoles
-              .filter((r) => r.id !== 'member')
-              .every((r) => (r.id === roleId ? isSelected : r.isEnabled));
-
-            updatedRoles[memberIndex] = {
-              ...updatedRoles[memberIndex],
-              isEnabled: allOtherRolesEnabled,
-            };
-          }
-        }
-
-        setValue('roles', updatedRoles, {
-          shouldDirty: true,
-        });
+      if (isSelected) {
+        newSelectedRoles.add(roleId);
+      } else {
+        newSelectedRoles.delete(roleId);
+        // If any role is unchecked, also uncheck the "member" role
+        newSelectedRoles.delete('member');
       }
+
+      // Check if all non-member roles are selected
+      const allNonMemberRoles = formattedRoles.filter((id) => id !== 'member');
+      const allNonMemberSelected = allNonMemberRoles.every((id) =>
+        id === roleId ? isSelected : newSelectedRoles.has(id),
+      );
+
+      // If all non-member roles are selected, also select the "member" role
+      if (allNonMemberSelected && isSelected) {
+        newSelectedRoles.add('member');
+      }
+
+      setSelectedRoles(newSelectedRoles);
+      setValue('roles', Array.from(newSelectedRoles), {
+        shouldDirty: true,
+      });
     },
-    [roles, setValue],
+    [selectedRoles, formattedRoles, setValue],
   );
 
   // State to track expanded sections
@@ -251,55 +293,43 @@ const CalendarForm = ({
   // Handle form submission
   const onFormSubmit = useCallback(
     (data: CalendarFormData) => {
-      // Validate data
-      if (data.accessRule === RegistrationAccess.GatedApp) {
-        // For gated access, ensure at least one access method is selected
-        if (expandedSection === AccessType.ByRole) {
-          // Check if at least one role is enabled
-          const hasEnabledRole = data.roles?.some((role) => role.isEnabled);
-          if (!hasEnabledRole) {
-            // If no roles are selected, handle the error
-            console.error('At least one role must be selected');
-            return;
-          }
-        } else if (expandedSection === AccessType.ByCredential) {
-          // Check if at least one POAP is selected
-          if (!data.poaps || data.poaps.length === 0) {
-            // If no POAPs are selected, handle the error
-            console.error('At least one POAP must be selected');
-            return;
-          }
-        } else {
-          // If no access method is expanded, default to role-based access
-          // We can't modify expandedSection directly as it's a constant
-          // We'll set the default value in the formData object below
-        }
+      // Determine access type - validation is now handled by Yup schema
+      // If no access method is expanded but gated is true, default to role-based access
+      if (data.gated && !expandedSection) {
+        // Default to role-based access
+        setExpandedSection(AccessType.ByRole);
       }
 
-      // Determine access type
-      let accessType = expandedSection;
+      // Use the current expandedSection value (which might have been updated above)
+      const accessType = expandedSection;
 
-      // If it's gated access but no access type is selected, default to role-based access
-      if (data.accessRule === RegistrationAccess.GatedApp && !accessType) {
-        accessType = AccessType.ByRole;
-      }
+      // Build submission data based on CreateCalendarInput type
+      const formData: CalendarFormData = {
+        // Required fields
+        name: data.name,
+        categories: data.categories,
 
-      // Build submission data
-      const formData = {
-        ...data,
+        // Form control fields
+        gated: data.gated,
         accessType: accessType || data.accessType,
+
         // Set appropriate data based on access type
         roles:
           accessType === AccessType.ByRole
-            ? // Only keep enabled roles
-              data.roles?.filter((role) => role.isEnabled)
+            ? // Use the selected roles
+              data.roles
             : undefined,
         poaps: accessType === AccessType.ByCredential ? data.poaps : undefined,
+
+        // Optional fields
+        id: data.id,
+        spaceId: data.spaceId,
+        createdAt: data.createdAt,
       };
 
       onSubmit(formData);
     },
-    [onSubmit, expandedSection],
+    [onSubmit, expandedSection, setExpandedSection],
   );
 
   return (
@@ -368,11 +398,14 @@ const CalendarForm = ({
                 <div
                   key={item.id}
                   className={`flex-1 flex-col ${
-                    accessRule === item.id
+                    (item.id === RegistrationAccess.GatedApp && gated) ||
+                    (item.id === RegistrationAccess.OpenApp && !gated)
                       ? 'border-white/20 bg-white/10'
                       : 'border-white/10 bg-white/[0.05] opacity-60'
                   } cursor-pointer rounded-[10px] border p-[10px] transition-all hover:border-white/20`}
-                  onClick={() => setValue('accessRule', item.id)}
+                  onClick={() =>
+                    setValue('gated', item.id === RegistrationAccess.GatedApp)
+                  }
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-[10px]">
@@ -381,7 +414,8 @@ const CalendarForm = ({
                         {item.name}
                       </div>
                     </div>
-                    {accessRule === item.id && (
+                    {((item.id === RegistrationAccess.GatedApp && gated) ||
+                      (item.id === RegistrationAccess.OpenApp && !gated)) && (
                       <Check size={20} weight="bold" className="text-white" />
                     )}
                   </div>
@@ -391,7 +425,7 @@ const CalendarForm = ({
           </div>
 
           {/* Access Rules Options (only visible when GatedApp is selected) */}
-          {accessRule === RegistrationAccess.GatedApp && (
+          {gated && (
             <>
               <div className="pt-[10px] text-[14px] font-normal">
                 <span>A Gated App</span>requires users to verify a credential or
@@ -418,7 +452,11 @@ const CalendarForm = ({
                           Select spaces roles
                         </div>
                       </div>
-                      <CaretRight size={20} className="opacity-60" />
+                      {expandedSection === AccessType.ByRole ? (
+                        <CaretDown size={20} className="opacity-60" />
+                      ) : (
+                        <CaretRight size={20} className="opacity-60" />
+                      )}
                     </div>
                     {expandedSection === AccessType.ByRole && (
                       <div className="mx-[14px] h-px bg-white/10"></div>
@@ -442,9 +480,7 @@ const CalendarForm = ({
                             </span>
                           </div>
                           <Switch
-                            isSelected={
-                              roles?.find((r) => r.id === 'member')?.isEnabled
-                            }
+                            isSelected={selectedRoles.has('member')}
                             onValueChange={handleMemberRoleToggle}
                             color="success"
                             className="h-[24px] w-[44px]"
@@ -452,34 +488,39 @@ const CalendarForm = ({
                         </div>
 
                         {/* Space Roles */}
-                        {roles
-                          ?.filter((role) => role.id !== 'member')
-                          .map((role) => (
+                        {formattedRoles
+                          .filter((roleId) => roleId !== 'member')
+                          .map((roleId) => (
                             <div
-                              key={role.id}
+                              key={roleId}
                               className="flex items-center justify-between"
                             >
                               <div className="flex items-center gap-[10px]">
                                 <div
                                   className="size-[20px] rounded-full"
                                   style={{
-                                    backgroundColor: role.color || '#404040',
+                                    backgroundColor: '#404040',
                                   }}
                                 />
                                 <span className="text-[16px] font-medium leading-[1.2em]">
-                                  {role.name}
+                                  {roleNameMap.get(roleId) || roleId}
                                 </span>
                               </div>
                               <Switch
-                                isSelected={role.isEnabled}
+                                isSelected={selectedRoles.has(roleId)}
                                 onValueChange={(isSelected) =>
-                                  handleUserRoleToggle(role.id, isSelected)
+                                  handleUserRoleToggle(roleId, isSelected)
                                 }
                                 color="success"
                                 className="h-[24px] w-[44px]"
                               />
                             </div>
                           ))}
+                        {errors?.roles && (
+                          <FormHelperText>
+                            {errors.roles.message}
+                          </FormHelperText>
+                        )}
                       </div>
                     </div>
                   )}
@@ -506,7 +547,11 @@ const CalendarForm = ({
                           Add Credentials
                         </div>
                       </div>
-                      <CaretRight size={20} className="opacity-60" />
+                      {expandedSection === AccessType.ByCredential ? (
+                        <CaretDown size={20} className="opacity-60" />
+                      ) : (
+                        <CaretRight size={20} className="opacity-60" />
+                      )}
                     </div>
                     {expandedSection === AccessType.ByCredential && (
                       <div className="mx-[14px] h-px bg-white/10"></div>
@@ -521,6 +566,9 @@ const CalendarForm = ({
                         setValue('poaps', updatedPoaps, { shouldDirty: true });
                       }}
                     />
+                  )}
+                  {errors?.poaps && (
+                    <FormHelperText>{errors.poaps.message}</FormHelperText>
                   )}
                 </div>
               </div>
